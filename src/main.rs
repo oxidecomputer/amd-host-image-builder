@@ -90,6 +90,7 @@ fn main() -> std::io::Result<()> {
     let args: Vec<String> = env::args().collect();
     let filename = &args[1];
     let file = File::create(filename)?;
+    file.set_len(16*1024*1024)?;
     let mut storage = FlashImage::new(file);
     let mut position: Location = 0;
     while position < 16*1024*1024 {
