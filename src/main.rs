@@ -2,6 +2,7 @@
 use core::cell::RefCell;
 use std::env;
 use std::fs::File;
+use std::fs::OpenOptions;
 use std::io::Read;
 use std::io::Seek;
 use std::io::SeekFrom;
@@ -89,7 +90,7 @@ impl FlashImage {
 fn main() -> std::io::Result<()> {
     let args: Vec<String> = env::args().collect();
     let filename = &args[1];
-    let file = File::create(filename)?;
+    let file = OpenOptions::new().read(true).write(true).create(true).open(filename)?;
     file.set_len(16*1024*1024)?;
     let mut storage = FlashImage::new(file);
     let mut position: Location = 0;
