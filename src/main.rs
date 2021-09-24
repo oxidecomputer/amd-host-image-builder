@@ -105,8 +105,7 @@ fn main() -> std::io::Result<()> {
         position += block_size;
     }
     assert!(position == IMAGE_SIZE);
-    eprintln!("BEFORE PROBLEMATIC AREA");
-    let efs = match Efs::<_, RW_BLOCK_SIZE, ERASURE_BLOCK_SIZE>::create(storage, ProcessorGeneration::Milan) {
+    let mut efs = match Efs::<_, RW_BLOCK_SIZE, ERASURE_BLOCK_SIZE>::create(storage, ProcessorGeneration::Milan) {
         Ok(efs) => {
             efs
         },
@@ -115,7 +114,8 @@ fn main() -> std::io::Result<()> {
             std::process::exit(1);
         }
     };
-    eprintln!("STILL ALIVE");
+    efs.create_psp_directory(0x12_0000, 0x24_0000).unwrap();
+    efs.create_bios_directory(0x24_0000, 0x24_0000 + 0x4_0000).unwrap();
 //            println!("{:?}", efh);
     let psp_directory = match efs.psp_directory() {
         Ok(v) => {
