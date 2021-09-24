@@ -1,5 +1,6 @@
 
 use core::cell::RefCell;
+use std::convert::TryInto;
 use std::env;
 use std::fs::File;
 use std::fs::OpenOptions;
@@ -87,20 +88,25 @@ impl FlashImage {
     }
 }
 
+const IMAGE_SIZE: u32 = 16*1024*1024;
+const RW_BLOCK_SIZE: usize = 0x1000;
+const ERASURE_BLOCK_SIZE: usize = 0x2_0000;
+
 fn main() -> std::io::Result<()> {
     let args: Vec<String> = env::args().collect();
     let filename = &args[1];
     let file = OpenOptions::new().read(true).write(true).create(true).open(filename)?;
-    file.set_len(16*1024*1024)?;
+    file.set_len(IMAGE_SIZE.into())?;
     let mut storage = FlashImage::new(file);
     let mut position: Location = 0;
-    while position < 16*1024*1024 {
-        FlashWrite::<0x1000, 0x2_0000>::erase_block(&mut storage, position).unwrap();
-        position += 0x2_0000;
+    let block_size: Location = ERASURE_BLOCK_SIZE.try_into().unwrap();
+    while position < IMAGE_SIZE {
+        FlashWrite::<RW_BLOCK_SIZE, ERASURE_BLOCK_SIZE>::erase_block(&mut storage, position).unwrap();
+        position += block_size;
     }
-    assert!(position == 16*1024*1024);
+    assert!(position == IMAGE_SIZE);
     eprintln!("BEFORE PROBLEMATIC AREA");
-    let efs = match Efs::<_, 0x1000, 0x2_0000>::create(storage, ProcessorGeneration::Milan) {
+    let efs = match Efs::<_, RW_BLOCK_SIZE, ERASURE_BLOCK_SIZE>::create(storage, ProcessorGeneration::Milan) {
         Ok(efs) => {
             efs
         },
