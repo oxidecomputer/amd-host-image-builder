@@ -9,7 +9,7 @@ use std::io::Read;
 use std::io::Seek;
 use std::io::SeekFrom;
 use std::io::Write;
-use amd_efs::{Efs, ProcessorGeneration, PspDirectoryEntryAttrs, BiosDirectoryEntryAttrs, BiosDirectory, PspDirectory};
+use amd_efs::{Efs, ProcessorGeneration, PspDirectoryEntryAttrs, PspDirectoryEntryType, BiosDirectoryEntryAttrs, BiosDirectory, PspDirectory};
 //use amd_efs::ProcessorGeneration;
 use amd_flash::{FlashRead, FlashWrite, Location, Result, Error};
 
@@ -93,6 +93,7 @@ const IMAGE_SIZE: u32 = 16*1024*1024;
 const RW_BLOCK_SIZE: usize = 256;
 const ERASURE_BLOCK_SIZE: usize = 0x1000;
 
+// TODO: Allow size override.
 fn psp_entry_add_from_file(directory: &mut PspDirectory<FlashImage, RW_BLOCK_SIZE, ERASURE_BLOCK_SIZE>, attrs: &PspDirectoryEntryAttrs, source_filename: &str) -> amd_efs::Result<()> {
     let file = File::open(source_filename).unwrap();
     let size: usize = file.metadata().unwrap().len().try_into().unwrap();
@@ -134,7 +135,25 @@ fn main() -> std::io::Result<()> {
         }
     };
     let mut psp_directory = efs.create_psp_directory(0x12_0000, 0x24_0000).unwrap();
+    psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AmdPublicKey), "GN/AmdPubKey_gn.tkn").unwrap();
+    psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspBootloader), "GN/PspBootLoader_gn.sbin").unwrap();
+    psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspRecoveryBootloader), "GN/PspRecoveryBootLoader_gn.sbin").unwrap();
+    psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SmuOffChipFirmware8), "GN/SmuFirmwareGn.csbin").unwrap();
+    psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AblPublicKey), "GN/PspABLFw_gn.stkn").unwrap();
+    // FIXME: PSP Soft Fuse Chain; value 1 for type = PspSoftFuseChain
 
+    psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SmuOffChipFirmware12), "GN/SmuFirmware2Gn.csbin").unwrap();
+    psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspEarlySecureUnlockDebugImage), "GN/SecureDebugUnlock_gn.sbin").unwrap();
+    psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::WrappedIkek), "GN/PspIkek_gn.bin").unwrap();
+    psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspTokenUnlockData), "GN/SecureEmptyToken.bin").unwrap();
+    psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SecurityPolicyBinary), "GN/RsmuSecPolicy_gn.sbin").unwrap(); // FIXME: check blob
+    psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::Mp5Firmware), "GN/Mp5Gn.csbin").unwrap();
+    psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::Abl0), "GN/AgesaBootloader_U_prod_GN.csbin").unwrap();
+    // TODO: SEV ...
+    psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::DxioPhySramFirmware), "GN/GnPhyFw.sbin").unwrap();
+    // psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::DrtmTa), "GN/PSP-DRTM_gn.sbin").unwrap()
+
+    psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspBootloaderPublicKeysTable), "GN/PSP-Key-DB_gn.sbin").unwrap();
 
     let mut bios_directory = efs.create_bios_directory(0x24_0000, 0x24_0000 + 0x8_0000).unwrap();
 
