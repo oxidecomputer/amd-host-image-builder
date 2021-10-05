@@ -9,7 +9,7 @@ use std::io::Read;
 use std::io::Seek;
 use std::io::SeekFrom;
 use std::io::Write;
-use amd_efs::{Efs, ProcessorGeneration, PspDirectoryEntryAttrs, PspDirectoryEntryType, BiosDirectoryEntryAttrs, BiosDirectory, PspDirectory};
+use amd_efs::{Efs, ProcessorGeneration, PspDirectoryEntryAttrs, PspDirectoryEntryType, BiosDirectoryEntryAttrs, BiosDirectory, PspDirectory, BiosDirectoryEntryType};
 //use amd_efs::ProcessorGeneration;
 use amd_flash::{FlashRead, FlashWrite, Location, Result, Error};
 
@@ -103,10 +103,11 @@ fn psp_entry_add_from_file(directory: &mut PspDirectory<FlashImage, RW_BLOCK_SIZ
     })
 }
 
-fn bios_entry_add_from_file(directory: &mut BiosDirectory<FlashImage, RW_BLOCK_SIZE, ERASURE_BLOCK_SIZE>, attrs: &BiosDirectoryEntryAttrs, source_filename: &str) -> amd_efs::Result<()> {
+fn bios_entry_add_from_file(directory: &mut BiosDirectory<FlashImage, RW_BLOCK_SIZE, ERASURE_BLOCK_SIZE>, attrs: &BiosDirectoryEntryAttrs, source_filename: &str, ram_destination_address: Option<u64>) -> amd_efs::Result<()> {
     let file = File::open(source_filename).unwrap();
     let size: usize = file.metadata().unwrap().len().try_into().unwrap();
     let mut reader = BufReader::new(file);
+    // FIXME: Use ram_destination_address.
     directory.add_blob_entry(attrs, size, &mut |buf: &mut [u8]| {
         reader.read(buf).or(amd_efs::Result::Err(amd_efs::Error::Marshal))
     })
@@ -140,7 +141,7 @@ fn main() -> std::io::Result<()> {
     psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspRecoveryBootloader), "GN/PspRecoveryBootLoader_gn.sbin").unwrap();
     psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SmuOffChipFirmware8), "GN/SmuFirmwareGn.csbin").unwrap();
     psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AblPublicKey), "GN/PspABLFw_gn.stkn").unwrap();
-    // FIXME: PSP Soft Fuse Chain; value 1 for type = PspSoftFuseChain
+    psp_entry.add_value_entry::<PspSoftFuseChain>(&mut psp_directory, PspSoftFuseChain::new().with_secure_debug_unlock(true));
 
     psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SmuOffChipFirmware12), "GN/SmuFirmware2Gn.csbin").unwrap();
     psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspEarlySecureUnlockDebugImage), "GN/SecureDebugUnlock_gn.sbin").unwrap();
@@ -149,13 +150,51 @@ fn main() -> std::io::Result<()> {
     psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SecurityPolicyBinary), "GN/RsmuSecPolicy_gn.sbin").unwrap(); // FIXME: check blob
     psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::Mp5Firmware), "GN/Mp5Gn.csbin").unwrap();
     psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::Abl0), "GN/AgesaBootloader_U_prod_GN.csbin").unwrap();
-    // TODO: SEV ...
+    // TODO: SEV... but we don't use that.
     psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::DxioPhySramFirmware), "GN/GnPhyFw.sbin").unwrap();
-    // psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::DrtmTa), "GN/PSP-DRTM_gn.sbin").unwrap()
+    // TODO: psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::DrtmTa), "GN/PSP-DRTM_gn.sbin").unwrap()
 
     psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspBootloaderPublicKeysTable), "GN/PSP-Key-DB_gn.sbin").unwrap();
 
     let mut bios_directory = efs.create_bios_directory(0x24_0000, 0x24_0000 + 0x8_0000).unwrap();
+    // FIXME: Do our own Apcb.
+    bios_entry_add_from_file(&mut bios_directory, &BiosDirectoryEntryAttrs::new().with_type_(BiosDirectoryEntryType::ApcbBackup).with_sub_program(1), "GN/APCB_GN_D4_DefaultRecovery.bin", None).unwrap();
+    // TODO: twice (updatable apcb, eventlog apcb)
+    bios_directory.add_apob_entry(BiosDirectoryEntryType::Apob, 0x3000_0000).unwrap();
+    bios_entry_add_from_file(&mut bios_directory, &BiosDirectoryEntryAttrs::new().with_type_(BiosDirectoryEntryType::Bios).with_reset_image(true).with_copy_image(true), "reset.bin", Some(0x76c0_0000)).unwrap();
+
+    bios_entry_add_from_file(&mut bios_directory, &BiosDirectoryEntryAttrs::new().with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions).with_instance(1).with_sub_program(1), "GN/Appb_GN_1D_Ddr4_Udimm_Imem.csbin", None).unwrap();
+    bios_entry_add_from_file(&mut bios_directory, &BiosDirectoryEntryAttrs::new().with_type_(BiosDirectoryEntryType::PmuFirmwareData).with_instance(1).with_sub_program(1), "GN/Appb_GN_1D_Ddr4_Udimm_Dmem.csbin", None).unwrap();
+
+    bios_entry_add_from_file(&mut bios_directory, &BiosDirectoryEntryAttrs::new().with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions).with_instance(2).with_sub_program(1), "GN/Appb_GN_1D_Ddr4_Rdimm_Imem.csbin", None).unwrap();
+    bios_entry_add_from_file(&mut bios_directory, &BiosDirectoryEntryAttrs::new().with_type_(BiosDirectoryEntryType::PmuFirmwareData).with_instance(2).with_sub_program(1), "GN/Appb_GN_1D_Ddr4_Rdimm_Dmem.csbin", None).unwrap();
+
+    bios_entry_add_from_file(&mut bios_directory, &BiosDirectoryEntryAttrs::new().with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions).with_instance(3).with_sub_program(1), "GN/Appb_GN_1D_Ddr4_Lrdimm_Imem.csbin", None).unwrap();
+    bios_entry_add_from_file(&mut bios_directory, &BiosDirectoryEntryAttrs::new().with_type_(BiosDirectoryEntryType::PmuFirmwareData).with_instance(3).with_sub_program(1), "GN/Appb_GN_1D_Ddr4_Lrdimm_Dmem.csbin", None).unwrap();
+
+    bios_entry_add_from_file(&mut bios_directory, &BiosDirectoryEntryAttrs::new().with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions).with_instance(4).with_sub_program(1), "GN/Appb_GN_2D_Ddr4_Udimm_Imem.csbin", None).unwrap();
+    bios_entry_add_from_file(&mut bios_directory, &BiosDirectoryEntryAttrs::new().with_type_(BiosDirectoryEntryType::PmuFirmwareData).with_instance(4).with_sub_program(1), "GN/Appb_GN_2D_Ddr4_Udimm_Dmem.csbin", None).unwrap();
+
+    bios_entry_add_from_file(&mut bios_directory, &BiosDirectoryEntryAttrs::new().with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions).with_instance(5).with_sub_program(1), "GN/Appb_GN_2D_Ddr4_Rdimm_Imem.csbin", None).unwrap();
+    bios_entry_add_from_file(&mut bios_directory, &BiosDirectoryEntryAttrs::new().with_type_(BiosDirectoryEntryType::PmuFirmwareData).with_instance(5).with_sub_program(1), "GN/Appb_GN_2D_Ddr4_Rdimm_Dmem.csbin", None).unwrap();
+
+    bios_entry_add_from_file(&mut bios_directory, &BiosDirectoryEntryAttrs::new().with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions).with_instance(6).with_sub_program(1), "GN/Appb_GN_2D_Ddr4_Lrdimm_Imem.csbin", None).unwrap();
+    bios_entry_add_from_file(&mut bios_directory, &BiosDirectoryEntryAttrs::new().with_type_(BiosDirectoryEntryType::PmuFirmwareData).with_instance(6).with_sub_program(1), "GN/Appb_GN_2D_Ddr4_Lrdimm_Dmem.csbin", None).unwrap();
+
+    bios_entry_add_from_file(&mut bios_directory, &BiosDirectoryEntryAttrs::new().with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions).with_instance(8).with_sub_program(1), "GN/Appb_GN_BIST_Ddr4_Udimm_Imem.csbin", None).unwrap();
+    bios_entry_add_from_file(&mut bios_directory, &BiosDirectoryEntryAttrs::new().with_type_(BiosDirectoryEntryType::PmuFirmwareData).with_instance(8).with_sub_program(1), "GN/Appb_GN_BIST_Ddr4_Udimm_Dmem.csbin", None).unwrap();
+
+    bios_entry_add_from_file(&mut bios_directory, &BiosDirectoryEntryAttrs::new().with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions).with_instance(8).with_sub_program(1), "GN/Appb_GN_BIST_Ddr4_Rdimm_Imem.csbin", None).unwrap();
+    bios_entry_add_from_file(&mut bios_directory, &BiosDirectoryEntryAttrs::new().with_type_(BiosDirectoryEntryType::PmuFirmwareData).with_instance(8).with_sub_program(1), "GN/Appb_GN_BIST_Ddr4_Rdimm_Dmem.csbin", None).unwrap();
+
+    bios_entry_add_from_file(&mut bios_directory, &BiosDirectoryEntryAttrs::new().with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions).with_instance(8).with_sub_program(1), "GN/Appb_GN_BIST_Ddr4_Lrdimm_Imem.csbin", None).unwrap();
+    bios_entry_add_from_file(&mut bios_directory, &BiosDirectoryEntryAttrs::new().with_type_(BiosDirectoryEntryType::PmuFirmwareData).with_instance(8).with_sub_program(1), "GN/Appb_GN_BIST_Ddr4_Lrdimm_Dmem.csbin", None).unwrap();
+
+    bios_entry_add_from_file(&mut bios_directory, &BiosDirectoryEntryAttrs::new().with_type_(BiosDirectoryEntryType::MicrocodePatch).with_instance(0), "GN/UcodePatch_GN_B2.bin", None).unwrap();
+    bios_entry_add_from_file(&mut bios_directory, &BiosDirectoryEntryAttrs::new().with_type_(BiosDirectoryEntryType::MicrocodePatch).with_instance(0), "GN/UcodePatch_GN_B1.bin", None).unwrap();
+    bios_entry_add_from_file(&mut bios_directory, &BiosDirectoryEntryAttrs::new().with_type_(BiosDirectoryEntryType::MicrocodePatch).with_instance(0), "GN/UcodePatch_GN_B0.bin", None).unwrap();
+    bios_entry_add_from_file(&mut bios_directory, &BiosDirectoryEntryAttrs::new().with_type_(BiosDirectoryEntryType::MicrocodePatch).with_instance(0), "GN/UcodePatch_GN_A0.bin", None).unwrap();
+
 
 //            println!("{:?}", efh);
     let psp_directory = match efs.psp_directory() {
