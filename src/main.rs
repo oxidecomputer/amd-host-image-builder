@@ -1,6 +1,7 @@
 use amd_efs::{
     BiosDirectory, BiosDirectoryEntryAttrs, BiosDirectoryEntryType, Efs, ProcessorGeneration,
     PspDirectory, PspDirectoryEntryAttrs, PspDirectoryEntryType,
+    PspSoftFuseChain
 };
 use core::cell::RefCell;
 use std::convert::TryInto;
@@ -186,10 +187,11 @@ fn main() -> std::io::Result<()> {
         "GN/PspABLFw_gn.stkn",
     )
     .unwrap();
-    psp_entry.add_value_entry::<PspSoftFuseChain>(
-        &mut psp_directory,
-        PspSoftFuseChain::new().with_secure_debug_unlock(true),
-    );
+    psp_directory.add_value_entry(
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspSoftFuseChain),
+        PspSoftFuseChain::new().with_secure_debug_unlock(true).into(),
+    )
+    .unwrap();
 
     psp_entry_add_from_file(
         &mut psp_directory,
