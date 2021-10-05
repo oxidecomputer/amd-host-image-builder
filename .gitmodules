@@ -1,0 +1,3 @@
+[submodule "amd-firmware"]
+	path = amd-firmware
+	url = git@github.com:oxidecomputer/amd-firmware.git
