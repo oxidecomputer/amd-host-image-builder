@@ -4,11 +4,12 @@ use std::convert::TryInto;
 use std::env;
 use std::fs::File;
 use std::fs::OpenOptions;
+use std::io::BufReader;
 use std::io::Read;
 use std::io::Seek;
 use std::io::SeekFrom;
 use std::io::Write;
-use amd_efs::{Efs, ProcessorGeneration};
+use amd_efs::{Efs, ProcessorGeneration, PspDirectoryEntryAttrs, BiosDirectoryEntryAttrs, BiosDirectory, PspDirectory};
 //use amd_efs::ProcessorGeneration;
 use amd_flash::{FlashRead, FlashWrite, Location, Result, Error};
 
@@ -89,8 +90,26 @@ impl FlashImage {
 }
 
 const IMAGE_SIZE: u32 = 16*1024*1024;
-const RW_BLOCK_SIZE: usize = 0x1000;
-const ERASURE_BLOCK_SIZE: usize = 0x2_0000;
+const RW_BLOCK_SIZE: usize = 256;
+const ERASURE_BLOCK_SIZE: usize = 0x1000;
+
+fn psp_entry_add_from_file(directory: &mut PspDirectory<FlashImage, RW_BLOCK_SIZE, ERASURE_BLOCK_SIZE>, attrs: &PspDirectoryEntryAttrs, source_filename: &str) -> amd_efs::Result<()> {
+    let file = File::open(source_filename).unwrap();
+    let size: usize = file.metadata().unwrap().len().try_into().unwrap();
+    let mut reader = BufReader::new(file);
+    directory.add_blob_entry(attrs, size, &mut |buf: &mut [u8]| {
+        reader.read(buf).or(amd_efs::Result::Err(amd_efs::Error::Marshal))
+    })
+}
+
+fn bios_entry_add_from_file(directory: &mut BiosDirectory<FlashImage, RW_BLOCK_SIZE, ERASURE_BLOCK_SIZE>, attrs: &BiosDirectoryEntryAttrs, source_filename: &str) -> amd_efs::Result<()> {
+    let file = File::open(source_filename).unwrap();
+    let size: usize = file.metadata().unwrap().len().try_into().unwrap();
+    let mut reader = BufReader::new(file);
+    directory.add_blob_entry(attrs, size, &mut |buf: &mut [u8]| {
+        reader.read(buf).or(amd_efs::Result::Err(amd_efs::Error::Marshal))
+    })
+}
 
 fn main() -> std::io::Result<()> {
     let args: Vec<String> = env::args().collect();
@@ -114,8 +133,11 @@ fn main() -> std::io::Result<()> {
             std::process::exit(1);
         }
     };
-    efs.create_psp_directory(0x12_0000, 0x24_0000).unwrap();
-    efs.create_bios_directory(0x24_0000, 0x24_0000 + 0x4_0000).unwrap();
+    let mut psp_directory = efs.create_psp_directory(0x12_0000, 0x24_0000).unwrap();
+
+
+    let mut bios_directory = efs.create_bios_directory(0x24_0000, 0x24_0000 + 0x8_0000).unwrap();
+
 //            println!("{:?}", efh);
     let psp_directory = match efs.psp_directory() {
         Ok(v) => {
