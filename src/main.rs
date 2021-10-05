@@ -160,31 +160,31 @@ fn main() -> std::io::Result<()> {
     psp_entry_add_from_file(
         &mut psp_directory,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AmdPublicKey),
-        "GN/AmdPubKey_gn.tkn",
+        "amd-firmware/milan/AmdPubKey_gn.tkn",
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspBootloader),
-        "GN/PspBootLoader_gn.sbin",
+        "amd-firmware/milan/PspBootLoader_gn.sbin",
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspRecoveryBootloader),
-        "GN/PspRecoveryBootLoader_gn.sbin",
+        "amd-firmware/milan/PspRecoveryBootLoader_gn.sbin",
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SmuOffChipFirmware8),
-        "GN/SmuFirmwareGn.csbin",
+        "amd-firmware/milan/SmuFirmwareGn.csbin",
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AblPublicKey),
-        "GN/PspABLFw_gn.stkn",
+        "amd-firmware/milan/PspABLFw_gn.stkn",
     )
     .unwrap();
     psp_directory.add_value_entry(
@@ -196,60 +196,60 @@ fn main() -> std::io::Result<()> {
     psp_entry_add_from_file(
         &mut psp_directory,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SmuOffChipFirmware12),
-        "GN/SmuFirmware2Gn.csbin",
+        "amd-firmware/milan/SmuFirmware2Gn.csbin",
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
         &PspDirectoryEntryAttrs::new()
             .with_type_(PspDirectoryEntryType::PspEarlySecureUnlockDebugImage),
-        "GN/SecureDebugUnlock_gn.sbin",
+        "amd-firmware/milan/SecureDebugUnlock_gn.sbin",
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::WrappedIkek),
-        "GN/PspIkek_gn.bin",
+        "amd-firmware/milan/PspIkek_gn.bin",
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspTokenUnlockData),
-        "GN/SecureEmptyToken.bin",
+        "amd-firmware/milan/SecureEmptyToken.bin",
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SecurityPolicyBinary),
-        "GN/RsmuSecPolicy_gn.sbin",
+        "amd-firmware/milan/RsmuSecPolicy_gn.sbin",
     )
     .unwrap(); // FIXME: check blob
     psp_entry_add_from_file(
         &mut psp_directory,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::Mp5Firmware),
-        "GN/Mp5Gn.csbin",
+        "amd-firmware/milan/Mp5Gn.csbin",
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::Abl0),
-        "GN/AgesaBootloader_U_prod_GN.csbin",
+        "amd-firmware/milan/AgesaBootloader_U_prod_GN.csbin",
     )
     .unwrap();
     // TODO: SEV... but we don't use that.
     psp_entry_add_from_file(
         &mut psp_directory,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::DxioPhySramFirmware),
-        "GN/GnPhyFw.sbin",
+        "amd-firmware/milan/GnPhyFw.sbin",
     )
     .unwrap();
-    // TODO: psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::DrtmTa), "GN/PSP-DRTM_gn.sbin").unwrap()
+    // TODO: psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::DrtmTa), "amd-firmware/milan/PSP-DRTM_gn.sbin").unwrap()
 
     psp_entry_add_from_file(
         &mut psp_directory,
         &PspDirectoryEntryAttrs::new()
             .with_type_(PspDirectoryEntryType::PspBootloaderPublicKeysTable),
-        "GN/PSP-Key-DB_gn.sbin",
+        "amd-firmware/milan/PSP-Key-DB_gn.sbin",
     )
     .unwrap();
 
@@ -262,7 +262,7 @@ fn main() -> std::io::Result<()> {
         &BiosDirectoryEntryAttrs::new()
             .with_type_(BiosDirectoryEntryType::ApcbBackup)
             .with_sub_program(1),
-        "GN/APCB_GN_D4_DefaultRecovery.bin",
+        "amd-firmware/milan/APCB_GN_D4_DefaultRecovery.bin",
         None,
     )
     .unwrap();
@@ -287,7 +287,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(1)
             .with_sub_program(1),
-        "GN/Appb_GN_1D_Ddr4_Udimm_Imem.csbin",
+        "amd-firmware/milan/Appb_GN_1D_Ddr4_Udimm_Imem.csbin",
         None,
     )
     .unwrap();
@@ -297,7 +297,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BiosDirectoryEntryType::PmuFirmwareData)
             .with_instance(1)
             .with_sub_program(1),
-        "GN/Appb_GN_1D_Ddr4_Udimm_Dmem.csbin",
+        "amd-firmware/milan/Appb_GN_1D_Ddr4_Udimm_Dmem.csbin",
         None,
     )
     .unwrap();
@@ -308,7 +308,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(2)
             .with_sub_program(1),
-        "GN/Appb_GN_1D_Ddr4_Rdimm_Imem.csbin",
+        "amd-firmware/milan/Appb_GN_1D_Ddr4_Rdimm_Imem.csbin",
         None,
     )
     .unwrap();
@@ -318,7 +318,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BiosDirectoryEntryType::PmuFirmwareData)
             .with_instance(2)
             .with_sub_program(1),
-        "GN/Appb_GN_1D_Ddr4_Rdimm_Dmem.csbin",
+        "amd-firmware/milan/Appb_GN_1D_Ddr4_Rdimm_Dmem.csbin",
         None,
     )
     .unwrap();
@@ -329,7 +329,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(3)
             .with_sub_program(1),
-        "GN/Appb_GN_1D_Ddr4_Lrdimm_Imem.csbin",
+        "amd-firmware/milan/Appb_GN_1D_Ddr4_Lrdimm_Imem.csbin",
         None,
     )
     .unwrap();
@@ -339,7 +339,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BiosDirectoryEntryType::PmuFirmwareData)
             .with_instance(3)
             .with_sub_program(1),
-        "GN/Appb_GN_1D_Ddr4_Lrdimm_Dmem.csbin",
+        "amd-firmware/milan/Appb_GN_1D_Ddr4_Lrdimm_Dmem.csbin",
         None,
     )
     .unwrap();
@@ -350,7 +350,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(4)
             .with_sub_program(1),
-        "GN/Appb_GN_2D_Ddr4_Udimm_Imem.csbin",
+        "amd-firmware/milan/Appb_GN_2D_Ddr4_Udimm_Imem.csbin",
         None,
     )
     .unwrap();
@@ -360,7 +360,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BiosDirectoryEntryType::PmuFirmwareData)
             .with_instance(4)
             .with_sub_program(1),
-        "GN/Appb_GN_2D_Ddr4_Udimm_Dmem.csbin",
+        "amd-firmware/milan/Appb_GN_2D_Ddr4_Udimm_Dmem.csbin",
         None,
     )
     .unwrap();
@@ -371,7 +371,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(5)
             .with_sub_program(1),
-        "GN/Appb_GN_2D_Ddr4_Rdimm_Imem.csbin",
+        "amd-firmware/milan/Appb_GN_2D_Ddr4_Rdimm_Imem.csbin",
         None,
     )
     .unwrap();
@@ -381,7 +381,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BiosDirectoryEntryType::PmuFirmwareData)
             .with_instance(5)
             .with_sub_program(1),
-        "GN/Appb_GN_2D_Ddr4_Rdimm_Dmem.csbin",
+        "amd-firmware/milan/Appb_GN_2D_Ddr4_Rdimm_Dmem.csbin",
         None,
     )
     .unwrap();
@@ -392,7 +392,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(6)
             .with_sub_program(1),
-        "GN/Appb_GN_2D_Ddr4_Lrdimm_Imem.csbin",
+        "amd-firmware/milan/Appb_GN_2D_Ddr4_Lrdimm_Imem.csbin",
         None,
     )
     .unwrap();
@@ -402,7 +402,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BiosDirectoryEntryType::PmuFirmwareData)
             .with_instance(6)
             .with_sub_program(1),
-        "GN/Appb_GN_2D_Ddr4_Lrdimm_Dmem.csbin",
+        "amd-firmware/milan/Appb_GN_2D_Ddr4_Lrdimm_Dmem.csbin",
         None,
     )
     .unwrap();
@@ -413,7 +413,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(8)
             .with_sub_program(1),
-        "GN/Appb_GN_BIST_Ddr4_Udimm_Imem.csbin",
+        "amd-firmware/milan/Appb_GN_BIST_Ddr4_Udimm_Imem.csbin",
         None,
     )
     .unwrap();
@@ -423,7 +423,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BiosDirectoryEntryType::PmuFirmwareData)
             .with_instance(8)
             .with_sub_program(1),
-        "GN/Appb_GN_BIST_Ddr4_Udimm_Dmem.csbin",
+        "amd-firmware/milan/Appb_GN_BIST_Ddr4_Udimm_Dmem.csbin",
         None,
     )
     .unwrap();
@@ -434,7 +434,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(8)
             .with_sub_program(1),
-        "GN/Appb_GN_BIST_Ddr4_Rdimm_Imem.csbin",
+        "amd-firmware/milan/Appb_GN_BIST_Ddr4_Rdimm_Imem.csbin",
         None,
     )
     .unwrap();
@@ -444,7 +444,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BiosDirectoryEntryType::PmuFirmwareData)
             .with_instance(8)
             .with_sub_program(1),
-        "GN/Appb_GN_BIST_Ddr4_Rdimm_Dmem.csbin",
+        "amd-firmware/milan/Appb_GN_BIST_Ddr4_Rdimm_Dmem.csbin",
         None,
     )
     .unwrap();
@@ -455,7 +455,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(8)
             .with_sub_program(1),
-        "GN/Appb_GN_BIST_Ddr4_Lrdimm_Imem.csbin",
+        "amd-firmware/milan/Appb_GN_BIST_Ddr4_Lrdimm_Imem.csbin",
         None,
     )
     .unwrap();
@@ -465,7 +465,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BiosDirectoryEntryType::PmuFirmwareData)
             .with_instance(8)
             .with_sub_program(1),
-        "GN/Appb_GN_BIST_Ddr4_Lrdimm_Dmem.csbin",
+        "amd-firmware/milan/Appb_GN_BIST_Ddr4_Lrdimm_Dmem.csbin",
         None,
     )
     .unwrap();
@@ -475,7 +475,7 @@ fn main() -> std::io::Result<()> {
         &BiosDirectoryEntryAttrs::new()
             .with_type_(BiosDirectoryEntryType::MicrocodePatch)
             .with_instance(0),
-        "GN/UcodePatch_GN_B2.bin",
+        "amd-firmware/milan/UcodePatch_GN_B2.bin",
         None,
     )
     .unwrap();
@@ -484,7 +484,7 @@ fn main() -> std::io::Result<()> {
         &BiosDirectoryEntryAttrs::new()
             .with_type_(BiosDirectoryEntryType::MicrocodePatch)
             .with_instance(0),
-        "GN/UcodePatch_GN_B1.bin",
+        "amd-firmware/milan/UcodePatch_GN_B1.bin",
         None,
     )
     .unwrap();
@@ -493,7 +493,7 @@ fn main() -> std::io::Result<()> {
         &BiosDirectoryEntryAttrs::new()
             .with_type_(BiosDirectoryEntryType::MicrocodePatch)
             .with_instance(0),
-        "GN/UcodePatch_GN_B0.bin",
+        "amd-firmware/milan/UcodePatch_GN_B0.bin",
         None,
     )
     .unwrap();
@@ -502,7 +502,7 @@ fn main() -> std::io::Result<()> {
         &BiosDirectoryEntryAttrs::new()
             .with_type_(BiosDirectoryEntryType::MicrocodePatch)
             .with_instance(0),
-        "GN/UcodePatch_GN_A0.bin",
+        "amd-firmware/milan/UcodePatch_GN_A0.bin",
         None,
     )
     .unwrap();
