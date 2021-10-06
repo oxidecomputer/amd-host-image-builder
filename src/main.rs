@@ -20,7 +20,7 @@ struct FlashImage {
     file: RefCell<File>,
 }
 
-impl<const READING_BLOCK_SIZE: usize> FlashRead<READING_BLOCK_SIZE> for FlashImage {
+impl<const READING_BLOCK_SIZE: usize, const ERASURE_BLOCK_SIZE: usize> FlashRead<READING_BLOCK_SIZE, ERASURE_BLOCK_SIZE> for FlashImage {
     fn read_block(&self, location: Location, buffer: &mut [u8; READING_BLOCK_SIZE]) -> Result<()> {
         let mut file = self.file.borrow_mut();
         match file.seek(SeekFrom::Start(location.into())) {
@@ -32,6 +32,24 @@ impl<const READING_BLOCK_SIZE: usize> FlashRead<READING_BLOCK_SIZE> for FlashIma
         match file.read(buffer) {
             Ok(size) => {
                 assert!(size == READING_BLOCK_SIZE);
+                Ok(())
+            }
+            Err(e) => {
+                return Err(Error::Io);
+            }
+        }
+    }
+    fn read_erasure_block(&self, location: Location, buffer: &mut [u8; ERASURE_BLOCK_SIZE]) -> Result<()> {
+        let mut file = self.file.borrow_mut();
+        match file.seek(SeekFrom::Start(location.into())) {
+            Ok(_) => {}
+            Err(e) => {
+                return Err(Error::Io);
+            }
+        }
+        match file.read(buffer) {
+            Ok(size) => {
+                assert!(size == ERASURE_BLOCK_SIZE);
                 Ok(())
             }
             Err(e) => {
