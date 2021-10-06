@@ -44,7 +44,7 @@ impl<const READING_BLOCK_SIZE: usize> FlashRead<READING_BLOCK_SIZE> for FlashIma
 impl<const WRITING_BLOCK_SIZE: usize, const ERASURE_BLOCK_SIZE: usize>
     FlashWrite<WRITING_BLOCK_SIZE, ERASURE_BLOCK_SIZE> for FlashImage
 {
-    fn write_block(&mut self, location: Location, buffer: &[u8; WRITING_BLOCK_SIZE]) -> Result<()> {
+    fn write_block(&self, location: Location, buffer: &[u8; WRITING_BLOCK_SIZE]) -> Result<()> {
         let mut file = self.file.borrow_mut();
         match file.seek(SeekFrom::Start(location.into())) {
             Ok(_) => {}
@@ -62,7 +62,7 @@ impl<const WRITING_BLOCK_SIZE: usize, const ERASURE_BLOCK_SIZE: usize>
             }
         }
     }
-    fn erase_block(&mut self, location: Location) -> Result<()> {
+    fn erase_block(&self, location: Location) -> Result<()> {
         let mut file = self.file.borrow_mut();
         match file.seek(SeekFrom::Start(location.into())) {
             Ok(_) => {}
@@ -71,7 +71,25 @@ impl<const WRITING_BLOCK_SIZE: usize, const ERASURE_BLOCK_SIZE: usize>
             }
         }
         let buffer = [0xFFu8; ERASURE_BLOCK_SIZE];
-        match file.write(&buffer) {
+        match file.write(&buffer[..]) {
+            Ok(size) => {
+                assert!(size == ERASURE_BLOCK_SIZE);
+                Ok(())
+            }
+            Err(e) => {
+                return Err(Error::Io);
+            }
+        }
+    }
+    fn erase_and_write_block(&self, location: Location, buffer: &[u8; ERASURE_BLOCK_SIZE]) -> Result<()> {
+        let mut file = self.file.borrow_mut();
+        match file.seek(SeekFrom::Start(location.into())) {
+            Ok(_) => {}
+            Err(e) => {
+                return Err(Error::Io);
+            }
+        }
+        match file.write(&(*buffer)[..]) {
             Ok(size) => {
                 assert!(size == ERASURE_BLOCK_SIZE);
                 Ok(())
@@ -104,11 +122,12 @@ fn psp_entry_add_from_file(
     let file = File::open(source_filename).unwrap();
     let size: usize = file.metadata().unwrap().len().try_into().unwrap();
     let mut reader = BufReader::new(file);
-    directory.add_blob_entry(attrs, size, &mut |buf: &mut [u8]| {
+    directory.add_blob_entry(None, attrs, size.try_into().unwrap(), &mut |buf: &mut [u8]| {
         reader
             .read(buf)
             .or(amd_efs::Result::Err(amd_efs::Error::Marshal))
-    })
+    })?;
+    Ok(())
 }
 
 fn bios_entry_add_from_file(
@@ -120,12 +139,12 @@ fn bios_entry_add_from_file(
     let file = File::open(source_filename).unwrap();
     let size: usize = file.metadata().unwrap().len().try_into().unwrap();
     let mut reader = BufReader::new(file);
-    // FIXME: Use ram_destination_address.
-    directory.add_blob_entry(attrs, size, &mut |buf: &mut [u8]| {
+    directory.add_blob_entry(None, attrs, size.try_into().unwrap(), ram_destination_address, &mut |buf: &mut [u8]| {
         reader
             .read(buf)
             .or(amd_efs::Result::Err(amd_efs::Error::Marshal))
-    })
+    })?;
+    Ok(())
 }
 
 fn main() -> std::io::Result<()> {
@@ -268,7 +287,7 @@ fn main() -> std::io::Result<()> {
     .unwrap();
     // TODO: twice (updatable apcb, eventlog apcb)
     bios_directory
-        .add_apob_entry(BiosDirectoryEntryType::Apob, 0x3000_0000)
+        .add_apob_entry(None, BiosDirectoryEntryType::Apob, 0x3000_0000)
         .unwrap();
     bios_entry_add_from_file(
         &mut bios_directory,
