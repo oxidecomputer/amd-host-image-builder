@@ -62,24 +62,6 @@ impl<const READING_BLOCK_SIZE: usize, const ERASURE_BLOCK_SIZE: usize> FlashRead
 impl<const WRITING_BLOCK_SIZE: usize, const ERASURE_BLOCK_SIZE: usize>
     FlashWrite<WRITING_BLOCK_SIZE, ERASURE_BLOCK_SIZE> for FlashImage
 {
-    fn write_block(&self, location: Location, buffer: &[u8; WRITING_BLOCK_SIZE]) -> Result<()> {
-        let mut file = self.file.borrow_mut();
-        match file.seek(SeekFrom::Start(location.into())) {
-            Ok(_) => {}
-            Err(e) => {
-                return Err(Error::Io);
-            }
-        }
-        match file.write(buffer) {
-            Ok(size) => {
-                assert!(size == WRITING_BLOCK_SIZE);
-                Ok(())
-            }
-            Err(e) => {
-                return Err(Error::Io);
-            }
-        }
-    }
     fn erase_block(&self, location: Location) -> Result<()> {
         let mut file = self.file.borrow_mut();
         match file.seek(SeekFrom::Start(location.into())) {
