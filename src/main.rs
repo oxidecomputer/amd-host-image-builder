@@ -1,5 +1,5 @@
 use amd_efs::{
-    BiosDirectory, BiosDirectoryEntryAttrs, BiosDirectoryEntryType, Efs, ProcessorGeneration,
+    BhdDirectory, BhdDirectoryEntryAttrs, BhdDirectoryEntryType, Efs, ProcessorGeneration,
     PspDirectory, PspDirectoryEntryAttrs, PspDirectoryEntryType,
     PspSoftFuseChain
 };
@@ -128,9 +128,9 @@ fn psp_entry_add_from_file(
     Ok(())
 }
 
-fn bios_entry_add_from_file(
-    directory: &mut BiosDirectory<FlashImage, ERASURE_BLOCK_SIZE>,
-    attrs: &BiosDirectoryEntryAttrs,
+fn bhd_entry_add_from_file(
+    directory: &mut BhdDirectory<FlashImage, ERASURE_BLOCK_SIZE>,
+    attrs: &BhdDirectoryEntryAttrs,
     source_filename: &str,
     ram_destination_address: Option<u64>,
 ) -> amd_efs::Result<()> {
@@ -270,27 +270,28 @@ fn main() -> std::io::Result<()> {
     )
     .unwrap();
 
-    let mut bios_directory = efs
-        .create_bios_directory(0x24_0000, 0x24_0000 + 0x8_0000)
+    let mut bhd_directory = efs
+        .create_bhd_directory(0x24_0000, 0x24_0000 + 0x8_0000)
         .unwrap();
     // FIXME: Do our own Apcb.
-    bios_entry_add_from_file(
-        &mut bios_directory,
-        &BiosDirectoryEntryAttrs::new()
-            .with_type_(BiosDirectoryEntryType::ApcbBackup)
+    bhd_entry_add_from_file(
+        &mut bhd_directory,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::ApcbBackup)
             .with_sub_program(1),
         "amd-firmware/milan/APCB_GN_D4_DefaultRecovery.bin",
         None,
     )
     .unwrap();
     // TODO: twice (updatable apcb, eventlog apcb)
-    bios_directory
-        .add_apob_entry(None, BiosDirectoryEntryType::Apob, 0x3000_0000)
+    bhd_directory
+        .add_apob_entry(None, BhdDirectoryEntryType::Apob, 0x3000_0000)
         .unwrap();
-    bios_entry_add_from_file(
-        &mut bios_directory,
-        &BiosDirectoryEntryAttrs::new()
-            .with_type_(BiosDirectoryEntryType::Bios)
+
+    bhd_entry_add_from_file(
+        &mut bhd_directory,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::Bios)
             .with_reset_image(true)
             .with_copy_image(true),
         "reset.bin",
@@ -298,20 +299,20 @@ fn main() -> std::io::Result<()> {
     )
     .unwrap();
 
-    bios_entry_add_from_file(
-        &mut bios_directory,
-        &BiosDirectoryEntryAttrs::new()
-            .with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions)
+    bhd_entry_add_from_file(
+        &mut bhd_directory,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(1)
             .with_sub_program(1),
         "amd-firmware/milan/Appb_GN_1D_Ddr4_Udimm_Imem.csbin",
         None,
     )
     .unwrap();
-    bios_entry_add_from_file(
-        &mut bios_directory,
-        &BiosDirectoryEntryAttrs::new()
-            .with_type_(BiosDirectoryEntryType::PmuFirmwareData)
+    bhd_entry_add_from_file(
+        &mut bhd_directory,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
             .with_instance(1)
             .with_sub_program(1),
         "amd-firmware/milan/Appb_GN_1D_Ddr4_Udimm_Dmem.csbin",
@@ -319,20 +320,20 @@ fn main() -> std::io::Result<()> {
     )
     .unwrap();
 
-    bios_entry_add_from_file(
-        &mut bios_directory,
-        &BiosDirectoryEntryAttrs::new()
-            .with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions)
+    bhd_entry_add_from_file(
+        &mut bhd_directory,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(2)
             .with_sub_program(1),
         "amd-firmware/milan/Appb_GN_1D_Ddr4_Rdimm_Imem.csbin",
         None,
     )
     .unwrap();
-    bios_entry_add_from_file(
-        &mut bios_directory,
-        &BiosDirectoryEntryAttrs::new()
-            .with_type_(BiosDirectoryEntryType::PmuFirmwareData)
+    bhd_entry_add_from_file(
+        &mut bhd_directory,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
             .with_instance(2)
             .with_sub_program(1),
         "amd-firmware/milan/Appb_GN_1D_Ddr4_Rdimm_Dmem.csbin",
@@ -340,20 +341,20 @@ fn main() -> std::io::Result<()> {
     )
     .unwrap();
 
-    bios_entry_add_from_file(
-        &mut bios_directory,
-        &BiosDirectoryEntryAttrs::new()
-            .with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions)
+    bhd_entry_add_from_file(
+        &mut bhd_directory,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(3)
             .with_sub_program(1),
         "amd-firmware/milan/Appb_GN_1D_Ddr4_Lrdimm_Imem.csbin",
         None,
     )
     .unwrap();
-    bios_entry_add_from_file(
-        &mut bios_directory,
-        &BiosDirectoryEntryAttrs::new()
-            .with_type_(BiosDirectoryEntryType::PmuFirmwareData)
+    bhd_entry_add_from_file(
+        &mut bhd_directory,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
             .with_instance(3)
             .with_sub_program(1),
         "amd-firmware/milan/Appb_GN_1D_Ddr4_Lrdimm_Dmem.csbin",
@@ -361,20 +362,20 @@ fn main() -> std::io::Result<()> {
     )
     .unwrap();
 
-    bios_entry_add_from_file(
-        &mut bios_directory,
-        &BiosDirectoryEntryAttrs::new()
-            .with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions)
+    bhd_entry_add_from_file(
+        &mut bhd_directory,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(4)
             .with_sub_program(1),
         "amd-firmware/milan/Appb_GN_2D_Ddr4_Udimm_Imem.csbin",
         None,
     )
     .unwrap();
-    bios_entry_add_from_file(
-        &mut bios_directory,
-        &BiosDirectoryEntryAttrs::new()
-            .with_type_(BiosDirectoryEntryType::PmuFirmwareData)
+    bhd_entry_add_from_file(
+        &mut bhd_directory,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
             .with_instance(4)
             .with_sub_program(1),
         "amd-firmware/milan/Appb_GN_2D_Ddr4_Udimm_Dmem.csbin",
@@ -382,20 +383,20 @@ fn main() -> std::io::Result<()> {
     )
     .unwrap();
 
-    bios_entry_add_from_file(
-        &mut bios_directory,
-        &BiosDirectoryEntryAttrs::new()
-            .with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions)
+    bhd_entry_add_from_file(
+        &mut bhd_directory,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(5)
             .with_sub_program(1),
         "amd-firmware/milan/Appb_GN_2D_Ddr4_Rdimm_Imem.csbin",
         None,
     )
     .unwrap();
-    bios_entry_add_from_file(
-        &mut bios_directory,
-        &BiosDirectoryEntryAttrs::new()
-            .with_type_(BiosDirectoryEntryType::PmuFirmwareData)
+    bhd_entry_add_from_file(
+        &mut bhd_directory,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
             .with_instance(5)
             .with_sub_program(1),
         "amd-firmware/milan/Appb_GN_2D_Ddr4_Rdimm_Dmem.csbin",
@@ -403,20 +404,20 @@ fn main() -> std::io::Result<()> {
     )
     .unwrap();
 
-    bios_entry_add_from_file(
-        &mut bios_directory,
-        &BiosDirectoryEntryAttrs::new()
-            .with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions)
+    bhd_entry_add_from_file(
+        &mut bhd_directory,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(6)
             .with_sub_program(1),
         "amd-firmware/milan/Appb_GN_2D_Ddr4_Lrdimm_Imem.csbin",
         None,
     )
     .unwrap();
-    bios_entry_add_from_file(
-        &mut bios_directory,
-        &BiosDirectoryEntryAttrs::new()
-            .with_type_(BiosDirectoryEntryType::PmuFirmwareData)
+    bhd_entry_add_from_file(
+        &mut bhd_directory,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
             .with_instance(6)
             .with_sub_program(1),
         "amd-firmware/milan/Appb_GN_2D_Ddr4_Lrdimm_Dmem.csbin",
@@ -424,20 +425,20 @@ fn main() -> std::io::Result<()> {
     )
     .unwrap();
 
-    bios_entry_add_from_file(
-        &mut bios_directory,
-        &BiosDirectoryEntryAttrs::new()
-            .with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions)
+    bhd_entry_add_from_file(
+        &mut bhd_directory,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(8)
             .with_sub_program(1),
         "amd-firmware/milan/Appb_GN_BIST_Ddr4_Udimm_Imem.csbin",
         None,
     )
     .unwrap();
-    bios_entry_add_from_file(
-        &mut bios_directory,
-        &BiosDirectoryEntryAttrs::new()
-            .with_type_(BiosDirectoryEntryType::PmuFirmwareData)
+    bhd_entry_add_from_file(
+        &mut bhd_directory,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
             .with_instance(8)
             .with_sub_program(1),
         "amd-firmware/milan/Appb_GN_BIST_Ddr4_Udimm_Dmem.csbin",
@@ -445,20 +446,20 @@ fn main() -> std::io::Result<()> {
     )
     .unwrap();
 
-    bios_entry_add_from_file(
-        &mut bios_directory,
-        &BiosDirectoryEntryAttrs::new()
-            .with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions)
+    bhd_entry_add_from_file(
+        &mut bhd_directory,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(8)
             .with_sub_program(1),
         "amd-firmware/milan/Appb_GN_BIST_Ddr4_Rdimm_Imem.csbin",
         None,
     )
     .unwrap();
-    bios_entry_add_from_file(
-        &mut bios_directory,
-        &BiosDirectoryEntryAttrs::new()
-            .with_type_(BiosDirectoryEntryType::PmuFirmwareData)
+    bhd_entry_add_from_file(
+        &mut bhd_directory,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
             .with_instance(8)
             .with_sub_program(1),
         "amd-firmware/milan/Appb_GN_BIST_Ddr4_Rdimm_Dmem.csbin",
@@ -466,20 +467,20 @@ fn main() -> std::io::Result<()> {
     )
     .unwrap();
 
-    bios_entry_add_from_file(
-        &mut bios_directory,
-        &BiosDirectoryEntryAttrs::new()
-            .with_type_(BiosDirectoryEntryType::PmuFirmwareInstructions)
+    bhd_entry_add_from_file(
+        &mut bhd_directory,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(8)
             .with_sub_program(1),
         "amd-firmware/milan/Appb_GN_BIST_Ddr4_Lrdimm_Imem.csbin",
         None,
     )
     .unwrap();
-    bios_entry_add_from_file(
-        &mut bios_directory,
-        &BiosDirectoryEntryAttrs::new()
-            .with_type_(BiosDirectoryEntryType::PmuFirmwareData)
+    bhd_entry_add_from_file(
+        &mut bhd_directory,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
             .with_instance(8)
             .with_sub_program(1),
         "amd-firmware/milan/Appb_GN_BIST_Ddr4_Lrdimm_Dmem.csbin",
@@ -487,37 +488,37 @@ fn main() -> std::io::Result<()> {
     )
     .unwrap();
 
-    bios_entry_add_from_file(
-        &mut bios_directory,
-        &BiosDirectoryEntryAttrs::new()
-            .with_type_(BiosDirectoryEntryType::MicrocodePatch)
+    bhd_entry_add_from_file(
+        &mut bhd_directory,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::MicrocodePatch)
             .with_instance(0),
         "amd-firmware/milan/UcodePatch_GN_B2.bin",
         None,
     )
     .unwrap();
-    bios_entry_add_from_file(
-        &mut bios_directory,
-        &BiosDirectoryEntryAttrs::new()
-            .with_type_(BiosDirectoryEntryType::MicrocodePatch)
+    bhd_entry_add_from_file(
+        &mut bhd_directory,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::MicrocodePatch)
             .with_instance(0),
         "amd-firmware/milan/UcodePatch_GN_B1.bin",
         None,
     )
     .unwrap();
-    bios_entry_add_from_file(
-        &mut bios_directory,
-        &BiosDirectoryEntryAttrs::new()
-            .with_type_(BiosDirectoryEntryType::MicrocodePatch)
+    bhd_entry_add_from_file(
+        &mut bhd_directory,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::MicrocodePatch)
             .with_instance(0),
         "amd-firmware/milan/UcodePatch_GN_B0.bin",
         None,
     )
     .unwrap();
-    bios_entry_add_from_file(
-        &mut bios_directory,
-        &BiosDirectoryEntryAttrs::new()
-            .with_type_(BiosDirectoryEntryType::MicrocodePatch)
+    bhd_entry_add_from_file(
+        &mut bhd_directory,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::MicrocodePatch)
             .with_instance(0),
         "amd-firmware/milan/UcodePatch_GN_A0.bin",
         None,
@@ -536,16 +537,16 @@ fn main() -> std::io::Result<()> {
     for entry in psp_directory.entries() {
         println!("    {:?}", entry);
     }
-    let bios_directories = match efs.bios_directories() {
+    let bhd_directories = match efs.bhd_directories() {
         Ok(d) => d,
         Err(e) => {
-            eprintln!("Error on bios_directory: {:?}", e);
+            eprintln!("Error on bhd_directory: {:?}", e);
             std::process::exit(1);
         }
     };
-    for bios_directory in bios_directories {
-        println!("{:?}", bios_directory.header);
-        for entry in bios_directory.entries() {
+    for bhd_directory in bhd_directories {
+        println!("{:?}", bhd_directory.header);
+        for entry in bhd_directory.entries() {
             println!("    {:?}", entry);
         }
     }
