@@ -21,7 +21,7 @@ struct FlashImage {
     file: RefCell<File>,
 }
 
-impl<const ERASURE_BLOCK_SIZE: usize> FlashRead<ERASURE_BLOCK_SIZE> for FlashImage {
+impl<const ERASABLE_BLOCK_SIZE: usize> FlashRead<ERASABLE_BLOCK_SIZE> for FlashImage {
     fn read_exact(&self, location: Location, buffer: &mut [u8]) -> Result<usize> {
         let mut file = self.file.borrow_mut();
         match file.seek(SeekFrom::Start(location.into())) {
@@ -39,7 +39,7 @@ impl<const ERASURE_BLOCK_SIZE: usize> FlashRead<ERASURE_BLOCK_SIZE> for FlashIma
             }
         }
     }
-    fn read_erasure_block(&self, location: ErasableLocation<ERASURE_BLOCK_SIZE>, buffer: &mut [u8; ERASURE_BLOCK_SIZE]) -> Result<()> {
+    fn read_erasure_block(&self, location: ErasableLocation<ERASABLE_BLOCK_SIZE>, buffer: &mut [u8; ERASABLE_BLOCK_SIZE]) -> Result<()> {
         let location = Location::from(location);
         let mut file = self.file.borrow_mut();
         match file.seek(SeekFrom::Start(location.into())) {
@@ -50,7 +50,7 @@ impl<const ERASURE_BLOCK_SIZE: usize> FlashRead<ERASURE_BLOCK_SIZE> for FlashIma
         }
         match file.read(buffer) {
             Ok(size) => {
-                assert!(size == ERASURE_BLOCK_SIZE);
+                assert!(size == ERASABLE_BLOCK_SIZE);
                 Ok(())
             }
             Err(e) => {
@@ -60,10 +60,10 @@ impl<const ERASURE_BLOCK_SIZE: usize> FlashRead<ERASURE_BLOCK_SIZE> for FlashIma
     }
 }
 
-impl<const ERASURE_BLOCK_SIZE: usize>
-    FlashWrite<ERASURE_BLOCK_SIZE> for FlashImage
+impl<const ERASABLE_BLOCK_SIZE: usize>
+    FlashWrite<ERASABLE_BLOCK_SIZE> for FlashImage
 {
-    fn erase_block(&self, location: ErasableLocation<ERASURE_BLOCK_SIZE>) -> Result<()> {
+    fn erase_block(&self, location: ErasableLocation<ERASABLE_BLOCK_SIZE>) -> Result<()> {
         let location = Location::from(location);
         let mut file = self.file.borrow_mut();
         match file.seek(SeekFrom::Start(location.into())) {
@@ -72,10 +72,10 @@ impl<const ERASURE_BLOCK_SIZE: usize>
                 return Err(Error::Io);
             }
         }
-        let buffer = [0xFFu8; ERASURE_BLOCK_SIZE];
+        let buffer = [0xFFu8; ERASABLE_BLOCK_SIZE];
         match file.write(&buffer[..]) {
             Ok(size) => {
-                assert!(size == ERASURE_BLOCK_SIZE);
+                assert!(size == ERASABLE_BLOCK_SIZE);
                 Ok(())
             }
             Err(e) => {
@@ -83,7 +83,7 @@ impl<const ERASURE_BLOCK_SIZE: usize>
             }
         }
     }
-    fn erase_and_write_block(&self, location: ErasableLocation<ERASURE_BLOCK_SIZE>, buffer: &[u8; ERASURE_BLOCK_SIZE]) -> Result<()> {
+    fn erase_and_write_block(&self, location: ErasableLocation<ERASABLE_BLOCK_SIZE>, buffer: &[u8; ERASABLE_BLOCK_SIZE]) -> Result<()> {
         let location = Location::from(location);
         let mut file = self.file.borrow_mut();
         match file.seek(SeekFrom::Start(location.into())) {
@@ -94,7 +94,7 @@ impl<const ERASURE_BLOCK_SIZE: usize>
         }
         match file.write(&(*buffer)[..]) {
             Ok(size) => {
-                assert!(size == ERASURE_BLOCK_SIZE);
+                assert!(size == ERASABLE_BLOCK_SIZE);
                 Ok(())
             }
             Err(e) => {
@@ -113,12 +113,12 @@ impl FlashImage {
 }
 
 const IMAGE_SIZE: u32 = 16 * 1024 * 1024;
-const ERASURE_BLOCK_SIZE: usize = 0x1000;
-type AlignedLocation = ErasableLocation<ERASURE_BLOCK_SIZE>;
+const ERASABLE_BLOCK_SIZE: usize = 0x1000;
+type AlignedLocation = ErasableLocation<ERASABLE_BLOCK_SIZE>;
 
 // TODO: Allow size override.
 fn psp_entry_add_from_file(
-    directory: &mut PspDirectory<FlashImage, ERASURE_BLOCK_SIZE>,
+    directory: &mut PspDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
     attrs: &PspDirectoryEntryAttrs,
     source_filename: &str,
 ) -> amd_efs::Result<()> {
@@ -134,7 +134,7 @@ fn psp_entry_add_from_file(
 }
 
 fn bhd_entry_add_from_file(
-    directory: &mut BhdDirectory<FlashImage, ERASURE_BLOCK_SIZE>,
+    directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
     attrs: &BhdDirectoryEntryAttrs,
     source_filename: &str,
     ram_destination_address: Option<u64>,
@@ -161,14 +161,14 @@ fn main() -> std::io::Result<()> {
     file.set_len(IMAGE_SIZE.into())?;
     let mut storage = FlashImage::new(file);
     let mut position: AlignedLocation = 0.try_into().unwrap();
-    let block_size: Location = ERASURE_BLOCK_SIZE.try_into().unwrap();
+    let block_size: Location = ERASABLE_BLOCK_SIZE.try_into().unwrap();
     while Location::from(position) < IMAGE_SIZE {
-        FlashWrite::<ERASURE_BLOCK_SIZE>::erase_block(&mut storage, position)
+        FlashWrite::<ERASABLE_BLOCK_SIZE>::erase_block(&mut storage, position)
             .unwrap();
-        position = position.advance(ERASURE_BLOCK_SIZE).unwrap();
+        position = position.advance(ERASABLE_BLOCK_SIZE).unwrap();
     }
     assert!(Location::from(position) == IMAGE_SIZE);
-    let mut efs = match Efs::<_, ERASURE_BLOCK_SIZE>::create(
+    let mut efs = match Efs::<_, ERASABLE_BLOCK_SIZE>::create(
         storage,
         ProcessorGeneration::Milan,
     ) {
