@@ -4,7 +4,8 @@ use amd_efs::{
     PspSoftFuseChain
 };
 use core::cell::RefCell;
-use std::convert::TryInto;
+use core::convert::TryFrom;
+use core::convert::TryInto;
 use std::env;
 use std::fs::File;
 use std::fs::OpenOptions;
@@ -14,7 +15,7 @@ use std::io::Seek;
 use std::io::SeekFrom;
 use std::io::Write;
 //use amd_efs::ProcessorGeneration;
-use amd_flash::{Error, FlashRead, FlashWrite, Location, Result};
+use amd_flash::{Error, FlashRead, FlashWrite, Location, ErasableLocation, Result};
 
 struct FlashImage {
     file: RefCell<File>,
@@ -38,7 +39,8 @@ impl<const ERASURE_BLOCK_SIZE: usize> FlashRead<ERASURE_BLOCK_SIZE> for FlashIma
             }
         }
     }
-    fn read_erasure_block(&self, location: Location, buffer: &mut [u8; ERASURE_BLOCK_SIZE]) -> Result<()> {
+    fn read_erasure_block(&self, location: ErasableLocation<ERASURE_BLOCK_SIZE>, buffer: &mut [u8; ERASURE_BLOCK_SIZE]) -> Result<()> {
+        let location = Location::from(location);
         let mut file = self.file.borrow_mut();
         match file.seek(SeekFrom::Start(location.into())) {
             Ok(_) => {}
@@ -61,7 +63,8 @@ impl<const ERASURE_BLOCK_SIZE: usize> FlashRead<ERASURE_BLOCK_SIZE> for FlashIma
 impl<const ERASURE_BLOCK_SIZE: usize>
     FlashWrite<ERASURE_BLOCK_SIZE> for FlashImage
 {
-    fn erase_block(&self, location: Location) -> Result<()> {
+    fn erase_block(&self, location: ErasableLocation<ERASURE_BLOCK_SIZE>) -> Result<()> {
+        let location = Location::from(location);
         let mut file = self.file.borrow_mut();
         match file.seek(SeekFrom::Start(location.into())) {
             Ok(_) => {}
@@ -80,7 +83,8 @@ impl<const ERASURE_BLOCK_SIZE: usize>
             }
         }
     }
-    fn erase_and_write_block(&self, location: Location, buffer: &[u8; ERASURE_BLOCK_SIZE]) -> Result<()> {
+    fn erase_and_write_block(&self, location: ErasableLocation<ERASURE_BLOCK_SIZE>, buffer: &[u8; ERASURE_BLOCK_SIZE]) -> Result<()> {
+        let location = Location::from(location);
         let mut file = self.file.borrow_mut();
         match file.seek(SeekFrom::Start(location.into())) {
             Ok(_) => {}
@@ -110,6 +114,7 @@ impl FlashImage {
 
 const IMAGE_SIZE: u32 = 16 * 1024 * 1024;
 const ERASURE_BLOCK_SIZE: usize = 0x1000;
+type AlignedLocation = ErasableLocation<ERASURE_BLOCK_SIZE>;
 
 // TODO: Allow size override.
 fn psp_entry_add_from_file(
@@ -155,14 +160,14 @@ fn main() -> std::io::Result<()> {
         .open(filename)?;
     file.set_len(IMAGE_SIZE.into())?;
     let mut storage = FlashImage::new(file);
-    let mut position: Location = 0;
+    let mut position: AlignedLocation = 0.try_into().unwrap();
     let block_size: Location = ERASURE_BLOCK_SIZE.try_into().unwrap();
-    while position < IMAGE_SIZE {
+    while Location::from(position) < IMAGE_SIZE {
         FlashWrite::<ERASURE_BLOCK_SIZE>::erase_block(&mut storage, position)
             .unwrap();
-        position += block_size;
+        position = position.advance(ERASURE_BLOCK_SIZE).unwrap();
     }
-    assert!(position == IMAGE_SIZE);
+    assert!(Location::from(position) == IMAGE_SIZE);
     let mut efs = match Efs::<_, ERASURE_BLOCK_SIZE>::create(
         storage,
         ProcessorGeneration::Milan,
@@ -173,7 +178,7 @@ fn main() -> std::io::Result<()> {
             std::process::exit(1);
         }
     };
-    let mut psp_directory = efs.create_psp_directory(0x12_0000, 0x24_0000).unwrap();
+    let mut psp_directory = efs.create_psp_directory(AlignedLocation::try_from(0x12_0000).unwrap(), AlignedLocation::try_from(0x24_0000).unwrap()).unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AmdPublicKey),
@@ -271,7 +276,7 @@ fn main() -> std::io::Result<()> {
     .unwrap();
 
     let mut bhd_directory = efs
-        .create_bhd_directory(0x24_0000, 0x24_0000 + 0x8_0000)
+        .create_bhd_directory(AlignedLocation::try_from(0x24_0000).unwrap(), AlignedLocation::try_from(0x24_0000 + 0x8_0000).unwrap())
         .unwrap();
     // FIXME: Do our own Apcb.
     bhd_entry_add_from_file(
@@ -288,7 +293,7 @@ fn main() -> std::io::Result<()> {
         .add_apob_entry(None, BhdDirectoryEntryType::Apob, 0x3000_0000)
         .unwrap();
 
-    bhd_entry_add_from_file(
+    /*bhd_entry_add_from_file(
         &mut bhd_directory,
         &BhdDirectoryEntryAttrs::new()
             .with_type_(BhdDirectoryEntryType::Bios)
@@ -297,7 +302,7 @@ fn main() -> std::io::Result<()> {
         "reset.bin",
         Some(0x76c0_0000),
     )
-    .unwrap();
+    .unwrap();*/
 
     bhd_entry_add_from_file(
         &mut bhd_directory,
