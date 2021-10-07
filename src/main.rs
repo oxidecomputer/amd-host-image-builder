@@ -20,8 +20,8 @@ struct FlashImage {
     file: RefCell<File>,
 }
 
-impl<const READING_BLOCK_SIZE: usize, const ERASURE_BLOCK_SIZE: usize> FlashRead<READING_BLOCK_SIZE, ERASURE_BLOCK_SIZE> for FlashImage {
-    fn read_block(&self, location: Location, buffer: &mut [u8; READING_BLOCK_SIZE]) -> Result<()> {
+impl<const ERASURE_BLOCK_SIZE: usize> FlashRead<ERASURE_BLOCK_SIZE> for FlashImage {
+    fn read_exact(&self, location: Location, buffer: &mut [u8]) -> Result<usize> {
         let mut file = self.file.borrow_mut();
         match file.seek(SeekFrom::Start(location.into())) {
             Ok(_) => {}
@@ -29,10 +29,9 @@ impl<const READING_BLOCK_SIZE: usize, const ERASURE_BLOCK_SIZE: usize> FlashRead
                 return Err(Error::Io);
             }
         }
-        match file.read(buffer) {
-            Ok(size) => {
-                assert!(size == READING_BLOCK_SIZE);
-                Ok(())
+        match file.read_exact(buffer) {
+            Ok(()) => {
+                Ok(buffer.len())
             }
             Err(e) => {
                 return Err(Error::Io);
@@ -59,8 +58,8 @@ impl<const READING_BLOCK_SIZE: usize, const ERASURE_BLOCK_SIZE: usize> FlashRead
     }
 }
 
-impl<const WRITING_BLOCK_SIZE: usize, const ERASURE_BLOCK_SIZE: usize>
-    FlashWrite<WRITING_BLOCK_SIZE, ERASURE_BLOCK_SIZE> for FlashImage
+impl<const ERASURE_BLOCK_SIZE: usize>
+    FlashWrite<ERASURE_BLOCK_SIZE> for FlashImage
 {
     fn erase_block(&self, location: Location) -> Result<()> {
         let mut file = self.file.borrow_mut();
@@ -110,12 +109,11 @@ impl FlashImage {
 }
 
 const IMAGE_SIZE: u32 = 16 * 1024 * 1024;
-const RW_BLOCK_SIZE: usize = 256;
 const ERASURE_BLOCK_SIZE: usize = 0x1000;
 
 // TODO: Allow size override.
 fn psp_entry_add_from_file(
-    directory: &mut PspDirectory<FlashImage, RW_BLOCK_SIZE, ERASURE_BLOCK_SIZE>,
+    directory: &mut PspDirectory<FlashImage, ERASURE_BLOCK_SIZE>,
     attrs: &PspDirectoryEntryAttrs,
     source_filename: &str,
 ) -> amd_efs::Result<()> {
@@ -131,7 +129,7 @@ fn psp_entry_add_from_file(
 }
 
 fn bios_entry_add_from_file(
-    directory: &mut BiosDirectory<FlashImage, RW_BLOCK_SIZE, ERASURE_BLOCK_SIZE>,
+    directory: &mut BiosDirectory<FlashImage, ERASURE_BLOCK_SIZE>,
     attrs: &BiosDirectoryEntryAttrs,
     source_filename: &str,
     ram_destination_address: Option<u64>,
@@ -160,12 +158,12 @@ fn main() -> std::io::Result<()> {
     let mut position: Location = 0;
     let block_size: Location = ERASURE_BLOCK_SIZE.try_into().unwrap();
     while position < IMAGE_SIZE {
-        FlashWrite::<RW_BLOCK_SIZE, ERASURE_BLOCK_SIZE>::erase_block(&mut storage, position)
+        FlashWrite::<ERASURE_BLOCK_SIZE>::erase_block(&mut storage, position)
             .unwrap();
         position += block_size;
     }
     assert!(position == IMAGE_SIZE);
-    let mut efs = match Efs::<_, RW_BLOCK_SIZE, ERASURE_BLOCK_SIZE>::create(
+    let mut efs = match Efs::<_, ERASURE_BLOCK_SIZE>::create(
         storage,
         ProcessorGeneration::Milan,
     ) {
