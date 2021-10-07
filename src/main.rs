@@ -39,7 +39,7 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashRead<ERASABLE_BLOCK_SIZE> for FlashI
             }
         }
     }
-    fn read_erasure_block(&self, location: ErasableLocation<ERASABLE_BLOCK_SIZE>, buffer: &mut [u8; ERASABLE_BLOCK_SIZE]) -> Result<()> {
+    fn read_erasable_block(&self, location: ErasableLocation<ERASABLE_BLOCK_SIZE>, buffer: &mut [u8; ERASABLE_BLOCK_SIZE]) -> Result<()> {
         let location = Location::from(location);
         let mut file = self.file.borrow_mut();
         match file.seek(SeekFrom::Start(location.into())) {
