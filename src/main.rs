@@ -330,7 +330,7 @@ fn main() -> std::io::Result<()> {
 
     bhd_entry_add_from_file(
         &mut bhd_directory,
-        None,
+        Some(0xd00000.try_into().unwrap()), // probably always needed to be aligned well
         &BhdDirectoryEntryAttrs::new()
             .with_type_(BhdDirectoryEntryType::Bios)
             .with_reset_image(true)
