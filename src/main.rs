@@ -119,13 +119,14 @@ type AlignedLocation = ErasableLocation<ERASABLE_BLOCK_SIZE>;
 // TODO: Allow size override.
 fn psp_entry_add_from_file(
     directory: &mut PspDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
+    payload_position: Option<ErasableLocation<ERASABLE_BLOCK_SIZE>>,
     attrs: &PspDirectoryEntryAttrs,
     source_filename: &str,
 ) -> amd_efs::Result<()> {
     let file = File::open(source_filename).unwrap();
     let size: usize = file.metadata().unwrap().len().try_into().unwrap();
     let mut reader = BufReader::new(file);
-    directory.add_blob_entry(None, attrs, size.try_into().unwrap(), &mut |buf: &mut [u8]| {
+    directory.add_blob_entry(payload_position, attrs, size.try_into().unwrap(), &mut |buf: &mut [u8]| {
         reader
             .read(buf)
             .or(amd_efs::Result::Err(amd_efs::Error::Marshal))
@@ -135,6 +136,7 @@ fn psp_entry_add_from_file(
 
 fn bhd_entry_add_from_file(
     directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
+    payload_position: Option<ErasableLocation<ERASABLE_BLOCK_SIZE>>,
     attrs: &BhdDirectoryEntryAttrs,
     source_filename: &str,
     ram_destination_address: Option<u64>,
@@ -142,7 +144,7 @@ fn bhd_entry_add_from_file(
     let file = File::open(source_filename).unwrap();
     let size: usize = file.metadata().unwrap().len().try_into().unwrap();
     let mut reader = BufReader::new(file);
-    directory.add_blob_entry(None, attrs, size.try_into().unwrap(), ram_destination_address, &mut |buf: &mut [u8]| {
+    directory.add_blob_entry(payload_position, attrs, size.try_into().unwrap(), ram_destination_address, &mut |buf: &mut [u8]| {
         reader
             .read(buf)
             .or(amd_efs::Result::Err(amd_efs::Error::Marshal))
@@ -181,24 +183,28 @@ fn main() -> std::io::Result<()> {
     let mut psp_directory = efs.create_psp_directory(AlignedLocation::try_from(0x12_0000).unwrap(), AlignedLocation::try_from(0x24_0000).unwrap()).unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
+        None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AmdPublicKey),
         "amd-firmware/rome/AmdPubKey.tkn",
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
+        None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspBootloader),
         "amd-firmware/rome/PspBootLoader.sbin",
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
+        None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspRecoveryBootloader),
         "amd-firmware/rome/PspRecoveryBootLoader.sbin",
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
+        None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SmuOffChipFirmware8),
         "amd-firmware/rome/SmuFirmware.csbin",
     )
@@ -206,6 +212,7 @@ fn main() -> std::io::Result<()> {
 
     psp_entry_add_from_file(
         &mut psp_directory,
+        None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AmdSecureDebugKey),
         "amd-firmware/rome/SecureDebug4KToken.stkn",
     )
@@ -213,6 +220,7 @@ fn main() -> std::io::Result<()> {
 
     psp_entry_add_from_file(
         &mut psp_directory,
+        None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AblPublicKey),
         "amd-firmware/rome/AblPubKey.bin", // that was weird: "PspABLFw_gn.stkn",
     )
@@ -226,12 +234,14 @@ fn main() -> std::io::Result<()> {
 
     psp_entry_add_from_file(
         &mut psp_directory,
+        None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SmuOffChipFirmware12),
         "amd-firmware/rome/SmuFirmware2.csbin",
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
+        None,
         &PspDirectoryEntryAttrs::new()
             .with_type_(PspDirectoryEntryType::PspEarlySecureUnlockDebugImage),
         "amd-firmware/rome/SecureDebugUnlock.sbin",
@@ -239,30 +249,35 @@ fn main() -> std::io::Result<()> {
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
+        None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::WrappedIkek),
         "amd-firmware/rome/PspIkek.bin",
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
+        None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspTokenUnlockData),
         "amd-firmware/rome/SecureEmptyToken.bin",
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
+        None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SecurityPolicyBinary),
         "amd-firmware/rome/RsmuSecPolicy.sbin",
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
+        None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::Mp5Firmware),
         "amd-firmware/rome/Mp5.csbin",
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
+        None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::Abl0),
         "amd-firmware/rome/AgesaBootloader_U_prod.csbin",
     )
@@ -270,6 +285,7 @@ fn main() -> std::io::Result<()> {
     // TODO: SEV... but we don't use that.
     psp_entry_add_from_file(
         &mut psp_directory,
+        None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::DxioPhySramFirmware),
         "amd-firmware/rome/PhyFw.sbin",
     )
@@ -278,6 +294,7 @@ fn main() -> std::io::Result<()> {
 
     psp_entry_add_from_file(
         &mut psp_directory,
+        None,
         &PspDirectoryEntryAttrs::new()
             .with_type_(PspDirectoryEntryType::DxioPhySramPublicKey),
         "amd-firmware/rome/PhyFwSb4kr.stkn",
@@ -286,6 +303,7 @@ fn main() -> std::io::Result<()> {
 
     psp_entry_add_from_file(
         &mut psp_directory,
+        None,
         &PspDirectoryEntryAttrs::new()
             .with_type_(PspDirectoryEntryType::PmuPublicKey),
         "amd-firmware/rome/Starship-PMU-FW.stkn",
@@ -298,6 +316,7 @@ fn main() -> std::io::Result<()> {
     // FIXME: Do our own Apcb.  FIXME: override size = 0x2000
     bhd_entry_add_from_file(
         &mut bhd_directory,
+        None,
         &BhdDirectoryEntryAttrs::new()
             .with_type_(BhdDirectoryEntryType::ApcbBackup),
 //            .with_sub_program(1),
@@ -311,6 +330,7 @@ fn main() -> std::io::Result<()> {
 
     bhd_entry_add_from_file(
         &mut bhd_directory,
+        None,
         &BhdDirectoryEntryAttrs::new()
             .with_type_(BhdDirectoryEntryType::Bios)
             .with_reset_image(true)
@@ -322,6 +342,7 @@ fn main() -> std::io::Result<()> {
 
     bhd_entry_add_from_file(
         &mut bhd_directory,
+        None,
         &BhdDirectoryEntryAttrs::new()
             .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(1)
@@ -332,6 +353,7 @@ fn main() -> std::io::Result<()> {
     .unwrap();
     bhd_entry_add_from_file(
         &mut bhd_directory,
+        None,
         &BhdDirectoryEntryAttrs::new()
             .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
             .with_instance(1)
@@ -343,6 +365,7 @@ fn main() -> std::io::Result<()> {
 
     bhd_entry_add_from_file(
         &mut bhd_directory,
+        None,
         &BhdDirectoryEntryAttrs::new()
             .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(2)
@@ -353,6 +376,7 @@ fn main() -> std::io::Result<()> {
     .unwrap();
     bhd_entry_add_from_file(
         &mut bhd_directory,
+        None,
         &BhdDirectoryEntryAttrs::new()
             .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
             .with_instance(2)
@@ -364,6 +388,7 @@ fn main() -> std::io::Result<()> {
 
     bhd_entry_add_from_file(
         &mut bhd_directory,
+        None,
         &BhdDirectoryEntryAttrs::new()
             .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(3)
@@ -374,6 +399,7 @@ fn main() -> std::io::Result<()> {
     .unwrap();
     bhd_entry_add_from_file(
         &mut bhd_directory,
+        None,
         &BhdDirectoryEntryAttrs::new()
             .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
             .with_instance(3)
@@ -385,6 +411,7 @@ fn main() -> std::io::Result<()> {
 
     bhd_entry_add_from_file(
         &mut bhd_directory,
+        None,
         &BhdDirectoryEntryAttrs::new()
             .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(4)
@@ -395,6 +422,7 @@ fn main() -> std::io::Result<()> {
     .unwrap();
     bhd_entry_add_from_file(
         &mut bhd_directory,
+        None,
         &BhdDirectoryEntryAttrs::new()
             .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
             .with_instance(4)
@@ -406,6 +434,7 @@ fn main() -> std::io::Result<()> {
 
     bhd_entry_add_from_file(
         &mut bhd_directory,
+        None,
         &BhdDirectoryEntryAttrs::new()
             .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(5)
@@ -416,6 +445,7 @@ fn main() -> std::io::Result<()> {
     .unwrap();
     bhd_entry_add_from_file(
         &mut bhd_directory,
+        None,
         &BhdDirectoryEntryAttrs::new()
             .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
             .with_instance(5)
@@ -427,6 +457,7 @@ fn main() -> std::io::Result<()> {
 
     bhd_entry_add_from_file(
         &mut bhd_directory,
+        None,
         &BhdDirectoryEntryAttrs::new()
             .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(6)
@@ -437,6 +468,7 @@ fn main() -> std::io::Result<()> {
     .unwrap();
     bhd_entry_add_from_file(
         &mut bhd_directory,
+        None,
         &BhdDirectoryEntryAttrs::new()
             .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
             .with_instance(6)
