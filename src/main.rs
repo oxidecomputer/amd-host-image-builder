@@ -213,14 +213,6 @@ fn main() -> std::io::Result<()> {
     psp_entry_add_from_file(
         &mut psp_directory,
         None,
-        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AmdSecureDebugKey),
-        "amd-firmware/rome/SecureDebug4KToken.stkn",
-    )
-    .unwrap();
-
-    psp_entry_add_from_file(
-        &mut psp_directory,
-        None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AblPublicKey),
         "amd-firmware/rome/AblPubKey.bin", // that was weird: "PspABLFw_gn.stkn",
     )
