@@ -299,8 +299,8 @@ fn main() -> std::io::Result<()> {
     bhd_entry_add_from_file(
         &mut bhd_directory,
         &BhdDirectoryEntryAttrs::new()
-            .with_type_(BhdDirectoryEntryType::ApcbBackup)
-            .with_sub_program(1),
+            .with_type_(BhdDirectoryEntryType::ApcbBackup),
+//            .with_sub_program(1),
         "amd-firmware/rome/APCB_D4_DefaultRecovery.bin",
         None,
     )
@@ -446,6 +446,7 @@ fn main() -> std::io::Result<()> {
     )
     .unwrap();
 
+/*
     bhd_entry_add_from_file(
         &mut bhd_directory,
         &BhdDirectoryEntryAttrs::new()
@@ -455,6 +456,7 @@ fn main() -> std::io::Result<()> {
         None,
     )
     .unwrap();
+*/
 
     //            println!("{:?}", efh);
     let psp_directory = match efs.psp_directory() {
