@@ -14,6 +14,7 @@ use std::io::Read;
 use std::io::Seek;
 use std::io::SeekFrom;
 use std::io::Write;
+use amd_apcb::Apcb;
 //use amd_efs::ProcessorGeneration;
 use amd_flash::{Error, FlashRead, FlashWrite, Location, ErasableLocation, Result};
 
@@ -324,7 +325,7 @@ fn main() -> std::io::Result<()> {
         &BhdDirectoryEntryAttrs::new()
             .with_type_(BhdDirectoryEntryType::ApcbBackup),
 //            .with_sub_program(1),
-        0x2000,
+        Apcb::MAX_SIZE,
         "amd-firmware/rome/APCB_D4_DefaultRecovery.bin",
         None,
     )
