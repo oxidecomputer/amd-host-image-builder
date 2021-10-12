@@ -134,6 +134,24 @@ fn psp_entry_add_from_file(
     Ok(())
 }
 
+fn bhd_entry_add_from_file_with_custom_size(
+    directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
+    payload_position: Option<ErasableLocation<ERASABLE_BLOCK_SIZE>>,
+    attrs: &BhdDirectoryEntryAttrs,
+    size: usize,
+    source_filename: &str,
+    ram_destination_address: Option<u64>,
+) -> amd_efs::Result<()> {
+    let file = File::open(source_filename).unwrap();
+    let mut reader = BufReader::new(file);
+    directory.add_blob_entry(payload_position, attrs, size.try_into().unwrap(), ram_destination_address, &mut |buf: &mut [u8]| {
+        reader
+            .read(buf)
+            .or(amd_efs::Result::Err(amd_efs::Error::Marshal))
+    })?;
+    Ok(())
+}
+
 fn bhd_entry_add_from_file(
     directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
     payload_position: Option<ErasableLocation<ERASABLE_BLOCK_SIZE>>,
@@ -143,13 +161,7 @@ fn bhd_entry_add_from_file(
 ) -> amd_efs::Result<()> {
     let file = File::open(source_filename).unwrap();
     let size: usize = file.metadata().unwrap().len().try_into().unwrap();
-    let mut reader = BufReader::new(file);
-    directory.add_blob_entry(payload_position, attrs, size.try_into().unwrap(), ram_destination_address, &mut |buf: &mut [u8]| {
-        reader
-            .read(buf)
-            .or(amd_efs::Result::Err(amd_efs::Error::Marshal))
-    })?;
-    Ok(())
+    bhd_entry_add_from_file_with_custom_size(directory, payload_position, attrs, size, source_filename, ram_destination_address)
 }
 
 fn main() -> std::io::Result<()> {
@@ -305,13 +317,14 @@ fn main() -> std::io::Result<()> {
     let mut bhd_directory = efs
         .create_bhd_directory(AlignedLocation::try_from(0x24_0000).unwrap(), AlignedLocation::try_from(0x24_0000 + 0x8_0000).unwrap())
         .unwrap();
-    // FIXME: Do our own Apcb.  FIXME: override size = 0x2000
-    bhd_entry_add_from_file(
+    // FIXME: Do our own Apcb.
+    bhd_entry_add_from_file_with_custom_size(
         &mut bhd_directory,
         None,
         &BhdDirectoryEntryAttrs::new()
             .with_type_(BhdDirectoryEntryType::ApcbBackup),
 //            .with_sub_program(1),
+        0x2000,
         "amd-firmware/rome/APCB_D4_DefaultRecovery.bin",
         None,
     )
