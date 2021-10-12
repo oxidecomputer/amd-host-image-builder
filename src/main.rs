@@ -117,7 +117,6 @@ const IMAGE_SIZE: u32 = 16 * 1024 * 1024;
 const ERASABLE_BLOCK_SIZE: usize = 0x1000;
 type AlignedLocation = ErasableLocation<ERASABLE_BLOCK_SIZE>;
 
-// TODO: Allow size override.
 fn psp_entry_add_from_file(
     directory: &mut PspDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
     payload_position: Option<ErasableLocation<ERASABLE_BLOCK_SIZE>>,
