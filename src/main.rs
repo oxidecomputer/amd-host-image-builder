@@ -325,7 +325,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BhdDirectoryEntryType::ApcbBackup),
 //            .with_sub_program(1),
         Apcb::MAX_SIZE,
-        "amd-firmware/rome/APCB_D4_DefaultRecovery.bin",
+        "amd-firmware/rome-ethx-100a/APCB_D4_DefaultRecovery.bin",
         None,
     )
     .unwrap();
