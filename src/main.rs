@@ -14,6 +14,8 @@ use std::io::Read;
 use std::io::Seek;
 use std::io::SeekFrom;
 use std::io::Write;
+use std::path::Path;
+use std::path::PathBuf;
 use amd_apcb::Apcb;
 //use amd_efs::ProcessorGeneration;
 use amd_flash::{Error, FlashRead, FlashWrite, Location, ErasableLocation, Result};
@@ -121,7 +123,7 @@ fn psp_entry_add_from_file(
     directory: &mut PspDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
     payload_position: Option<ErasableLocation<ERASABLE_BLOCK_SIZE>>,
     attrs: &PspDirectoryEntryAttrs,
-    source_filename: &str,
+    source_filename: PathBuf,
 ) -> amd_efs::Result<()> {
     let file = File::open(source_filename).unwrap();
     let size: usize = file.metadata().unwrap().len().try_into().unwrap();
@@ -139,7 +141,7 @@ fn bhd_entry_add_from_file_with_custom_size(
     payload_position: Option<ErasableLocation<ERASABLE_BLOCK_SIZE>>,
     attrs: &BhdDirectoryEntryAttrs,
     size: usize,
-    source_filename: &str,
+    source_filename: &Path,
     ram_destination_address: Option<u64>,
 ) -> amd_efs::Result<()> {
     let file = File::open(source_filename).unwrap();
@@ -156,12 +158,13 @@ fn bhd_entry_add_from_file(
     directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
     payload_position: Option<ErasableLocation<ERASABLE_BLOCK_SIZE>>,
     attrs: &BhdDirectoryEntryAttrs,
-    source_filename: &str,
+    source_filename: PathBuf,
     ram_destination_address: Option<u64>,
 ) -> amd_efs::Result<()> {
+    let source_filename = source_filename.as_path();
     let file = File::open(source_filename).unwrap();
     let size: usize = file.metadata().unwrap().len().try_into().unwrap();
-    bhd_entry_add_from_file_with_custom_size(directory, payload_position, attrs, size, source_filename, ram_destination_address)
+    bhd_entry_add_from_file_with_custom_size(directory, payload_position, attrs, size, &source_filename, ram_destination_address)
 }
 
 fn main() -> std::io::Result<()> {
@@ -182,9 +185,14 @@ fn main() -> std::io::Result<()> {
         position = position.advance(ERASABLE_BLOCK_SIZE).unwrap();
     }
     assert!(Location::from(position) == IMAGE_SIZE);
+    let host_processor_generation = ProcessorGeneration::Milan;
+    let firmware_blob_directory_name = match host_processor_generation {
+        ProcessorGeneration::Milan => Path::new("amd-firmware").join("milan"),
+        ProcessorGeneration::Rome => Path::new("amd-firmware").join("rome"),
+    };
     let mut efs = match Efs::<_, ERASABLE_BLOCK_SIZE>::create(
         storage,
-        ProcessorGeneration::Rome,
+        host_processor_generation,
     ) {
         Ok(efs) => efs,
         Err(e) => {
@@ -197,28 +205,28 @@ fn main() -> std::io::Result<()> {
         &mut psp_directory,
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AmdPublicKey),
-        "amd-firmware/rome/AmdPubKey.tkn",
+        firmware_blob_directory_name.join("AmdPubKey.tkn"),
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspBootloader),
-        "amd-firmware/rome/PspBootLoader.sbin",
+        firmware_blob_directory_name.join("PspBootLoader.sbin"),
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspRecoveryBootloader),
-        "amd-firmware/rome/PspRecoveryBootLoader.sbin",
+        firmware_blob_directory_name.join("PspRecoveryBootLoader.sbin"),
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SmuOffChipFirmware8),
-        "amd-firmware/rome/SmuFirmware.csbin",
+        firmware_blob_directory_name.join("SmuFirmware.csbin"),
     )
     .unwrap();
 
@@ -226,7 +234,7 @@ fn main() -> std::io::Result<()> {
         &mut psp_directory,
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AblPublicKey),
-        "amd-firmware/rome/AblPubKey.bin", // that was weird: "PspABLFw_gn.stkn",
+        firmware_blob_directory_name.join("AblPubKey.bin"), // that was weird: "PspABLFw_gn.stkn",
     )
     .unwrap();
 
@@ -240,7 +248,7 @@ fn main() -> std::io::Result<()> {
         &mut psp_directory,
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SmuOffChipFirmware12),
-        "amd-firmware/rome/SmuFirmware2.csbin",
+        firmware_blob_directory_name.join("SmuFirmware2.csbin"),
     )
     .unwrap();
     psp_entry_add_from_file(
@@ -248,42 +256,42 @@ fn main() -> std::io::Result<()> {
         None,
         &PspDirectoryEntryAttrs::new()
             .with_type_(PspDirectoryEntryType::PspEarlySecureUnlockDebugImage),
-        "amd-firmware/rome/SecureDebugUnlock.sbin",
+        firmware_blob_directory_name.join("SecureDebugUnlock.sbin"),
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::WrappedIkek),
-        "amd-firmware/rome/PspIkek.bin",
+        firmware_blob_directory_name.join("PspIkek.bin"),
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspTokenUnlockData),
-        "amd-firmware/rome/SecureEmptyToken.bin",
+        firmware_blob_directory_name.join("SecureEmptyToken.bin"),
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SecurityPolicyBinary),
-        "amd-firmware/rome/RsmuSecPolicy.sbin",
+        firmware_blob_directory_name.join("RsmuSecPolicy.sbin"),
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::Mp5Firmware),
-        "amd-firmware/rome/Mp5.csbin",
+        firmware_blob_directory_name.join("Mp5.csbin"),
     )
     .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::Abl0),
-        "amd-firmware/rome/AgesaBootloader_U_prod.csbin",
+        firmware_blob_directory_name.join("AgesaBootloader_U_prod.csbin"),
     )
     .unwrap();
     // TODO: SEV... but we don't use that.
@@ -291,41 +299,65 @@ fn main() -> std::io::Result<()> {
         &mut psp_directory,
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::DxioPhySramFirmware),
-        "amd-firmware/rome/PhyFw.sbin",
-    )
-    .unwrap();
-    // TODO: psp_entry_add_from_file(&mut psp_directory, &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::DrtmTa), "amd-firmware/rome/PSP-DRTM.sbin").unwrap()
-
-    psp_entry_add_from_file(
-        &mut psp_directory,
-        None,
-        &PspDirectoryEntryAttrs::new()
-            .with_type_(PspDirectoryEntryType::DxioPhySramPublicKey),
-        "amd-firmware/rome/PhyFwSb4kr.stkn",
+        firmware_blob_directory_name.join("PhyFw.sbin"),
     )
     .unwrap();
 
-    psp_entry_add_from_file(
-        &mut psp_directory,
-        None,
-        &PspDirectoryEntryAttrs::new()
-            .with_type_(PspDirectoryEntryType::PmuPublicKey),
-        "amd-firmware/rome/Starship-PMU-FW.stkn",
-    )
-    .unwrap();
+    if host_processor_generation == ProcessorGeneration::Rome {
+        psp_entry_add_from_file(
+            &mut psp_directory,
+            None,
+            &PspDirectoryEntryAttrs::new()
+                .with_type_(PspDirectoryEntryType::DxioPhySramPublicKey),
+            firmware_blob_directory_name.join("PhyFwSb4kr.stkn"),
+        )
+        .unwrap();
+        psp_entry_add_from_file(
+            &mut psp_directory,
+            None,
+            &PspDirectoryEntryAttrs::new()
+                .with_type_(PspDirectoryEntryType::PmuPublicKey),
+            firmware_blob_directory_name.join("Starship-PMU-FW.stkn"),
+        )
+        .unwrap();
+    } else {
+        psp_entry_add_from_file(
+            &mut psp_directory,
+            None,
+            &PspDirectoryEntryAttrs::new()
+                .with_type_(PspDirectoryEntryType::DrtmTa),
+            firmware_blob_directory_name.join("PSP-DRTM.sbin"),
+        )
+        .unwrap();
+        psp_entry_add_from_file(
+            &mut psp_directory,
+            None,
+            &PspDirectoryEntryAttrs::new()
+                .with_type_(PspDirectoryEntryType::PspBootloaderPublicKeysTable),
+            firmware_blob_directory_name.join("PSP-Key-DB.sbin"),
+        )
+        .unwrap();
+    }
 
     let mut bhd_directory = efs
         .create_bhd_directory(AlignedLocation::try_from(0x24_0000).unwrap(), AlignedLocation::try_from(0x24_0000 + 0x8_0000).unwrap())
         .unwrap();
     // FIXME: Do our own Apcb.
+    let apcb_source_file_name = match host_processor_generation {
+        ProcessorGeneration::Milan => Path::new("amd-firmware").join("milan-ethx-1001").join("APCB_D4_DefaultRecovery.bin"),
+        ProcessorGeneration::Rome => Path::new("amd-firmware").join("rome-ethx-100a").join("APCB_D4_DefaultRecovery.bin"),
+    };
+
+
     bhd_entry_add_from_file_with_custom_size(
         &mut bhd_directory,
         None,
-        &BhdDirectoryEntryAttrs::new()
-            .with_type_(BhdDirectoryEntryType::ApcbBackup),
-//            .with_sub_program(1),
+        &match host_processor_generation {
+            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup).with_sub_program(1),
+            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup),
+        },
         Apcb::MAX_SIZE,
-        "amd-firmware/rome-ethx-100a/APCB_D4_DefaultRecovery.bin",
+        apcb_source_file_name.as_path(),
         None,
     )
     .unwrap();
@@ -335,12 +367,12 @@ fn main() -> std::io::Result<()> {
 
     bhd_entry_add_from_file(
         &mut bhd_directory,
-        Some(0xd00000.try_into().unwrap()), // probably always needed to be aligned well
+        Some(0xd00000.try_into().unwrap()), // TODO: Could also be None--works.
         &BhdDirectoryEntryAttrs::new()
             .with_type_(BhdDirectoryEntryType::Bios)
             .with_reset_image(true)
             .with_copy_image(true),
-        "nanobl-rs-0x7ffc_d000.bin",
+        Path::new("nanobl-rs-0x7ffc_d000.bin").to_path_buf(),
         Some(0x7ffc_d000),
     )
     .unwrap();
@@ -352,7 +384,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(1)
             .with_sub_program(1),
-        "amd-firmware/rome/Appb_1D_Ddr4_Udimm_Imem.csbin",
+        firmware_blob_directory_name.join("Appb_1D_Ddr4_Udimm_Imem.csbin"),
         None,
     )
     .unwrap();
@@ -363,7 +395,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
             .with_instance(1)
             .with_sub_program(1),
-        "amd-firmware/rome/Appb_1D_Ddr4_Udimm_Dmem.csbin",
+        firmware_blob_directory_name.join("Appb_1D_Ddr4_Udimm_Dmem.csbin"),
         None,
     )
     .unwrap();
@@ -375,7 +407,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(2)
             .with_sub_program(1),
-        "amd-firmware/rome/Appb_1D_Ddr4_Rdimm_Imem.csbin",
+        firmware_blob_directory_name.join("Appb_1D_Ddr4_Rdimm_Imem.csbin"),
         None,
     )
     .unwrap();
@@ -386,7 +418,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
             .with_instance(2)
             .with_sub_program(1),
-        "amd-firmware/rome/Appb_1D_Ddr4_Rdimm_Dmem.csbin",
+        firmware_blob_directory_name.join("Appb_1D_Ddr4_Rdimm_Dmem.csbin"),
         None,
     )
     .unwrap();
@@ -398,7 +430,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(3)
             .with_sub_program(1),
-        "amd-firmware/rome/Appb_1D_Ddr4_Lrdimm_Imem.csbin",
+        firmware_blob_directory_name.join("Appb_1D_Ddr4_Lrdimm_Imem.csbin"),
         None,
     )
     .unwrap();
@@ -409,7 +441,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
             .with_instance(3)
             .with_sub_program(1),
-        "amd-firmware/rome/Appb_1D_Ddr4_Lrdimm_Dmem.csbin",
+        firmware_blob_directory_name.join("Appb_1D_Ddr4_Lrdimm_Dmem.csbin"),
         None,
     )
     .unwrap();
@@ -421,7 +453,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(4)
             .with_sub_program(1),
-        "amd-firmware/rome/Appb_2D_Ddr4_Udimm_Imem.csbin",
+        firmware_blob_directory_name.join("Appb_2D_Ddr4_Udimm_Imem.csbin"),
         None,
     )
     .unwrap();
@@ -432,7 +464,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
             .with_instance(4)
             .with_sub_program(1),
-        "amd-firmware/rome/Appb_2D_Ddr4_Udimm_Dmem.csbin",
+        firmware_blob_directory_name.join("Appb_2D_Ddr4_Udimm_Dmem.csbin"),
         None,
     )
     .unwrap();
@@ -444,7 +476,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(5)
             .with_sub_program(1),
-        "amd-firmware/rome/Appb_2D_Ddr4_Rdimm_Imem.csbin",
+        firmware_blob_directory_name.join("Appb_2D_Ddr4_Rdimm_Imem.csbin"),
         None,
     )
     .unwrap();
@@ -455,7 +487,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
             .with_instance(5)
             .with_sub_program(1),
-        "amd-firmware/rome/Appb_2D_Ddr4_Rdimm_Dmem.csbin",
+        firmware_blob_directory_name.join("Appb_2D_Ddr4_Rdimm_Dmem.csbin"),
         None,
     )
     .unwrap();
@@ -467,7 +499,7 @@ fn main() -> std::io::Result<()> {
             .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
             .with_instance(6)
             .with_sub_program(1),
-        "amd-firmware/rome/Appb_2D_Ddr4_Lrdimm_Imem.csbin",
+        firmware_blob_directory_name.join("Appb_2D_Ddr4_Lrdimm_Imem.csbin"),
         None,
     )
     .unwrap();
@@ -478,10 +510,104 @@ fn main() -> std::io::Result<()> {
             .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
             .with_instance(6)
             .with_sub_program(1),
-        "amd-firmware/rome/Appb_2D_Ddr4_Lrdimm_Dmem.csbin",
+        firmware_blob_directory_name.join("Appb_2D_Ddr4_Lrdimm_Dmem.csbin"),
         None,
     )
     .unwrap();
+
+    if host_processor_generation == ProcessorGeneration::Milan {
+        bhd_entry_add_from_file(
+            &mut bhd_directory,
+            None,
+            &BhdDirectoryEntryAttrs::new()
+                .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
+                .with_instance(8)
+                .with_sub_program(1),
+            firmware_blob_directory_name.join("Appb_BIST_Ddr4_Udimm_Imem.csbin"),
+            None,
+        )
+        .unwrap();
+        bhd_entry_add_from_file(
+            &mut bhd_directory,
+            None,
+            &BhdDirectoryEntryAttrs::new()
+                .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
+                .with_instance(8)
+                .with_sub_program(1),
+            firmware_blob_directory_name.join("Appb_BIST_Ddr4_Udimm_Dmem.csbin"),
+            None,
+        )
+        .unwrap();
+
+        bhd_entry_add_from_file(
+            &mut bhd_directory,
+            None,
+            &BhdDirectoryEntryAttrs::new()
+                .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
+                .with_instance(9)
+                .with_sub_program(1),
+            firmware_blob_directory_name.join("Appb_BIST_Ddr4_Rdimm_Imem.csbin"),
+            None,
+        )
+        .unwrap();
+        bhd_entry_add_from_file(
+            &mut bhd_directory,
+            None,
+            &BhdDirectoryEntryAttrs::new()
+                .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
+                .with_instance(9)
+                .with_sub_program(1),
+            firmware_blob_directory_name.join("Appb_BIST_Ddr4_Rdimm_Dmem.csbin"),
+            None,
+        )
+        .unwrap();
+
+        bhd_entry_add_from_file(
+            &mut bhd_directory,
+            None,
+            &BhdDirectoryEntryAttrs::new()
+                .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
+                .with_instance(10)
+                .with_sub_program(1),
+            firmware_blob_directory_name.join("Appb_BIST_Ddr4_Lrdimm_Imem.csbin"),
+            None,
+        )
+        .unwrap();
+        bhd_entry_add_from_file(
+            &mut bhd_directory,
+            None,
+            &BhdDirectoryEntryAttrs::new()
+                .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
+                .with_instance(10)
+                .with_sub_program(1),
+            firmware_blob_directory_name.join("Appb_BIST_Ddr4_Lrdimm_Dmem.csbin"),
+            None,
+        )
+        .unwrap();
+
+        bhd_entry_add_from_file(
+            &mut bhd_directory,
+            None,
+            &BhdDirectoryEntryAttrs::new()
+                .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
+                .with_instance(8)
+                .with_sub_program(1),
+            firmware_blob_directory_name.join("Appb_BIST_Ddr4_Udimm_Imem.csbin"),
+            None,
+        )
+        .unwrap();
+        bhd_entry_add_from_file(
+            &mut bhd_directory,
+            None,
+            &BhdDirectoryEntryAttrs::new()
+                .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
+                .with_instance(8)
+                .with_sub_program(1),
+            firmware_blob_directory_name.join("Appb_BIST_Ddr4_Udimm_Dmem.csbin"),
+            None,
+        )
+        .unwrap();
+    }
 
 /*
     bhd_entry_add_from_file(
@@ -489,7 +615,7 @@ fn main() -> std::io::Result<()> {
         &BhdDirectoryEntryAttrs::new()
             .with_type_(BhdDirectoryEntryType::MicrocodePatch)
             .with_instance(1),
-        "amd-firmware/rome/UcodePatch_A0.bin",
+        firmware_blob_directory_name.join("UcodePatch_A0.bin"),
         None,
     )
     .unwrap();
