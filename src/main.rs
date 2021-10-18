@@ -258,6 +258,149 @@ fn psp_directory_add_default_entries(psp_directory: &mut PspDirectory<FlashImage
     Ok(())
 }
 
+fn bhd_directory_add_default_entries(bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>, firmware_blob_directory_name: &PathBuf) -> amd_efs::Result<()> {
+    bhd_directory
+        .add_apob_entry(None, BhdDirectoryEntryType::Apob, 0x3000_0000)?;
+
+    bhd_entry_add_from_file(
+        bhd_directory,
+        Some(0xd00000.try_into().unwrap()), // TODO: Could also be None--works.
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::Bios)
+            .with_reset_image(true)
+            .with_copy_image(true),
+        Path::new("nanobl-rs-0x7ffc_d000.bin").to_path_buf(),
+        Some(0x7ffc_d000),
+    )?;
+
+    bhd_entry_add_from_file(
+        bhd_directory,
+        None,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
+            .with_instance(1)
+            .with_sub_program(1),
+        firmware_blob_directory_name.join("Appb_1D_Ddr4_Udimm_Imem.csbin"),
+        None,
+    )?;
+    bhd_entry_add_from_file(
+        bhd_directory,
+        None,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
+            .with_instance(1)
+            .with_sub_program(1),
+        firmware_blob_directory_name.join("Appb_1D_Ddr4_Udimm_Dmem.csbin"),
+        None,
+    )?;
+
+    bhd_entry_add_from_file(
+        bhd_directory,
+        None,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
+            .with_instance(2)
+            .with_sub_program(1),
+        firmware_blob_directory_name.join("Appb_1D_Ddr4_Rdimm_Imem.csbin"),
+        None,
+    )?;
+    bhd_entry_add_from_file(
+        bhd_directory,
+        None,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
+            .with_instance(2)
+            .with_sub_program(1),
+        firmware_blob_directory_name.join("Appb_1D_Ddr4_Rdimm_Dmem.csbin"),
+        None,
+    )?;
+
+    bhd_entry_add_from_file(
+        bhd_directory,
+        None,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
+            .with_instance(3)
+            .with_sub_program(1),
+        firmware_blob_directory_name.join("Appb_1D_Ddr4_Lrdimm_Imem.csbin"),
+        None,
+    )?;
+    bhd_entry_add_from_file(
+        bhd_directory,
+        None,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
+            .with_instance(3)
+            .with_sub_program(1),
+        firmware_blob_directory_name.join("Appb_1D_Ddr4_Lrdimm_Dmem.csbin"),
+        None,
+    )?;
+
+    bhd_entry_add_from_file(
+        bhd_directory,
+        None,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
+            .with_instance(4)
+            .with_sub_program(1),
+        firmware_blob_directory_name.join("Appb_2D_Ddr4_Udimm_Imem.csbin"),
+        None,
+    )?;
+    bhd_entry_add_from_file(
+        bhd_directory,
+        None,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
+            .with_instance(4)
+            .with_sub_program(1),
+        firmware_blob_directory_name.join("Appb_2D_Ddr4_Udimm_Dmem.csbin"),
+        None,
+    )?;
+
+    bhd_entry_add_from_file(
+        bhd_directory,
+        None,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
+            .with_instance(5)
+            .with_sub_program(1),
+        firmware_blob_directory_name.join("Appb_2D_Ddr4_Rdimm_Imem.csbin"),
+        None,
+    )?;
+    bhd_entry_add_from_file(
+        bhd_directory,
+        None,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
+            .with_instance(5)
+            .with_sub_program(1),
+        firmware_blob_directory_name.join("Appb_2D_Ddr4_Rdimm_Dmem.csbin"),
+        None,
+    )?;
+
+    bhd_entry_add_from_file(
+        bhd_directory,
+        None,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
+            .with_instance(6)
+            .with_sub_program(1),
+        firmware_blob_directory_name.join("Appb_2D_Ddr4_Lrdimm_Imem.csbin"),
+        None,
+    )?;
+    bhd_entry_add_from_file(
+        bhd_directory,
+        None,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
+            .with_instance(6)
+            .with_sub_program(1),
+        firmware_blob_directory_name.join("Appb_2D_Ddr4_Lrdimm_Dmem.csbin"),
+        None,
+    )?;
+    Ok(())
+}
+
 fn main() -> std::io::Result<()> {
     let args: Vec<String> = env::args().collect();
     let filename = &args[1];
@@ -338,7 +481,6 @@ fn main() -> std::io::Result<()> {
         ProcessorGeneration::Rome => Path::new("amd-firmware").join("rome-ethx-100a").join("APCB_D4_DefaultRecovery.bin"),
     };
 
-
     bhd_entry_add_from_file_with_custom_size(
         &mut bhd_directory,
         None,
@@ -351,159 +493,8 @@ fn main() -> std::io::Result<()> {
         None,
     )
     .unwrap();
-    bhd_directory
-        .add_apob_entry(None, BhdDirectoryEntryType::Apob, 0x3000_0000)
-        .unwrap();
 
-    bhd_entry_add_from_file(
-        &mut bhd_directory,
-        Some(0xd00000.try_into().unwrap()), // TODO: Could also be None--works.
-        &BhdDirectoryEntryAttrs::new()
-            .with_type_(BhdDirectoryEntryType::Bios)
-            .with_reset_image(true)
-            .with_copy_image(true),
-        Path::new("nanobl-rs-0x7ffc_d000.bin").to_path_buf(),
-        Some(0x7ffc_d000),
-    )
-    .unwrap();
-
-    bhd_entry_add_from_file(
-        &mut bhd_directory,
-        None,
-        &BhdDirectoryEntryAttrs::new()
-            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
-            .with_instance(1)
-            .with_sub_program(1),
-        firmware_blob_directory_name.join("Appb_1D_Ddr4_Udimm_Imem.csbin"),
-        None,
-    )
-    .unwrap();
-    bhd_entry_add_from_file(
-        &mut bhd_directory,
-        None,
-        &BhdDirectoryEntryAttrs::new()
-            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
-            .with_instance(1)
-            .with_sub_program(1),
-        firmware_blob_directory_name.join("Appb_1D_Ddr4_Udimm_Dmem.csbin"),
-        None,
-    )
-    .unwrap();
-
-    bhd_entry_add_from_file(
-        &mut bhd_directory,
-        None,
-        &BhdDirectoryEntryAttrs::new()
-            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
-            .with_instance(2)
-            .with_sub_program(1),
-        firmware_blob_directory_name.join("Appb_1D_Ddr4_Rdimm_Imem.csbin"),
-        None,
-    )
-    .unwrap();
-    bhd_entry_add_from_file(
-        &mut bhd_directory,
-        None,
-        &BhdDirectoryEntryAttrs::new()
-            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
-            .with_instance(2)
-            .with_sub_program(1),
-        firmware_blob_directory_name.join("Appb_1D_Ddr4_Rdimm_Dmem.csbin"),
-        None,
-    )
-    .unwrap();
-
-    bhd_entry_add_from_file(
-        &mut bhd_directory,
-        None,
-        &BhdDirectoryEntryAttrs::new()
-            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
-            .with_instance(3)
-            .with_sub_program(1),
-        firmware_blob_directory_name.join("Appb_1D_Ddr4_Lrdimm_Imem.csbin"),
-        None,
-    )
-    .unwrap();
-    bhd_entry_add_from_file(
-        &mut bhd_directory,
-        None,
-        &BhdDirectoryEntryAttrs::new()
-            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
-            .with_instance(3)
-            .with_sub_program(1),
-        firmware_blob_directory_name.join("Appb_1D_Ddr4_Lrdimm_Dmem.csbin"),
-        None,
-    )
-    .unwrap();
-
-    bhd_entry_add_from_file(
-        &mut bhd_directory,
-        None,
-        &BhdDirectoryEntryAttrs::new()
-            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
-            .with_instance(4)
-            .with_sub_program(1),
-        firmware_blob_directory_name.join("Appb_2D_Ddr4_Udimm_Imem.csbin"),
-        None,
-    )
-    .unwrap();
-    bhd_entry_add_from_file(
-        &mut bhd_directory,
-        None,
-        &BhdDirectoryEntryAttrs::new()
-            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
-            .with_instance(4)
-            .with_sub_program(1),
-        firmware_blob_directory_name.join("Appb_2D_Ddr4_Udimm_Dmem.csbin"),
-        None,
-    )
-    .unwrap();
-
-    bhd_entry_add_from_file(
-        &mut bhd_directory,
-        None,
-        &BhdDirectoryEntryAttrs::new()
-            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
-            .with_instance(5)
-            .with_sub_program(1),
-        firmware_blob_directory_name.join("Appb_2D_Ddr4_Rdimm_Imem.csbin"),
-        None,
-    )
-    .unwrap();
-    bhd_entry_add_from_file(
-        &mut bhd_directory,
-        None,
-        &BhdDirectoryEntryAttrs::new()
-            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
-            .with_instance(5)
-            .with_sub_program(1),
-        firmware_blob_directory_name.join("Appb_2D_Ddr4_Rdimm_Dmem.csbin"),
-        None,
-    )
-    .unwrap();
-
-    bhd_entry_add_from_file(
-        &mut bhd_directory,
-        None,
-        &BhdDirectoryEntryAttrs::new()
-            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
-            .with_instance(6)
-            .with_sub_program(1),
-        firmware_blob_directory_name.join("Appb_2D_Ddr4_Lrdimm_Imem.csbin"),
-        None,
-    )
-    .unwrap();
-    bhd_entry_add_from_file(
-        &mut bhd_directory,
-        None,
-        &BhdDirectoryEntryAttrs::new()
-            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
-            .with_instance(6)
-            .with_sub_program(1),
-        firmware_blob_directory_name.join("Appb_2D_Ddr4_Lrdimm_Dmem.csbin"),
-        None,
-    )
-    .unwrap();
+    bhd_directory_add_default_entries(&mut bhd_directory, &firmware_blob_directory_name).unwrap();
 
     if host_processor_generation == ProcessorGeneration::Milan {
         bhd_entry_add_from_file(
