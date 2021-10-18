@@ -167,6 +167,97 @@ fn bhd_entry_add_from_file(
     bhd_entry_add_from_file_with_custom_size(directory, payload_position, attrs, size, &source_filename, ram_destination_address)
 }
 
+fn psp_directory_add_default_entries(psp_directory: &mut PspDirectory<FlashImage, ERASABLE_BLOCK_SIZE>, firmware_blob_directory_name: &PathBuf) -> amd_efs::Result<()> {
+    psp_entry_add_from_file(
+        psp_directory,
+        None,
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AmdPublicKey),
+        firmware_blob_directory_name.join("AmdPubKey.tkn"),
+    )?;
+    psp_entry_add_from_file(
+        psp_directory,
+        None,
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspBootloader),
+        firmware_blob_directory_name.join("PspBootLoader.sbin"),
+    )?;
+    psp_entry_add_from_file(
+        psp_directory,
+        None,
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspRecoveryBootloader),
+        firmware_blob_directory_name.join("PspRecoveryBootLoader.sbin"),
+    )?;
+    psp_entry_add_from_file(
+        psp_directory,
+        None,
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SmuOffChipFirmware8),
+        firmware_blob_directory_name.join("SmuFirmware.csbin"),
+    )?;
+
+    psp_entry_add_from_file(
+        psp_directory,
+        None,
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AblPublicKey),
+        firmware_blob_directory_name.join("AblPubKey.bin"), // that was weird: "PspABLFw_gn.stkn",
+    )?;
+
+    psp_directory.add_value_entry(
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspSoftFuseChain),
+        PspSoftFuseChain::new().with_secure_debug_unlock(true).into(),
+    )?;
+
+    psp_entry_add_from_file(
+        psp_directory,
+        None,
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SmuOffChipFirmware12),
+        firmware_blob_directory_name.join("SmuFirmware2.csbin"),
+    )?;
+    psp_entry_add_from_file(
+        psp_directory,
+        None,
+        &PspDirectoryEntryAttrs::new()
+            .with_type_(PspDirectoryEntryType::PspEarlySecureUnlockDebugImage),
+        firmware_blob_directory_name.join("SecureDebugUnlock.sbin"),
+    )?;
+    psp_entry_add_from_file(
+        psp_directory,
+        None,
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::WrappedIkek),
+        firmware_blob_directory_name.join("PspIkek.bin"),
+    )?;
+    psp_entry_add_from_file(
+        psp_directory,
+        None,
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspTokenUnlockData),
+        firmware_blob_directory_name.join("SecureEmptyToken.bin"),
+    )?;
+    psp_entry_add_from_file(
+        psp_directory,
+        None,
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SecurityPolicyBinary),
+        firmware_blob_directory_name.join("RsmuSecPolicy.sbin"),
+    )?;
+    psp_entry_add_from_file(
+        psp_directory,
+        None,
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::Mp5Firmware),
+        firmware_blob_directory_name.join("Mp5.csbin"),
+    )?;
+    psp_entry_add_from_file(
+        psp_directory,
+        None,
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::Abl0),
+        firmware_blob_directory_name.join("AgesaBootloader_U_prod.csbin"),
+    )?;
+    // TODO: SEV... but we don't use that.
+    psp_entry_add_from_file(
+        psp_directory,
+        None,
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::DxioPhySramFirmware),
+        firmware_blob_directory_name.join("PhyFw.sbin"),
+    )?;
+    Ok(())
+}
+
 fn main() -> std::io::Result<()> {
     let args: Vec<String> = env::args().collect();
     let filename = &args[1];
@@ -201,108 +292,7 @@ fn main() -> std::io::Result<()> {
         }
     };
     let mut psp_directory = efs.create_psp_directory(AlignedLocation::try_from(0x12_0000).unwrap(), AlignedLocation::try_from(0x24_0000).unwrap()).unwrap();
-    psp_entry_add_from_file(
-        &mut psp_directory,
-        None,
-        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AmdPublicKey),
-        firmware_blob_directory_name.join("AmdPubKey.tkn"),
-    )
-    .unwrap();
-    psp_entry_add_from_file(
-        &mut psp_directory,
-        None,
-        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspBootloader),
-        firmware_blob_directory_name.join("PspBootLoader.sbin"),
-    )
-    .unwrap();
-    psp_entry_add_from_file(
-        &mut psp_directory,
-        None,
-        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspRecoveryBootloader),
-        firmware_blob_directory_name.join("PspRecoveryBootLoader.sbin"),
-    )
-    .unwrap();
-    psp_entry_add_from_file(
-        &mut psp_directory,
-        None,
-        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SmuOffChipFirmware8),
-        firmware_blob_directory_name.join("SmuFirmware.csbin"),
-    )
-    .unwrap();
-
-    psp_entry_add_from_file(
-        &mut psp_directory,
-        None,
-        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AblPublicKey),
-        firmware_blob_directory_name.join("AblPubKey.bin"), // that was weird: "PspABLFw_gn.stkn",
-    )
-    .unwrap();
-
-    psp_directory.add_value_entry(
-        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspSoftFuseChain),
-        PspSoftFuseChain::new().with_secure_debug_unlock(true).into(),
-    )
-    .unwrap();
-
-    psp_entry_add_from_file(
-        &mut psp_directory,
-        None,
-        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SmuOffChipFirmware12),
-        firmware_blob_directory_name.join("SmuFirmware2.csbin"),
-    )
-    .unwrap();
-    psp_entry_add_from_file(
-        &mut psp_directory,
-        None,
-        &PspDirectoryEntryAttrs::new()
-            .with_type_(PspDirectoryEntryType::PspEarlySecureUnlockDebugImage),
-        firmware_blob_directory_name.join("SecureDebugUnlock.sbin"),
-    )
-    .unwrap();
-    psp_entry_add_from_file(
-        &mut psp_directory,
-        None,
-        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::WrappedIkek),
-        firmware_blob_directory_name.join("PspIkek.bin"),
-    )
-    .unwrap();
-    psp_entry_add_from_file(
-        &mut psp_directory,
-        None,
-        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspTokenUnlockData),
-        firmware_blob_directory_name.join("SecureEmptyToken.bin"),
-    )
-    .unwrap();
-    psp_entry_add_from_file(
-        &mut psp_directory,
-        None,
-        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SecurityPolicyBinary),
-        firmware_blob_directory_name.join("RsmuSecPolicy.sbin"),
-    )
-    .unwrap();
-    psp_entry_add_from_file(
-        &mut psp_directory,
-        None,
-        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::Mp5Firmware),
-        firmware_blob_directory_name.join("Mp5.csbin"),
-    )
-    .unwrap();
-    psp_entry_add_from_file(
-        &mut psp_directory,
-        None,
-        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::Abl0),
-        firmware_blob_directory_name.join("AgesaBootloader_U_prod.csbin"),
-    )
-    .unwrap();
-    // TODO: SEV... but we don't use that.
-    psp_entry_add_from_file(
-        &mut psp_directory,
-        None,
-        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::DxioPhySramFirmware),
-        firmware_blob_directory_name.join("PhyFw.sbin"),
-    )
-    .unwrap();
-
+    psp_directory_add_default_entries(&mut psp_directory, &firmware_blob_directory_name).unwrap();
     if host_processor_generation == ProcessorGeneration::Rome {
         psp_entry_add_from_file(
             &mut psp_directory,
