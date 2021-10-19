@@ -482,10 +482,6 @@ fn main() -> std::io::Result<()> {
         .unwrap();
     }
 
-    /* does not work; let firmware_blob_directory_name = match host_processor_generation {
-        ProcessorGeneration::Milan => Path::new("amd-firmware").join("milan"),
-        ProcessorGeneration::Rome => Path::new("amd-firmware").join("rome"),
-    };*/
     let mut second_level_psp_directory = efs.create_second_level_psp_directory(AlignedLocation::try_from(0x2c_0000).unwrap(), AlignedLocation::try_from(0x2c_0000 + 0x12_0000).unwrap()).unwrap();
 
     psp_entry_add_from_file(
