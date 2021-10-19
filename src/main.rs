@@ -646,122 +646,110 @@ fn main() -> std::io::Result<()> {
         .unwrap();
     }
 
-/*
-    bhd_entry_add_from_file(
-        &mut bhd_directory,
-        &BhdDirectoryEntryAttrs::new()
-            .with_type_(BhdDirectoryEntryType::MicrocodePatch)
-            .with_instance(1),
-        firmware_blob_directory_name.join("UcodePatch_A0.bin"),
-        None,
-    )
-    .unwrap();
-*/
-
-    let firmware_blob_directory_name = Path::new("amd-firmware/MILAN-b").join("second-bhd");
-    let mut secondary_bhd_directory = bhd_directory.create_subdirectory(AlignedLocation::try_from(0x3e_0000).unwrap(), AlignedLocation::try_from(0x3e_0000 + 0x8_0000).unwrap()).unwrap();
-
-    // FIXME: if Milan
-
-    bhd_entry_add_from_file_with_custom_size(
-        &mut secondary_bhd_directory,
-        None,
-        &match host_processor_generation {
-            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup).with_sub_program(1),
-            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup),
-        },
-        Apcb::MAX_SIZE,
-        apcb_source_file_name.as_path(),
-        None,
-    )
-    .unwrap();
-
-    bhd_entry_add_from_file_with_custom_size(
-        &mut secondary_bhd_directory,
-        None,
-        &match host_processor_generation {
-            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup).with_instance(8).with_sub_program(1),
-            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup),
-        },
-        544,
-        Path::new("amd-firmware/MILAN-b/second-bhd/ApcbBackup_8.unsorted"),
-        None,
-    )
-    .unwrap();
-
-    bhd_entry_add_from_file_with_custom_size(
-        &mut secondary_bhd_directory,
-        None,
-        &match host_processor_generation {
-            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup).with_instance(9).with_sub_program(1),
-            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup),
-        },
-        672,
-        Path::new("amd-firmware/MILAN-b/second-bhd/ApcbBackup_9.unsorted"),
-        None,
-    )
-    .unwrap();
-
-    bhd_entry_add_from_file_with_custom_size(
-        &mut secondary_bhd_directory,
-        None,
-        &match host_processor_generation {
-            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::Apcb).with_instance(0).with_sub_program(1),
-            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::Apcb),
-        },
-        4096,
-        Path::new("amd-firmware/MILAN-b/second-bhd/Apcb.unsorted"),
-        None,
-    )
-    .unwrap();
-
-    bhd_entry_add_from_file_with_custom_size(
-        &mut secondary_bhd_directory,
-        None,
-        &match host_processor_generation {
-            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::Apcb).with_instance(1).with_sub_program(1),
-            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::Apcb),
-        },
-        4096,
-        Path::new("amd-firmware/MILAN-b/second-bhd/Apcb_1.unsorted"),
-        None,
-    )
-    .unwrap();
-
-    bhd_directory_add_default_entries(&mut secondary_bhd_directory, &firmware_blob_directory_name).unwrap();
-
-    bhd_entry_add_from_file(
-        &mut secondary_bhd_directory,
-        None,
-        &BhdDirectoryEntryAttrs::new()
-            .with_type_(BhdDirectoryEntryType::MicrocodePatch)
-            .with_instance(0),
-        Path::new("amd-firmware/MILAN-b/second-bhd/MicrocodePatch.unsorted").to_path_buf(),
-        None,
-    )
-    .unwrap();
-
-    bhd_entry_add_from_file(
-        &mut secondary_bhd_directory,
-        None,
-        &BhdDirectoryEntryAttrs::new()
-            .with_type_(BhdDirectoryEntryType::MicrocodePatch)
-            .with_instance(1),
-        Path::new("amd-firmware/MILAN-b/second-bhd/MicrocodePatch_1.unsorted").to_path_buf(),
-        None,
-    )
-    .unwrap();
-
-    bhd_entry_add_from_file(
-        &mut secondary_bhd_directory,
-        None,
-        &BhdDirectoryEntryAttrs::new()
-            .with_type_(BhdDirectoryEntryType::MicrocodePatch)
-            .with_instance(2),
-        Path::new("amd-firmware/MILAN-b/second-bhd/MicrocodePatch_2.unsorted").to_path_buf(),
-        None,
-    )
-    .unwrap();
+//    let firmware_blob_directory_name = Path::new("amd-firmware/MILAN-b").join("second-bhd");
+//    let mut secondary_bhd_directory = bhd_directory.create_subdirectory(AlignedLocation::try_from(0x3e_0000).unwrap(), AlignedLocation::try_from(0x3e_0000 + 0x8_0000).unwrap()).unwrap();
+//
+//    // FIXME: if Milan
+//
+//    bhd_entry_add_from_file_with_custom_size(
+//        &mut secondary_bhd_directory,
+//        None,
+//        &match host_processor_generation {
+//            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup).with_sub_program(1),
+//            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup),
+//        },
+//        Apcb::MAX_SIZE,
+//        apcb_source_file_name.as_path(),
+//        None,
+//    )
+//    .unwrap();
+//
+//    bhd_entry_add_from_file_with_custom_size(
+//        &mut secondary_bhd_directory,
+//        None,
+//        &match host_processor_generation {
+//            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup).with_instance(8).with_sub_program(1),
+//            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup),
+//        },
+//        544,
+//        Path::new("amd-firmware/MILAN-b/second-bhd/ApcbBackup_8.unsorted"),
+//        None,
+//    )
+//    .unwrap();
+//
+//    bhd_entry_add_from_file_with_custom_size(
+//        &mut secondary_bhd_directory,
+//        None,
+//        &match host_processor_generation {
+//            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup).with_instance(9).with_sub_program(1),
+//            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup),
+//        },
+//        672,
+//        Path::new("amd-firmware/MILAN-b/second-bhd/ApcbBackup_9.unsorted"),
+//        None,
+//    )
+//    .unwrap();
+//
+//    bhd_entry_add_from_file_with_custom_size(
+//        &mut secondary_bhd_directory,
+//        None,
+//        &match host_processor_generation {
+//            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::Apcb).with_instance(0).with_sub_program(1),
+//            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::Apcb),
+//        },
+//        4096,
+//        Path::new("amd-firmware/MILAN-b/second-bhd/Apcb.unsorted"),
+//        None,
+//    )
+//    .unwrap();
+//
+//    bhd_entry_add_from_file_with_custom_size(
+//        &mut secondary_bhd_directory,
+//        None,
+//        &match host_processor_generation {
+//            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::Apcb).with_instance(1).with_sub_program(1),
+//            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::Apcb),
+//        },
+//        4096,
+//        Path::new("amd-firmware/MILAN-b/second-bhd/Apcb_1.unsorted"),
+//        None,
+//    )
+//    .unwrap();
+//
+//    bhd_directory_add_default_entries(&mut secondary_bhd_directory, &firmware_blob_directory_name).unwrap();
+//
+//    bhd_entry_add_from_file(
+//        &mut secondary_bhd_directory,
+//        None,
+//        &BhdDirectoryEntryAttrs::new()
+//            .with_type_(BhdDirectoryEntryType::MicrocodePatch)
+//            .with_instance(0),
+//        Path::new("amd-firmware/MILAN-b/second-bhd/MicrocodePatch.unsorted").to_path_buf(),
+//        None,
+//    )
+//    .unwrap();
+//
+//    bhd_entry_add_from_file(
+//        &mut secondary_bhd_directory,
+//        None,
+//        &BhdDirectoryEntryAttrs::new()
+//            .with_type_(BhdDirectoryEntryType::MicrocodePatch)
+//            .with_instance(1),
+//        Path::new("amd-firmware/MILAN-b/second-bhd/MicrocodePatch_1.unsorted").to_path_buf(),
+//        None,
+//    )
+//    .unwrap();
+//
+//    bhd_entry_add_from_file(
+//        &mut secondary_bhd_directory,
+//        None,
+//        &BhdDirectoryEntryAttrs::new()
+//            .with_type_(BhdDirectoryEntryType::MicrocodePatch)
+//            .with_instance(2),
+//        Path::new("amd-firmware/MILAN-b/second-bhd/MicrocodePatch_2.unsorted").to_path_buf(),
+//        None,
+//    )
+//    .unwrap();
 
     //            println!("{:?}", efh);
     let psp_directory = match efs.psp_directory() {
