@@ -494,7 +494,7 @@ fn main() -> std::io::Result<()> {
         &mut second_level_psp_directory,
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AmdSecureDebugKey),
-        Path::new("amd-firmware/MILAN-b").join("second-psp").join("AmdSecureDebugKey.unsorted"),
+        firmware_blob_directory_name.join("SecureDebugToken.stkn"),
     ).unwrap(); // XXX cannot remove
     psp_directory_add_default_entries(&mut second_level_psp_directory, &firmware_blob_directory_name).unwrap();
 
