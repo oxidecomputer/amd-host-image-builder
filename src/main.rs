@@ -472,7 +472,6 @@ fn main() -> std::io::Result<()> {
         .unwrap();
     }
 
-    let firmware_blob_directory_name = Path::new("amd-firmware/MILAN-b").join("second-psp");
     /* does not work; let firmware_blob_directory_name = match host_processor_generation {
         ProcessorGeneration::Milan => Path::new("amd-firmware").join("milan"),
         ProcessorGeneration::Rome => Path::new("amd-firmware").join("rome"),
@@ -495,7 +494,7 @@ fn main() -> std::io::Result<()> {
         &mut second_level_psp_directory,
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AmdSecureDebugKey),
-        firmware_blob_directory_name.join("AmdSecureDebugKey.unsorted"),
+        Path::new("amd-firmware/MILAN-b").join("second-psp").join("AmdSecureDebugKey.unsorted"),
     ).unwrap(); // XXX cannot remove
     psp_directory_add_default_entries(&mut second_level_psp_directory, &firmware_blob_directory_name).unwrap();
 
