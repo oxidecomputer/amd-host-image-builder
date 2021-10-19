@@ -527,7 +527,11 @@ fn main() -> std::io::Result<()> {
         .unwrap();
     }
 
-    let firmware_blob_directory_name = Path::new("amd-firmware/MILAN-b").join("first-bhd");
+    //let firmware_blob_directory_name = Path::new("amd-firmware/MILAN-b").join("first-bhd");
+    let firmware_blob_directory_name = match host_processor_generation {
+        ProcessorGeneration::Milan => Path::new("amd-firmware").join("milan"),
+        ProcessorGeneration::Rome => Path::new("amd-firmware").join("rome"),
+    };
     let mut bhd_directory = efs
         .create_bhd_directory(AlignedLocation::try_from(0x24_0000).unwrap(), AlignedLocation::try_from(0x24_0000 + 0x8_0000).unwrap())
         .unwrap();
