@@ -473,6 +473,10 @@ fn main() -> std::io::Result<()> {
     }
 
     let firmware_blob_directory_name = Path::new("amd-firmware/MILAN-b").join("second-psp");
+    /* does not work; let firmware_blob_directory_name = match host_processor_generation {
+        ProcessorGeneration::Milan => Path::new("amd-firmware").join("milan"),
+        ProcessorGeneration::Rome => Path::new("amd-firmware").join("rome"),
+    };*/
     let mut second_level_psp_directory = efs.create_second_level_psp_directory(AlignedLocation::try_from(0x2c_0000).unwrap(), AlignedLocation::try_from(0x2c_0000 + 0x12_0000).unwrap()).unwrap();
 
     psp_entry_add_from_file(
@@ -492,10 +496,10 @@ fn main() -> std::io::Result<()> {
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AmdSecureDebugKey),
         firmware_blob_directory_name.join("AmdSecureDebugKey.unsorted"),
-    ).unwrap();
+    ).unwrap(); // XXX cannot remove
     psp_directory_add_default_entries(&mut second_level_psp_directory, &firmware_blob_directory_name).unwrap();
 
-    psp_entry_add_from_file(
+/* removed    psp_entry_add_from_file(
         &mut second_level_psp_directory,
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SevData),
@@ -507,7 +511,7 @@ fn main() -> std::io::Result<()> {
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SevCode),
         firmware_blob_directory_name.join("SevCode.unsorted"),
-    ).unwrap();
+    ).unwrap();*/
 
     psp_entry_add_from_file(
         &mut second_level_psp_directory,
