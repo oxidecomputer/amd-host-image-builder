@@ -226,6 +226,20 @@ fn psp_directory_add_default_entries(psp_directory: &mut PspDirectory<FlashImage
     Ok(())
 }
 
+fn bhd_entry_add_from_file_if_present(
+    directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
+    payload_position: Option<ErasableLocation<ERASABLE_BLOCK_SIZE>>,
+    attrs: &BhdDirectoryEntryAttrs,
+    source_filename: PathBuf,
+    ram_destination_address: Option<u64>,
+) -> amd_efs::Result<()> {
+    if source_filename.as_path().exists() {
+        bhd_entry_add_from_file(directory, payload_position, attrs, source_filename, ram_destination_address)
+    } else {
+        Ok(())
+    }
+}
+
 fn bhd_directory_add_default_entries(bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>, firmware_blob_directory_name: &PathBuf) -> amd_efs::Result<()> {
     bhd_directory
         .add_apob_entry(None, BhdDirectoryEntryType::Apob, 0x3000_0000)?;
