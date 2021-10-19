@@ -454,14 +454,14 @@ fn main() -> std::io::Result<()> {
         )
         .unwrap();
     } else {
-        psp_entry_add_from_file(
+        /* optional psp_entry_add_from_file(
             &mut psp_directory,
             None,
             &PspDirectoryEntryAttrs::new()
                 .with_type_(PspDirectoryEntryType::DrtmTa),
             firmware_blob_directory_name.join("PSP-DRTM.sbin"),
         )
-        .unwrap();
+        .unwrap(); */
         psp_entry_add_from_file(
             &mut psp_directory,
             None,
@@ -474,6 +474,17 @@ fn main() -> std::io::Result<()> {
 
     let mut second_level_psp_directory = efs.create_second_level_psp_directory(AlignedLocation::try_from(0x2c_0000).unwrap(), AlignedLocation::try_from(0x2c_0000 + 0x12_0000).unwrap()).unwrap();
     psp_directory_add_default_entries(&mut second_level_psp_directory, &firmware_blob_directory_name).unwrap();
+
+    if host_processor_generation == ProcessorGeneration::Milan {
+        psp_entry_add_from_file(
+            &mut second_level_psp_directory,
+            None,
+            &PspDirectoryEntryAttrs::new()
+                .with_type_(PspDirectoryEntryType::PspBootloaderPublicKeysTable),
+            firmware_blob_directory_name.join("PSP-Key-DB.sbin"),
+        )
+        .unwrap();
+    }
 
     let mut bhd_directory = efs
         .create_bhd_directory(AlignedLocation::try_from(0x24_0000).unwrap(), AlignedLocation::try_from(0x24_0000 + 0x8_0000).unwrap())
@@ -499,7 +510,7 @@ fn main() -> std::io::Result<()> {
 
     bhd_directory_add_default_entries(&mut bhd_directory, &firmware_blob_directory_name).unwrap();
 
-    if host_processor_generation == ProcessorGeneration::Milan {
+    if host_processor_generation == ProcessorGeneration::Milan && false {
         bhd_entry_add_from_file(
             &mut bhd_directory,
             None,
@@ -604,6 +615,77 @@ fn main() -> std::io::Result<()> {
     )
     .unwrap();
 */
+
+    let mut secondary_bhd_directory = bhd_directory.create_subdirectory(AlignedLocation::try_from(0x3e_0000).unwrap(), AlignedLocation::try_from(0x3e_0000 + 0x8_0000).unwrap()).unwrap();
+
+    // FIXME: if Milan
+
+    bhd_entry_add_from_file_with_custom_size(
+        &mut secondary_bhd_directory,
+        None,
+        &match host_processor_generation {
+            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup).with_sub_program(1),
+            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup),
+        },
+        Apcb::MAX_SIZE,
+        apcb_source_file_name.as_path(),
+        None,
+    )
+    .unwrap();
+
+    bhd_entry_add_from_file_with_custom_size(
+        &mut secondary_bhd_directory,
+        None,
+        &match host_processor_generation {
+            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup).with_instance(8).with_sub_program(1),
+            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup),
+        },
+        544,
+        Path::new("amd-firmware/MILAN-b/second-bhd/ApcbBackup_8.unsorted"),
+        None,
+    )
+    .unwrap();
+
+    bhd_entry_add_from_file_with_custom_size(
+        &mut secondary_bhd_directory,
+        None,
+        &match host_processor_generation {
+            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup).with_instance(9).with_sub_program(1),
+            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup),
+        },
+        672,
+        Path::new("amd-firmware/MILAN-b/second-bhd/ApcbBackup_9.unsorted"),
+        None,
+    )
+    .unwrap();
+
+    bhd_entry_add_from_file_with_custom_size(
+        &mut secondary_bhd_directory,
+        None,
+        &match host_processor_generation {
+            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::Apcb).with_instance(0).with_sub_program(1),
+            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::Apcb),
+        },
+        4096,
+        Path::new("amd-firmware/MILAN-b/second-bhd/Apcb.unsorted"),
+        None,
+    )
+    .unwrap();
+
+    bhd_entry_add_from_file_with_custom_size(
+        &mut secondary_bhd_directory,
+        None,
+        &match host_processor_generation {
+            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::Apcb).with_instance(1).with_sub_program(1),
+            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::Apcb),
+        },
+        4096,
+        Path::new("amd-firmware/MILAN-b/second-bhd/Apcb_1.unsorted"),
+        None,
+    )
+    .unwrap();
+
+    bhd_directory_add_default_entries(&mut secondary_bhd_directory, &firmware_blob_directory_name).unwrap();
 
     //            println!("{:?}", efh);
     let psp_directory = match efs.psp_directory() {
