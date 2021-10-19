@@ -402,10 +402,6 @@ fn main() -> std::io::Result<()> {
     }
     assert!(Location::from(position) == IMAGE_SIZE);
     let host_processor_generation = ProcessorGeneration::Milan;
-    let firmware_blob_directory_name = match host_processor_generation {
-        ProcessorGeneration::Milan => Path::new("amd-firmware").join("milan"),
-        ProcessorGeneration::Rome => Path::new("amd-firmware").join("rome"),
-    };
     let mut efs = match Efs::<_, ERASABLE_BLOCK_SIZE>::create(
         storage,
         host_processor_generation,
