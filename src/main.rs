@@ -572,99 +572,96 @@ fn main() -> std::io::Result<()> {
 
     bhd_directory_add_default_entries(&mut bhd_directory, &firmware_blob_directory_name).unwrap();
 
-    if host_processor_generation == ProcessorGeneration::Milan && false {
-        bhd_entry_add_from_file(
-            &mut bhd_directory,
-            None,
-            &BhdDirectoryEntryAttrs::new()
-                .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
-                .with_instance(8)
-                .with_sub_program(1),
-            firmware_blob_directory_name.join("Appb_BIST_Ddr4_Udimm_Imem.csbin"),
-            None,
-        )
-        .unwrap();
-        bhd_entry_add_from_file(
-            &mut bhd_directory,
-            None,
-            &BhdDirectoryEntryAttrs::new()
-                .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
-                .with_instance(8)
-                .with_sub_program(1),
-            firmware_blob_directory_name.join("Appb_BIST_Ddr4_Udimm_Dmem.csbin"),
-            None,
-        )
-        .unwrap();
+    bhd_entry_add_from_file_if_present(
+        &mut bhd_directory,
+        None,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
+            .with_instance(8)
+            .with_sub_program(1),
+        firmware_blob_directory_name.join("Appb_BIST_Ddr4_Udimm_Imem.csbin"),
+        None,
+    )
+    .unwrap();
+    bhd_entry_add_from_file_if_present(
+        &mut bhd_directory,
+        None,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
+            .with_instance(8)
+            .with_sub_program(1),
+        firmware_blob_directory_name.join("Appb_BIST_Ddr4_Udimm_Dmem.csbin"),
+        None,
+    )
+    .unwrap();
 
-        bhd_entry_add_from_file(
-            &mut bhd_directory,
-            None,
-            &BhdDirectoryEntryAttrs::new()
-                .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
-                .with_instance(9)
-                .with_sub_program(1),
-            firmware_blob_directory_name.join("Appb_BIST_Ddr4_Rdimm_Imem.csbin"),
-            None,
-        )
-        .unwrap();
-        bhd_entry_add_from_file(
-            &mut bhd_directory,
-            None,
-            &BhdDirectoryEntryAttrs::new()
-                .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
-                .with_instance(9)
-                .with_sub_program(1),
-            firmware_blob_directory_name.join("Appb_BIST_Ddr4_Rdimm_Dmem.csbin"),
-            None,
-        )
-        .unwrap();
+    bhd_entry_add_from_file_if_present(
+        &mut bhd_directory,
+        None,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
+            .with_instance(9)
+            .with_sub_program(1),
+        firmware_blob_directory_name.join("Appb_BIST_Ddr4_Rdimm_Imem.csbin"),
+        None,
+    )
+    .unwrap();
+    bhd_entry_add_from_file_if_present(
+        &mut bhd_directory,
+        None,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
+            .with_instance(9)
+            .with_sub_program(1),
+        firmware_blob_directory_name.join("Appb_BIST_Ddr4_Rdimm_Dmem.csbin"),
+        None,
+    )
+    .unwrap();
 
-        bhd_entry_add_from_file(
-            &mut bhd_directory,
-            None,
-            &BhdDirectoryEntryAttrs::new()
-                .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
-                .with_instance(10)
-                .with_sub_program(1),
-            firmware_blob_directory_name.join("Appb_BIST_Ddr4_Lrdimm_Imem.csbin"),
-            None,
-        )
-        .unwrap();
-        bhd_entry_add_from_file(
-            &mut bhd_directory,
-            None,
-            &BhdDirectoryEntryAttrs::new()
-                .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
-                .with_instance(10)
-                .with_sub_program(1),
-            firmware_blob_directory_name.join("Appb_BIST_Ddr4_Lrdimm_Dmem.csbin"),
-            None,
-        )
-        .unwrap();
-
-        bhd_entry_add_from_file(
-            &mut bhd_directory,
-            None,
-            &BhdDirectoryEntryAttrs::new()
-                .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
-                .with_instance(8)
-                .with_sub_program(1),
-            firmware_blob_directory_name.join("Appb_BIST_Ddr4_Udimm_Imem.csbin"),
-            None,
-        )
-        .unwrap();
-        bhd_entry_add_from_file(
-            &mut bhd_directory,
-            None,
-            &BhdDirectoryEntryAttrs::new()
-                .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
-                .with_instance(8)
-                .with_sub_program(1),
-            firmware_blob_directory_name.join("Appb_BIST_Ddr4_Udimm_Dmem.csbin"),
-            None,
-        )
-        .unwrap();
-    }
+    bhd_entry_add_from_file_if_present(
+        &mut bhd_directory,
+        None,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
+            .with_instance(10)
+            .with_sub_program(1),
+        firmware_blob_directory_name.join("Appb_BIST_Ddr4_Lrdimm_Imem.csbin"),
+        None,
+    )
+    .unwrap();
+    bhd_entry_add_from_file_if_present(
+        &mut bhd_directory,
+        None,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
+            .with_instance(10)
+            .with_sub_program(1),
+        firmware_blob_directory_name.join("Appb_BIST_Ddr4_Lrdimm_Dmem.csbin"),
+        None,
+    )
+    .unwrap();
+    bhd_entry_add_from_file_if_present(
+        &mut bhd_directory,
+        None,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareInstructions)
+            .with_instance(8)
+            .with_sub_program(1),
+        firmware_blob_directory_name.join("Appb_BIST_Ddr4_Udimm_Imem.csbin"),
+        None,
+    )
+    .unwrap();
+    bhd_entry_add_from_file_if_present(
+        &mut bhd_directory,
+        None,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::PmuFirmwareData)
+            .with_instance(8)
+            .with_sub_program(1),
+        firmware_blob_directory_name.join("Appb_BIST_Ddr4_Udimm_Dmem.csbin"),
+        None,
+    )
+    .unwrap();
 
 //    let firmware_blob_directory_name = Path::new("amd-firmware/MILAN-b").join("second-bhd");
 //    let mut secondary_bhd_directory = bhd_directory.create_subdirectory(AlignedLocation::try_from(0x3e_0000).unwrap(), AlignedLocation::try_from(0x3e_0000 + 0x8_0000).unwrap()).unwrap();
