@@ -172,7 +172,7 @@ fn psp_directory_add_default_entries(psp_directory: &mut PspDirectory<FlashImage
         psp_directory,
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AblPublicKey),
-        firmware_blob_directory_name.join("AblPubKey.bin"), // that was weird: "PspABLFw_gn.stkn",
+        firmware_blob_directory_name.join("AblPubKey.bin"), // that was weird: "PspABLFw_gn.stkn", // imm
     )?;
 
     psp_directory.add_value_entry(
@@ -197,13 +197,13 @@ fn psp_directory_add_default_entries(psp_directory: &mut PspDirectory<FlashImage
         psp_directory,
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::WrappedIkek),
-        firmware_blob_directory_name.join("PspIkek.bin"),
+        firmware_blob_directory_name.join("PspIkek.bin"), // imm
     )?;
     psp_entry_add_from_file(
         psp_directory,
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspTokenUnlockData),
-        firmware_blob_directory_name.join("SecureEmptyToken.bin"),
+        firmware_blob_directory_name.join("SecureEmptyToken.bin"), // imm
     )?;
     psp_entry_add_from_file(
         psp_directory,
@@ -402,7 +402,7 @@ fn main() -> std::io::Result<()> {
             std::process::exit(1);
         }
     };
-    let firmware_blob_directory_name = Path::new("amd-firmware/MILAN-b").join("first-psp");
+    let firmware_blob_directory_name = Path::new("amd-firmware").join("milan-ethx-1001");
     let mut psp_directory = efs.create_psp_directory(AlignedLocation::try_from(0x12_0000).unwrap(), AlignedLocation::try_from(0x24_0000).unwrap()).unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
