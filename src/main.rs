@@ -530,7 +530,6 @@ fn main() -> std::io::Result<()> {
         .unwrap();
     }
 
-    //let firmware_blob_directory_name = Path::new("amd-firmware/MILAN-b").join("first-bhd");
     let firmware_blob_directory_name = match host_processor_generation {
         ProcessorGeneration::Milan => Path::new("amd-firmware").join("milan"),
         ProcessorGeneration::Rome => Path::new("amd-firmware").join("rome"),
