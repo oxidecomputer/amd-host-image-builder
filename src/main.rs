@@ -171,31 +171,6 @@ fn psp_directory_add_default_entries(psp_directory: &mut PspDirectory<FlashImage
     psp_entry_add_from_file(
         psp_directory,
         None,
-        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AmdPublicKey),
-        firmware_blob_directory_name.join("AmdPubKey.tkn"),
-    )?;
-    psp_entry_add_from_file(
-        psp_directory,
-        None,
-        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspBootloader),
-        firmware_blob_directory_name.join("PspBootLoader.sbin"),
-    )?;
-    psp_entry_add_from_file(
-        psp_directory,
-        None,
-        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspRecoveryBootloader),
-        firmware_blob_directory_name.join("PspRecoveryBootLoader.sbin"),
-    )?;
-    psp_entry_add_from_file(
-        psp_directory,
-        None,
-        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SmuOffChipFirmware8),
-        firmware_blob_directory_name.join("SmuFirmware.csbin"),
-    )?;
-
-    psp_entry_add_from_file(
-        psp_directory,
-        None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AblPublicKey),
         firmware_blob_directory_name.join("AblPubKey.bin"), // that was weird: "PspABLFw_gn.stkn",
     )?;
@@ -247,13 +222,6 @@ fn psp_directory_add_default_entries(psp_directory: &mut PspDirectory<FlashImage
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::Abl0),
         firmware_blob_directory_name.join("AgesaBootloader_U_prod.csbin"),
-    )?;
-    // TODO: SEV... but we don't use that.
-    psp_entry_add_from_file(
-        psp_directory,
-        None,
-        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::DxioPhySramFirmware),
-        firmware_blob_directory_name.join("PhyFw.sbin"),
     )?;
     Ok(())
 }
@@ -434,8 +402,40 @@ fn main() -> std::io::Result<()> {
             std::process::exit(1);
         }
     };
+    let firmware_blob_directory_name = Path::new("amd-firmware/MILAN-b").join("first-psp");
     let mut psp_directory = efs.create_psp_directory(AlignedLocation::try_from(0x12_0000).unwrap(), AlignedLocation::try_from(0x24_0000).unwrap()).unwrap();
+    psp_entry_add_from_file(
+        &mut psp_directory,
+        None,
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AmdPublicKey),
+        firmware_blob_directory_name.join("AmdPubKey.tkn"),
+    ).unwrap();
+    psp_entry_add_from_file(
+        &mut psp_directory,
+        None,
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspBootloader),
+        firmware_blob_directory_name.join("PspBootLoader.sbin"),
+    ).unwrap();
+    psp_entry_add_from_file(
+        &mut psp_directory,
+        None,
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspRecoveryBootloader),
+        firmware_blob_directory_name.join("PspRecoveryBootLoader.sbin"),
+    ).unwrap();
+    psp_entry_add_from_file(
+        &mut psp_directory,
+        None,
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SmuOffChipFirmware8),
+        firmware_blob_directory_name.join("SmuFirmware.csbin"),
+    ).unwrap();
     psp_directory_add_default_entries(&mut psp_directory, &firmware_blob_directory_name).unwrap();
+    psp_entry_add_from_file(
+        &mut psp_directory,
+        None,
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::DxioPhySramFirmware),
+        firmware_blob_directory_name.join("PhyFw.sbin"),
+    ).unwrap();
+
     if host_processor_generation == ProcessorGeneration::Rome {
         psp_entry_add_from_file(
             &mut psp_directory,
@@ -472,8 +472,49 @@ fn main() -> std::io::Result<()> {
         .unwrap();
     }
 
+    let firmware_blob_directory_name = Path::new("amd-firmware/MILAN-b").join("second-psp");
     let mut second_level_psp_directory = efs.create_second_level_psp_directory(AlignedLocation::try_from(0x2c_0000).unwrap(), AlignedLocation::try_from(0x2c_0000 + 0x12_0000).unwrap()).unwrap();
+
+    psp_entry_add_from_file(
+        &mut second_level_psp_directory,
+        None,
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspBootloader),
+        firmware_blob_directory_name.join("PspBootLoader.sbin"),
+    ).unwrap();
+    psp_entry_add_from_file(
+        &mut second_level_psp_directory,
+        None,
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SmuOffChipFirmware8),
+        firmware_blob_directory_name.join("SmuFirmware.csbin"),
+    ).unwrap();
+    psp_entry_add_from_file(
+        &mut second_level_psp_directory,
+        None,
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AmdSecureDebugKey),
+        firmware_blob_directory_name.join("AmdSecureDebugKey.unsorted"),
+    ).unwrap();
     psp_directory_add_default_entries(&mut second_level_psp_directory, &firmware_blob_directory_name).unwrap();
+
+    psp_entry_add_from_file(
+        &mut second_level_psp_directory,
+        None,
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SevData),
+        firmware_blob_directory_name.join("SevData.unsorted"),
+    ).unwrap();
+
+    psp_entry_add_from_file(
+        &mut second_level_psp_directory,
+        None,
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SevCode),
+        firmware_blob_directory_name.join("SevCode.unsorted"),
+    ).unwrap();
+
+    psp_entry_add_from_file(
+        &mut second_level_psp_directory,
+        None,
+        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::DxioPhySramFirmware),
+        firmware_blob_directory_name.join("PhyFw.sbin"),
+    ).unwrap();
 
     if host_processor_generation == ProcessorGeneration::Milan {
         psp_entry_add_from_file(
@@ -486,6 +527,7 @@ fn main() -> std::io::Result<()> {
         .unwrap();
     }
 
+    let firmware_blob_directory_name = Path::new("amd-firmware/MILAN-b").join("first-bhd");
     let mut bhd_directory = efs
         .create_bhd_directory(AlignedLocation::try_from(0x24_0000).unwrap(), AlignedLocation::try_from(0x24_0000 + 0x8_0000).unwrap())
         .unwrap();
@@ -616,6 +658,7 @@ fn main() -> std::io::Result<()> {
     .unwrap();
 */
 
+    let firmware_blob_directory_name = Path::new("amd-firmware/MILAN-b").join("second-bhd");
     let mut secondary_bhd_directory = bhd_directory.create_subdirectory(AlignedLocation::try_from(0x3e_0000).unwrap(), AlignedLocation::try_from(0x3e_0000 + 0x8_0000).unwrap()).unwrap();
 
     // FIXME: if Milan
@@ -686,6 +729,39 @@ fn main() -> std::io::Result<()> {
     .unwrap();
 
     bhd_directory_add_default_entries(&mut secondary_bhd_directory, &firmware_blob_directory_name).unwrap();
+
+    bhd_entry_add_from_file(
+        &mut secondary_bhd_directory,
+        None,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::MicrocodePatch)
+            .with_instance(0),
+        Path::new("amd-firmware/MILAN-b/second-bhd/MicrocodePatch.unsorted").to_path_buf(),
+        None,
+    )
+    .unwrap();
+
+    bhd_entry_add_from_file(
+        &mut secondary_bhd_directory,
+        None,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::MicrocodePatch)
+            .with_instance(1),
+        Path::new("amd-firmware/MILAN-b/second-bhd/MicrocodePatch_1.unsorted").to_path_buf(),
+        None,
+    )
+    .unwrap();
+
+    bhd_entry_add_from_file(
+        &mut secondary_bhd_directory,
+        None,
+        &BhdDirectoryEntryAttrs::new()
+            .with_type_(BhdDirectoryEntryType::MicrocodePatch)
+            .with_instance(2),
+        Path::new("amd-firmware/MILAN-b/second-bhd/MicrocodePatch_2.unsorted").to_path_buf(),
+        None,
+    )
+    .unwrap();
 
     //            println!("{:?}", efh);
     let psp_directory = match efs.psp_directory() {
