@@ -412,7 +412,10 @@ fn main() -> std::io::Result<()> {
             std::process::exit(1);
         }
     };
-    let firmware_blob_directory_name = Path::new("amd-firmware").join("milan-ethx-1001");
+    let firmware_blob_directory_name = match host_processor_generation {
+        ProcessorGeneration::Milan => Path::new("amd-firmware").join("milan"),
+        ProcessorGeneration::Rome => Path::new("amd-firmware").join("rome"),
+    };
     let mut psp_directory = efs.create_psp_directory(AlignedLocation::try_from(0x12_0000).unwrap(), AlignedLocation::try_from(0x24_0000).unwrap()).unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
