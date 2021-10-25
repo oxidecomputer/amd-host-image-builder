@@ -391,8 +391,8 @@ struct Opts {
     #[structopt(short = "g", long = "generation")]
     host_processor_generation: ProcessorGeneration,
 
-    #[structopt(short = "o", long = "output-file")]
-    output_filename: String,
+    #[structopt(short = "o", long = "output-file", parse(from_os_str))]
+    output_filename: PathBuf,
 
     #[structopt(short = "r", long = "reset-image", parse(from_os_str))]
     reset_image_filename: PathBuf,
