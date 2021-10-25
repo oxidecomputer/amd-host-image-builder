@@ -242,7 +242,7 @@ fn bhd_entry_add_from_file_if_present(
     }
 }
 
-fn bhd_directory_add_default_entries(bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>, firmware_blob_directory_name: &PathBuf) -> amd_efs::Result<()> {
+fn bhd_directory_add_default_entries(bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>, firmware_blob_directory_name: &PathBuf, reset_image_filename: &str) -> amd_efs::Result<()> {
     bhd_directory
         .add_apob_entry(None, BhdDirectoryEntryType::Apob, 0x3000_0000)?;
 
@@ -253,7 +253,7 @@ fn bhd_directory_add_default_entries(bhd_directory: &mut BhdDirectory<FlashImage
             .with_type_(BhdDirectoryEntryType::Bios)
             .with_reset_image(true)
             .with_copy_image(true),
-        Path::new("nanobl-rs-0x7ffc_d000.bin").to_path_buf(),
+        Path::new(reset_image_filename).to_path_buf(),
         Some(0x7ffc_d000),
     )?;
 
@@ -393,6 +393,9 @@ struct Opts {
 
     #[structopt(short = "o", long = "output-file")]
     output_filename: String,
+
+    #[structopt(short = "r", long = "reset-image")]
+    reset_image_filename: String,
 }
 
 fn main() -> std::io::Result<()> {
@@ -588,7 +591,7 @@ fn main() -> std::io::Result<()> {
     )
     .unwrap();
 
-    bhd_directory_add_default_entries(&mut bhd_directory, &firmware_blob_directory_name).unwrap();
+    bhd_directory_add_default_entries(&mut bhd_directory, &firmware_blob_directory_name, &opts.reset_image_filename).unwrap();
 
     bhd_entry_add_from_file_if_present(
         &mut bhd_directory,
@@ -751,7 +754,7 @@ fn main() -> std::io::Result<()> {
 //    )
 //    .unwrap();
 //
-//    bhd_directory_add_default_entries(&mut secondary_bhd_directory, &firmware_blob_directory_name).unwrap();
+//    bhd_directory_add_default_entries(&mut secondary_bhd_directory, &firmware_blob_directory_name, &opts.reset_image_filename).unwrap();
 //
 //    bhd_entry_add_from_file(
 //        &mut secondary_bhd_directory,
