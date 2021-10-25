@@ -9,3 +9,4 @@ edition = "2018"
 amd-apcb = { path = "../amd-apcb", features = ["std"] }
 amd-efs = { path = "../amd-efs", features = ["std"] }
 amd-flash = { path = "../amd-flash" }
+structopt = "0.3"

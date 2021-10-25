@@ -1,4 +1,4 @@
 
 .PHONY: all
 all:
-	cargo run foo
+	cargo run -- -g Milan -o foo

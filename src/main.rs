@@ -16,6 +16,8 @@ use std::io::SeekFrom;
 use std::io::Write;
 use std::path::Path;
 use std::path::PathBuf;
+use structopt::StructOpt;
+
 use amd_apcb::Apcb;
 //use amd_efs::ProcessorGeneration;
 use amd_flash::{Error, FlashRead, FlashWrite, Location, ErasableLocation, Result};
@@ -383,9 +385,21 @@ fn bhd_directory_add_default_entries(bhd_directory: &mut BhdDirectory<FlashImage
     Ok(())
 }
 
+#[derive(Debug, StructOpt)]
+#[structopt(name = "amd-host-image-builder", about = "Build host flash image for AMD Zen CPUs.")]
+struct Opts {
+    #[structopt(short = "g", long = "generation")]
+    host_processor_generation: ProcessorGeneration,
+
+    #[structopt(short = "o", long = "output-file")]
+    output_filename: String,
+}
+
 fn main() -> std::io::Result<()> {
-    let args: Vec<String> = env::args().collect();
-    let filename = &args[1];
+    //let args: Vec<String> = env::args().collect();
+    let opts = Opts::from_args();
+
+    let filename = opts.output_filename;
     let file = OpenOptions::new()
         .read(true)
         .write(true)
@@ -401,7 +415,7 @@ fn main() -> std::io::Result<()> {
         position = position.advance(ERASABLE_BLOCK_SIZE).unwrap();
     }
     assert!(Location::from(position) == IMAGE_SIZE);
-    let host_processor_generation = ProcessorGeneration::Milan;
+    let host_processor_generation = opts.host_processor_generation;
     let mut efs = match Efs::<_, ERASABLE_BLOCK_SIZE>::create(
         storage,
         host_processor_generation,
