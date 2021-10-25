@@ -253,7 +253,7 @@ fn bhd_directory_add_default_entries(bhd_directory: &mut BhdDirectory<FlashImage
             .with_type_(BhdDirectoryEntryType::Bios)
             .with_reset_image(true)
             .with_copy_image(true),
-        Path::new(reset_image_filename).to_path_buf(),
+        reset_image_filename.to_path_buf(),
         Some(0x7ffc_d000),
     )?;
 
