@@ -530,7 +530,7 @@ fn main() -> std::io::Result<()> {
 //    ).unwrap(); // XXX cannot remove
 //    psp_directory_add_default_entries(&mut second_level_psp_directory, &firmware_blob_directory_name).unwrap();
 //
-///* removed    psp_entry_add_from_file(
+// /* removed    psp_entry_add_from_file(
 //        &mut second_level_psp_directory,
 //        None,
 //        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SevData),
