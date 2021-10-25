@@ -9,4 +9,5 @@ edition = "2018"
 amd-apcb = { path = "../amd-apcb", features = ["std"] }
 amd-efs = { path = "../amd-efs", features = ["std"] }
 amd-flash = { path = "../amd-flash" }
+goblin = { version = "0.4", features = ["elf64", "endian_fd"] }
 structopt = "0.3"

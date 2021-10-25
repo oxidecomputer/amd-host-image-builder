@@ -7,6 +7,7 @@ use core::cell::RefCell;
 use core::convert::TryFrom;
 use core::convert::TryInto;
 use std::env;
+use std::fs;
 use std::fs::File;
 use std::fs::OpenOptions;
 use std::io::BufReader;
@@ -245,6 +246,34 @@ fn bhd_entry_add_from_file_if_present(
 fn bhd_directory_add_default_entries(bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>, firmware_blob_directory_name: &PathBuf, reset_image_filename: &Path) -> amd_efs::Result<()> {
     bhd_directory
         .add_apob_entry(None, BhdDirectoryEntryType::Apob, 0x3000_0000)?;
+
+    let buffer = fs::read(reset_image_filename).unwrap();
+    match goblin::Object::parse(&buffer).unwrap() {
+        goblin::Object::Elf(binary) => {
+            for header in &binary.program_headers {
+                if header.p_type == goblin::elf::program_header::PT_LOAD {
+                    // FIXME: let mut _buf = vec![0u8; ph.p_filesz as usize];
+                    eprintln!("PROG {:?}", header);
+                }
+            }
+            for header in &binary.section_headers {
+                eprintln!("SECTION {:?}", header);
+            }
+            if let Some(mut iter) = binary.iter_note_headers(&buffer) {
+                while let Some(Ok(a)) = iter.next() {
+                    eprintln!("NOTE HEADER {:?}", a);
+                }
+            }
+            if let Some(mut iter) = binary.iter_note_sections(&buffer, None) {
+                while let Some(Ok(a)) = iter.next() {
+                    eprintln!("NOTE SECTION {:?}", a);
+                }
+            }
+            panic!("you probably don't want this to continue (yet)");
+        },
+        _ => {
+        }
+    }
 
     bhd_entry_add_from_file(
         bhd_directory,
