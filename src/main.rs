@@ -455,13 +455,15 @@ fn main() -> std::io::Result<()> {
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SmuOffChipFirmware8),
         firmware_blob_directory_name.join("SmuFirmware.csbin"),
     ).unwrap();
-    // Note: Cannot remove this entry (otherwise postcode 0xE022 error).
-    psp_entry_add_from_file(
-        &mut psp_directory,
-        None,
-        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AmdSecureDebugKey),
-        firmware_blob_directory_name.join("SecureDebugToken.stkn"),
-    ).unwrap();
+    if host_processor_generation != ProcessorGeneration::Rome {
+        // Note: Cannot remove this entry (otherwise postcode 0xE022 error).
+        psp_entry_add_from_file(
+            &mut psp_directory,
+            None,
+            &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AmdSecureDebugKey),
+            firmware_blob_directory_name.join("SecureDebugToken.stkn"),
+        ).unwrap();
+    }
     psp_directory_add_default_entries(&mut psp_directory, &firmware_blob_directory_name).unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
