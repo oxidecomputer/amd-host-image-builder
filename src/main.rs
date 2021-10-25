@@ -242,7 +242,7 @@ fn bhd_entry_add_from_file_if_present(
     }
 }
 
-fn bhd_directory_add_default_entries(bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>, firmware_blob_directory_name: &PathBuf, reset_image_filename: &str) -> amd_efs::Result<()> {
+fn bhd_directory_add_default_entries(bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>, firmware_blob_directory_name: &PathBuf, reset_image_filename: &Path) -> amd_efs::Result<()> {
     bhd_directory
         .add_apob_entry(None, BhdDirectoryEntryType::Apob, 0x3000_0000)?;
 
@@ -394,8 +394,8 @@ struct Opts {
     #[structopt(short = "o", long = "output-file")]
     output_filename: String,
 
-    #[structopt(short = "r", long = "reset-image")]
-    reset_image_filename: String,
+    #[structopt(short = "r", long = "reset-image", parse(from_os_str))]
+    reset_image_filename: PathBuf,
 }
 
 fn main() -> std::io::Result<()> {
