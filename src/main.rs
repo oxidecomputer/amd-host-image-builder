@@ -243,6 +243,18 @@ fn bhd_entry_add_from_file_if_present(
     }
 }
 
+fn elf_symbol(binary: &goblin::elf::Elf, key: &str) -> Option<goblin::elf::Sym> {
+    for sym in &binary.syms {
+        let ix = sym.st_name;
+        if ix != 0 {
+            if &binary.strtab[sym.st_name] == key {
+                return Some(sym);
+            }
+        }
+    }
+    None
+}
+
 fn bhd_directory_add_default_entries(bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>, firmware_blob_directory_name: &PathBuf, reset_image_filename: &Path) -> amd_efs::Result<()> {
     bhd_directory
         .add_apob_entry(None, BhdDirectoryEntryType::Apob, 0x3000_0000)?;
@@ -269,6 +281,8 @@ fn bhd_directory_add_default_entries(bhd_directory: &mut BhdDirectory<FlashImage
                     eprintln!("NOTE SECTION {:?}", a);
                 }
             }
+            // SYMBOL "_BL_SPACE" Sym { st_name: 5342, st_info: 0x0 LOCAL NOTYPE, st_other: 0 DEFAULT, st_shndx: 65521, st_value: 0x29000, st_size: 0 }
+            eprintln!("_BL_SPACE: {:?}", elf_symbol(&binary, "_BL_SPACE").unwrap().st_value);
             panic!("you probably don't want this to continue (yet)");
         },
         _ => {
