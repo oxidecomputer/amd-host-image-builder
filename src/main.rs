@@ -255,10 +255,9 @@ fn elf_symbol(binary: &goblin::elf::Elf, key: &str) -> Option<goblin::elf::Sym> 
     None
 }
 
-fn bhd_directory_add_default_entries(bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>, firmware_blob_directory_name: &PathBuf, reset_image_filename: &Path) -> amd_efs::Result<()> {
+fn bhd_directory_add_reset_image(bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>, reset_image_filename: &Path) -> amd_efs::Result<()> {
     bhd_directory
         .add_apob_entry(None, BhdDirectoryEntryType::Apob, 0x3000_0000)?;
-
     let buffer = fs::read(reset_image_filename).unwrap();
     let mut destination_origin: Option<u64> = None;
     match goblin::Object::parse(&buffer).unwrap() {
@@ -314,6 +313,12 @@ fn bhd_directory_add_default_entries(bhd_directory: &mut BhdDirectory<FlashImage
         reset_image_filename.to_path_buf(),
         destination_origin,
     )?;
+    Ok(())
+}
+
+fn bhd_directory_add_default_entries(bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>, firmware_blob_directory_name: &PathBuf, reset_image_filename: &Path) -> amd_efs::Result<()> {
+
+    bhd_directory_add_reset_image(bhd_directory, reset_image_filename)?;
 
     bhd_entry_add_from_file(
         bhd_directory,
