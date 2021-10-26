@@ -260,11 +260,21 @@ fn bhd_directory_add_default_entries(bhd_directory: &mut BhdDirectory<FlashImage
         .add_apob_entry(None, BhdDirectoryEntryType::Apob, 0x3000_0000)?;
 
     let buffer = fs::read(reset_image_filename).unwrap();
+    let mut destination_origin: Option<u64> = None;
     match goblin::Object::parse(&buffer).unwrap() {
         goblin::Object::Elf(binary) => {
+            assert!(binary.header.e_type == goblin::elf::header::ET_EXEC);
+            assert!(binary.header.e_machine == goblin::elf::header::EM_X86_64);
+            // TODO: Check e_version >= 1 (EV_CURRENT)
             for header in &binary.program_headers {
                 if header.p_type == goblin::elf::program_header::PT_LOAD {
+                    assert!(header.p_filesz <= header.p_memsz);
+                    // FIXME: read out & copy header.p_filesz bytes at header.p_offset; then pad with 0s until header.p_memsz.  TODO: Still have to align (to what?)!
                     // FIXME: let mut _buf = vec![0u8; ph.p_filesz as usize];
+                    if destination_origin == None {
+                        // Note: File is sorted by p_vaddr.
+                        destination_origin = Some(header.p_vaddr);
+                    }
                     eprintln!("PROG {:?}", header);
                 }
             }
@@ -286,7 +296,12 @@ fn bhd_directory_add_default_entries(bhd_directory: &mut BhdDirectory<FlashImage
             panic!("you probably don't want this to continue (yet)");
         },
         _ => {
+            destination_origin = Some(0x7ffc_d000);
         }
+    }
+
+    if destination_origin == None {
+        eprintln!("Warning: No destination in RAM specified for Reset image.");
     }
 
     bhd_entry_add_from_file(
@@ -297,7 +312,7 @@ fn bhd_directory_add_default_entries(bhd_directory: &mut BhdDirectory<FlashImage
             .with_reset_image(true)
             .with_copy_image(true),
         reset_image_filename.to_path_buf(),
-        Some(0x7ffc_d000),
+        destination_origin,
     )?;
 
     bhd_entry_add_from_file(
