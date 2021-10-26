@@ -316,10 +316,7 @@ fn bhd_directory_add_reset_image(bhd_directory: &mut BhdDirectory<FlashImage, ER
     Ok(())
 }
 
-fn bhd_directory_add_default_entries(bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>, firmware_blob_directory_name: &PathBuf, reset_image_filename: &Path) -> amd_efs::Result<()> {
-
-    bhd_directory_add_reset_image(bhd_directory, reset_image_filename)?;
-
+fn bhd_directory_add_default_entries(bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>, firmware_blob_directory_name: &PathBuf) -> amd_efs::Result<()> {
     bhd_entry_add_from_file(
         bhd_directory,
         None,
@@ -654,7 +651,8 @@ fn main() -> std::io::Result<()> {
     )
     .unwrap();
 
-    bhd_directory_add_default_entries(&mut bhd_directory, &firmware_blob_directory_name, &opts.reset_image_filename).unwrap();
+    bhd_directory_add_reset_image(&mut bhd_directory, &opts.reset_image_filename).unwrap();
+    bhd_directory_add_default_entries(&mut bhd_directory, &firmware_blob_directory_name).unwrap();
 
     bhd_entry_add_from_file_if_present(
         &mut bhd_directory,
@@ -817,7 +815,8 @@ fn main() -> std::io::Result<()> {
 //    )
 //    .unwrap();
 //
-//    bhd_directory_add_default_entries(&mut secondary_bhd_directory, &firmware_blob_directory_name, &opts.reset_image_filename).unwrap();
+//    bhd_directory_add_reset_image(&mut secondary_bhd_directory, &opts.reset_image_filename).unwrap();
+//    bhd_directory_add_default_entries(&mut secondary_bhd_directory, &firmware_blob_directory_name).unwrap();
 //
 //    bhd_entry_add_from_file(
 //        &mut secondary_bhd_directory,
