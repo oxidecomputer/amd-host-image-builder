@@ -409,7 +409,7 @@ fn bhd_directory_add_reset_image(bhd_directory: &mut BhdDirectory<FlashImage, ER
             }
 
             // The entry point (reset vector) must be 0x10 bytes below the
-            // beginning of a segment, and that segment must begin at the end
+            // end of a (real-mode) segment--and that segment must begin at the end
             // of the loaded program.  See AMD pub 55758 sec. 4.3 item 4.
             if binary.header.e_entry != last_vaddr.checked_sub(0x10).ok_or(Error::IncompatibleExecutable)? {
                 return Err(Error::IncompatibleExecutable)
