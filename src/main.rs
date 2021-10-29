@@ -339,17 +339,18 @@ fn bhd_directory_add_reset_image(bhd_directory: &mut BhdDirectory<FlashImage, ER
                         destination_origin = Some(header.p_vaddr);
                         last_vaddr = header.p_vaddr;
                     }
+                    if header.p_vaddr < last_vaddr {
+                        // According to ELF standard, this should not happen
+                        return Err(Error::IncompatibleExecutable)
+                    }
                     if header.p_filesz > header.p_memsz {
+                        // According to ELF standard, this should not happen
                         return Err(Error::IncompatibleExecutable)
                     }
                     if header.p_paddr != header.p_vaddr {
                         return Err(Error::IncompatibleExecutable)
                     }
                     if header.p_filesz > 0 {
-                        if header.p_vaddr < last_vaddr {
-                            // According to ELF standard, this should not happen
-                            return Err(Error::IncompatibleExecutable)
-                        }
                         if header.p_vaddr > last_vaddr {
                             holesz += (header.p_vaddr - last_vaddr) as usize;
                         }
