@@ -309,7 +309,7 @@ fn bhd_directory_add_reset_image(bhd_directory: &mut BhdDirectory<FlashImage, ER
             let mut totalsz = 0usize;
             assert!(binary.header.e_type == goblin::elf::header::ET_EXEC);
             assert!(binary.header.e_machine == goblin::elf::header::EM_X86_64);
-            // TODO: Check e_version >= 1 (EV_CURRENT)
+            assert!(binary.header.e_version >= goblin::elf::header::EV_CURRENT.into());
             for header in &binary.program_headers {
                 if header.p_type == goblin::elf::program_header::PT_LOAD {
                     eprintln!("PROG {:x?}", header);
