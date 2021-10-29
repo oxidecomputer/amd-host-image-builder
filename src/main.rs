@@ -20,7 +20,20 @@ use structopt::StructOpt;
 
 use amd_apcb::Apcb;
 //use amd_efs::ProcessorGeneration;
-use amd_flash::{Error, FlashRead, FlashWrite, Location, ErasableLocation, Result};
+use amd_flash::{FlashRead, FlashWrite, Location, ErasableLocation};
+
+#[derive(Debug)]
+enum Error {
+    Efs(amd_efs::Error),
+}
+
+type Result<T> = core::result::Result<T, Error>;
+
+impl From<amd_efs::Error> for Error {
+    fn from(err: amd_efs::Error) -> Self {
+        Self::Efs(err)
+    }
+}
 
 mod hole;
 use hole::Hole;
@@ -30,12 +43,12 @@ struct FlashImage {
 }
 
 impl<const ERASABLE_BLOCK_SIZE: usize> FlashRead<ERASABLE_BLOCK_SIZE> for FlashImage {
-    fn read_exact(&self, location: Location, buffer: &mut [u8]) -> Result<usize> {
+    fn read_exact(&self, location: Location, buffer: &mut [u8]) -> amd_flash::Result<usize> {
         let mut file = self.file.borrow_mut();
         match file.seek(SeekFrom::Start(location.into())) {
             Ok(_) => {}
             Err(e) => {
-                return Err(Error::Io);
+                return Err(amd_flash::Error::Io);
             }
         }
         match file.read_exact(buffer) {
@@ -43,17 +56,17 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashRead<ERASABLE_BLOCK_SIZE> for FlashI
                 Ok(buffer.len())
             }
             Err(e) => {
-                return Err(Error::Io);
+                return Err(amd_flash::Error::Io);
             }
         }
     }
-    fn read_erasable_block(&self, location: ErasableLocation<ERASABLE_BLOCK_SIZE>, buffer: &mut [u8; ERASABLE_BLOCK_SIZE]) -> Result<()> {
+    fn read_erasable_block(&self, location: ErasableLocation<ERASABLE_BLOCK_SIZE>, buffer: &mut [u8; ERASABLE_BLOCK_SIZE]) -> amd_flash::Result<()> {
         let location = Location::from(location);
         let mut file = self.file.borrow_mut();
         match file.seek(SeekFrom::Start(location.into())) {
             Ok(_) => {}
             Err(e) => {
-                return Err(Error::Io);
+                return Err(amd_flash::Error::Io);
             }
         }
         match file.read(buffer) {
@@ -62,7 +75,7 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashRead<ERASABLE_BLOCK_SIZE> for FlashI
                 Ok(())
             }
             Err(e) => {
-                return Err(Error::Io);
+                return Err(amd_flash::Error::Io);
             }
         }
     }
@@ -71,13 +84,13 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashRead<ERASABLE_BLOCK_SIZE> for FlashI
 impl<const ERASABLE_BLOCK_SIZE: usize>
     FlashWrite<ERASABLE_BLOCK_SIZE> for FlashImage
 {
-    fn erase_block(&self, location: ErasableLocation<ERASABLE_BLOCK_SIZE>) -> Result<()> {
+    fn erase_block(&self, location: ErasableLocation<ERASABLE_BLOCK_SIZE>) -> amd_flash::Result<()> {
         let location = Location::from(location);
         let mut file = self.file.borrow_mut();
         match file.seek(SeekFrom::Start(location.into())) {
             Ok(_) => {}
             Err(e) => {
-                return Err(Error::Io);
+                return Err(amd_flash::Error::Io);
             }
         }
         let buffer = [0xFFu8; ERASABLE_BLOCK_SIZE];
@@ -87,17 +100,17 @@ impl<const ERASABLE_BLOCK_SIZE: usize>
                 Ok(())
             }
             Err(e) => {
-                return Err(Error::Io);
+                return Err(amd_flash::Error::Io);
             }
         }
     }
-    fn erase_and_write_block(&self, location: ErasableLocation<ERASABLE_BLOCK_SIZE>, buffer: &[u8; ERASABLE_BLOCK_SIZE]) -> Result<()> {
+    fn erase_and_write_block(&self, location: ErasableLocation<ERASABLE_BLOCK_SIZE>, buffer: &[u8; ERASABLE_BLOCK_SIZE]) -> amd_flash::Result<()> {
         let location = Location::from(location);
         let mut file = self.file.borrow_mut();
         match file.seek(SeekFrom::Start(location.into())) {
             Ok(_) => {}
             Err(e) => {
-                return Err(Error::Io);
+                return Err(amd_flash::Error::Io);
             }
         }
         match file.write(&(*buffer)[..]) {
@@ -106,7 +119,7 @@ impl<const ERASABLE_BLOCK_SIZE: usize>
                 Ok(())
             }
             Err(e) => {
-                return Err(Error::Io);
+                return Err(amd_flash::Error::Io);
             }
         }
     }
@@ -296,7 +309,7 @@ fn elf_symbol(binary: &goblin::elf::Elf, key: &str) -> Option<goblin::elf::Sym> 
     None
 }
 
-fn bhd_directory_add_reset_image(bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>, reset_image_filename: &Path) -> amd_efs::Result<()> {
+fn bhd_directory_add_reset_image(bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>, reset_image_filename: &Path) -> Result<()> {
     let buffer = fs::read(reset_image_filename).unwrap();
     let mut destination_origin: Option<u64> = None;
     let mut iov = Box::new(std::io::empty()) as Box<dyn Read>;
