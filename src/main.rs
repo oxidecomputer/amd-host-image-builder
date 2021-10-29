@@ -981,29 +981,5 @@ fn main() -> std::io::Result<()> {
 //    .unwrap();
 
     //            println!("{:?}", efh);
-    let psp_directory = match efs.psp_directory() {
-        Ok(v) => v,
-        Err(e) => {
-            eprintln!("Error on psp_directory: {:?}", e);
-            std::process::exit(1);
-        }
-    };
-    println!("{:x?}", psp_directory.header);
-    for entry in psp_directory.entries() {
-        println!("    {:x?}", entry);
-    }
-    let bhd_directories = match efs.bhd_directories() {
-        Ok(d) => d,
-        Err(e) => {
-            eprintln!("Error on bhd_directory: {:?}", e);
-            std::process::exit(1);
-        }
-    };
-    for bhd_directory in bhd_directories {
-        println!("{:x?}", bhd_directory.header);
-        for entry in bhd_directory.entries() {
-            println!("    {:x?}", entry);
-        }
-    }
     Ok(())
 }
