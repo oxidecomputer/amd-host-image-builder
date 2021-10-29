@@ -6,7 +6,6 @@ use amd_efs::{
 use core::cell::RefCell;
 use core::convert::TryFrom;
 use core::convert::TryInto;
-use std::env;
 use std::fs;
 use std::fs::File;
 use std::fs::OpenOptions;
@@ -133,14 +132,14 @@ fn psp_entry_add_from_file(
 ) -> amd_efs::Result<()> {
     let file = File::open(source_filename).unwrap();
     let size: usize = file.metadata().unwrap().len().try_into().unwrap();
-    let mut reader = BufReader::new(file);
+    let mut source = BufReader::new(file);
     directory.add_blob_entry(payload_position, attrs, size.try_into().unwrap(), &mut |buf: &mut [u8]| {
         let mut cursor = 0;
         loop {
             let bytes = source.read(&mut buf[cursor ..]).map_err(|_| {
                 amd_efs::Error::Marshal
             })?;
-            if (bytes == 0) {
+            if bytes == 0 {
                 return Ok(cursor);
             }
             cursor += bytes;
@@ -175,7 +174,7 @@ where T: std::io::Read
             let bytes = source.read(&mut buf[cursor ..]).map_err(|_| {
                 amd_efs::Error::Marshal
             })?;
-            if (bytes == 0) {
+            if bytes == 0 {
                 return Ok(cursor);
             }
             cursor += bytes;
@@ -314,7 +313,7 @@ fn bhd_directory_add_reset_image(bhd_directory: &mut BhdDirectory<FlashImage, ER
             for header in &binary.program_headers {
                 if header.p_type == goblin::elf::program_header::PT_LOAD {
                     eprintln!("PROG {:x?}", header);
-                    if (header.p_memsz == 0) {
+                    if header.p_memsz == 0 {
                         continue;
                     }
                     if destination_origin == None {
@@ -324,12 +323,12 @@ fn bhd_directory_add_reset_image(bhd_directory: &mut BhdDirectory<FlashImage, ER
                     }
                     assert!(header.p_filesz <= header.p_memsz);
                     assert_eq!(header.p_paddr, header.p_vaddr);
-                    if (header.p_filesz > 0) {
+                    if header.p_filesz > 0 {
                         assert!(header.p_vaddr >= last_vaddr);
-                        if (header.p_vaddr > last_vaddr) {
+                        if header.p_vaddr > last_vaddr {
                             holesz += (header.p_vaddr - last_vaddr) as usize;
                         }
-                        if (holesz > 0) {
+                        if holesz > 0 {
                             eprintln!("hole: {:x}", holesz);
                             iov = Box::new(iov.chain(Hole::new(holesz))) as Box<dyn Read>;
                             totalsz += holesz;
@@ -340,7 +339,7 @@ fn bhd_directory_add_reset_image(bhd_directory: &mut BhdDirectory<FlashImage, ER
                         eprintln!("chunk: {:x} @ {:x}", header.p_filesz, header.p_offset);
                         iov = Box::new(iov.chain(chunk)) as Box<dyn Read>;
                         totalsz += header.p_filesz as usize;
-                        if (header.p_memsz > header.p_filesz) {
+                        if header.p_memsz > header.p_filesz {
                             holesz += (header.p_memsz - header.p_filesz) as usize;
                         }
                         last_vaddr = header.p_vaddr + header.p_memsz;
@@ -565,7 +564,6 @@ fn main() -> std::io::Result<()> {
     file.set_len(IMAGE_SIZE.into())?;
     let mut storage = FlashImage::new(file);
     let mut position: AlignedLocation = 0.try_into().unwrap();
-    let block_size: Location = ERASABLE_BLOCK_SIZE.try_into().unwrap();
     while Location::from(position) < IMAGE_SIZE {
         FlashWrite::<ERASABLE_BLOCK_SIZE>::erase_block(&mut storage, position)
             .unwrap();

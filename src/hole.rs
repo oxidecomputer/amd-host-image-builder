@@ -15,7 +15,7 @@ impl Hole {
 
 impl Read for Hole {
     fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
-        if (self.cursor == 0) {
+        if self.cursor == 0 {
             return Ok(0)
         }
         let l = min(buf.len(), self.cursor);
