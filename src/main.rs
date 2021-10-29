@@ -23,6 +23,9 @@ use amd_apcb::Apcb;
 //use amd_efs::ProcessorGeneration;
 use amd_flash::{Error, FlashRead, FlashWrite, Location, ErasableLocation, Result};
 
+mod hole;
+use hole::Hole;
+
 struct FlashImage {
     file: RefCell<File>,
 }
@@ -139,6 +142,41 @@ fn psp_entry_add_from_file(
     Ok(())
 }
 
+//
+// The comment in efs.rs:add_payload() states that the function passed into
+// directory.add_blob_entry() must not return a result smaller than the length
+// of the buffer passed into it unless there are no more contents.  This means
+// we cannot expect it to be called repeatedly, which is to say that we must
+// loop ourselves until the reader we are given returns no more data.  This
+// matters because it is *not* an error for a reader to return less data than
+// would have filled the buffer it was given, even if more data might be
+// available.
+//
+fn bhd_entry_add_from_reader_with_custom_size<T>(
+    directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
+    payload_position: Option<ErasableLocation<ERASABLE_BLOCK_SIZE>>,
+    attrs: &BhdDirectoryEntryAttrs,
+    size: usize,
+    source: &mut T,
+    ram_destination_address: Option<u64>
+) -> amd_efs::Result<()>
+where T: std::io::Read
+{
+    directory.add_blob_entry(payload_position, attrs, size.try_into().unwrap(), ram_destination_address, &mut |buf: &mut [u8]| {
+        let mut cursor = 0;
+        loop {
+            let bytes = source.read(&mut buf[cursor ..]).map_err(|_| {
+                amd_efs::Error::Marshal
+            })?;
+            if (bytes == 0) {
+                return Ok(cursor);
+            }
+            cursor += bytes;
+        }
+    })?;
+    Ok(())
+}
+
 fn bhd_entry_add_from_file_with_custom_size(
     directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
     payload_position: Option<ErasableLocation<ERASABLE_BLOCK_SIZE>>,
@@ -149,12 +187,9 @@ fn bhd_entry_add_from_file_with_custom_size(
 ) -> amd_efs::Result<()> {
     let file = File::open(source_filename).unwrap();
     let mut reader = BufReader::new(file);
-    directory.add_blob_entry(payload_position, attrs, size.try_into().unwrap(), ram_destination_address, &mut |buf: &mut [u8]| {
-        reader
-            .read(buf)
-            .or(amd_efs::Result::Err(amd_efs::Error::Marshal))
-    })?;
-    Ok(())
+
+    bhd_entry_add_from_reader_with_custom_size(directory, payload_position,
+        attrs, size, &mut reader, ram_destination_address)
 }
 
 fn bhd_entry_add_from_file(
@@ -256,46 +291,97 @@ fn elf_symbol(binary: &goblin::elf::Elf, key: &str) -> Option<goblin::elf::Sym> 
 }
 
 fn bhd_directory_add_reset_image(bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>, reset_image_filename: &Path) -> amd_efs::Result<()> {
-    bhd_directory
-        .add_apob_entry(None, BhdDirectoryEntryType::Apob, 0x3000_0000)?;
     let buffer = fs::read(reset_image_filename).unwrap();
     let mut destination_origin: Option<u64> = None;
+    let mut iov = Box::new(std::io::empty()) as Box<dyn Read>;
+    let sz;
+
     match goblin::Object::parse(&buffer).unwrap() {
         goblin::Object::Elf(binary) => {
+            let mut last_vaddr = 0u64;
+            let mut holesz = 0usize;
+            let mut totalsz = 0usize;
             assert!(binary.header.e_type == goblin::elf::header::ET_EXEC);
             assert!(binary.header.e_machine == goblin::elf::header::EM_X86_64);
             // TODO: Check e_version >= 1 (EV_CURRENT)
             for header in &binary.program_headers {
                 if header.p_type == goblin::elf::program_header::PT_LOAD {
-                    assert!(header.p_filesz <= header.p_memsz);
-                    // FIXME: read out & copy header.p_filesz bytes at header.p_offset; then pad with 0s until header.p_memsz.  TODO: Still have to align (to what?)!
-                    // FIXME: let mut _buf = vec![0u8; ph.p_filesz as usize];
+                    eprintln!("PROG {:x?}", header);
+                    if (header.p_memsz == 0) {
+                        continue;
+                    }
                     if destination_origin == None {
                         // Note: File is sorted by p_vaddr.
                         destination_origin = Some(header.p_vaddr);
+                        last_vaddr = header.p_vaddr;
                     }
-                    eprintln!("PROG {:?}", header);
+                    assert!(header.p_filesz <= header.p_memsz);
+                    assert_eq!(header.p_paddr, header.p_vaddr);
+                    if (header.p_filesz > 0) {
+                        assert!(header.p_vaddr >= last_vaddr);
+                        if (header.p_vaddr > last_vaddr) {
+                            holesz += (header.p_vaddr - last_vaddr) as usize;
+                        }
+                        if (holesz > 0) {
+                            eprintln!("hole: {:x}", holesz);
+                            iov = Box::new(iov.chain(Hole::new(holesz))) as Box<dyn Read>;
+                            totalsz += holesz;
+                            holesz = 0;
+                        }
+                        let chunk = &buffer[header.p_offset as usize ..
+                            (header.p_offset + header.p_filesz) as usize];
+                        eprintln!("chunk: {:x} @ {:x}", header.p_filesz, header.p_offset);
+                        iov = Box::new(iov.chain(chunk)) as Box<dyn Read>;
+                        totalsz += header.p_filesz as usize;
+                        if (header.p_memsz > header.p_filesz) {
+                            holesz += (header.p_memsz - header.p_filesz) as usize;
+                        }
+                        last_vaddr = header.p_vaddr + header.p_memsz;
+                    }
                 }
             }
             for header in &binary.section_headers {
-                eprintln!("SECTION {:?}", header);
+                eprintln!("SECTION {:x?}", header);
             }
             if let Some(mut iter) = binary.iter_note_headers(&buffer) {
                 while let Some(Ok(a)) = iter.next() {
-                    eprintln!("NOTE HEADER {:?}", a);
+                    eprintln!("NOTE HEADER {:x?}", a);
                 }
             }
             if let Some(mut iter) = binary.iter_note_sections(&buffer, None) {
                 while let Some(Ok(a)) = iter.next() {
-                    eprintln!("NOTE SECTION {:?}", a);
+                    eprintln!("NOTE SECTION {:x?}", a);
                 }
             }
             // SYMBOL "_BL_SPACE" Sym { st_name: 5342, st_info: 0x0 LOCAL NOTYPE, st_other: 0 DEFAULT, st_shndx: 65521, st_value: 0x29000, st_size: 0 }
-            eprintln!("_BL_SPACE: {:?}", elf_symbol(&binary, "_BL_SPACE").unwrap().st_value);
-            panic!("you probably don't want this to continue (yet)");
+            // The part of the program we copy into the flash image should be
+            // of the same size as the space allocated at loader build time.
+            let symsz = elf_symbol(&binary, "_BL_SPACE").unwrap().st_value;
+            eprintln!("_BL_SPACE: {:x?}", symsz);
+            assert_eq!(totalsz, symsz as usize);
+            sz = totalsz;
+
+            // These symbols have been embedded into the loader to serve as
+            // checks in this exact application.
+            let sloader = elf_symbol(&binary, "__sloader").unwrap().st_value;
+            eprintln!("__sloader: {:x?}", sloader);
+            assert_eq!(sloader, destination_origin.unwrap());
+
+            let eloader = elf_symbol(&binary, "__eloader").unwrap().st_value;
+            eprintln!("__eloader: {:x?}", eloader);
+            assert_eq!(eloader, last_vaddr);
+
+            // The entry point (reset vector) must be 0x10 bytes below the
+            // beginning of a segment, and that segment must begin at the end
+            // of the loaded program.  See AMD pub 55758 sec. 4.3 item 4.
+            let entry = binary.header.e_entry;
+            assert_eq!(entry, last_vaddr - 0x10);
+            assert_eq!(last_vaddr & 0xffff, 0);
         },
         _ => {
-            destination_origin = Some(0x7ffc_d000);
+            destination_origin = Some(0x8000_0000 - buffer.len() as u64);
+            iov = Box::new(&buffer.as_slice()[..]) as Box<dyn Read>;
+            sz = buffer.len();
         }
     }
 
@@ -303,14 +389,15 @@ fn bhd_directory_add_reset_image(bhd_directory: &mut BhdDirectory<FlashImage, ER
         eprintln!("Warning: No destination in RAM specified for Reset image.");
     }
 
-    bhd_entry_add_from_file(
+    bhd_entry_add_from_reader_with_custom_size(
         bhd_directory,
-        Some(0xd00000.try_into().unwrap()), // TODO: Could also be None--works.
+        None,
         &BhdDirectoryEntryAttrs::new()
             .with_type_(BhdDirectoryEntryType::Bios)
             .with_reset_image(true)
             .with_copy_image(true),
-        reset_image_filename.to_path_buf(),
+        sz,
+        &mut iov,
         destination_origin,
     )?;
     Ok(())
@@ -651,6 +738,9 @@ fn main() -> std::io::Result<()> {
     )
     .unwrap();
 
+    bhd_directory
+        .add_apob_entry(None, BhdDirectoryEntryType::Apob, 0x400_0000).unwrap();
+
     bhd_directory_add_reset_image(&mut bhd_directory, &opts.reset_image_filename).unwrap();
     bhd_directory_add_default_entries(&mut bhd_directory, &firmware_blob_directory_name).unwrap();
 
@@ -744,7 +834,6 @@ fn main() -> std::io::Result<()> {
         None,
     )
     .unwrap();
-
 //    let firmware_blob_directory_name = Path::new("amd-firmware/MILAN-b").join("second-bhd");
 //    let mut secondary_bhd_directory = bhd_directory.create_subdirectory(AlignedLocation::try_from(0x3e_0000).unwrap(), AlignedLocation::try_from(0x3e_0000 + 0x8_0000).unwrap()).unwrap();
 //
@@ -859,9 +948,9 @@ fn main() -> std::io::Result<()> {
             std::process::exit(1);
         }
     };
-    println!("{:?}", psp_directory.header);
+    println!("{:x?}", psp_directory.header);
     for entry in psp_directory.entries() {
-        println!("    {:?}", entry);
+        println!("    {:x?}", entry);
     }
     let bhd_directories = match efs.bhd_directories() {
         Ok(d) => d,
@@ -871,9 +960,9 @@ fn main() -> std::io::Result<()> {
         }
     };
     for bhd_directory in bhd_directories {
-        println!("{:?}", bhd_directory.header);
+        println!("{:x?}", bhd_directory.header);
         for entry in bhd_directory.entries() {
-            println!("    {:?}", entry);
+            println!("    {:x?}", entry);
         }
     }
     Ok(())
