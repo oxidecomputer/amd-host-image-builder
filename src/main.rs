@@ -25,6 +25,9 @@ use amd_flash::{FlashRead, FlashWrite, Location, ErasableLocation};
 #[derive(Debug)]
 enum Error {
     Efs(amd_efs::Error),
+    IncompatibleExecutable,
+    Io(std::io::Error),
+    ImageTooBig,
 }
 
 type Result<T> = core::result::Result<T, Error>;
@@ -310,19 +313,21 @@ fn elf_symbol(binary: &goblin::elf::Elf, key: &str) -> Option<goblin::elf::Sym> 
 }
 
 fn bhd_directory_add_reset_image(bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>, reset_image_filename: &Path) -> Result<()> {
-    let buffer = fs::read(reset_image_filename).unwrap();
+    let buffer = fs::read(reset_image_filename).map_err(|x| Error::Io(x))?;
     let mut destination_origin: Option<u64> = None;
     let mut iov = Box::new(std::io::empty()) as Box<dyn Read>;
     let sz;
 
-    match goblin::Object::parse(&buffer).unwrap() {
+    match goblin::Object::parse(&buffer).map_err(|_| Error::IncompatibleExecutable)? {
         goblin::Object::Elf(binary) => {
             let mut last_vaddr = 0u64;
             let mut holesz = 0usize;
             let mut totalsz = 0usize;
-            assert!(binary.header.e_type == goblin::elf::header::ET_EXEC);
-            assert!(binary.header.e_machine == goblin::elf::header::EM_X86_64);
-            assert!(binary.header.e_version >= goblin::elf::header::EV_CURRENT.into());
+            if binary.header.e_type != goblin::elf::header::ET_EXEC
+            || binary.header.e_machine != goblin::elf::header::EM_X86_64
+            || binary.header.e_version < goblin::elf::header::EV_CURRENT.into() {
+                return Err(Error::IncompatibleExecutable)
+            }
             for header in &binary.program_headers {
                 if header.p_type == goblin::elf::program_header::PT_LOAD {
                     eprintln!("PROG {:x?}", header);
@@ -334,10 +339,17 @@ fn bhd_directory_add_reset_image(bhd_directory: &mut BhdDirectory<FlashImage, ER
                         destination_origin = Some(header.p_vaddr);
                         last_vaddr = header.p_vaddr;
                     }
-                    assert!(header.p_filesz <= header.p_memsz);
-                    assert_eq!(header.p_paddr, header.p_vaddr);
+                    if header.p_filesz > header.p_memsz {
+                        return Err(Error::IncompatibleExecutable)
+                    }
+                    if header.p_paddr != header.p_vaddr {
+                        return Err(Error::IncompatibleExecutable)
+                    }
                     if header.p_filesz > 0 {
-                        assert!(header.p_vaddr >= last_vaddr);
+                        if header.p_vaddr < last_vaddr {
+                            // According to ELF standard, this should not happen
+                            return Err(Error::IncompatibleExecutable)
+                        }
                         if header.p_vaddr > last_vaddr {
                             holesz += (header.p_vaddr - last_vaddr) as usize;
                         }
@@ -375,30 +387,39 @@ fn bhd_directory_add_reset_image(bhd_directory: &mut BhdDirectory<FlashImage, ER
             // SYMBOL "_BL_SPACE" Sym { st_name: 5342, st_info: 0x0 LOCAL NOTYPE, st_other: 0 DEFAULT, st_shndx: 65521, st_value: 0x29000, st_size: 0 }
             // The part of the program we copy into the flash image should be
             // of the same size as the space allocated at loader build time.
-            let symsz = elf_symbol(&binary, "_BL_SPACE").unwrap().st_value;
+            let symsz = elf_symbol(&binary, "_BL_SPACE").ok_or(Error::IncompatibleExecutable)?.st_value;
             eprintln!("_BL_SPACE: {:x?}", symsz);
-            assert_eq!(totalsz, symsz as usize);
+            if totalsz != symsz as usize {
+                return Err(Error::IncompatibleExecutable)
+            }
             sz = totalsz;
 
             // These symbols have been embedded into the loader to serve as
             // checks in this exact application.
-            let sloader = elf_symbol(&binary, "__sloader").unwrap().st_value;
+            let sloader = elf_symbol(&binary, "__sloader").ok_or(Error::IncompatibleExecutable)?.st_value;
             eprintln!("__sloader: {:x?}", sloader);
-            assert_eq!(sloader, destination_origin.unwrap());
+            if sloader != destination_origin.ok_or(Error::IncompatibleExecutable)? {
+                return Err(Error::IncompatibleExecutable)
+            }
 
-            let eloader = elf_symbol(&binary, "__eloader").unwrap().st_value;
+            let eloader = elf_symbol(&binary, "__eloader").ok_or(Error::IncompatibleExecutable)?.st_value;
             eprintln!("__eloader: {:x?}", eloader);
-            assert_eq!(eloader, last_vaddr);
+            if eloader != last_vaddr {
+                return Err(Error::IncompatibleExecutable)
+            }
 
             // The entry point (reset vector) must be 0x10 bytes below the
             // beginning of a segment, and that segment must begin at the end
             // of the loaded program.  See AMD pub 55758 sec. 4.3 item 4.
-            let entry = binary.header.e_entry;
-            assert_eq!(entry, last_vaddr - 0x10);
-            assert_eq!(last_vaddr & 0xffff, 0);
+            if binary.header.e_entry != last_vaddr.checked_sub(0x10).ok_or(Error::IncompatibleExecutable)? {
+                return Err(Error::IncompatibleExecutable)
+            }
+            if last_vaddr & 0xffff != 0 {
+                return Err(Error::IncompatibleExecutable)
+            }
         },
         _ => {
-            destination_origin = Some(0x8000_0000 - buffer.len() as u64);
+            destination_origin = Some(0x8000_0000u64.checked_sub(buffer.len() as u64).ok_or(Error::ImageTooBig)?);
             iov = Box::new(&buffer.as_slice()[..]) as Box<dyn Read>;
             sz = buffer.len();
         }
