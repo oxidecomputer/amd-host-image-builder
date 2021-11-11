@@ -619,6 +619,7 @@ fn main() -> std::io::Result<()> {
     let firmware_blob_directory_name = match host_processor_generation {
         ProcessorGeneration::Milan => Path::new("amd-firmware").join("milan"),
         ProcessorGeneration::Rome => Path::new("amd-firmware").join("rome"),
+        ProcessorGeneration::Naples => Path::new("amd-firmware").join("naples"),
     };
     let mut psp_directory = efs.create_psp_directory(AlignedLocation::try_from(0x12_0000).unwrap(), AlignedLocation::try_from(0x24_0000).unwrap()).unwrap();
     psp_entry_add_from_file(
@@ -752,10 +753,6 @@ fn main() -> std::io::Result<()> {
 //        .unwrap();
 //    }
 
-    let firmware_blob_directory_name = match host_processor_generation {
-        ProcessorGeneration::Milan => Path::new("amd-firmware").join("milan"),
-        ProcessorGeneration::Rome => Path::new("amd-firmware").join("rome"),
-    };
     let mut bhd_directory = efs
         .create_bhd_directory(AlignedLocation::try_from(0x24_0000).unwrap(), AlignedLocation::try_from(0x24_0000 + 0x8_0000).unwrap())
         .unwrap();
@@ -763,6 +760,7 @@ fn main() -> std::io::Result<()> {
     let apcb_source_file_name = match host_processor_generation {
         ProcessorGeneration::Milan => Path::new("amd-firmware").join("milan-ethx-1001").join("APCB_D4_DefaultRecovery.bin"),
         ProcessorGeneration::Rome => Path::new("amd-firmware").join("rome-ethx-100a").join("APCB_D4_DefaultRecovery.bin"),
+        ProcessorGeneration::Naples => Path::new("amd-firmware").join("naples-diesel").join("APCB_D4_DefaultRecovery.bin"),
     };
 
     bhd_entry_add_from_file_with_custom_size(
@@ -771,6 +769,7 @@ fn main() -> std::io::Result<()> {
         &match host_processor_generation {
             ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup).with_sub_program(1),
             ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup),
+            ProcessorGeneration::Naples => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup),
         },
         Apcb::MAX_SIZE,
         apcb_source_file_name.as_path(),
