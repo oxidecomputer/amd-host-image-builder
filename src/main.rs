@@ -1,7 +1,6 @@
 use amd_efs::{
     BhdDirectory, BhdDirectoryEntryAttrs, BhdDirectoryEntryType, Efs, ProcessorGeneration,
-    PspDirectory, PspDirectoryEntryAttrs, PspDirectoryEntryType,
-    PspSoftFuseChain
+    PspDirectory, PspDirectoryEntryAttrs, PspDirectoryEntryType, PspSoftFuseChain,
 };
 use core::cell::RefCell;
 use core::convert::TryFrom;
@@ -20,7 +19,7 @@ use structopt::StructOpt;
 
 use amd_apcb::Apcb;
 //use amd_efs::ProcessorGeneration;
-use amd_flash::{FlashRead, FlashWrite, Location, ErasableLocation};
+use amd_flash::{ErasableLocation, FlashRead, FlashWrite, Location};
 
 #[derive(Debug)]
 enum Error {
@@ -55,15 +54,17 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashRead<ERASABLE_BLOCK_SIZE> for FlashI
             }
         }
         match file.read_exact(buffer) {
-            Ok(()) => {
-                Ok(buffer.len())
-            }
+            Ok(()) => Ok(buffer.len()),
             Err(e) => {
                 return Err(amd_flash::Error::Io);
             }
         }
     }
-    fn read_erasable_block(&self, location: ErasableLocation<ERASABLE_BLOCK_SIZE>, buffer: &mut [u8; ERASABLE_BLOCK_SIZE]) -> amd_flash::Result<()> {
+    fn read_erasable_block(
+        &self,
+        location: ErasableLocation<ERASABLE_BLOCK_SIZE>,
+        buffer: &mut [u8; ERASABLE_BLOCK_SIZE],
+    ) -> amd_flash::Result<()> {
         let location = Location::from(location);
         let mut file = self.file.borrow_mut();
         match file.seek(SeekFrom::Start(location.into())) {
@@ -84,10 +85,11 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashRead<ERASABLE_BLOCK_SIZE> for FlashI
     }
 }
 
-impl<const ERASABLE_BLOCK_SIZE: usize>
-    FlashWrite<ERASABLE_BLOCK_SIZE> for FlashImage
-{
-    fn erase_block(&self, location: ErasableLocation<ERASABLE_BLOCK_SIZE>) -> amd_flash::Result<()> {
+impl<const ERASABLE_BLOCK_SIZE: usize> FlashWrite<ERASABLE_BLOCK_SIZE> for FlashImage {
+    fn erase_block(
+        &self,
+        location: ErasableLocation<ERASABLE_BLOCK_SIZE>,
+    ) -> amd_flash::Result<()> {
         let location = Location::from(location);
         let mut file = self.file.borrow_mut();
         match file.seek(SeekFrom::Start(location.into())) {
@@ -107,7 +109,11 @@ impl<const ERASABLE_BLOCK_SIZE: usize>
             }
         }
     }
-    fn erase_and_write_block(&self, location: ErasableLocation<ERASABLE_BLOCK_SIZE>, buffer: &[u8; ERASABLE_BLOCK_SIZE]) -> amd_flash::Result<()> {
+    fn erase_and_write_block(
+        &self,
+        location: ErasableLocation<ERASABLE_BLOCK_SIZE>,
+        buffer: &[u8; ERASABLE_BLOCK_SIZE],
+    ) -> amd_flash::Result<()> {
         let location = Location::from(location);
         let mut file = self.file.borrow_mut();
         match file.seek(SeekFrom::Start(location.into())) {
@@ -149,18 +155,23 @@ fn psp_entry_add_from_file(
     let file = File::open(source_filename).unwrap();
     let size: usize = file.metadata().unwrap().len().try_into().unwrap();
     let mut source = BufReader::new(file);
-    directory.add_blob_entry(payload_position, attrs, size.try_into().unwrap(), &mut |buf: &mut [u8]| {
-        let mut cursor = 0;
-        loop {
-            let bytes = source.read(&mut buf[cursor ..]).map_err(|_| {
-                amd_efs::Error::Marshal
-            })?;
-            if bytes == 0 {
-                return Ok(cursor);
+    directory.add_blob_entry(
+        payload_position,
+        attrs,
+        size.try_into().unwrap(),
+        &mut |buf: &mut [u8]| {
+            let mut cursor = 0;
+            loop {
+                let bytes = source
+                    .read(&mut buf[cursor..])
+                    .map_err(|_| amd_efs::Error::Marshal)?;
+                if bytes == 0 {
+                    return Ok(cursor);
+                }
+                cursor += bytes;
             }
-            cursor += bytes;
-        }
-    })?;
+        },
+    )?;
     Ok(())
 }
 
@@ -180,22 +191,29 @@ fn bhd_entry_add_from_reader_with_custom_size<T>(
     attrs: &BhdDirectoryEntryAttrs,
     size: usize,
     source: &mut T,
-    ram_destination_address: Option<u64>
+    ram_destination_address: Option<u64>,
 ) -> amd_efs::Result<()>
-where T: std::io::Read
+where
+    T: std::io::Read,
 {
-    directory.add_blob_entry(payload_position, attrs, size.try_into().unwrap(), ram_destination_address, &mut |buf: &mut [u8]| {
-        let mut cursor = 0;
-        loop {
-            let bytes = source.read(&mut buf[cursor ..]).map_err(|_| {
-                amd_efs::Error::Marshal
-            })?;
-            if bytes == 0 {
-                return Ok(cursor);
+    directory.add_blob_entry(
+        payload_position,
+        attrs,
+        size.try_into().unwrap(),
+        ram_destination_address,
+        &mut |buf: &mut [u8]| {
+            let mut cursor = 0;
+            loop {
+                let bytes = source
+                    .read(&mut buf[cursor..])
+                    .map_err(|_| amd_efs::Error::Marshal)?;
+                if bytes == 0 {
+                    return Ok(cursor);
+                }
+                cursor += bytes;
             }
-            cursor += bytes;
-        }
-    })?;
+        },
+    )?;
     Ok(())
 }
 
@@ -210,8 +228,14 @@ fn bhd_entry_add_from_file_with_custom_size(
     let file = File::open(source_filename).unwrap();
     let mut reader = BufReader::new(file);
 
-    bhd_entry_add_from_reader_with_custom_size(directory, payload_position,
-        attrs, size, &mut reader, ram_destination_address)
+    bhd_entry_add_from_reader_with_custom_size(
+        directory,
+        payload_position,
+        attrs,
+        size,
+        &mut reader,
+        ram_destination_address,
+    )
 }
 
 fn bhd_entry_add_from_file(
@@ -224,10 +248,20 @@ fn bhd_entry_add_from_file(
     let source_filename = source_filename.as_path();
     let file = File::open(source_filename).unwrap();
     let size: usize = file.metadata().unwrap().len().try_into().unwrap();
-    bhd_entry_add_from_file_with_custom_size(directory, payload_position, attrs, size, &source_filename, ram_destination_address)
+    bhd_entry_add_from_file_with_custom_size(
+        directory,
+        payload_position,
+        attrs,
+        size,
+        &source_filename,
+        ram_destination_address,
+    )
 }
 
-fn psp_directory_add_default_entries(psp_directory: &mut PspDirectory<FlashImage, ERASABLE_BLOCK_SIZE>, firmware_blob_directory_name: &PathBuf) -> amd_efs::Result<()> {
+fn psp_directory_add_default_entries(
+    psp_directory: &mut PspDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
+    firmware_blob_directory_name: &PathBuf,
+) -> amd_efs::Result<()> {
     psp_entry_add_from_file(
         psp_directory,
         None,
@@ -237,7 +271,9 @@ fn psp_directory_add_default_entries(psp_directory: &mut PspDirectory<FlashImage
 
     psp_directory.add_value_entry(
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspSoftFuseChain),
-        PspSoftFuseChain::new().with_secure_debug_unlock(true).into(),
+        PspSoftFuseChain::new()
+            .with_secure_debug_unlock(true)
+            .into(),
     )?;
 
     psp_entry_add_from_file(
@@ -294,7 +330,13 @@ fn bhd_entry_add_from_file_if_present(
     ram_destination_address: Option<u64>,
 ) -> amd_efs::Result<()> {
     if source_filename.as_path().exists() {
-        bhd_entry_add_from_file(directory, payload_position, attrs, source_filename, ram_destination_address)
+        bhd_entry_add_from_file(
+            directory,
+            payload_position,
+            attrs,
+            source_filename,
+            ram_destination_address,
+        )
     } else {
         Ok(())
     }
@@ -312,7 +354,10 @@ fn elf_symbol(binary: &goblin::elf::Elf, key: &str) -> Option<goblin::elf::Sym> 
     None
 }
 
-fn bhd_directory_add_reset_image(bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>, reset_image_filename: &Path) -> Result<()> {
+fn bhd_directory_add_reset_image(
+    bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
+    reset_image_filename: &Path,
+) -> Result<()> {
     let buffer = fs::read(reset_image_filename).map_err(|x| Error::Io(x))?;
     let mut destination_origin: Option<u64> = None;
     let mut iov = Box::new(std::io::empty()) as Box<dyn Read>;
@@ -324,9 +369,10 @@ fn bhd_directory_add_reset_image(bhd_directory: &mut BhdDirectory<FlashImage, ER
             let mut holesz = 0usize;
             let mut totalsz = 0usize;
             if binary.header.e_type != goblin::elf::header::ET_EXEC
-            || binary.header.e_machine != goblin::elf::header::EM_X86_64
-            || binary.header.e_version < goblin::elf::header::EV_CURRENT.into() {
-                return Err(Error::IncompatibleExecutable)
+                || binary.header.e_machine != goblin::elf::header::EM_X86_64
+                || binary.header.e_version < goblin::elf::header::EV_CURRENT.into()
+            {
+                return Err(Error::IncompatibleExecutable);
             }
             for header in &binary.program_headers {
                 if header.p_type == goblin::elf::program_header::PT_LOAD {
@@ -341,14 +387,14 @@ fn bhd_directory_add_reset_image(bhd_directory: &mut BhdDirectory<FlashImage, ER
                     }
                     if header.p_vaddr < last_vaddr {
                         // According to ELF standard, this should not happen
-                        return Err(Error::IncompatibleExecutable)
+                        return Err(Error::IncompatibleExecutable);
                     }
                     if header.p_filesz > header.p_memsz {
                         // According to ELF standard, this should not happen
-                        return Err(Error::IncompatibleExecutable)
+                        return Err(Error::IncompatibleExecutable);
                     }
                     if header.p_paddr != header.p_vaddr {
-                        return Err(Error::IncompatibleExecutable)
+                        return Err(Error::IncompatibleExecutable);
                     }
                     if header.p_filesz > 0 {
                         if header.p_vaddr > last_vaddr {
@@ -360,8 +406,8 @@ fn bhd_directory_add_reset_image(bhd_directory: &mut BhdDirectory<FlashImage, ER
                             totalsz += holesz;
                             holesz = 0;
                         }
-                        let chunk = &buffer[header.p_offset as usize ..
-                            (header.p_offset + header.p_filesz) as usize];
+                        let chunk = &buffer[header.p_offset as usize
+                            ..(header.p_offset + header.p_filesz) as usize];
                         eprintln!("chunk: {:x} @ {:x}", header.p_filesz, header.p_offset);
                         iov = Box::new(iov.chain(chunk)) as Box<dyn Read>;
                         totalsz += header.p_filesz as usize;
@@ -388,39 +434,53 @@ fn bhd_directory_add_reset_image(bhd_directory: &mut BhdDirectory<FlashImage, ER
             // SYMBOL "_BL_SPACE" Sym { st_name: 5342, st_info: 0x0 LOCAL NOTYPE, st_other: 0 DEFAULT, st_shndx: 65521, st_value: 0x29000, st_size: 0 }
             // The part of the program we copy into the flash image should be
             // of the same size as the space allocated at loader build time.
-            let symsz = elf_symbol(&binary, "_BL_SPACE").ok_or(Error::IncompatibleExecutable)?.st_value;
+            let symsz = elf_symbol(&binary, "_BL_SPACE")
+                .ok_or(Error::IncompatibleExecutable)?
+                .st_value;
             eprintln!("_BL_SPACE: {:x?}", symsz);
             if totalsz != symsz as usize {
-                return Err(Error::IncompatibleExecutable)
+                return Err(Error::IncompatibleExecutable);
             }
             sz = totalsz;
 
             // These symbols have been embedded into the loader to serve as
             // checks in this exact application.
-            let sloader = elf_symbol(&binary, "__sloader").ok_or(Error::IncompatibleExecutable)?.st_value;
+            let sloader = elf_symbol(&binary, "__sloader")
+                .ok_or(Error::IncompatibleExecutable)?
+                .st_value;
             eprintln!("__sloader: {:x?}", sloader);
             if sloader != destination_origin.ok_or(Error::IncompatibleExecutable)? {
-                return Err(Error::IncompatibleExecutable)
+                return Err(Error::IncompatibleExecutable);
             }
 
-            let eloader = elf_symbol(&binary, "__eloader").ok_or(Error::IncompatibleExecutable)?.st_value;
+            let eloader = elf_symbol(&binary, "__eloader")
+                .ok_or(Error::IncompatibleExecutable)?
+                .st_value;
             eprintln!("__eloader: {:x?}", eloader);
             if eloader != last_vaddr {
-                return Err(Error::IncompatibleExecutable)
+                return Err(Error::IncompatibleExecutable);
             }
 
             // The entry point (reset vector) must be 0x10 bytes below the
             // end of a (real-mode) segment--and that segment must begin at the end
             // of the loaded program.  See AMD pub 55758 sec. 4.3 item 4.
-            if binary.header.e_entry != last_vaddr.checked_sub(0x10).ok_or(Error::IncompatibleExecutable)? {
-                return Err(Error::IncompatibleExecutable)
+            if binary.header.e_entry
+                != last_vaddr
+                    .checked_sub(0x10)
+                    .ok_or(Error::IncompatibleExecutable)?
+            {
+                return Err(Error::IncompatibleExecutable);
             }
             if last_vaddr & 0xffff != 0 {
-                return Err(Error::IncompatibleExecutable)
+                return Err(Error::IncompatibleExecutable);
             }
-        },
+        }
         _ => {
-            destination_origin = Some(0x8000_0000u64.checked_sub(buffer.len() as u64).ok_or(Error::ImageTooBig)?);
+            destination_origin = Some(
+                0x8000_0000u64
+                    .checked_sub(buffer.len() as u64)
+                    .ok_or(Error::ImageTooBig)?,
+            );
             iov = Box::new(&buffer.as_slice()[..]) as Box<dyn Read>;
             sz = buffer.len();
         }
@@ -444,7 +504,10 @@ fn bhd_directory_add_reset_image(bhd_directory: &mut BhdDirectory<FlashImage, ER
     Ok(())
 }
 
-fn bhd_directory_add_default_entries(bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>, firmware_blob_directory_name: &PathBuf) -> amd_efs::Result<()> {
+fn bhd_directory_add_default_entries(
+    bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
+    firmware_blob_directory_name: &PathBuf,
+) -> amd_efs::Result<()> {
     bhd_entry_add_from_file(
         bhd_directory,
         None,
@@ -531,245 +594,750 @@ fn bhd_directory_add_default_entries(bhd_directory: &mut BhdDirectory<FlashImage
     Ok(())
 }
 
-fn bhd_add_apcb(processor_generation: ProcessorGeneration, bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>, attrs: &BhdDirectoryEntryAttrs) -> amd_apcb::Result<()> {
+fn bhd_add_apcb(
+    processor_generation: ProcessorGeneration,
+    bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
+    attrs: &BhdDirectoryEntryAttrs,
+) -> amd_apcb::Result<()> {
+    use amd_apcb::memory::platform_specific_override;
+    use amd_apcb::memory::*;
+    use amd_apcb::ApcbIoOptions;
     use amd_apcb::BoardInstances;
     use amd_apcb::EntryId;
     use amd_apcb::GroupId;
     use amd_apcb::MemoryEntryId;
-    use amd_apcb::PriorityLevels;
     use amd_apcb::PriorityLevel;
-    use amd_apcb::memory::*;
-    use amd_apcb::memory::platform_specific_override;
-    use amd_apcb::ApcbIoOptions;
-    use amd_apcb::{DfToggle, DfCakeCrcThresholdBounds, DxioPhyParamIqofc, DxioPhyParamPole, DxioPhyParamVga, DxioPhyParamDc, MemClockValue, FchSmbusSpeed, MemHealBistEnable, SecondPcieLinkMaxPayload, FchConsoleSerialPort, PspEnableDebugMode, BaudRate, MemTrainingHdtControl, SecondPcieLinkSpeed, DfXgmiTxEqMode, MemSelfRefreshExitStaggering, MemHealTestSelect, CcxSevAsidCount, FchConsoleOutSuperIoType, MemActionOnBistFailure, MemHealPprType, DfDramNumaPerSocket, DfMemInterleaving, DfMemInterleavingSize, WorkloadProfile, DfRemapAt1TiB, MemMbistDataEyeType, MemUserTimingMode, FchGppClkMap, TokenEntryId, ContextType, MemTsmeMode, MemMbistTest, BmcGen2TxDeemphasis, BmcLinkSpeed, MemDataPoison, DfXgmiLinkConfig, DfPstateModeSelect, EccSymbolSize, GnbSmuDfPstateFclkLimit, MemMaxActivityCount, MemNvdimmPowerSource, MemControllerWritingCrcMode, UmaMode, MemControllerPmuTrainingMode, MemMbistTestMode, MemMbistAggressorsChannels, MemMbistPatternSelect};
+    use amd_apcb::PriorityLevels;
+    use amd_apcb::{
+        BaudRate, BmcGen2TxDeemphasis, BmcLinkSpeed, CcxSevAsidCount, ContextType,
+        DfCakeCrcThresholdBounds, DfDramNumaPerSocket, DfMemInterleaving, DfMemInterleavingSize,
+        DfPstateModeSelect, DfRemapAt1TiB, DfToggle, DfXgmiLinkConfig, DfXgmiTxEqMode,
+        DxioPhyParamDc, DxioPhyParamIqofc, DxioPhyParamPole, DxioPhyParamVga, EccSymbolSize,
+        FchConsoleOutSuperIoType, FchConsoleSerialPort, FchGppClkMap, FchSmbusSpeed,
+        GnbSmuDfPstateFclkLimit, MemActionOnBistFailure, MemClockValue,
+        MemControllerPmuTrainingMode, MemControllerWritingCrcMode, MemDataPoison,
+        MemHealBistEnable, MemHealPprType, MemHealTestSelect, MemMaxActivityCount,
+        MemMbistAggressorsChannels, MemMbistDataEyeType, MemMbistPatternSelect, MemMbistTest,
+        MemMbistTestMode, MemNvdimmPowerSource, MemSelfRefreshExitStaggering,
+        MemTrainingHdtControl, MemTsmeMode, MemUserTimingMode, PspEnableDebugMode,
+        SecondPcieLinkMaxPayload, SecondPcieLinkSpeed, TokenEntryId, UmaMode, WorkloadProfile,
+    };
     let mut buf: [u8; Apcb::MAX_SIZE] = [0xff; Apcb::MAX_SIZE];
-    let mut apcb = Apcb::create(&mut buf, 1/*FIXME*/, &ApcbIoOptions::default()/*FIXME*/)?;
+    let mut apcb = Apcb::create(
+        &mut buf,
+        1,                         /*FIXME*/
+        &ApcbIoOptions::default(), /*FIXME*/
+    )?;
     apcb.insert_group(GroupId::Memory, *b"MEMG")?;
-    apcb.insert_struct_array_as_entry::<DimmInfoSmbusElement>(EntryId::Memory(MemoryEntryId::DimmInfoSmbus), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &[
-        // socket_id, channel_id, dimm_id, dimm_smbus_address, i2c_mux_address=148, mux_control_address=3, mux_channel
-        DimmInfoSmbusElement::new_slot(0, 0, 0, 160, Some(148), Some(3), Some(128))?,
-        DimmInfoSmbusElement::new_slot(0, 0, 1, 162, Some(148), Some(3), Some(128))?,
-        DimmInfoSmbusElement::new_slot(0, 1, 0, 164, Some(148), Some(3), Some(128))?,
-        DimmInfoSmbusElement::new_slot(0, 1, 1, 166, Some(148), Some(3), Some(128))?,
-        DimmInfoSmbusElement::new_slot(0, 2, 0, 168, Some(148), Some(3), Some(128))?,
-        DimmInfoSmbusElement::new_slot(0, 2, 1, 170, Some(148), Some(3), Some(128))?,
-        DimmInfoSmbusElement::new_slot(0, 3, 0, 172, Some(148), Some(3), Some(128))?,
-        DimmInfoSmbusElement::new_slot(0, 3, 1, 174, Some(148), Some(3), Some(128))?,
-        DimmInfoSmbusElement::new_slot(0, 4, 0, 160, Some(148), Some(3), Some(64))?,
-        DimmInfoSmbusElement::new_slot(0, 4, 1, 162, Some(148), Some(3), Some(64))?,
-        DimmInfoSmbusElement::new_slot(0, 5, 0, 164, Some(148), Some(3), Some(64))?,
-        DimmInfoSmbusElement::new_slot(0, 5, 1, 166, Some(148), Some(3), Some(64))?,
-        DimmInfoSmbusElement::new_slot(0, 6, 0, 168, Some(148), Some(3), Some(64))?,
-        DimmInfoSmbusElement::new_slot(0, 6, 1, 170, Some(148), Some(3), Some(64))?,
-        DimmInfoSmbusElement::new_slot(0, 7, 0, 172, Some(148), Some(3), Some(64))?,
-        DimmInfoSmbusElement::new_slot(0, 7, 1, 174, Some(148), Some(3), Some(64))?,
-        DimmInfoSmbusElement::new_slot(1, 0, 0, 160, Some(148), Some(3), Some(32))?,
-        DimmInfoSmbusElement::new_slot(1, 0, 1, 162, Some(148), Some(3), Some(32))?,
-        DimmInfoSmbusElement::new_slot(1, 1, 0, 164, Some(148), Some(3), Some(32))?,
-        DimmInfoSmbusElement::new_slot(1, 1, 1, 166, Some(148), Some(3), Some(32))?,
-        DimmInfoSmbusElement::new_slot(1, 2, 0, 168, Some(148), Some(3), Some(32))?,
-        DimmInfoSmbusElement::new_slot(1, 2, 1, 170, Some(148), Some(3), Some(32))?,
-        DimmInfoSmbusElement::new_slot(1, 3, 0, 172, Some(148), Some(3), Some(32))?,
-        DimmInfoSmbusElement::new_slot(1, 3, 1, 174, Some(148), Some(3), Some(32))?,
-        DimmInfoSmbusElement::new_slot(1, 4, 0, 160, Some(148), Some(3), Some(16))?,
-        DimmInfoSmbusElement::new_slot(1, 4, 1, 162, Some(148), Some(3), Some(16))?,
-        DimmInfoSmbusElement::new_slot(1, 5, 0, 164, Some(148), Some(3), Some(16))?,
-        DimmInfoSmbusElement::new_slot(1, 5, 1, 166, Some(148), Some(3), Some(16))?,
-        DimmInfoSmbusElement::new_slot(1, 6, 0, 168, Some(148), Some(3), Some(16))?,
-        DimmInfoSmbusElement::new_slot(1, 6, 1, 170, Some(148), Some(3), Some(16))?,
-        DimmInfoSmbusElement::new_slot(1, 7, 0, 172, Some(148), Some(3), Some(16))?,
-        DimmInfoSmbusElement::new_slot(1, 7, 1, 174, Some(148), Some(3), Some(16))?,
-    ])?;
+    apcb.insert_struct_array_as_entry::<DimmInfoSmbusElement>(
+        EntryId::Memory(MemoryEntryId::DimmInfoSmbus),
+        0,
+        BoardInstances::all(),
+        PriorityLevels::from_level(PriorityLevel::Normal),
+        &[
+            // socket_id, channel_id, dimm_id, dimm_smbus_address, i2c_mux_address=148, mux_control_address=3, mux_channel
+            DimmInfoSmbusElement::new_slot(0, 0, 0, 160, Some(148), Some(3), Some(128))?,
+            DimmInfoSmbusElement::new_slot(0, 0, 1, 162, Some(148), Some(3), Some(128))?,
+            DimmInfoSmbusElement::new_slot(0, 1, 0, 164, Some(148), Some(3), Some(128))?,
+            DimmInfoSmbusElement::new_slot(0, 1, 1, 166, Some(148), Some(3), Some(128))?,
+            DimmInfoSmbusElement::new_slot(0, 2, 0, 168, Some(148), Some(3), Some(128))?,
+            DimmInfoSmbusElement::new_slot(0, 2, 1, 170, Some(148), Some(3), Some(128))?,
+            DimmInfoSmbusElement::new_slot(0, 3, 0, 172, Some(148), Some(3), Some(128))?,
+            DimmInfoSmbusElement::new_slot(0, 3, 1, 174, Some(148), Some(3), Some(128))?,
+            DimmInfoSmbusElement::new_slot(0, 4, 0, 160, Some(148), Some(3), Some(64))?,
+            DimmInfoSmbusElement::new_slot(0, 4, 1, 162, Some(148), Some(3), Some(64))?,
+            DimmInfoSmbusElement::new_slot(0, 5, 0, 164, Some(148), Some(3), Some(64))?,
+            DimmInfoSmbusElement::new_slot(0, 5, 1, 166, Some(148), Some(3), Some(64))?,
+            DimmInfoSmbusElement::new_slot(0, 6, 0, 168, Some(148), Some(3), Some(64))?,
+            DimmInfoSmbusElement::new_slot(0, 6, 1, 170, Some(148), Some(3), Some(64))?,
+            DimmInfoSmbusElement::new_slot(0, 7, 0, 172, Some(148), Some(3), Some(64))?,
+            DimmInfoSmbusElement::new_slot(0, 7, 1, 174, Some(148), Some(3), Some(64))?,
+            DimmInfoSmbusElement::new_slot(1, 0, 0, 160, Some(148), Some(3), Some(32))?,
+            DimmInfoSmbusElement::new_slot(1, 0, 1, 162, Some(148), Some(3), Some(32))?,
+            DimmInfoSmbusElement::new_slot(1, 1, 0, 164, Some(148), Some(3), Some(32))?,
+            DimmInfoSmbusElement::new_slot(1, 1, 1, 166, Some(148), Some(3), Some(32))?,
+            DimmInfoSmbusElement::new_slot(1, 2, 0, 168, Some(148), Some(3), Some(32))?,
+            DimmInfoSmbusElement::new_slot(1, 2, 1, 170, Some(148), Some(3), Some(32))?,
+            DimmInfoSmbusElement::new_slot(1, 3, 0, 172, Some(148), Some(3), Some(32))?,
+            DimmInfoSmbusElement::new_slot(1, 3, 1, 174, Some(148), Some(3), Some(32))?,
+            DimmInfoSmbusElement::new_slot(1, 4, 0, 160, Some(148), Some(3), Some(16))?,
+            DimmInfoSmbusElement::new_slot(1, 4, 1, 162, Some(148), Some(3), Some(16))?,
+            DimmInfoSmbusElement::new_slot(1, 5, 0, 164, Some(148), Some(3), Some(16))?,
+            DimmInfoSmbusElement::new_slot(1, 5, 1, 166, Some(148), Some(3), Some(16))?,
+            DimmInfoSmbusElement::new_slot(1, 6, 0, 168, Some(148), Some(3), Some(16))?,
+            DimmInfoSmbusElement::new_slot(1, 6, 1, 170, Some(148), Some(3), Some(16))?,
+            DimmInfoSmbusElement::new_slot(1, 7, 0, 172, Some(148), Some(3), Some(16))?,
+            DimmInfoSmbusElement::new_slot(1, 7, 1, 174, Some(148), Some(3), Some(16))?,
+        ],
+    )?;
     // &[&dyn SequenceElementAsBytes]
-    use platform_specific_override::SocketIds;
     use platform_specific_override::ChannelIds;
     use platform_specific_override::DimmSlots;
-    apcb.insert_struct_sequence_as_entry(EntryId::Memory(MemoryEntryId::PlatformSpecificOverride), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &[
-        &platform_specific_override::MemclkMap::new(SocketIds::ALL, ChannelIds::Any, [0, 1, 2, 3, 0, 0, 0, 0])?,
-        &platform_specific_override::CkeTristateMap::new(SocketIds::ALL, ChannelIds::Any, DimmSlots::Any, [0, 1, 2, 3])?,
-        &platform_specific_override::OdtTristateMap::new(SocketIds::ALL, ChannelIds::Any, DimmSlots::Any, [0, 1, 2, 3])?,
-        &platform_specific_override::CsTristateMap::new(SocketIds::ALL, ChannelIds::Any, DimmSlots::Any, [0, 1, 2, 3, 0, 0, 0, 0])?,
-        &platform_specific_override::MaxDimmsPerChannel::new(SocketIds::ALL, ChannelIds::Any, 1)?, // FIXME check orig
-        &platform_specific_override::MaxChannelsPerSocket::new(SocketIds::ALL, 8)?,
-    ])?;
+    use platform_specific_override::SocketIds;
+    apcb.insert_struct_sequence_as_entry(
+        EntryId::Memory(MemoryEntryId::PlatformSpecificOverride),
+        0,
+        BoardInstances::all(),
+        PriorityLevels::from_level(PriorityLevel::Normal),
+        &[
+            &platform_specific_override::MemclkMap::new(
+                SocketIds::ALL,
+                ChannelIds::Any,
+                [0, 1, 2, 3, 0, 0, 0, 0],
+            )?,
+            &platform_specific_override::CkeTristateMap::new(
+                SocketIds::ALL,
+                ChannelIds::Any,
+                DimmSlots::Any,
+                [0, 1, 2, 3],
+            )?,
+            &platform_specific_override::OdtTristateMap::new(
+                SocketIds::ALL,
+                ChannelIds::Any,
+                DimmSlots::Any,
+                [0, 1, 2, 3],
+            )?,
+            &platform_specific_override::CsTristateMap::new(
+                SocketIds::ALL,
+                ChannelIds::Any,
+                DimmSlots::Any,
+                [0, 1, 2, 3, 0, 0, 0, 0],
+            )?,
+            &platform_specific_override::MaxDimmsPerChannel::new(
+                SocketIds::ALL,
+                ChannelIds::Any,
+                1,
+            )?, // FIXME check orig
+            &platform_specific_override::MaxChannelsPerSocket::new(SocketIds::ALL, 8)?,
+        ],
+    )?;
     match processor_generation {
         ProcessorGeneration::Naples => {
             panic!("not supported");
-        },
+        }
         ProcessorGeneration::Rome => {
             // PPR 12.7.2.2 DRAM ODT Pin Control
-            apcb.insert_struct_array_as_entry::<Ddr4OdtPatElement>(EntryId::Memory(MemoryEntryId::PsRdimmDdr4OdtPat), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &[
-                Ddr4OdtPatElement::new(Ddr4OdtPatDimmRankBitmaps::new().with_dimm1(Ddr4DimmRanks::new().with_single_rank(true)).with_dimm0(Ddr4DimmRanks::new().with_unpopulated(true)),
-                  OdtPatPatterns::new(), OdtPatPatterns::new(), OdtPatPatterns::new(), OdtPatPatterns::new()),
-                Ddr4OdtPatElement::new(Ddr4OdtPatDimmRankBitmaps::new().with_dimm1(Ddr4DimmRanks::new().with_dual_rank(true)).with_dimm0(Ddr4DimmRanks::new().with_unpopulated(true)),
-                  OdtPatPatterns::new(), OdtPatPatterns::new(), OdtPatPatterns::new().with_writing_pattern(2).with_reading_pattern(0), OdtPatPatterns::new().with_writing_pattern(8).with_reading_pattern(0)),
-                Ddr4OdtPatElement::new(Ddr4OdtPatDimmRankBitmaps::new().with_dimm1(Ddr4DimmRanks::new().with_unpopulated(true)).with_dimm0(Ddr4DimmRanks::new().with_single_rank(true)),
-                  OdtPatPatterns::new(), OdtPatPatterns::new(), OdtPatPatterns::new(), OdtPatPatterns::new()),
-                Ddr4OdtPatElement::new(Ddr4OdtPatDimmRankBitmaps::new().with_dimm1(Ddr4DimmRanks::new().with_unpopulated(true)).with_dimm0(Ddr4DimmRanks::new().with_dual_rank(true)),
-                  OdtPatPatterns::new().with_writing_pattern(1).with_reading_pattern(0), OdtPatPatterns::new().with_writing_pattern(4).with_reading_pattern(0), OdtPatPatterns::new(), OdtPatPatterns::new()),
-                Ddr4OdtPatElement::new(Ddr4OdtPatDimmRankBitmaps::new().with_dimm1(Ddr4DimmRanks::new().with_single_rank(true)).with_dimm0(Ddr4DimmRanks::new().with_single_rank(true)),
-                  OdtPatPatterns::new(), OdtPatPatterns::new(), OdtPatPatterns::new(), OdtPatPatterns::new()),
-                Ddr4OdtPatElement::new(Ddr4OdtPatDimmRankBitmaps::new().with_dimm1(Ddr4DimmRanks::new().with_dual_rank(true)).with_dimm0(Ddr4DimmRanks::new().with_single_rank(true)),
-                  OdtPatPatterns::new().with_writing_pattern(2).with_reading_pattern(2), OdtPatPatterns::new(), OdtPatPatterns::new().with_writing_pattern(1).with_reading_pattern(1), OdtPatPatterns::new().with_writing_pattern(1).with_reading_pattern(1)),
-                Ddr4OdtPatElement::new(Ddr4OdtPatDimmRankBitmaps::new().with_dimm1(Ddr4DimmRanks::new().with_single_rank(true)).with_dimm0(Ddr4DimmRanks::new().with_dual_rank(true)),
-                  OdtPatPatterns::new().with_writing_pattern(2).with_reading_pattern(2), OdtPatPatterns::new().with_writing_pattern(2).with_reading_pattern(2), OdtPatPatterns::new().with_writing_pattern(1).with_reading_pattern(1), OdtPatPatterns::new()),
-                Ddr4OdtPatElement::new(Ddr4OdtPatDimmRankBitmaps::new().with_dimm1(Ddr4DimmRanks::new().with_dual_rank(true)).with_dimm0(Ddr4DimmRanks::new().with_dual_rank(true)),
-                  OdtPatPatterns::new().with_writing_pattern(0xa).with_reading_pattern(0xa), OdtPatPatterns::new().with_writing_pattern(0xa).with_reading_pattern(0xa), OdtPatPatterns::new().with_writing_pattern(5).with_reading_pattern(5), OdtPatPatterns::new().with_writing_pattern(5).with_reading_pattern(5)),
-            ])?;
-        },
+            apcb.insert_struct_array_as_entry::<Ddr4OdtPatElement>(
+                EntryId::Memory(MemoryEntryId::PsRdimmDdr4OdtPat),
+                0,
+                BoardInstances::all(),
+                PriorityLevels::from_level(PriorityLevel::Normal),
+                &[
+                    Ddr4OdtPatElement::new(
+                        Ddr4OdtPatDimmRankBitmaps::new()
+                            .with_dimm1(Ddr4DimmRanks::new().with_single_rank(true))
+                            .with_dimm0(Ddr4DimmRanks::new().with_unpopulated(true)),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new(),
+                    ),
+                    Ddr4OdtPatElement::new(
+                        Ddr4OdtPatDimmRankBitmaps::new()
+                            .with_dimm1(Ddr4DimmRanks::new().with_dual_rank(true))
+                            .with_dimm0(Ddr4DimmRanks::new().with_unpopulated(true)),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(2)
+                            .with_reading_pattern(0),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(8)
+                            .with_reading_pattern(0),
+                    ),
+                    Ddr4OdtPatElement::new(
+                        Ddr4OdtPatDimmRankBitmaps::new()
+                            .with_dimm1(Ddr4DimmRanks::new().with_unpopulated(true))
+                            .with_dimm0(Ddr4DimmRanks::new().with_single_rank(true)),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new(),
+                    ),
+                    Ddr4OdtPatElement::new(
+                        Ddr4OdtPatDimmRankBitmaps::new()
+                            .with_dimm1(Ddr4DimmRanks::new().with_unpopulated(true))
+                            .with_dimm0(Ddr4DimmRanks::new().with_dual_rank(true)),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(1)
+                            .with_reading_pattern(0),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(4)
+                            .with_reading_pattern(0),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new(),
+                    ),
+                    Ddr4OdtPatElement::new(
+                        Ddr4OdtPatDimmRankBitmaps::new()
+                            .with_dimm1(Ddr4DimmRanks::new().with_single_rank(true))
+                            .with_dimm0(Ddr4DimmRanks::new().with_single_rank(true)),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new(),
+                    ),
+                    Ddr4OdtPatElement::new(
+                        Ddr4OdtPatDimmRankBitmaps::new()
+                            .with_dimm1(Ddr4DimmRanks::new().with_dual_rank(true))
+                            .with_dimm0(Ddr4DimmRanks::new().with_single_rank(true)),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(2)
+                            .with_reading_pattern(2),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(1)
+                            .with_reading_pattern(1),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(1)
+                            .with_reading_pattern(1),
+                    ),
+                    Ddr4OdtPatElement::new(
+                        Ddr4OdtPatDimmRankBitmaps::new()
+                            .with_dimm1(Ddr4DimmRanks::new().with_single_rank(true))
+                            .with_dimm0(Ddr4DimmRanks::new().with_dual_rank(true)),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(2)
+                            .with_reading_pattern(2),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(2)
+                            .with_reading_pattern(2),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(1)
+                            .with_reading_pattern(1),
+                        OdtPatPatterns::new(),
+                    ),
+                    Ddr4OdtPatElement::new(
+                        Ddr4OdtPatDimmRankBitmaps::new()
+                            .with_dimm1(Ddr4DimmRanks::new().with_dual_rank(true))
+                            .with_dimm0(Ddr4DimmRanks::new().with_dual_rank(true)),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(0xa)
+                            .with_reading_pattern(0xa),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(0xa)
+                            .with_reading_pattern(0xa),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(5)
+                            .with_reading_pattern(5),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(5)
+                            .with_reading_pattern(5),
+                    ),
+                ],
+            )?;
+        }
         ProcessorGeneration::Milan => {
             // PPR 12.7.2.2 DRAM ODT Pin Control
-            apcb.insert_struct_array_as_entry::<Ddr4OdtPatElement>(EntryId::Memory(MemoryEntryId::PsRdimmDdr4OdtPat), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &[
-                Ddr4OdtPatElement::new(Ddr4OdtPatDimmRankBitmaps::new().with_dimm1(Ddr4DimmRanks::new().with_single_rank(true)).with_dimm0(Ddr4DimmRanks::new().with_unpopulated(true)),
-                  OdtPatPatterns::new(), OdtPatPatterns::new(), OdtPatPatterns::new(), OdtPatPatterns::new()),
-                Ddr4OdtPatElement::new(Ddr4OdtPatDimmRankBitmaps::new().with_dimm1(Ddr4DimmRanks::new().with_dual_rank(true)).with_dimm0(Ddr4DimmRanks::new().with_unpopulated(true)),
-                  OdtPatPatterns::new(), OdtPatPatterns::new(), OdtPatPatterns::new().with_writing_pattern(4).with_reading_pattern(0), OdtPatPatterns::new().with_writing_pattern(8).with_reading_pattern(0)),
-                Ddr4OdtPatElement::new(Ddr4OdtPatDimmRankBitmaps::new().with_dimm1(Ddr4DimmRanks::new().with_unpopulated(true)).with_dimm0(Ddr4DimmRanks::new().with_single_rank(true)),
-                  OdtPatPatterns::new(), OdtPatPatterns::new(), OdtPatPatterns::new(), OdtPatPatterns::new()),
-                Ddr4OdtPatElement::new(Ddr4OdtPatDimmRankBitmaps::new().with_dimm1(Ddr4DimmRanks::new().with_unpopulated(true)).with_dimm0(Ddr4DimmRanks::new().with_dual_rank(true)),
-                  OdtPatPatterns::new().with_writing_pattern(1).with_reading_pattern(0), OdtPatPatterns::new().with_writing_pattern(2).with_reading_pattern(0), OdtPatPatterns::new(), OdtPatPatterns::new()),
-                Ddr4OdtPatElement::new(Ddr4OdtPatDimmRankBitmaps::new().with_dimm1(Ddr4DimmRanks::new().with_single_rank(true)).with_dimm0(Ddr4DimmRanks::new().with_single_rank(true)),
-                  OdtPatPatterns::new(), OdtPatPatterns::new(), OdtPatPatterns::new(), OdtPatPatterns::new()),
-                Ddr4OdtPatElement::new(Ddr4OdtPatDimmRankBitmaps::new().with_dimm1(Ddr4DimmRanks::new().with_dual_rank(true)).with_dimm0(Ddr4DimmRanks::new().with_single_rank(true)),
-                  OdtPatPatterns::new().with_writing_pattern(4).with_reading_pattern(4), OdtPatPatterns::new(), OdtPatPatterns::new().with_writing_pattern(1).with_reading_pattern(1), OdtPatPatterns::new().with_writing_pattern(1).with_reading_pattern(1)),
-                Ddr4OdtPatElement::new(Ddr4OdtPatDimmRankBitmaps::new().with_dimm1(Ddr4DimmRanks::new().with_single_rank(true)).with_dimm0(Ddr4DimmRanks::new().with_dual_rank(true)),
-                  OdtPatPatterns::new().with_writing_pattern(4).with_reading_pattern(4), OdtPatPatterns::new().with_writing_pattern(4).with_reading_pattern(4), OdtPatPatterns::new().with_writing_pattern(1).with_reading_pattern(1), OdtPatPatterns::new()),
-                Ddr4OdtPatElement::new(Ddr4OdtPatDimmRankBitmaps::new().with_dimm1(Ddr4DimmRanks::new().with_dual_rank(true)).with_dimm0(Ddr4DimmRanks::new().with_dual_rank(true)),
-                  OdtPatPatterns::new().with_writing_pattern(0xc).with_reading_pattern(0xc), OdtPatPatterns::new().with_writing_pattern(0xc).with_reading_pattern(0xc), OdtPatPatterns::new().with_writing_pattern(3).with_reading_pattern(3), OdtPatPatterns::new().with_writing_pattern(3).with_reading_pattern(3)),
-            ])?;
-        },
+            apcb.insert_struct_array_as_entry::<Ddr4OdtPatElement>(
+                EntryId::Memory(MemoryEntryId::PsRdimmDdr4OdtPat),
+                0,
+                BoardInstances::all(),
+                PriorityLevels::from_level(PriorityLevel::Normal),
+                &[
+                    Ddr4OdtPatElement::new(
+                        Ddr4OdtPatDimmRankBitmaps::new()
+                            .with_dimm1(Ddr4DimmRanks::new().with_single_rank(true))
+                            .with_dimm0(Ddr4DimmRanks::new().with_unpopulated(true)),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new(),
+                    ),
+                    Ddr4OdtPatElement::new(
+                        Ddr4OdtPatDimmRankBitmaps::new()
+                            .with_dimm1(Ddr4DimmRanks::new().with_dual_rank(true))
+                            .with_dimm0(Ddr4DimmRanks::new().with_unpopulated(true)),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(4)
+                            .with_reading_pattern(0),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(8)
+                            .with_reading_pattern(0),
+                    ),
+                    Ddr4OdtPatElement::new(
+                        Ddr4OdtPatDimmRankBitmaps::new()
+                            .with_dimm1(Ddr4DimmRanks::new().with_unpopulated(true))
+                            .with_dimm0(Ddr4DimmRanks::new().with_single_rank(true)),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new(),
+                    ),
+                    Ddr4OdtPatElement::new(
+                        Ddr4OdtPatDimmRankBitmaps::new()
+                            .with_dimm1(Ddr4DimmRanks::new().with_unpopulated(true))
+                            .with_dimm0(Ddr4DimmRanks::new().with_dual_rank(true)),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(1)
+                            .with_reading_pattern(0),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(2)
+                            .with_reading_pattern(0),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new(),
+                    ),
+                    Ddr4OdtPatElement::new(
+                        Ddr4OdtPatDimmRankBitmaps::new()
+                            .with_dimm1(Ddr4DimmRanks::new().with_single_rank(true))
+                            .with_dimm0(Ddr4DimmRanks::new().with_single_rank(true)),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new(),
+                    ),
+                    Ddr4OdtPatElement::new(
+                        Ddr4OdtPatDimmRankBitmaps::new()
+                            .with_dimm1(Ddr4DimmRanks::new().with_dual_rank(true))
+                            .with_dimm0(Ddr4DimmRanks::new().with_single_rank(true)),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(4)
+                            .with_reading_pattern(4),
+                        OdtPatPatterns::new(),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(1)
+                            .with_reading_pattern(1),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(1)
+                            .with_reading_pattern(1),
+                    ),
+                    Ddr4OdtPatElement::new(
+                        Ddr4OdtPatDimmRankBitmaps::new()
+                            .with_dimm1(Ddr4DimmRanks::new().with_single_rank(true))
+                            .with_dimm0(Ddr4DimmRanks::new().with_dual_rank(true)),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(4)
+                            .with_reading_pattern(4),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(4)
+                            .with_reading_pattern(4),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(1)
+                            .with_reading_pattern(1),
+                        OdtPatPatterns::new(),
+                    ),
+                    Ddr4OdtPatElement::new(
+                        Ddr4OdtPatDimmRankBitmaps::new()
+                            .with_dimm1(Ddr4DimmRanks::new().with_dual_rank(true))
+                            .with_dimm0(Ddr4DimmRanks::new().with_dual_rank(true)),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(0xc)
+                            .with_reading_pattern(0xc),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(0xc)
+                            .with_reading_pattern(0xc),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(3)
+                            .with_reading_pattern(3),
+                        OdtPatPatterns::new()
+                            .with_writing_pattern(3)
+                            .with_reading_pattern(3),
+                    ),
+                ],
+            )?;
+        }
     }
     let u = Ddr4DimmRanks::new().with_unpopulated(true);
     let s = Ddr4DimmRanks::new().with_single_rank(true);
     let d = Ddr4DimmRanks::new().with_dual_rank(true);
-    let sd = Ddr4DimmRanks::new().with_single_rank(true).with_dual_rank(true); // s|d
-    apcb.insert_struct_array_as_entry::<RdimmDdr4CadBusElement>(EntryId::Memory(MemoryEntryId::PsRdimmDdr4CadBus), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &[
-        // dimm_slots_per_channel, ddr_rates, dimm0_ranks, dimm1_ranks, address_command_control
-        RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr1600(true), sd, u, 0x393939)?,
-        RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr1866(true), sd, u, 0x373737)?,
-        RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr2133(true), sd, u, 0x353535)?,
-        RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr2400(true), sd, u, 0x333333)?,
-        RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr2667(true), sd, u, 0x313131)?,
-        RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr2933(true), sd, u, 0x2f2f2f)?,
-        RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr3200(true), sd, u, 0x2d2d2d)?,
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1600(true), u, sd, 0x393939)?,
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1600(true), sd, u, 0x393939)?,
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1600(true), sd, sd, 0x353939)?,
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1866(true), u, sd, 0x373737)?,
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1866(true), sd, u, 0x373737)?,
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1866(true), s, s, 0x333939)?,
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1866(true), s, d, 0x333737)?,
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1866(true), d, sd, 0x333737)?,
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2133(true), u, sd, 0x353535)?,
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2133(true), sd, u, 0x353535)?,
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2133(true), sd, sd, 0x313535)?,
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2400(true), u, sd, 0x333333)?,
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2400(true), sd, u, 0x333333)?,
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2400(true), sd, sd, 0x2f3333)?,
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2667(true), u, sd, 0x313131)?,
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2667(true), sd, u, 0x313131)?,
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2667(true), sd, sd, 0x2d3131)?,
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2933(true), u, sd, 0x2f2f2f)?,
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2933(true), sd, u, 0x2f2f2f)?,
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2933(true), sd, sd, 0x2c2f2f)?,
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr3200(true), u, sd, 0x2d2d2d)?,
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr3200(true), sd, u, 0x2d2d2d)?,
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr3200(true), sd, sd, 0x2a2d2d)?,
-    ])?;
-    let ddr_rates = DdrRates::new().with_ddr3200(true).with_ddr2933(true).with_ddr2667(true).with_ddr2400(true).with_ddr2133(true).with_ddr1866(true).with_ddr1600(true);
-    apcb.insert_struct_array_as_entry::<Ddr4DataBusElement>(EntryId::Memory(MemoryEntryId::PsRdimmDdr4DataBus), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &[
-        Ddr4DataBusElement::new(1, ddr_rates, s, u, RttNom::Off, RttWr::Off, RttPark::_48Ohm, 91, VrefDq::Range1(VrefDqRange1::_74_95P))?,
-        Ddr4DataBusElement::new(1, ddr_rates, d, u, RttNom::_60Ohm, RttWr::Off, RttPark::_240Ohm, 93, VrefDq::Range1(VrefDqRange1::_74_95P))?,
-        Ddr4DataBusElement::new(2, ddr_rates, u, s, RttNom::Off, RttWr::Off, RttPark::_48Ohm, 91, VrefDq::Range1(VrefDqRange1::_74_95P))?,
-        Ddr4DataBusElement::new(2, ddr_rates, u, d, RttNom::_60Ohm, RttWr::Off, RttPark::_240Ohm, 93, VrefDq::Range1(VrefDqRange1::_74_95P))?,
-        Ddr4DataBusElement::new(2, ddr_rates, s, u, RttNom::Off, RttWr::Off, RttPark::_48Ohm, 91, VrefDq::Range1(VrefDqRange1::_74_95P))?,
-        Ddr4DataBusElement::new(2, ddr_rates, s, s, RttNom::Off, RttWr::_80Ohm, RttPark::_34Ohm, 104, VrefDq::Range1(VrefDqRange1::_78_85P))?,
-        Ddr4DataBusElement::new(2, ddr_rates, s, d, RttNom::_34Ohm, RttWr::_120Ohm, RttPark::_240Ohm, 103, VrefDq::Range1(VrefDqRange1::_80_80P))?,
-        Ddr4DataBusElement::new(2, ddr_rates, d, u, RttNom::_60Ohm, RttWr::Off, RttPark::_240Ohm, 93, VrefDq::Range1(VrefDqRange1::_74_95P))?,
-        Ddr4DataBusElement::new(2, ddr_rates, d, s, RttNom::_34Ohm, RttWr::_120Ohm, RttPark::_240Ohm, 103, VrefDq::Range1(VrefDqRange1::_80_80P))?,
-        Ddr4DataBusElement::new(2, ddr_rates, d, d, RttNom::_60Ohm, RttWr::_120Ohm, RttPark::_240Ohm, 106, VrefDq::Range1(VrefDqRange1::_79_50P))?,
-    ])?;
+    let sd = Ddr4DimmRanks::new()
+        .with_single_rank(true)
+        .with_dual_rank(true); // s|d
+    apcb.insert_struct_array_as_entry::<RdimmDdr4CadBusElement>(
+        EntryId::Memory(MemoryEntryId::PsRdimmDdr4CadBus),
+        0,
+        BoardInstances::all(),
+        PriorityLevels::from_level(PriorityLevel::Normal),
+        &[
+            // dimm_slots_per_channel, ddr_rates, dimm0_ranks, dimm1_ranks, address_command_control
+            RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr1600(true), sd, u, 0x393939)?,
+            RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr1866(true), sd, u, 0x373737)?,
+            RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr2133(true), sd, u, 0x353535)?,
+            RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr2400(true), sd, u, 0x333333)?,
+            RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr2667(true), sd, u, 0x313131)?,
+            RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr2933(true), sd, u, 0x2f2f2f)?,
+            RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr3200(true), sd, u, 0x2d2d2d)?,
+            RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1600(true), u, sd, 0x393939)?,
+            RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1600(true), sd, u, 0x393939)?,
+            RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1600(true), sd, sd, 0x353939)?,
+            RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1866(true), u, sd, 0x373737)?,
+            RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1866(true), sd, u, 0x373737)?,
+            RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1866(true), s, s, 0x333939)?,
+            RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1866(true), s, d, 0x333737)?,
+            RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1866(true), d, sd, 0x333737)?,
+            RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2133(true), u, sd, 0x353535)?,
+            RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2133(true), sd, u, 0x353535)?,
+            RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2133(true), sd, sd, 0x313535)?,
+            RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2400(true), u, sd, 0x333333)?,
+            RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2400(true), sd, u, 0x333333)?,
+            RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2400(true), sd, sd, 0x2f3333)?,
+            RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2667(true), u, sd, 0x313131)?,
+            RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2667(true), sd, u, 0x313131)?,
+            RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2667(true), sd, sd, 0x2d3131)?,
+            RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2933(true), u, sd, 0x2f2f2f)?,
+            RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2933(true), sd, u, 0x2f2f2f)?,
+            RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2933(true), sd, sd, 0x2c2f2f)?,
+            RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr3200(true), u, sd, 0x2d2d2d)?,
+            RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr3200(true), sd, u, 0x2d2d2d)?,
+            RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr3200(true), sd, sd, 0x2a2d2d)?,
+        ],
+    )?;
+    let ddr_rates = DdrRates::new()
+        .with_ddr3200(true)
+        .with_ddr2933(true)
+        .with_ddr2667(true)
+        .with_ddr2400(true)
+        .with_ddr2133(true)
+        .with_ddr1866(true)
+        .with_ddr1600(true);
+    apcb.insert_struct_array_as_entry::<Ddr4DataBusElement>(
+        EntryId::Memory(MemoryEntryId::PsRdimmDdr4DataBus),
+        0,
+        BoardInstances::all(),
+        PriorityLevels::from_level(PriorityLevel::Normal),
+        &[
+            Ddr4DataBusElement::new(
+                1,
+                ddr_rates,
+                s,
+                u,
+                RttNom::Off,
+                RttWr::Off,
+                RttPark::_48Ohm,
+                91,
+                VrefDq::Range1(VrefDqRange1::_74_95P),
+            )?,
+            Ddr4DataBusElement::new(
+                1,
+                ddr_rates,
+                d,
+                u,
+                RttNom::_60Ohm,
+                RttWr::Off,
+                RttPark::_240Ohm,
+                93,
+                VrefDq::Range1(VrefDqRange1::_74_95P),
+            )?,
+            Ddr4DataBusElement::new(
+                2,
+                ddr_rates,
+                u,
+                s,
+                RttNom::Off,
+                RttWr::Off,
+                RttPark::_48Ohm,
+                91,
+                VrefDq::Range1(VrefDqRange1::_74_95P),
+            )?,
+            Ddr4DataBusElement::new(
+                2,
+                ddr_rates,
+                u,
+                d,
+                RttNom::_60Ohm,
+                RttWr::Off,
+                RttPark::_240Ohm,
+                93,
+                VrefDq::Range1(VrefDqRange1::_74_95P),
+            )?,
+            Ddr4DataBusElement::new(
+                2,
+                ddr_rates,
+                s,
+                u,
+                RttNom::Off,
+                RttWr::Off,
+                RttPark::_48Ohm,
+                91,
+                VrefDq::Range1(VrefDqRange1::_74_95P),
+            )?,
+            Ddr4DataBusElement::new(
+                2,
+                ddr_rates,
+                s,
+                s,
+                RttNom::Off,
+                RttWr::_80Ohm,
+                RttPark::_34Ohm,
+                104,
+                VrefDq::Range1(VrefDqRange1::_78_85P),
+            )?,
+            Ddr4DataBusElement::new(
+                2,
+                ddr_rates,
+                s,
+                d,
+                RttNom::_34Ohm,
+                RttWr::_120Ohm,
+                RttPark::_240Ohm,
+                103,
+                VrefDq::Range1(VrefDqRange1::_80_80P),
+            )?,
+            Ddr4DataBusElement::new(
+                2,
+                ddr_rates,
+                d,
+                u,
+                RttNom::_60Ohm,
+                RttWr::Off,
+                RttPark::_240Ohm,
+                93,
+                VrefDq::Range1(VrefDqRange1::_74_95P),
+            )?,
+            Ddr4DataBusElement::new(
+                2,
+                ddr_rates,
+                d,
+                s,
+                RttNom::_34Ohm,
+                RttWr::_120Ohm,
+                RttPark::_240Ohm,
+                103,
+                VrefDq::Range1(VrefDqRange1::_80_80P),
+            )?,
+            Ddr4DataBusElement::new(
+                2,
+                ddr_rates,
+                d,
+                d,
+                RttNom::_60Ohm,
+                RttWr::_120Ohm,
+                RttPark::_240Ohm,
+                106,
+                VrefDq::Range1(VrefDqRange1::_79_50P),
+            )?,
+        ],
+    )?;
     let one_dimm = DimmsPerChannel::Specific(DimmsPerChannelSelector::new().with_one_dimm(true));
     let two_dimms = DimmsPerChannel::Specific(DimmsPerChannelSelector::new().with_two_dimms(true));
     let unsupported_speed = match processor_generation {
         ProcessorGeneration::Rome => DdrSpeed::UnsupportedRome,
         _ => DdrSpeed::UnsupportedMilan,
     };
-    apcb.insert_struct_array_as_entry::<MaxFreqElement>(EntryId::Memory(MemoryEntryId::PsRdimmDdr4MaxFreq), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &[
-        MaxFreqElement::new(unsupported_speed, one_dimm, 1, 1, 0, 0, DdrSpeed::Ddr3200),
-        MaxFreqElement::new(unsupported_speed, one_dimm, 1, 0, 1, 0, DdrSpeed::Ddr3200),
-        MaxFreqElement::new(unsupported_speed, two_dimms, 1, 1, 0, 0, DdrSpeed::Ddr3200),
-        MaxFreqElement::new(unsupported_speed, two_dimms, 1, 0, 1, 0, DdrSpeed::Ddr3200),
-        MaxFreqElement::new(unsupported_speed, two_dimms, 2, 2, 0, 0, DdrSpeed::Ddr2933),
-        MaxFreqElement::new(unsupported_speed, two_dimms, 2, 1, 1, 0, DdrSpeed::Ddr2933),
-        MaxFreqElement::new(unsupported_speed, two_dimms, 2, 0, 2, 0, DdrSpeed::Ddr2933),
-    ])?;
-    apcb.insert_struct_array_as_entry::<StretchFreqElement>(EntryId::Memory(MemoryEntryId::PsRdimmDdr4StretchFreq), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &[
-        StretchFreqElement::new(unsupported_speed, one_dimm, 1, 1, 0, 0, DdrSpeed::Ddr3200),
-        StretchFreqElement::new(unsupported_speed, one_dimm, 1, 0, 1, 0, DdrSpeed::Ddr3200),
-        StretchFreqElement::new(unsupported_speed, two_dimms, 1, 1, 0, 0, DdrSpeed::Ddr3200),
-        StretchFreqElement::new(unsupported_speed, two_dimms, 1, 0, 1, 0, DdrSpeed::Ddr3200),
-        StretchFreqElement::new(unsupported_speed, two_dimms, 2, 2, 0, 0, DdrSpeed::Ddr3200),
-        StretchFreqElement::new(unsupported_speed, two_dimms, 2, 1, 1, 0, DdrSpeed::Ddr3200),
-        StretchFreqElement::new(unsupported_speed, two_dimms, 2, 0, 2, 0, DdrSpeed::Ddr3200),
-    ])?;
-    apcb.insert_struct_array_as_entry::<MaxFreqElement>(EntryId::Memory(MemoryEntryId::Ps3dsRdimmDdr4MaxFreq), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &[
-        MaxFreqElement::new(unsupported_speed, one_dimm, 1, 0, 1, 0, DdrSpeed::Ddr3200),
-        MaxFreqElement::new(unsupported_speed, two_dimms, 1, 0, 1, 0, DdrSpeed::Ddr2933),
-        MaxFreqElement::new(unsupported_speed, two_dimms, 2, 0, 2, 0, DdrSpeed::Ddr2667),
-    ])?;
-    apcb.insert_struct_array_as_entry::<StretchFreqElement>(EntryId::Memory(MemoryEntryId::Ps3dsRdimmDdr4StretchFreq), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &[
-        StretchFreqElement::new(unsupported_speed, one_dimm, 1, 0, 1, 0, DdrSpeed::Ddr3200),
-        StretchFreqElement::new(unsupported_speed, two_dimms, 1, 0, 1, 0, DdrSpeed::Ddr3200),
-        StretchFreqElement::new(unsupported_speed, two_dimms, 2, 0, 2, 0, DdrSpeed::Ddr3200),
-    ])?;
-    apcb.insert_struct_array_as_entry::<Ddr4DataBusElement>(EntryId::Memory(MemoryEntryId::Ps3dsRdimmDdr4DataBus), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &[
-        Ddr4DataBusElement::new(1, ddr_rates, d, u, RttNom::_60Ohm, RttWr::Off, RttPark::_240Ohm, 91, VrefDq::Range1(VrefDqRange1::_71_70P))?, // FIXME check ddr_rates
-        Ddr4DataBusElement::new(2, ddr_rates, u, d, RttNom::_60Ohm, RttWr::Off, RttPark::_240Ohm, 91, VrefDq::Range1(VrefDqRange1::_71_70P))?,
-        Ddr4DataBusElement::new(2, ddr_rates, d, u, RttNom::_60Ohm, RttWr::Off, RttPark::_240Ohm, 91, VrefDq::Range1(VrefDqRange1::_71_70P))?,
-        Ddr4DataBusElement::new(2, ddr_rates, d, d, RttNom::_60Ohm, RttWr::_120Ohm, RttPark::_240Ohm, 104, VrefDq::Range1(VrefDqRange1::_77_55P))?,
-    ])?;
+    apcb.insert_struct_array_as_entry::<MaxFreqElement>(
+        EntryId::Memory(MemoryEntryId::PsRdimmDdr4MaxFreq),
+        0,
+        BoardInstances::all(),
+        PriorityLevels::from_level(PriorityLevel::Normal),
+        &[
+            MaxFreqElement::new(unsupported_speed, one_dimm, 1, 1, 0, 0, DdrSpeed::Ddr3200),
+            MaxFreqElement::new(unsupported_speed, one_dimm, 1, 0, 1, 0, DdrSpeed::Ddr3200),
+            MaxFreqElement::new(unsupported_speed, two_dimms, 1, 1, 0, 0, DdrSpeed::Ddr3200),
+            MaxFreqElement::new(unsupported_speed, two_dimms, 1, 0, 1, 0, DdrSpeed::Ddr3200),
+            MaxFreqElement::new(unsupported_speed, two_dimms, 2, 2, 0, 0, DdrSpeed::Ddr2933),
+            MaxFreqElement::new(unsupported_speed, two_dimms, 2, 1, 1, 0, DdrSpeed::Ddr2933),
+            MaxFreqElement::new(unsupported_speed, two_dimms, 2, 0, 2, 0, DdrSpeed::Ddr2933),
+        ],
+    )?;
+    apcb.insert_struct_array_as_entry::<StretchFreqElement>(
+        EntryId::Memory(MemoryEntryId::PsRdimmDdr4StretchFreq),
+        0,
+        BoardInstances::all(),
+        PriorityLevels::from_level(PriorityLevel::Normal),
+        &[
+            StretchFreqElement::new(unsupported_speed, one_dimm, 1, 1, 0, 0, DdrSpeed::Ddr3200),
+            StretchFreqElement::new(unsupported_speed, one_dimm, 1, 0, 1, 0, DdrSpeed::Ddr3200),
+            StretchFreqElement::new(unsupported_speed, two_dimms, 1, 1, 0, 0, DdrSpeed::Ddr3200),
+            StretchFreqElement::new(unsupported_speed, two_dimms, 1, 0, 1, 0, DdrSpeed::Ddr3200),
+            StretchFreqElement::new(unsupported_speed, two_dimms, 2, 2, 0, 0, DdrSpeed::Ddr3200),
+            StretchFreqElement::new(unsupported_speed, two_dimms, 2, 1, 1, 0, DdrSpeed::Ddr3200),
+            StretchFreqElement::new(unsupported_speed, two_dimms, 2, 0, 2, 0, DdrSpeed::Ddr3200),
+        ],
+    )?;
+    apcb.insert_struct_array_as_entry::<MaxFreqElement>(
+        EntryId::Memory(MemoryEntryId::Ps3dsRdimmDdr4MaxFreq),
+        0,
+        BoardInstances::all(),
+        PriorityLevels::from_level(PriorityLevel::Normal),
+        &[
+            MaxFreqElement::new(unsupported_speed, one_dimm, 1, 0, 1, 0, DdrSpeed::Ddr3200),
+            MaxFreqElement::new(unsupported_speed, two_dimms, 1, 0, 1, 0, DdrSpeed::Ddr2933),
+            MaxFreqElement::new(unsupported_speed, two_dimms, 2, 0, 2, 0, DdrSpeed::Ddr2667),
+        ],
+    )?;
+    apcb.insert_struct_array_as_entry::<StretchFreqElement>(
+        EntryId::Memory(MemoryEntryId::Ps3dsRdimmDdr4StretchFreq),
+        0,
+        BoardInstances::all(),
+        PriorityLevels::from_level(PriorityLevel::Normal),
+        &[
+            StretchFreqElement::new(unsupported_speed, one_dimm, 1, 0, 1, 0, DdrSpeed::Ddr3200),
+            StretchFreqElement::new(unsupported_speed, two_dimms, 1, 0, 1, 0, DdrSpeed::Ddr3200),
+            StretchFreqElement::new(unsupported_speed, two_dimms, 2, 0, 2, 0, DdrSpeed::Ddr3200),
+        ],
+    )?;
+    apcb.insert_struct_array_as_entry::<Ddr4DataBusElement>(
+        EntryId::Memory(MemoryEntryId::Ps3dsRdimmDdr4DataBus),
+        0,
+        BoardInstances::all(),
+        PriorityLevels::from_level(PriorityLevel::Normal),
+        &[
+            Ddr4DataBusElement::new(
+                1,
+                ddr_rates,
+                d,
+                u,
+                RttNom::_60Ohm,
+                RttWr::Off,
+                RttPark::_240Ohm,
+                91,
+                VrefDq::Range1(VrefDqRange1::_71_70P),
+            )?, // FIXME check ddr_rates
+            Ddr4DataBusElement::new(
+                2,
+                ddr_rates,
+                u,
+                d,
+                RttNom::_60Ohm,
+                RttWr::Off,
+                RttPark::_240Ohm,
+                91,
+                VrefDq::Range1(VrefDqRange1::_71_70P),
+            )?,
+            Ddr4DataBusElement::new(
+                2,
+                ddr_rates,
+                d,
+                u,
+                RttNom::_60Ohm,
+                RttWr::Off,
+                RttPark::_240Ohm,
+                91,
+                VrefDq::Range1(VrefDqRange1::_71_70P),
+            )?,
+            Ddr4DataBusElement::new(
+                2,
+                ddr_rates,
+                d,
+                d,
+                RttNom::_60Ohm,
+                RttWr::_120Ohm,
+                RttPark::_240Ohm,
+                104,
+                VrefDq::Range1(VrefDqRange1::_77_55P),
+            )?,
+        ],
+    )?;
 
-    let console_out = AblConsoleOutControl::new().with_enable_console_logging(true).with_enable_mem_flow_logging(true).with_enable_mem_setreg_logging(true).with_enable_mem_getreg_logging(false).with_enable_mem_status_logging(true).with_enable_mem_pmu_logging(true).with_enable_mem_pmu_sram_read_logging(false).with_enable_mem_pmu_sram_write_logging(false).with_enable_mem_test_verbose_logging(false).with_enable_mem_basic_output_logging(true);
-    apcb.insert_struct_entry::<ConsoleOutControl>(EntryId::Memory(MemoryEntryId::ConsoleOutControl), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &
+    let console_out = AblConsoleOutControl::new()
+        .with_enable_console_logging(true)
+        .with_enable_mem_flow_logging(true)
+        .with_enable_mem_setreg_logging(true)
+        .with_enable_mem_getreg_logging(false)
+        .with_enable_mem_status_logging(true)
+        .with_enable_mem_pmu_logging(true)
+        .with_enable_mem_pmu_sram_read_logging(false)
+        .with_enable_mem_pmu_sram_write_logging(false)
+        .with_enable_mem_test_verbose_logging(false)
+        .with_enable_mem_basic_output_logging(true);
+    apcb.insert_struct_entry::<ConsoleOutControl>(
+        EntryId::Memory(MemoryEntryId::ConsoleOutControl),
+        0,
+        BoardInstances::all(),
+        PriorityLevels::from_level(PriorityLevel::Normal),
+        &
     // TODO: Nicer stuff
-        ConsoleOutControl::new(console_out, AblBreakpointControl::new(false, false))
-    , &[])?;
+        ConsoleOutControl::new(console_out, AblBreakpointControl::new(false, false)),
+        &[],
+    )?;
     match processor_generation {
         ProcessorGeneration::Naples => {
             // ?
-        },
+        }
         ProcessorGeneration::Milan => {
-            apcb.insert_struct_entry::<ErrorOutControl116>(EntryId::Memory(MemoryEntryId::ErrorOutControl), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &ErrorOutControl116::new().with_enable_error_reporting(false).with_error_reporting_gpio(Some(Gpio::new(85, 1, 192))).with_input_port(0x84).with_input_port_size(PortSize::_32Bit).with_clear_acknowledgement(false).with_enable_heart_beat(false).with_enable_error_reporting_beep_codes(false).with_stop_on_first_fatal_error(false).with_enable_error_reporting_gpio(false)
-        // FIXME add values (which have fine defaults) eventually: enable_error_reporting, enable_error_reporting_gpio, enable_error_reporting_beep_codes, enable_using_handshake, input_port: 132.into(), input_port, output_delay, output_port
-        // FIXME: stop_on_first_fatal_error: false.into(), input_port_size: 4.into(), output_port_size: 4.into(), input_port_type: 6.into(), output_port_type: 6.into(), clear_acknowledgement: false.into(), error_reporting_gpio: Gpio { pin: 85, iomux_control: 1, bank_control: 192 }, enable_heart_beat: false.into() }
-            , &[])?;
-        },
+            apcb.insert_struct_entry::<ErrorOutControl116>(
+                EntryId::Memory(MemoryEntryId::ErrorOutControl),
+                0,
+                BoardInstances::all(),
+                PriorityLevels::from_level(PriorityLevel::Normal),
+                &ErrorOutControl116::new()
+                    .with_enable_error_reporting(false)
+                    .with_error_reporting_gpio(Some(Gpio::new(85, 1, 192)))
+                    .with_input_port(0x84)
+                    .with_input_port_size(PortSize::_32Bit)
+                    .with_clear_acknowledgement(false)
+                    .with_enable_heart_beat(false)
+                    .with_enable_error_reporting_beep_codes(false)
+                    .with_stop_on_first_fatal_error(false)
+                    .with_enable_error_reporting_gpio(false), // FIXME add values (which have fine defaults) eventually: enable_error_reporting, enable_error_reporting_gpio, enable_error_reporting_beep_codes, enable_using_handshake, input_port: 132.into(), input_port, output_delay, output_port
+                                                              // FIXME: stop_on_first_fatal_error: false.into(), input_port_size: 4.into(), output_port_size: 4.into(), input_port_type: 6.into(), output_port_type: 6.into(), clear_acknowledgement: false.into(), error_reporting_gpio: Gpio { pin: 85, iomux_control: 1, bank_control: 192 }, enable_heart_beat: false.into() }
+                &[],
+            )?;
+        }
         ProcessorGeneration::Rome => {
-            apcb.insert_struct_entry::<ErrorOutControl112>(EntryId::Memory(MemoryEntryId::ErrorOutControl), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &ErrorOutControl112::new().with_enable_error_reporting(false).with_error_reporting_gpio(Some(Gpio::new(85, 1, 192))).with_input_port(0x84).with_input_port_size(PortSize::_32Bit).with_clear_acknowledgement(false).with_enable_heart_beat(false).with_enable_error_reporting_beep_codes(false).with_stop_on_first_fatal_error(false).with_enable_error_reporting_gpio(false)
-        // FIXME add values (which have fine defaults) eventually: enable_error_reporting, enable_error_reporting_gpio, enable_error_reporting_beep_codes, enable_using_handshake, input_port: 132.into(), input_port, output_delay, output_port
-        // FIXME: stop_on_first_fatal_error: false.into(), input_port_size: 4.into(), output_port_size: 4.into(), input_port_type: 6.into(), output_port_type: 6.into(), clear_acknowledgement: false.into(), error_reporting_gpio: Gpio { pin: 85, iomux_control: 1, bank_control: 192 }, enable_heart_beat: false.into() }
-            , &[])?;
-        },
+            apcb.insert_struct_entry::<ErrorOutControl112>(
+                EntryId::Memory(MemoryEntryId::ErrorOutControl),
+                0,
+                BoardInstances::all(),
+                PriorityLevels::from_level(PriorityLevel::Normal),
+                &ErrorOutControl112::new()
+                    .with_enable_error_reporting(false)
+                    .with_error_reporting_gpio(Some(Gpio::new(85, 1, 192)))
+                    .with_input_port(0x84)
+                    .with_input_port_size(PortSize::_32Bit)
+                    .with_clear_acknowledgement(false)
+                    .with_enable_heart_beat(false)
+                    .with_enable_error_reporting_beep_codes(false)
+                    .with_stop_on_first_fatal_error(false)
+                    .with_enable_error_reporting_gpio(false), // FIXME add values (which have fine defaults) eventually: enable_error_reporting, enable_error_reporting_gpio, enable_error_reporting_beep_codes, enable_using_handshake, input_port: 132.into(), input_port, output_delay, output_port
+                                                              // FIXME: stop_on_first_fatal_error: false.into(), input_port_size: 4.into(), output_port_size: 4.into(), input_port_type: 6.into(), output_port_type: 6.into(), clear_acknowledgement: false.into(), error_reporting_gpio: Gpio { pin: 85, iomux_control: 1, bank_control: 192 }, enable_heart_beat: false.into() }
+                &[],
+            )?;
+        }
     }
 
-    apcb.insert_struct_entry::<ExtVoltageControl>(EntryId::Memory(MemoryEntryId::ExtVoltageControl), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &
-        ExtVoltageControl::new_enabled(PortType::FchHtIo, 0x84, PortSize::_32Bit, PortType::FchHtIo, 0x80, PortSize::_32Bit, false)
-    , &[])?;
+    apcb.insert_struct_entry::<ExtVoltageControl>(
+        EntryId::Memory(MemoryEntryId::ExtVoltageControl),
+        0,
+        BoardInstances::all(),
+        PriorityLevels::from_level(PriorityLevel::Normal),
+        &ExtVoltageControl::new_enabled(
+            PortType::FchHtIo,
+            0x84,
+            PortSize::_32Bit,
+            PortType::FchHtIo,
+            0x80,
+            PortSize::_32Bit,
+            false,
+        ),
+        &[],
+    )?;
 
-    apcb.insert_struct_sequence_as_entry(EntryId::Memory(MemoryEntryId::PlatformTuning), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &[
-        &amd_apcb::memory::platform_tuning::Terminator::new()
-    ])?;
+    apcb.insert_struct_sequence_as_entry(
+        EntryId::Memory(MemoryEntryId::PlatformTuning),
+        0,
+        BoardInstances::all(),
+        PriorityLevels::from_level(PriorityLevel::Normal),
+        &[&amd_apcb::memory::platform_tuning::Terminator::new()],
+    )?;
 
     apcb.insert_group(GroupId::Token, *b"TOKN")?;
-    apcb.insert_entry(EntryId::Token(TokenEntryId::Bool), 0, BoardInstances::all(), ContextType::Tokens, PriorityLevels::from_level(PriorityLevel::Normal), &[])?;
+    apcb.insert_entry(
+        EntryId::Token(TokenEntryId::Bool),
+        0,
+        BoardInstances::all(),
+        ContextType::Tokens,
+        PriorityLevels::from_level(PriorityLevel::Normal),
+        &[],
+    )?;
     // TODO: priority level ?
     // mem_uncorrected_ecc_retry_ddr4 has TWO entries with the same id on Rome and Milan. Fake one of them.
-    apcb.insert_token(EntryId::Token(TokenEntryId::Bool), 0, BoardInstances::all(), 0xbff00125, 1)?;
+    apcb.insert_token(
+        EntryId::Token(TokenEntryId::Bool),
+        0,
+        BoardInstances::all(),
+        0xbff00125,
+        1,
+    )?;
 
     // Note: apcb.insert_entry is done implicity
 
-    let mut tokens = apcb.tokens_mut(0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal))?;
+    let mut tokens = apcb.tokens_mut(
+        0,
+        BoardInstances::all(),
+        PriorityLevels::from_level(PriorityLevel::Normal),
+    )?;
 
     tokens.set_psp_measure_config(0x0)?;
     tokens.set_psp_enable_debug_mode(PspEnableDebugMode::Disabled)?; // Byte
@@ -840,7 +1408,7 @@ fn bhd_add_apcb(processor_generation: ProcessorGeneration, bhd_directory: &mut B
     tokens.set_nvdimm_n_disable(false)?;
     tokens.set_u0x96176308(true)?; // Bool
     tokens.set_mem_dram_double_refresh_rate(0x0)?; // Byte
-    // TODO: Try to remove and boot
+                                                   // TODO: Try to remove and boot
     tokens.set_mem_dram_double_refresh_rate_unused(false)?; // Bool
     tokens.set_mem_sw_cmd_throttle_enable(false)?;
     tokens.set_mem_enable_bank_group_swap_alt(true)?;
@@ -977,7 +1545,7 @@ fn bhd_add_apcb(processor_generation: ProcessorGeneration, bhd_directory: &mut B
     match processor_generation {
         ProcessorGeneration::Naples => {
             panic!("not supported");
-        },
+        }
         ProcessorGeneration::Rome => {
             tokens.set_mother_board_type_0(false)?;
             tokens.set_mctp_reroute_enable(false)?;
@@ -989,7 +1557,7 @@ fn bhd_add_apcb(processor_generation: ProcessorGeneration, bhd_directory: &mut B
             tokens.set_bmc_vga_io_port_size(0)?;
             tokens.set_bmc_vga_io_bar_to_replace(0)?;
             tokens.set_bmc_gen2_tx_deemphasis(BmcGen2TxDeemphasis::Disabled)?;
-        },
+        }
         ProcessorGeneration::Milan => {
             tokens.set_gnb_additional_features(true)?; // [optional]
             tokens.set_gnb_additional_feature_dsm(true)?;
@@ -1004,23 +1572,34 @@ fn bhd_add_apcb(processor_generation: ProcessorGeneration, bhd_directory: &mut B
     Apcb::update_checksum(&mut buf)?;
     let mut xbuf = &buf[..]; // TODO: cut off at APCB_SIZE
     let size = xbuf.len();
-    bhd_directory.add_blob_entry(None, attrs, size.try_into().unwrap(), None, &mut |buf: &mut [u8]| {
-        let bytes = if xbuf.len() > buf.len() {
-            buf.len()
-        } else {
-            xbuf.len()
-        };
-        let (a,b) = xbuf.split_at(bytes);
-        (&mut buf[..a.len()]).copy_from_slice(a);
-        xbuf = b;
-        Ok(bytes)
-    }).unwrap();
+    bhd_directory
+        .add_blob_entry(
+            None,
+            attrs,
+            size.try_into().unwrap(),
+            None,
+            &mut |buf: &mut [u8]| {
+                let bytes = if xbuf.len() > buf.len() {
+                    buf.len()
+                } else {
+                    xbuf.len()
+                };
+                let (a, b) = xbuf.split_at(bytes);
+                (&mut buf[..a.len()]).copy_from_slice(a);
+                xbuf = b;
+                Ok(bytes)
+            },
+        )
+        .unwrap();
 
     Ok(())
 }
 
 #[derive(Debug, StructOpt)]
-#[structopt(name = "amd-host-image-builder", about = "Build host flash image for AMD Zen CPUs.")]
+#[structopt(
+    name = "amd-host-image-builder",
+    about = "Build host flash image for AMD Zen CPUs."
+)]
 struct Opts {
     #[structopt(short = "g", long = "generation")]
     host_processor_generation: ProcessorGeneration,
@@ -1046,16 +1625,12 @@ fn main() -> std::io::Result<()> {
     let mut storage = FlashImage::new(file);
     let mut position: AlignedLocation = 0.try_into().unwrap();
     while Location::from(position) < IMAGE_SIZE {
-        FlashWrite::<ERASABLE_BLOCK_SIZE>::erase_block(&mut storage, position)
-            .unwrap();
+        FlashWrite::<ERASABLE_BLOCK_SIZE>::erase_block(&mut storage, position).unwrap();
         position = position.advance(ERASABLE_BLOCK_SIZE).unwrap();
     }
     assert!(Location::from(position) == IMAGE_SIZE);
     let host_processor_generation = opts.host_processor_generation;
-    let mut efs = match Efs::<_, ERASABLE_BLOCK_SIZE>::create(
-        storage,
-        host_processor_generation,
-    ) {
+    let mut efs = match Efs::<_, ERASABLE_BLOCK_SIZE>::create(storage, host_processor_generation) {
         Ok(efs) => efs,
         Err(e) => {
             eprintln!("Error on creation: {:?}", e);
@@ -1067,31 +1642,40 @@ fn main() -> std::io::Result<()> {
         ProcessorGeneration::Rome => Path::new("amd-firmware").join("rome"),
         ProcessorGeneration::Naples => Path::new("amd-firmware").join("naples"),
     };
-    let mut psp_directory = efs.create_psp_directory(AlignedLocation::try_from(0x12_0000).unwrap(), AlignedLocation::try_from(0x24_0000).unwrap()).unwrap();
+    let mut psp_directory = efs
+        .create_psp_directory(
+            AlignedLocation::try_from(0x12_0000).unwrap(),
+            AlignedLocation::try_from(0x24_0000).unwrap(),
+        )
+        .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AmdPublicKey),
         firmware_blob_directory_name.join("AmdPubKey.tkn"),
-    ).unwrap();
+    )
+    .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspBootloader),
         firmware_blob_directory_name.join("PspBootLoader.sbin"),
-    ).unwrap();
+    )
+    .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspRecoveryBootloader),
         firmware_blob_directory_name.join("PspRecoveryBootLoader.sbin"),
-    ).unwrap();
+    )
+    .unwrap();
     psp_entry_add_from_file(
         &mut psp_directory,
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SmuOffChipFirmware8),
         firmware_blob_directory_name.join("SmuFirmware.csbin"),
-    ).unwrap();
+    )
+    .unwrap();
     if host_processor_generation != ProcessorGeneration::Rome {
         // Note: Cannot remove this entry (otherwise postcode 0xE022 error).
         psp_entry_add_from_file(
@@ -1099,7 +1683,8 @@ fn main() -> std::io::Result<()> {
             None,
             &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AmdSecureDebugKey),
             firmware_blob_directory_name.join("SecureDebugToken.stkn"),
-        ).unwrap();
+        )
+        .unwrap();
     }
     psp_directory_add_default_entries(&mut psp_directory, &firmware_blob_directory_name).unwrap();
     psp_entry_add_from_file(
@@ -1107,22 +1692,21 @@ fn main() -> std::io::Result<()> {
         None,
         &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::DxioPhySramFirmware),
         firmware_blob_directory_name.join("PhyFw.sbin"),
-    ).unwrap();
+    )
+    .unwrap();
 
     if host_processor_generation == ProcessorGeneration::Rome {
         psp_entry_add_from_file(
             &mut psp_directory,
             None,
-            &PspDirectoryEntryAttrs::new()
-                .with_type_(PspDirectoryEntryType::DxioPhySramPublicKey),
+            &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::DxioPhySramPublicKey),
             firmware_blob_directory_name.join("PhyFwSb4kr.stkn"),
         )
         .unwrap();
         psp_entry_add_from_file(
             &mut psp_directory,
             None,
-            &PspDirectoryEntryAttrs::new()
-                .with_type_(PspDirectoryEntryType::PmuPublicKey),
+            &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PmuPublicKey),
             firmware_blob_directory_name.join("Starship-PMU-FW.stkn"),
         )
         .unwrap();
@@ -1145,74 +1729,86 @@ fn main() -> std::io::Result<()> {
         .unwrap();
     }
 
-//    let mut second_level_psp_directory = efs.create_second_level_psp_directory(AlignedLocation::try_from(0x2c_0000).unwrap(), AlignedLocation::try_from(0x2c_0000 + 0x12_0000).unwrap()).unwrap();
-//
-//    psp_entry_add_from_file(
-//        &mut second_level_psp_directory,
-//        None,
-//        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspBootloader),
-//        firmware_blob_directory_name.join("PspBootLoader.sbin"),
-//    ).unwrap();
-//    psp_entry_add_from_file(
-//        &mut second_level_psp_directory,
-//        None,
-//        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SmuOffChipFirmware8),
-//        firmware_blob_directory_name.join("SmuFirmware.csbin"),
-//    ).unwrap();
-//    psp_entry_add_from_file(
-//        &mut second_level_psp_directory,
-//        None,
-//        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AmdSecureDebugKey),
-//        firmware_blob_directory_name.join("SecureDebugToken.stkn"),
-//    ).unwrap(); // XXX cannot remove
-//    psp_directory_add_default_entries(&mut second_level_psp_directory, &firmware_blob_directory_name).unwrap();
-//
-// /* removed    psp_entry_add_from_file(
-//        &mut second_level_psp_directory,
-//        None,
-//        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SevData),
-//        firmware_blob_directory_name.join("SevData.unsorted"),
-//    ).unwrap();
-//
-//    psp_entry_add_from_file(
-//        &mut second_level_psp_directory,
-//        None,
-//        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SevCode),
-//        firmware_blob_directory_name.join("SevCode.unsorted"),
-//    ).unwrap();*/
-//
-//    psp_entry_add_from_file(
-//        &mut second_level_psp_directory,
-//        None,
-//        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::DxioPhySramFirmware),
-//        firmware_blob_directory_name.join("PhyFw.sbin"),
-//    ).unwrap();
-//
-//    if host_processor_generation == ProcessorGeneration::Milan {
-//        psp_entry_add_from_file(
-//            &mut second_level_psp_directory,
-//            None,
-//            &PspDirectoryEntryAttrs::new()
-//                .with_type_(PspDirectoryEntryType::PspBootloaderPublicKeysTable),
-//            firmware_blob_directory_name.join("PSP-Key-DB.sbin"),
-//        )
-//        .unwrap();
-//    }
+    //    let mut second_level_psp_directory = efs.create_second_level_psp_directory(AlignedLocation::try_from(0x2c_0000).unwrap(), AlignedLocation::try_from(0x2c_0000 + 0x12_0000).unwrap()).unwrap();
+    //
+    //    psp_entry_add_from_file(
+    //        &mut second_level_psp_directory,
+    //        None,
+    //        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspBootloader),
+    //        firmware_blob_directory_name.join("PspBootLoader.sbin"),
+    //    ).unwrap();
+    //    psp_entry_add_from_file(
+    //        &mut second_level_psp_directory,
+    //        None,
+    //        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SmuOffChipFirmware8),
+    //        firmware_blob_directory_name.join("SmuFirmware.csbin"),
+    //    ).unwrap();
+    //    psp_entry_add_from_file(
+    //        &mut second_level_psp_directory,
+    //        None,
+    //        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AmdSecureDebugKey),
+    //        firmware_blob_directory_name.join("SecureDebugToken.stkn"),
+    //    ).unwrap(); // XXX cannot remove
+    //    psp_directory_add_default_entries(&mut second_level_psp_directory, &firmware_blob_directory_name).unwrap();
+    //
+    // /* removed    psp_entry_add_from_file(
+    //        &mut second_level_psp_directory,
+    //        None,
+    //        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SevData),
+    //        firmware_blob_directory_name.join("SevData.unsorted"),
+    //    ).unwrap();
+    //
+    //    psp_entry_add_from_file(
+    //        &mut second_level_psp_directory,
+    //        None,
+    //        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SevCode),
+    //        firmware_blob_directory_name.join("SevCode.unsorted"),
+    //    ).unwrap();*/
+    //
+    //    psp_entry_add_from_file(
+    //        &mut second_level_psp_directory,
+    //        None,
+    //        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::DxioPhySramFirmware),
+    //        firmware_blob_directory_name.join("PhyFw.sbin"),
+    //    ).unwrap();
+    //
+    //    if host_processor_generation == ProcessorGeneration::Milan {
+    //        psp_entry_add_from_file(
+    //            &mut second_level_psp_directory,
+    //            None,
+    //            &PspDirectoryEntryAttrs::new()
+    //                .with_type_(PspDirectoryEntryType::PspBootloaderPublicKeysTable),
+    //            firmware_blob_directory_name.join("PSP-Key-DB.sbin"),
+    //        )
+    //        .unwrap();
+    //    }
 
     let mut bhd_directory = efs
-        .create_bhd_directory(AlignedLocation::try_from(0x24_0000).unwrap(), AlignedLocation::try_from(0x24_0000 + 0x8_0000).unwrap())
+        .create_bhd_directory(
+            AlignedLocation::try_from(0x24_0000).unwrap(),
+            AlignedLocation::try_from(0x24_0000 + 0x8_0000).unwrap(),
+        )
         .unwrap();
 
-    bhd_add_apcb(host_processor_generation, &mut bhd_directory,
+    bhd_add_apcb(
+        host_processor_generation,
+        &mut bhd_directory,
         &match host_processor_generation {
-            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup).with_sub_program(1),
-            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup),
-            ProcessorGeneration::Naples => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup),
+            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new()
+                .with_type_(BhdDirectoryEntryType::ApcbBackup)
+                .with_sub_program(1),
+            ProcessorGeneration::Rome => {
+                BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup)
+            }
+            ProcessorGeneration::Naples => {
+                BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup)
+            }
         },
     );
 
     bhd_directory
-        .add_apob_entry(None, BhdDirectoryEntryType::Apob, 0x400_0000).unwrap();
+        .add_apob_entry(None, BhdDirectoryEntryType::Apob, 0x400_0000)
+        .unwrap();
 
     bhd_directory_add_reset_image(&mut bhd_directory, &opts.reset_image_filename).unwrap();
     bhd_directory_add_default_entries(&mut bhd_directory, &firmware_blob_directory_name).unwrap();
@@ -1285,111 +1881,111 @@ fn main() -> std::io::Result<()> {
         None,
     )
     .unwrap();
-//    let firmware_blob_directory_name = Path::new("amd-firmware/MILAN-b").join("second-bhd");
-//    let mut secondary_bhd_directory = bhd_directory.create_subdirectory(AlignedLocation::try_from(0x3e_0000).unwrap(), AlignedLocation::try_from(0x3e_0000 + 0x8_0000).unwrap()).unwrap();
-//
-//    // FIXME: if Milan
-//
-//    bhd_entry_add_from_file_with_custom_size(
-//        &mut secondary_bhd_directory,
-//        None,
-//        &match host_processor_generation {
-//            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup).with_sub_program(1),
-//            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup),
-//        },
-//        Apcb::MAX_SIZE,
-//        apcb_source_file_name.as_path(),
-//        None,
-//    )
-//    .unwrap();
-//
-//    bhd_entry_add_from_file_with_custom_size(
-//        &mut secondary_bhd_directory,
-//        None,
-//        &match host_processor_generation {
-//            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup).with_instance(8).with_sub_program(1),
-//            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup),
-//        },
-//        544,
-//        Path::new("amd-firmware/MILAN-b/second-bhd/ApcbBackup_8.unsorted"),
-//        None,
-//    )
-//    .unwrap();
-//
-//    bhd_entry_add_from_file_with_custom_size(
-//        &mut secondary_bhd_directory,
-//        None,
-//        &match host_processor_generation {
-//            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup).with_instance(9).with_sub_program(1),
-//            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup),
-//        },
-//        672,
-//        Path::new("amd-firmware/MILAN-b/second-bhd/ApcbBackup_9.unsorted"),
-//        None,
-//    )
-//    .unwrap();
-//
-//    bhd_entry_add_from_file_with_custom_size(
-//        &mut secondary_bhd_directory,
-//        None,
-//        &match host_processor_generation {
-//            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::Apcb).with_instance(0).with_sub_program(1),
-//            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::Apcb),
-//        },
-//        4096,
-//        Path::new("amd-firmware/MILAN-b/second-bhd/Apcb.unsorted"),
-//        None,
-//    )
-//    .unwrap();
-//
-//    bhd_entry_add_from_file_with_custom_size(
-//        &mut secondary_bhd_directory,
-//        None,
-//        &match host_processor_generation {
-//            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::Apcb).with_instance(1).with_sub_program(1),
-//            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::Apcb),
-//        },
-//        4096,
-//        Path::new("amd-firmware/MILAN-b/second-bhd/Apcb_1.unsorted"),
-//        None,
-//    )
-//    .unwrap();
-//
-//    bhd_directory_add_reset_image(&mut secondary_bhd_directory, &opts.reset_image_filename).unwrap();
-//    bhd_directory_add_default_entries(&mut secondary_bhd_directory, &firmware_blob_directory_name).unwrap();
-//
-//    bhd_entry_add_from_file(
-//        &mut secondary_bhd_directory,
-//        None,
-//        &BhdDirectoryEntryAttrs::new()
-//            .with_type_(BhdDirectoryEntryType::MicrocodePatch)
-//            .with_instance(0),
-//        Path::new("amd-firmware/MILAN-b/second-bhd/MicrocodePatch.unsorted").to_path_buf(),
-//        None,
-//    )
-//    .unwrap();
-//
-//    bhd_entry_add_from_file(
-//        &mut secondary_bhd_directory,
-//        None,
-//        &BhdDirectoryEntryAttrs::new()
-//            .with_type_(BhdDirectoryEntryType::MicrocodePatch)
-//            .with_instance(1),
-//        Path::new("amd-firmware/MILAN-b/second-bhd/MicrocodePatch_1.unsorted").to_path_buf(),
-//        None,
-//    )
-//    .unwrap();
-//
-//    bhd_entry_add_from_file(
-//        &mut secondary_bhd_directory,
-//        None,
-//        &BhdDirectoryEntryAttrs::new()
-//            .with_type_(BhdDirectoryEntryType::MicrocodePatch)
-//            .with_instance(2),
-//        Path::new("amd-firmware/MILAN-b/second-bhd/MicrocodePatch_2.unsorted").to_path_buf(),
-//        None,
-//    )
-//    .unwrap();
+    //    let firmware_blob_directory_name = Path::new("amd-firmware/MILAN-b").join("second-bhd");
+    //    let mut secondary_bhd_directory = bhd_directory.create_subdirectory(AlignedLocation::try_from(0x3e_0000).unwrap(), AlignedLocation::try_from(0x3e_0000 + 0x8_0000).unwrap()).unwrap();
+    //
+    //    // FIXME: if Milan
+    //
+    //    bhd_entry_add_from_file_with_custom_size(
+    //        &mut secondary_bhd_directory,
+    //        None,
+    //        &match host_processor_generation {
+    //            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup).with_sub_program(1),
+    //            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup),
+    //        },
+    //        Apcb::MAX_SIZE,
+    //        apcb_source_file_name.as_path(),
+    //        None,
+    //    )
+    //    .unwrap();
+    //
+    //    bhd_entry_add_from_file_with_custom_size(
+    //        &mut secondary_bhd_directory,
+    //        None,
+    //        &match host_processor_generation {
+    //            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup).with_instance(8).with_sub_program(1),
+    //            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup),
+    //        },
+    //        544,
+    //        Path::new("amd-firmware/MILAN-b/second-bhd/ApcbBackup_8.unsorted"),
+    //        None,
+    //    )
+    //    .unwrap();
+    //
+    //    bhd_entry_add_from_file_with_custom_size(
+    //        &mut secondary_bhd_directory,
+    //        None,
+    //        &match host_processor_generation {
+    //            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup).with_instance(9).with_sub_program(1),
+    //            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup),
+    //        },
+    //        672,
+    //        Path::new("amd-firmware/MILAN-b/second-bhd/ApcbBackup_9.unsorted"),
+    //        None,
+    //    )
+    //    .unwrap();
+    //
+    //    bhd_entry_add_from_file_with_custom_size(
+    //        &mut secondary_bhd_directory,
+    //        None,
+    //        &match host_processor_generation {
+    //            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::Apcb).with_instance(0).with_sub_program(1),
+    //            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::Apcb),
+    //        },
+    //        4096,
+    //        Path::new("amd-firmware/MILAN-b/second-bhd/Apcb.unsorted"),
+    //        None,
+    //    )
+    //    .unwrap();
+    //
+    //    bhd_entry_add_from_file_with_custom_size(
+    //        &mut secondary_bhd_directory,
+    //        None,
+    //        &match host_processor_generation {
+    //            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::Apcb).with_instance(1).with_sub_program(1),
+    //            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::Apcb),
+    //        },
+    //        4096,
+    //        Path::new("amd-firmware/MILAN-b/second-bhd/Apcb_1.unsorted"),
+    //        None,
+    //    )
+    //    .unwrap();
+    //
+    //    bhd_directory_add_reset_image(&mut secondary_bhd_directory, &opts.reset_image_filename).unwrap();
+    //    bhd_directory_add_default_entries(&mut secondary_bhd_directory, &firmware_blob_directory_name).unwrap();
+    //
+    //    bhd_entry_add_from_file(
+    //        &mut secondary_bhd_directory,
+    //        None,
+    //        &BhdDirectoryEntryAttrs::new()
+    //            .with_type_(BhdDirectoryEntryType::MicrocodePatch)
+    //            .with_instance(0),
+    //        Path::new("amd-firmware/MILAN-b/second-bhd/MicrocodePatch.unsorted").to_path_buf(),
+    //        None,
+    //    )
+    //    .unwrap();
+    //
+    //    bhd_entry_add_from_file(
+    //        &mut secondary_bhd_directory,
+    //        None,
+    //        &BhdDirectoryEntryAttrs::new()
+    //            .with_type_(BhdDirectoryEntryType::MicrocodePatch)
+    //            .with_instance(1),
+    //        Path::new("amd-firmware/MILAN-b/second-bhd/MicrocodePatch_1.unsorted").to_path_buf(),
+    //        None,
+    //    )
+    //    .unwrap();
+    //
+    //    bhd_entry_add_from_file(
+    //        &mut secondary_bhd_directory,
+    //        None,
+    //        &BhdDirectoryEntryAttrs::new()
+    //            .with_type_(BhdDirectoryEntryType::MicrocodePatch)
+    //            .with_instance(2),
+    //        Path::new("amd-firmware/MILAN-b/second-bhd/MicrocodePatch_2.unsorted").to_path_buf(),
+    //        None,
+    //    )
+    //    .unwrap();
 
     //            println!("{:?}", efh);
     Ok(())
