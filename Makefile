@@ -1,5 +1,6 @@
 
 .PHONY: all
 all:
-	cargo run -- -g Milan -r nanobl-rs-0x7ffc_d000.bin -o Milan.img
-	cargo run -- -g Rome -r nanobl-rs-0x7ffc_d000.bin -o Rome.img
+	make -C nanobl-rs
+	cargo run -- -g Milan -r nanobl-rs/obj/nanobl-rs.elf -o Milan.img
+	cargo run -- -g Rome -r nanobl-rs/obj/nanobl-rs.elf -o Rome.img
