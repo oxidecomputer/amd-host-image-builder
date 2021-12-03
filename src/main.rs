@@ -531,7 +531,7 @@ fn bhd_directory_add_default_entries(bhd_directory: &mut BhdDirectory<FlashImage
     Ok(())
 }
 
-fn bhd_add_apcb(processor_generation: ProcessorGeneration, bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>, attrs: &BhdDirectoryEntryAttrs) {
+fn bhd_add_apcb(processor_generation: ProcessorGeneration, bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>, attrs: &BhdDirectoryEntryAttrs) -> amd_apcb::Result<()> {
     use amd_apcb::BoardInstances;
     use amd_apcb::EntryId;
     use amd_apcb::GroupId;
@@ -543,55 +543,55 @@ fn bhd_add_apcb(processor_generation: ProcessorGeneration, bhd_directory: &mut B
     use amd_apcb::ApcbIoOptions;
     use amd_apcb::{DfToggle, DfCakeCrcThresholdBounds, DxioPhyParamIqofc, DxioPhyParamPole, DxioPhyParamVga, DxioPhyParamDc, MemClockValue, FchSmbusSpeed, MemHealBistEnable, SecondPcieLinkMaxPayload, FchConsoleSerialPort, PspEnableDebugMode, BaudRate, MemTrainingHdtControl, SecondPcieLinkSpeed, DfXgmiTxEqMode, MemSelfRefreshExitStaggering, MemHealTestSelect, CcxSevAsidCount, FchConsoleOutSuperIoType, MemActionOnBistFailure, MemHealPprType, DfDramNumaPerSocket, DfMemInterleaving, DfMemInterleavingSize, WorkloadProfile, DfRemapAt1TiB, MemMbistDataEyeType, MemUserTimingMode, FchGppClkMap, TokenEntryId, ContextType, MemTsmeMode, MemMbistTest, BmcGen2TxDeemphasis, BmcLinkSpeed, MemDataPoison, DfXgmiLinkConfig, DfPstateModeSelect, EccSymbolSize, GnbSmuDfPstateFclkLimit, MemMaxActivityCount, MemNvdimmPowerSource, MemControllerWritingCrcMode, UmaMode, MemControllerPmuTrainingMode, MemMbistTestMode, MemMbistAggressorsChannels, MemMbistPatternSelect};
     let mut buf: [u8; Apcb::MAX_SIZE] = [0xff; Apcb::MAX_SIZE];
-    let mut apcb = Apcb::create(&mut buf, 1/*FIXME*/, &ApcbIoOptions::default()/*FIXME*/).unwrap();
-    apcb.insert_group(GroupId::Memory, *b"MEMG").unwrap();
+    let mut apcb = Apcb::create(&mut buf, 1/*FIXME*/, &ApcbIoOptions::default()/*FIXME*/)?;
+    apcb.insert_group(GroupId::Memory, *b"MEMG")?;
     apcb.insert_struct_array_as_entry::<DimmInfoSmbusElement>(EntryId::Memory(MemoryEntryId::DimmInfoSmbus), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &[
         // socket_id, channel_id, dimm_id, dimm_smbus_address, i2c_mux_address=148, mux_control_address=3, mux_channel
-        DimmInfoSmbusElement::new_slot(0, 0, 0, 160, Some(148), Some(3), Some(128)).unwrap(),
-        DimmInfoSmbusElement::new_slot(0, 0, 1, 162, Some(148), Some(3), Some(128)).unwrap(),
-        DimmInfoSmbusElement::new_slot(0, 1, 0, 164, Some(148), Some(3), Some(128)).unwrap(),
-        DimmInfoSmbusElement::new_slot(0, 1, 1, 166, Some(148), Some(3), Some(128)).unwrap(),
-        DimmInfoSmbusElement::new_slot(0, 2, 0, 168, Some(148), Some(3), Some(128)).unwrap(),
-        DimmInfoSmbusElement::new_slot(0, 2, 1, 170, Some(148), Some(3), Some(128)).unwrap(),
-        DimmInfoSmbusElement::new_slot(0, 3, 0, 172, Some(148), Some(3), Some(128)).unwrap(),
-        DimmInfoSmbusElement::new_slot(0, 3, 1, 174, Some(148), Some(3), Some(128)).unwrap(),
-        DimmInfoSmbusElement::new_slot(0, 4, 0, 160, Some(148), Some(3), Some(64)).unwrap(),
-        DimmInfoSmbusElement::new_slot(0, 4, 1, 162, Some(148), Some(3), Some(64)).unwrap(),
-        DimmInfoSmbusElement::new_slot(0, 5, 0, 164, Some(148), Some(3), Some(64)).unwrap(),
-        DimmInfoSmbusElement::new_slot(0, 5, 1, 166, Some(148), Some(3), Some(64)).unwrap(),
-        DimmInfoSmbusElement::new_slot(0, 6, 0, 168, Some(148), Some(3), Some(64)).unwrap(),
-        DimmInfoSmbusElement::new_slot(0, 6, 1, 170, Some(148), Some(3), Some(64)).unwrap(),
-        DimmInfoSmbusElement::new_slot(0, 7, 0, 172, Some(148), Some(3), Some(64)).unwrap(),
-        DimmInfoSmbusElement::new_slot(0, 7, 1, 174, Some(148), Some(3), Some(64)).unwrap(),
-        DimmInfoSmbusElement::new_slot(1, 0, 0, 160, Some(148), Some(3), Some(32)).unwrap(),
-        DimmInfoSmbusElement::new_slot(1, 0, 1, 162, Some(148), Some(3), Some(32)).unwrap(),
-        DimmInfoSmbusElement::new_slot(1, 1, 0, 164, Some(148), Some(3), Some(32)).unwrap(),
-        DimmInfoSmbusElement::new_slot(1, 1, 1, 166, Some(148), Some(3), Some(32)).unwrap(),
-        DimmInfoSmbusElement::new_slot(1, 2, 0, 168, Some(148), Some(3), Some(32)).unwrap(),
-        DimmInfoSmbusElement::new_slot(1, 2, 1, 170, Some(148), Some(3), Some(32)).unwrap(),
-        DimmInfoSmbusElement::new_slot(1, 3, 0, 172, Some(148), Some(3), Some(32)).unwrap(),
-        DimmInfoSmbusElement::new_slot(1, 3, 1, 174, Some(148), Some(3), Some(32)).unwrap(),
-        DimmInfoSmbusElement::new_slot(1, 4, 0, 160, Some(148), Some(3), Some(16)).unwrap(),
-        DimmInfoSmbusElement::new_slot(1, 4, 1, 162, Some(148), Some(3), Some(16)).unwrap(),
-        DimmInfoSmbusElement::new_slot(1, 5, 0, 164, Some(148), Some(3), Some(16)).unwrap(),
-        DimmInfoSmbusElement::new_slot(1, 5, 1, 166, Some(148), Some(3), Some(16)).unwrap(),
-        DimmInfoSmbusElement::new_slot(1, 6, 0, 168, Some(148), Some(3), Some(16)).unwrap(),
-        DimmInfoSmbusElement::new_slot(1, 6, 1, 170, Some(148), Some(3), Some(16)).unwrap(),
-        DimmInfoSmbusElement::new_slot(1, 7, 0, 172, Some(148), Some(3), Some(16)).unwrap(),
-        DimmInfoSmbusElement::new_slot(1, 7, 1, 174, Some(148), Some(3), Some(16)).unwrap(),
-    ]).unwrap();
+        DimmInfoSmbusElement::new_slot(0, 0, 0, 160, Some(148), Some(3), Some(128))?,
+        DimmInfoSmbusElement::new_slot(0, 0, 1, 162, Some(148), Some(3), Some(128))?,
+        DimmInfoSmbusElement::new_slot(0, 1, 0, 164, Some(148), Some(3), Some(128))?,
+        DimmInfoSmbusElement::new_slot(0, 1, 1, 166, Some(148), Some(3), Some(128))?,
+        DimmInfoSmbusElement::new_slot(0, 2, 0, 168, Some(148), Some(3), Some(128))?,
+        DimmInfoSmbusElement::new_slot(0, 2, 1, 170, Some(148), Some(3), Some(128))?,
+        DimmInfoSmbusElement::new_slot(0, 3, 0, 172, Some(148), Some(3), Some(128))?,
+        DimmInfoSmbusElement::new_slot(0, 3, 1, 174, Some(148), Some(3), Some(128))?,
+        DimmInfoSmbusElement::new_slot(0, 4, 0, 160, Some(148), Some(3), Some(64))?,
+        DimmInfoSmbusElement::new_slot(0, 4, 1, 162, Some(148), Some(3), Some(64))?,
+        DimmInfoSmbusElement::new_slot(0, 5, 0, 164, Some(148), Some(3), Some(64))?,
+        DimmInfoSmbusElement::new_slot(0, 5, 1, 166, Some(148), Some(3), Some(64))?,
+        DimmInfoSmbusElement::new_slot(0, 6, 0, 168, Some(148), Some(3), Some(64))?,
+        DimmInfoSmbusElement::new_slot(0, 6, 1, 170, Some(148), Some(3), Some(64))?,
+        DimmInfoSmbusElement::new_slot(0, 7, 0, 172, Some(148), Some(3), Some(64))?,
+        DimmInfoSmbusElement::new_slot(0, 7, 1, 174, Some(148), Some(3), Some(64))?,
+        DimmInfoSmbusElement::new_slot(1, 0, 0, 160, Some(148), Some(3), Some(32))?,
+        DimmInfoSmbusElement::new_slot(1, 0, 1, 162, Some(148), Some(3), Some(32))?,
+        DimmInfoSmbusElement::new_slot(1, 1, 0, 164, Some(148), Some(3), Some(32))?,
+        DimmInfoSmbusElement::new_slot(1, 1, 1, 166, Some(148), Some(3), Some(32))?,
+        DimmInfoSmbusElement::new_slot(1, 2, 0, 168, Some(148), Some(3), Some(32))?,
+        DimmInfoSmbusElement::new_slot(1, 2, 1, 170, Some(148), Some(3), Some(32))?,
+        DimmInfoSmbusElement::new_slot(1, 3, 0, 172, Some(148), Some(3), Some(32))?,
+        DimmInfoSmbusElement::new_slot(1, 3, 1, 174, Some(148), Some(3), Some(32))?,
+        DimmInfoSmbusElement::new_slot(1, 4, 0, 160, Some(148), Some(3), Some(16))?,
+        DimmInfoSmbusElement::new_slot(1, 4, 1, 162, Some(148), Some(3), Some(16))?,
+        DimmInfoSmbusElement::new_slot(1, 5, 0, 164, Some(148), Some(3), Some(16))?,
+        DimmInfoSmbusElement::new_slot(1, 5, 1, 166, Some(148), Some(3), Some(16))?,
+        DimmInfoSmbusElement::new_slot(1, 6, 0, 168, Some(148), Some(3), Some(16))?,
+        DimmInfoSmbusElement::new_slot(1, 6, 1, 170, Some(148), Some(3), Some(16))?,
+        DimmInfoSmbusElement::new_slot(1, 7, 0, 172, Some(148), Some(3), Some(16))?,
+        DimmInfoSmbusElement::new_slot(1, 7, 1, 174, Some(148), Some(3), Some(16))?,
+    ])?;
     // &[&dyn SequenceElementAsBytes]
     use platform_specific_override::SocketIds;
     use platform_specific_override::ChannelIds;
     use platform_specific_override::DimmSlots;
     apcb.insert_struct_sequence_as_entry(EntryId::Memory(MemoryEntryId::PlatformSpecificOverride), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &[
-        &platform_specific_override::MemclkMap::new(SocketIds::ALL, ChannelIds::Any, [0, 1, 2, 3, 0, 0, 0, 0]).unwrap(),
-        &platform_specific_override::CkeTristateMap::new(SocketIds::ALL, ChannelIds::Any, DimmSlots::Any, [0, 1, 2, 3]).unwrap(),
-        &platform_specific_override::OdtTristateMap::new(SocketIds::ALL, ChannelIds::Any, DimmSlots::Any, [0, 1, 2, 3]).unwrap(),
-        &platform_specific_override::CsTristateMap::new(SocketIds::ALL, ChannelIds::Any, DimmSlots::Any, [0, 1, 2, 3, 0, 0, 0, 0]).unwrap(),
-        &platform_specific_override::MaxDimmsPerChannel::new(SocketIds::ALL, ChannelIds::Any, 1).unwrap(), // FIXME check orig
-        &platform_specific_override::MaxChannelsPerSocket::new(SocketIds::ALL, 8).unwrap(),
-    ]).unwrap();
+        &platform_specific_override::MemclkMap::new(SocketIds::ALL, ChannelIds::Any, [0, 1, 2, 3, 0, 0, 0, 0])?,
+        &platform_specific_override::CkeTristateMap::new(SocketIds::ALL, ChannelIds::Any, DimmSlots::Any, [0, 1, 2, 3])?,
+        &platform_specific_override::OdtTristateMap::new(SocketIds::ALL, ChannelIds::Any, DimmSlots::Any, [0, 1, 2, 3])?,
+        &platform_specific_override::CsTristateMap::new(SocketIds::ALL, ChannelIds::Any, DimmSlots::Any, [0, 1, 2, 3, 0, 0, 0, 0])?,
+        &platform_specific_override::MaxDimmsPerChannel::new(SocketIds::ALL, ChannelIds::Any, 1)?, // FIXME check orig
+        &platform_specific_override::MaxChannelsPerSocket::new(SocketIds::ALL, 8)?,
+    ])?;
     match processor_generation {
         ProcessorGeneration::Naples => {
             panic!("not supported");
@@ -615,7 +615,7 @@ fn bhd_add_apcb(processor_generation: ProcessorGeneration, bhd_directory: &mut B
                   OdtPatPatterns::new().with_writing_pattern(2).with_reading_pattern(2), OdtPatPatterns::new().with_writing_pattern(2).with_reading_pattern(2), OdtPatPatterns::new().with_writing_pattern(1).with_reading_pattern(1), OdtPatPatterns::new()),
                 Ddr4OdtPatElement::new(Ddr4OdtPatDimmRankBitmaps::new().with_dimm1(Ddr4DimmRanks::new().with_dual_rank(true)).with_dimm0(Ddr4DimmRanks::new().with_dual_rank(true)),
                   OdtPatPatterns::new().with_writing_pattern(0xa).with_reading_pattern(0xa), OdtPatPatterns::new().with_writing_pattern(0xa).with_reading_pattern(0xa), OdtPatPatterns::new().with_writing_pattern(5).with_reading_pattern(5), OdtPatPatterns::new().with_writing_pattern(5).with_reading_pattern(5)),
-            ]).unwrap();
+            ])?;
         },
         ProcessorGeneration::Milan => {
             // PPR 12.7.2.2 DRAM ODT Pin Control
@@ -636,7 +636,7 @@ fn bhd_add_apcb(processor_generation: ProcessorGeneration, bhd_directory: &mut B
                   OdtPatPatterns::new().with_writing_pattern(4).with_reading_pattern(4), OdtPatPatterns::new().with_writing_pattern(4).with_reading_pattern(4), OdtPatPatterns::new().with_writing_pattern(1).with_reading_pattern(1), OdtPatPatterns::new()),
                 Ddr4OdtPatElement::new(Ddr4OdtPatDimmRankBitmaps::new().with_dimm1(Ddr4DimmRanks::new().with_dual_rank(true)).with_dimm0(Ddr4DimmRanks::new().with_dual_rank(true)),
                   OdtPatPatterns::new().with_writing_pattern(0xc).with_reading_pattern(0xc), OdtPatPatterns::new().with_writing_pattern(0xc).with_reading_pattern(0xc), OdtPatPatterns::new().with_writing_pattern(3).with_reading_pattern(3), OdtPatPatterns::new().with_writing_pattern(3).with_reading_pattern(3)),
-            ]).unwrap();
+            ])?;
         },
     }
     let u = Ddr4DimmRanks::new().with_unpopulated(true);
@@ -645,50 +645,50 @@ fn bhd_add_apcb(processor_generation: ProcessorGeneration, bhd_directory: &mut B
     let sd = Ddr4DimmRanks::new().with_single_rank(true).with_dual_rank(true); // s|d
     apcb.insert_struct_array_as_entry::<RdimmDdr4CadBusElement>(EntryId::Memory(MemoryEntryId::PsRdimmDdr4CadBus), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &[
         // dimm_slots_per_channel, ddr_rates, dimm0_ranks, dimm1_ranks, address_command_control
-        RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr1600(true), sd, u, 0x393939).unwrap(),
-        RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr1866(true), sd, u, 0x373737).unwrap(),
-        RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr2133(true), sd, u, 0x353535).unwrap(),
-        RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr2400(true), sd, u, 0x333333).unwrap(),
-        RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr2667(true), sd, u, 0x313131).unwrap(),
-        RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr2933(true), sd, u, 0x2f2f2f).unwrap(),
-        RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr3200(true), sd, u, 0x2d2d2d).unwrap(),
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1600(true), u, sd, 0x393939).unwrap(),
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1600(true), sd, u, 0x393939).unwrap(),
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1600(true), sd, sd, 0x353939).unwrap(),
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1866(true), u, sd, 0x373737).unwrap(),
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1866(true), sd, u, 0x373737).unwrap(),
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1866(true), s, s, 0x333939).unwrap(),
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1866(true), s, d, 0x333737).unwrap(),
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1866(true), d, sd, 0x333737).unwrap(),
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2133(true), u, sd, 0x353535).unwrap(),
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2133(true), sd, u, 0x353535).unwrap(),
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2133(true), sd, sd, 0x313535).unwrap(),
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2400(true), u, sd, 0x333333).unwrap(),
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2400(true), sd, u, 0x333333).unwrap(),
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2400(true), sd, sd, 0x2f3333).unwrap(),
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2667(true), u, sd, 0x313131).unwrap(),
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2667(true), sd, u, 0x313131).unwrap(),
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2667(true), sd, sd, 0x2d3131).unwrap(),
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2933(true), u, sd, 0x2f2f2f).unwrap(),
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2933(true), sd, u, 0x2f2f2f).unwrap(),
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2933(true), sd, sd, 0x2c2f2f).unwrap(),
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr3200(true), u, sd, 0x2d2d2d).unwrap(),
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr3200(true), sd, u, 0x2d2d2d).unwrap(),
-        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr3200(true), sd, sd, 0x2a2d2d).unwrap(),
-    ]).unwrap();
+        RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr1600(true), sd, u, 0x393939)?,
+        RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr1866(true), sd, u, 0x373737)?,
+        RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr2133(true), sd, u, 0x353535)?,
+        RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr2400(true), sd, u, 0x333333)?,
+        RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr2667(true), sd, u, 0x313131)?,
+        RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr2933(true), sd, u, 0x2f2f2f)?,
+        RdimmDdr4CadBusElement::new(1, DdrRates::new().with_ddr3200(true), sd, u, 0x2d2d2d)?,
+        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1600(true), u, sd, 0x393939)?,
+        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1600(true), sd, u, 0x393939)?,
+        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1600(true), sd, sd, 0x353939)?,
+        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1866(true), u, sd, 0x373737)?,
+        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1866(true), sd, u, 0x373737)?,
+        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1866(true), s, s, 0x333939)?,
+        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1866(true), s, d, 0x333737)?,
+        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr1866(true), d, sd, 0x333737)?,
+        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2133(true), u, sd, 0x353535)?,
+        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2133(true), sd, u, 0x353535)?,
+        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2133(true), sd, sd, 0x313535)?,
+        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2400(true), u, sd, 0x333333)?,
+        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2400(true), sd, u, 0x333333)?,
+        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2400(true), sd, sd, 0x2f3333)?,
+        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2667(true), u, sd, 0x313131)?,
+        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2667(true), sd, u, 0x313131)?,
+        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2667(true), sd, sd, 0x2d3131)?,
+        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2933(true), u, sd, 0x2f2f2f)?,
+        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2933(true), sd, u, 0x2f2f2f)?,
+        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr2933(true), sd, sd, 0x2c2f2f)?,
+        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr3200(true), u, sd, 0x2d2d2d)?,
+        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr3200(true), sd, u, 0x2d2d2d)?,
+        RdimmDdr4CadBusElement::new(2, DdrRates::new().with_ddr3200(true), sd, sd, 0x2a2d2d)?,
+    ])?;
     let ddr_rates = DdrRates::new().with_ddr3200(true).with_ddr2933(true).with_ddr2667(true).with_ddr2400(true).with_ddr2133(true).with_ddr1866(true).with_ddr1600(true);
     apcb.insert_struct_array_as_entry::<Ddr4DataBusElement>(EntryId::Memory(MemoryEntryId::PsRdimmDdr4DataBus), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &[
-        Ddr4DataBusElement::new(1, ddr_rates, s, u, RttNom::Off, RttWr::Off, RttPark::_48Ohm, 91, VrefDq::Range1(VrefDqRange1::_74_95P)).unwrap(),
-        Ddr4DataBusElement::new(1, ddr_rates, d, u, RttNom::_60Ohm, RttWr::Off, RttPark::_240Ohm, 93, VrefDq::Range1(VrefDqRange1::_74_95P)).unwrap(),
-        Ddr4DataBusElement::new(2, ddr_rates, u, s, RttNom::Off, RttWr::Off, RttPark::_48Ohm, 91, VrefDq::Range1(VrefDqRange1::_74_95P)).unwrap(),
-        Ddr4DataBusElement::new(2, ddr_rates, u, d, RttNom::_60Ohm, RttWr::Off, RttPark::_240Ohm, 93, VrefDq::Range1(VrefDqRange1::_74_95P)).unwrap(),
-        Ddr4DataBusElement::new(2, ddr_rates, s, u, RttNom::Off, RttWr::Off, RttPark::_48Ohm, 91, VrefDq::Range1(VrefDqRange1::_74_95P)).unwrap(),
-        Ddr4DataBusElement::new(2, ddr_rates, s, s, RttNom::Off, RttWr::_80Ohm, RttPark::_34Ohm, 104, VrefDq::Range1(VrefDqRange1::_78_85P)).unwrap(),
-        Ddr4DataBusElement::new(2, ddr_rates, s, d, RttNom::_34Ohm, RttWr::_120Ohm, RttPark::_240Ohm, 103, VrefDq::Range1(VrefDqRange1::_80_80P)).unwrap(),
-        Ddr4DataBusElement::new(2, ddr_rates, d, u, RttNom::_60Ohm, RttWr::Off, RttPark::_240Ohm, 93, VrefDq::Range1(VrefDqRange1::_74_95P)).unwrap(),
-        Ddr4DataBusElement::new(2, ddr_rates, d, s, RttNom::_34Ohm, RttWr::_120Ohm, RttPark::_240Ohm, 103, VrefDq::Range1(VrefDqRange1::_80_80P)).unwrap(),
-        Ddr4DataBusElement::new(2, ddr_rates, d, d, RttNom::_60Ohm, RttWr::_120Ohm, RttPark::_240Ohm, 106, VrefDq::Range1(VrefDqRange1::_79_50P)).unwrap(),
-    ]).unwrap();
+        Ddr4DataBusElement::new(1, ddr_rates, s, u, RttNom::Off, RttWr::Off, RttPark::_48Ohm, 91, VrefDq::Range1(VrefDqRange1::_74_95P))?,
+        Ddr4DataBusElement::new(1, ddr_rates, d, u, RttNom::_60Ohm, RttWr::Off, RttPark::_240Ohm, 93, VrefDq::Range1(VrefDqRange1::_74_95P))?,
+        Ddr4DataBusElement::new(2, ddr_rates, u, s, RttNom::Off, RttWr::Off, RttPark::_48Ohm, 91, VrefDq::Range1(VrefDqRange1::_74_95P))?,
+        Ddr4DataBusElement::new(2, ddr_rates, u, d, RttNom::_60Ohm, RttWr::Off, RttPark::_240Ohm, 93, VrefDq::Range1(VrefDqRange1::_74_95P))?,
+        Ddr4DataBusElement::new(2, ddr_rates, s, u, RttNom::Off, RttWr::Off, RttPark::_48Ohm, 91, VrefDq::Range1(VrefDqRange1::_74_95P))?,
+        Ddr4DataBusElement::new(2, ddr_rates, s, s, RttNom::Off, RttWr::_80Ohm, RttPark::_34Ohm, 104, VrefDq::Range1(VrefDqRange1::_78_85P))?,
+        Ddr4DataBusElement::new(2, ddr_rates, s, d, RttNom::_34Ohm, RttWr::_120Ohm, RttPark::_240Ohm, 103, VrefDq::Range1(VrefDqRange1::_80_80P))?,
+        Ddr4DataBusElement::new(2, ddr_rates, d, u, RttNom::_60Ohm, RttWr::Off, RttPark::_240Ohm, 93, VrefDq::Range1(VrefDqRange1::_74_95P))?,
+        Ddr4DataBusElement::new(2, ddr_rates, d, s, RttNom::_34Ohm, RttWr::_120Ohm, RttPark::_240Ohm, 103, VrefDq::Range1(VrefDqRange1::_80_80P))?,
+        Ddr4DataBusElement::new(2, ddr_rates, d, d, RttNom::_60Ohm, RttWr::_120Ohm, RttPark::_240Ohm, 106, VrefDq::Range1(VrefDqRange1::_79_50P))?,
+    ])?;
     let one_dimm = DimmsPerChannel::Specific(DimmsPerChannelSelector::new().with_one_dimm(true));
     let two_dimms = DimmsPerChannel::Specific(DimmsPerChannelSelector::new().with_two_dimms(true));
     let unsupported_speed = match processor_generation {
@@ -703,7 +703,7 @@ fn bhd_add_apcb(processor_generation: ProcessorGeneration, bhd_directory: &mut B
         MaxFreqElement::new(unsupported_speed, two_dimms, 2, 2, 0, 0, DdrSpeed::Ddr2933),
         MaxFreqElement::new(unsupported_speed, two_dimms, 2, 1, 1, 0, DdrSpeed::Ddr2933),
         MaxFreqElement::new(unsupported_speed, two_dimms, 2, 0, 2, 0, DdrSpeed::Ddr2933),
-    ]).unwrap();
+    ])?;
     apcb.insert_struct_array_as_entry::<StretchFreqElement>(EntryId::Memory(MemoryEntryId::PsRdimmDdr4StretchFreq), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &[
         StretchFreqElement::new(unsupported_speed, one_dimm, 1, 1, 0, 0, DdrSpeed::Ddr3200),
         StretchFreqElement::new(unsupported_speed, one_dimm, 1, 0, 1, 0, DdrSpeed::Ddr3200),
@@ -712,29 +712,29 @@ fn bhd_add_apcb(processor_generation: ProcessorGeneration, bhd_directory: &mut B
         StretchFreqElement::new(unsupported_speed, two_dimms, 2, 2, 0, 0, DdrSpeed::Ddr3200),
         StretchFreqElement::new(unsupported_speed, two_dimms, 2, 1, 1, 0, DdrSpeed::Ddr3200),
         StretchFreqElement::new(unsupported_speed, two_dimms, 2, 0, 2, 0, DdrSpeed::Ddr3200),
-    ]).unwrap();
+    ])?;
     apcb.insert_struct_array_as_entry::<MaxFreqElement>(EntryId::Memory(MemoryEntryId::Ps3dsRdimmDdr4MaxFreq), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &[
         MaxFreqElement::new(unsupported_speed, one_dimm, 1, 0, 1, 0, DdrSpeed::Ddr3200),
         MaxFreqElement::new(unsupported_speed, two_dimms, 1, 0, 1, 0, DdrSpeed::Ddr2933),
         MaxFreqElement::new(unsupported_speed, two_dimms, 2, 0, 2, 0, DdrSpeed::Ddr2667),
-    ]).unwrap();
+    ])?;
     apcb.insert_struct_array_as_entry::<StretchFreqElement>(EntryId::Memory(MemoryEntryId::Ps3dsRdimmDdr4StretchFreq), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &[
         StretchFreqElement::new(unsupported_speed, one_dimm, 1, 0, 1, 0, DdrSpeed::Ddr3200),
         StretchFreqElement::new(unsupported_speed, two_dimms, 1, 0, 1, 0, DdrSpeed::Ddr3200),
         StretchFreqElement::new(unsupported_speed, two_dimms, 2, 0, 2, 0, DdrSpeed::Ddr3200),
-    ]).unwrap();
+    ])?;
     apcb.insert_struct_array_as_entry::<Ddr4DataBusElement>(EntryId::Memory(MemoryEntryId::Ps3dsRdimmDdr4DataBus), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &[
-        Ddr4DataBusElement::new(1, ddr_rates, d, u, RttNom::_60Ohm, RttWr::Off, RttPark::_240Ohm, 91, VrefDq::Range1(VrefDqRange1::_71_70P)).unwrap(), // FIXME check ddr_rates
-        Ddr4DataBusElement::new(2, ddr_rates, u, d, RttNom::_60Ohm, RttWr::Off, RttPark::_240Ohm, 91, VrefDq::Range1(VrefDqRange1::_71_70P)).unwrap(),
-        Ddr4DataBusElement::new(2, ddr_rates, d, u, RttNom::_60Ohm, RttWr::Off, RttPark::_240Ohm, 91, VrefDq::Range1(VrefDqRange1::_71_70P)).unwrap(),
-        Ddr4DataBusElement::new(2, ddr_rates, d, d, RttNom::_60Ohm, RttWr::_120Ohm, RttPark::_240Ohm, 104, VrefDq::Range1(VrefDqRange1::_77_55P)).unwrap(),
-    ]).unwrap();
+        Ddr4DataBusElement::new(1, ddr_rates, d, u, RttNom::_60Ohm, RttWr::Off, RttPark::_240Ohm, 91, VrefDq::Range1(VrefDqRange1::_71_70P))?, // FIXME check ddr_rates
+        Ddr4DataBusElement::new(2, ddr_rates, u, d, RttNom::_60Ohm, RttWr::Off, RttPark::_240Ohm, 91, VrefDq::Range1(VrefDqRange1::_71_70P))?,
+        Ddr4DataBusElement::new(2, ddr_rates, d, u, RttNom::_60Ohm, RttWr::Off, RttPark::_240Ohm, 91, VrefDq::Range1(VrefDqRange1::_71_70P))?,
+        Ddr4DataBusElement::new(2, ddr_rates, d, d, RttNom::_60Ohm, RttWr::_120Ohm, RttPark::_240Ohm, 104, VrefDq::Range1(VrefDqRange1::_77_55P))?,
+    ])?;
 
     let console_out = AblConsoleOutControl::new().with_enable_console_logging(true).with_enable_mem_flow_logging(true).with_enable_mem_setreg_logging(true).with_enable_mem_getreg_logging(false).with_enable_mem_status_logging(true).with_enable_mem_pmu_logging(true).with_enable_mem_pmu_sram_read_logging(false).with_enable_mem_pmu_sram_write_logging(false).with_enable_mem_test_verbose_logging(false).with_enable_mem_basic_output_logging(true);
     apcb.insert_struct_entry::<ConsoleOutControl>(EntryId::Memory(MemoryEntryId::ConsoleOutControl), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &
     // TODO: Nicer stuff
         ConsoleOutControl::new(console_out, AblBreakpointControl::new(false, false))
-    , &[]).unwrap();
+    , &[])?;
     match processor_generation {
         ProcessorGeneration::Naples => {
             // ?
@@ -743,265 +743,265 @@ fn bhd_add_apcb(processor_generation: ProcessorGeneration, bhd_directory: &mut B
             apcb.insert_struct_entry::<ErrorOutControl116>(EntryId::Memory(MemoryEntryId::ErrorOutControl), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &ErrorOutControl116::new().with_enable_error_reporting(false).with_error_reporting_gpio(Some(Gpio::new(85, 1, 192))).with_input_port(0x84).with_input_port_size(PortSize::_32Bit).with_clear_acknowledgement(false).with_enable_heart_beat(false).with_enable_error_reporting_beep_codes(false).with_stop_on_first_fatal_error(false).with_enable_error_reporting_gpio(false)
         // FIXME add values (which have fine defaults) eventually: enable_error_reporting, enable_error_reporting_gpio, enable_error_reporting_beep_codes, enable_using_handshake, input_port: 132.into(), input_port, output_delay, output_port
         // FIXME: stop_on_first_fatal_error: false.into(), input_port_size: 4.into(), output_port_size: 4.into(), input_port_type: 6.into(), output_port_type: 6.into(), clear_acknowledgement: false.into(), error_reporting_gpio: Gpio { pin: 85, iomux_control: 1, bank_control: 192 }, enable_heart_beat: false.into() }
-            , &[]).unwrap();
+            , &[])?;
         },
         ProcessorGeneration::Rome => {
             apcb.insert_struct_entry::<ErrorOutControl112>(EntryId::Memory(MemoryEntryId::ErrorOutControl), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &ErrorOutControl112::new().with_enable_error_reporting(false).with_error_reporting_gpio(Some(Gpio::new(85, 1, 192))).with_input_port(0x84).with_input_port_size(PortSize::_32Bit).with_clear_acknowledgement(false).with_enable_heart_beat(false).with_enable_error_reporting_beep_codes(false).with_stop_on_first_fatal_error(false).with_enable_error_reporting_gpio(false)
         // FIXME add values (which have fine defaults) eventually: enable_error_reporting, enable_error_reporting_gpio, enable_error_reporting_beep_codes, enable_using_handshake, input_port: 132.into(), input_port, output_delay, output_port
         // FIXME: stop_on_first_fatal_error: false.into(), input_port_size: 4.into(), output_port_size: 4.into(), input_port_type: 6.into(), output_port_type: 6.into(), clear_acknowledgement: false.into(), error_reporting_gpio: Gpio { pin: 85, iomux_control: 1, bank_control: 192 }, enable_heart_beat: false.into() }
-            , &[]).unwrap();
+            , &[])?;
         },
     }
 
     apcb.insert_struct_entry::<ExtVoltageControl>(EntryId::Memory(MemoryEntryId::ExtVoltageControl), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &
         ExtVoltageControl::new_enabled(PortType::FchHtIo, 0x84, PortSize::_32Bit, PortType::FchHtIo, 0x80, PortSize::_32Bit, false)
-    , &[]).unwrap();
+    , &[])?;
 
     apcb.insert_struct_sequence_as_entry(EntryId::Memory(MemoryEntryId::PlatformTuning), 0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal), &[
         &amd_apcb::memory::platform_tuning::Terminator::new()
-    ]).unwrap();
+    ])?;
 
-    apcb.insert_group(GroupId::Token, *b"TOKN").unwrap();
-    apcb.insert_entry(EntryId::Token(TokenEntryId::Bool), 0, BoardInstances::all(), ContextType::Tokens, PriorityLevels::from_level(PriorityLevel::Normal), &[]).unwrap();
+    apcb.insert_group(GroupId::Token, *b"TOKN")?;
+    apcb.insert_entry(EntryId::Token(TokenEntryId::Bool), 0, BoardInstances::all(), ContextType::Tokens, PriorityLevels::from_level(PriorityLevel::Normal), &[])?;
     // TODO: priority level ?
     // mem_uncorrected_ecc_retry_ddr4 has TWO entries with the same id on Rome and Milan. Fake one of them.
-    apcb.insert_token(EntryId::Token(TokenEntryId::Bool), 0, BoardInstances::all(), 0xbff00125, 1).unwrap();
+    apcb.insert_token(EntryId::Token(TokenEntryId::Bool), 0, BoardInstances::all(), 0xbff00125, 1)?;
 
     // Note: apcb.insert_entry is done implicity
 
-    let mut tokens = apcb.tokens_mut(0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal)).unwrap();
+    let mut tokens = apcb.tokens_mut(0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal))?;
 
-    tokens.set_psp_measure_config(0x0);
-    tokens.set_psp_enable_debug_mode(PspEnableDebugMode::Disabled); // Byte
-    tokens.set_psp_tp_port(true);
-    tokens.set_psp_event_log_display(true);
-    tokens.set_psp_psb_auto_fuse(true);
-    tokens.set_psp_error_display(true);
-    tokens.set_psp_stop_on_error(false);
-    tokens.set_psp_syshub_watchdog_timer_interval(0xa28); // Word
+    tokens.set_psp_measure_config(0x0)?;
+    tokens.set_psp_enable_debug_mode(PspEnableDebugMode::Disabled)?; // Byte
+    tokens.set_psp_tp_port(true)?;
+    tokens.set_psp_event_log_display(true)?;
+    tokens.set_psp_psb_auto_fuse(true)?;
+    tokens.set_psp_error_display(true)?;
+    tokens.set_psp_stop_on_error(false)?;
+    tokens.set_psp_syshub_watchdog_timer_interval(0xa28)?; // Word
 
-    tokens.set_abl_serial_baud_rate(BaudRate::_115200Baud); // Byte
+    tokens.set_abl_serial_baud_rate(BaudRate::_115200Baud)?; // Byte
 
-    tokens.set_pmu_training_mode(MemControllerPmuTrainingMode::_1D_2D); // OBSOLETE 24
-    tokens.set_mem_training_hdt_control(MemTrainingHdtControl::StageCompletionMessages1); // Byte ; FIXME: +1
-    tokens.set_display_pmu_training_results(false);
-    tokens.set_performance_tracing(false);
-    tokens.set_ecc_symbol_size(EccSymbolSize::x16); // OBSOLETE 30
-    tokens.set_cpu_fetch_from_spi_ap_base(0xfff00000); // DWord
-    tokens.set_vga_program(true);
+    tokens.set_pmu_training_mode(MemControllerPmuTrainingMode::_1D_2D)?; // OBSOLETE 24
+    tokens.set_mem_training_hdt_control(MemTrainingHdtControl::StageCompletionMessages1)?; // Byte ; FIXME: +1
+    tokens.set_display_pmu_training_results(false)?;
+    tokens.set_performance_tracing(false)?;
+    tokens.set_ecc_symbol_size(EccSymbolSize::x16)?; // OBSOLETE 30
+    tokens.set_cpu_fetch_from_spi_ap_base(0xfff00000)?; // DWord
+    tokens.set_vga_program(true)?;
 
-    tokens.set_fch_console_out_mode(0);
-    tokens.set_fch_smbus_speed(FchSmbusSpeed::Value(0x2a)); // Byte; x in 66 MHz / (4 x); FIXME: Auto?!
-    tokens.set_fch_console_out_super_io_type(FchConsoleOutSuperIoType::Auto); // Byte
-    tokens.set_fch_console_out_basic_enable(0x0); // Byte // OBSOLETE 21
-    tokens.set_fch_console_out_serial_port(FchConsoleSerialPort::Uart0Mmio); // Byte
-    tokens.set_fch_gpp_clk_map(FchGppClkMap::Auto); // Word
-    tokens.set_fch_rom3_base_high(0x0); // DWord
+    tokens.set_fch_console_out_mode(0)?;
+    tokens.set_fch_smbus_speed(FchSmbusSpeed::Value(0x2a))?; // Byte; x in 66 MHz / (4 x); FIXME: Auto?!
+    tokens.set_fch_console_out_super_io_type(FchConsoleOutSuperIoType::Auto)?; // Byte
+    tokens.set_fch_console_out_basic_enable(0x0)?; // Byte // OBSOLETE 21
+    tokens.set_fch_console_out_serial_port(FchConsoleSerialPort::Uart0Mmio)?; // Byte
+    tokens.set_fch_gpp_clk_map(FchGppClkMap::Auto)?; // Word
+    tokens.set_fch_rom3_base_high(0x0)?; // DWord
 
-    tokens.set_ccx_min_sev_asid(0x1); // DWord
-    tokens.set_ccx_ppin_opt_in(false);
-    tokens.set_ccx_sev_asid_count(CcxSevAsidCount::_509); // Byte
+    tokens.set_ccx_min_sev_asid(0x1)?; // DWord
+    tokens.set_ccx_ppin_opt_in(false)?;
+    tokens.set_ccx_sev_asid_count(CcxSevAsidCount::_509)?; // Byte
 
-    tokens.set_bmc_init_before_dram(false);
-    tokens.set_bmc_link_speed(BmcLinkSpeed::PcieGen1);
-    tokens.set_bmc_start_lane(0x81); // Byte // OBSOLETE 23
-    tokens.set_bmc_end_lane(0x81); // Byte // OBSOLETE 9
-    tokens.set_bmc_socket(0x0); // Byte // OBSOLETE 19
-    tokens.set_bmc_device(0x5); // Byte // OBSOLETE 25
-    tokens.set_bmc_function(0x2); // Byte // OBSOLETE 11
-    tokens.set_configure_second_pcie_link(false);
-    tokens.set_second_pcie_link_max_payload(SecondPcieLinkMaxPayload::HardwareDefault); // Byte
-    tokens.set_second_pcie_link_speed(SecondPcieLinkSpeed::Gen2); // Byte
+    tokens.set_bmc_init_before_dram(false)?;
+    tokens.set_bmc_link_speed(BmcLinkSpeed::PcieGen1)?;
+    tokens.set_bmc_start_lane(0x81)?; // Byte // OBSOLETE 23
+    tokens.set_bmc_end_lane(0x81)?; // Byte // OBSOLETE 9
+    tokens.set_bmc_socket(0x0)?; // Byte // OBSOLETE 19
+    tokens.set_bmc_device(0x5)?; // Byte // OBSOLETE 25
+    tokens.set_bmc_function(0x2)?; // Byte // OBSOLETE 11
+    tokens.set_configure_second_pcie_link(false)?;
+    tokens.set_second_pcie_link_max_payload(SecondPcieLinkMaxPayload::HardwareDefault)?; // Byte
+    tokens.set_second_pcie_link_speed(SecondPcieLinkSpeed::Gen2)?; // Byte
 
-    tokens.set_mem_quad_rank_capable(true); // OBSOLETE 6
-    tokens.set_mem_sodimm_capable(true);
-    tokens.set_mem_rdimm_capable(true);
-    tokens.set_mem_lrdimm_capable(true); // ? // leaving this off is bad
-    tokens.set_mem_mode_unganged(true); // ? // leaving this off is bad
-    tokens.set_mem_dimm_type_ddr3_capable(false); // ? // leaving this off is bad
-    tokens.set_mem_dimm_type_lpddr3_capable(false);
-    tokens.set_mem_force_power_down_throttle_enable(false);
-    tokens.set_mem_dqs_training_control(true);
-    tokens.set_mem_enable_parity(true);
-    tokens.set_mem_udimm_capable(true);
-    tokens.set_mem_enable_bank_group_swap(true);
-    tokens.set_mem_channel_interleaving(false);
-    tokens.set_mem_pstate(true);
-    tokens.set_mem_limit_memory_to_below_1_TiB(true);
-    tokens.set_mem_enable_bank_swizzle(false);
-    tokens.set_mem_spd_read_optimization_ddr4(true);
-    tokens.set_mem_hole_remapping(true);
-    tokens.set_mem_oc_vddio_control(false);
-    tokens.set_mem_enable_chip_select_interleaving(false);
-    tokens.set_mem_uma_above_4_GiB(true);
-    tokens.set_mem_ignore_spd_checksum(true);
-    tokens.set_mem_ecc_sync_flood(false);
-    tokens.set_u0x8f84dcb4(false); // Bool
-    tokens.set_nvdimm_n_disable(false);
-    tokens.set_u0x96176308(true); // Bool
-    tokens.set_mem_dram_double_refresh_rate(0x0); // Byte
+    tokens.set_mem_quad_rank_capable(true)?; // OBSOLETE 6
+    tokens.set_mem_sodimm_capable(true)?;
+    tokens.set_mem_rdimm_capable(true)?;
+    tokens.set_mem_lrdimm_capable(true)?; // ? // leaving this off is bad
+    tokens.set_mem_mode_unganged(true)?; // ? // leaving this off is bad
+    tokens.set_mem_dimm_type_ddr3_capable(false)?; // ? // leaving this off is bad
+    tokens.set_mem_dimm_type_lpddr3_capable(false)?;
+    tokens.set_mem_force_power_down_throttle_enable(false)?;
+    tokens.set_mem_dqs_training_control(true)?;
+    tokens.set_mem_enable_parity(true)?;
+    tokens.set_mem_udimm_capable(true)?;
+    tokens.set_mem_enable_bank_group_swap(true)?;
+    tokens.set_mem_channel_interleaving(false)?;
+    tokens.set_mem_pstate(true)?;
+    tokens.set_mem_limit_memory_to_below_1_TiB(true)?;
+    tokens.set_mem_enable_bank_swizzle(false)?;
+    tokens.set_mem_spd_read_optimization_ddr4(true)?;
+    tokens.set_mem_hole_remapping(true)?;
+    tokens.set_mem_oc_vddio_control(false)?;
+    tokens.set_mem_enable_chip_select_interleaving(false)?;
+    tokens.set_mem_uma_above_4_GiB(true)?;
+    tokens.set_mem_ignore_spd_checksum(true)?;
+    tokens.set_mem_ecc_sync_flood(false)?;
+    tokens.set_u0x8f84dcb4(false)?; // Bool
+    tokens.set_nvdimm_n_disable(false)?;
+    tokens.set_u0x96176308(true)?; // Bool
+    tokens.set_mem_dram_double_refresh_rate(0x0)?; // Byte
     // TODO: Try to remove and boot
-    tokens.set_mem_dram_double_refresh_rate_unused(false); // Bool
-    tokens.set_mem_sw_cmd_throttle_enable(false);
-    tokens.set_mem_enable_bank_group_swap_alt(true);
-    tokens.set_mem_on_die_thermal_sensor(true);
-    tokens.set_mem_all_clocks(true);
-    tokens.set_mem_enable_power_down(true);
-    tokens.set_mem_uncorrected_ecc_retry_ddr4(true);
-    tokens.set_mem_odts_cmd_throttle_enable(true);
-    tokens.set_mem_clear(false);
-    tokens.set_mem_post_package_repair_enable(true);
-    tokens.set_mem_tsme_mode(MemTsmeMode::Disabled);
-    tokens.set_mem_ddr4_force_data_mask_disable(false);
-    tokens.set_mem_enable_ecc_feature(true);
-    tokens.set_mem_ecc_redirection(false);
-    tokens.set_mem_ddr_route_balanced_tee(false);
-    tokens.set_mem_temp_controlled_refresh_enable(false);
-    tokens.set_mem_temp_controlled_extended_refresh(false); // OBSOLETE 7
-    tokens.set_mem_restore_control(false);
-    tokens.set_mem_override_dimm_spd_max_activity_count(MemMaxActivityCount::Auto); // Byte
-    tokens.set_mem_urg_ref_limit(0x6); // Byte
-    tokens.set_u0x190305df(0x0); // Byte // OBSOLETE 10
-    tokens.set_uma_mode(UmaMode::Auto); // OBSOLETE 12
-    tokens.set_workload_profile(WorkloadProfile::Disabled); // Byte
-    tokens.set_mem_nvdimm_power_source(MemNvdimmPowerSource::DeviceManaged); // OBSOLETE 13
-    tokens.set_mem_dram_addresss_command_parity_retry_count(0x1); // Byte
-    tokens.set_mem_data_poison(MemDataPoison::Enabled); // Byte // OBSOLETE 14
-    tokens.set_u0x5985083a(0xff); // Byte
-    tokens.set_mem_heal_ppr_type(MemHealPprType::SoftRepair); // Byte
-    tokens.set_mem_heal_test_select(MemHealTestSelect::Normal); // Byte
-    tokens.set_mem_heal_max_bank_fails(0x3); // Byte
-    tokens.set_mem_heal_bist_enable(MemHealBistEnable::Disabled); // Byte
-    tokens.set_mem_rcd_parity(true); // Byte
-    tokens.set_odts_cmd_throttle_cycles(0x57); // Byte // OBSOLETE 15
-    tokens.set_u0x6c4ccf38(0x0); // Byte // OBSOLETE 16
+    tokens.set_mem_dram_double_refresh_rate_unused(false)?; // Bool
+    tokens.set_mem_sw_cmd_throttle_enable(false)?;
+    tokens.set_mem_enable_bank_group_swap_alt(true)?;
+    tokens.set_mem_on_die_thermal_sensor(true)?;
+    tokens.set_mem_all_clocks(true)?;
+    tokens.set_mem_enable_power_down(true)?;
+    tokens.set_mem_uncorrected_ecc_retry_ddr4(true)?;
+    tokens.set_mem_odts_cmd_throttle_enable(true)?;
+    tokens.set_mem_clear(false)?;
+    tokens.set_mem_post_package_repair_enable(true)?;
+    tokens.set_mem_tsme_mode(MemTsmeMode::Disabled)?;
+    tokens.set_mem_ddr4_force_data_mask_disable(false)?;
+    tokens.set_mem_enable_ecc_feature(true)?;
+    tokens.set_mem_ecc_redirection(false)?;
+    tokens.set_mem_ddr_route_balanced_tee(false)?;
+    tokens.set_mem_temp_controlled_refresh_enable(false)?;
+    tokens.set_mem_temp_controlled_extended_refresh(false)?; // OBSOLETE 7
+    tokens.set_mem_restore_control(false)?;
+    tokens.set_mem_override_dimm_spd_max_activity_count(MemMaxActivityCount::Auto)?; // Byte
+    tokens.set_mem_urg_ref_limit(0x6)?; // Byte
+    tokens.set_u0x190305df(0x0)?; // Byte // OBSOLETE 10
+    tokens.set_uma_mode(UmaMode::Auto)?; // OBSOLETE 12
+    tokens.set_workload_profile(WorkloadProfile::Disabled)?; // Byte
+    tokens.set_mem_nvdimm_power_source(MemNvdimmPowerSource::DeviceManaged)?; // OBSOLETE 13
+    tokens.set_mem_dram_addresss_command_parity_retry_count(0x1)?; // Byte
+    tokens.set_mem_data_poison(MemDataPoison::Enabled)?; // Byte // OBSOLETE 14
+    tokens.set_u0x5985083a(0xff)?; // Byte
+    tokens.set_mem_heal_ppr_type(MemHealPprType::SoftRepair)?; // Byte
+    tokens.set_mem_heal_test_select(MemHealTestSelect::Normal)?; // Byte
+    tokens.set_mem_heal_max_bank_fails(0x3)?; // Byte
+    tokens.set_mem_heal_bist_enable(MemHealBistEnable::Disabled)?; // Byte
+    tokens.set_mem_rcd_parity(true)?; // Byte
+    tokens.set_odts_cmd_throttle_cycles(0x57)?; // Byte // OBSOLETE 15
+    tokens.set_u0x6c4ccf38(0x0)?; // Byte // OBSOLETE 16
 
-    tokens.set_mem_data_scramble(0x1); // Byte // OBSOLETE 20
-    tokens.set_mem_dram_vref_range(0x0); // OBSOLETE 22
-    tokens.set_mem_cpu_vref_range(0x0); // Byte // OBSOLETE 17
-    tokens.set_u0xae7f0df4(0xff); // Byte
+    tokens.set_mem_data_scramble(0x1)?; // Byte // OBSOLETE 20
+    tokens.set_mem_dram_vref_range(0x0)?; // OBSOLETE 22
+    tokens.set_mem_cpu_vref_range(0x0)?; // Byte // OBSOLETE 17
+    tokens.set_u0xae7f0df4(0xff)?; // Byte
 
-    tokens.set_df_group_d_platform(true);
-    tokens.set_df_bottom_io(0xb0); // Byte
-    tokens.set_df_pci_mmio_size(0x10000000); // DWord
-    tokens.set_df_remap_at_1tib(DfRemapAt1TiB::Auto); // Byte
-    tokens.set_df_invert_dram_map(DfToggle::Auto); // Byte
-    tokens.set_df_mem_interleaving(DfMemInterleaving::Auto); // Byte
-    tokens.set_df_mem_interleaving_size(DfMemInterleavingSize::Auto); // Byte
-    tokens.set_df_gmi_encrypt(DfToggle::Auto); // Byte
-    tokens.set_df_probe_filter(DfToggle::Auto); // Byte
-    tokens.set_df_xgmi_encrypt(DfToggle::Auto); // Byte
-    tokens.set_df_dram_numa_per_socket(DfDramNumaPerSocket::Auto); // Byte
-    tokens.set_df_4link_max_xgmi_speed(0xff); // Byte
-    tokens.set_df_3link_max_xgmi_speed(0xff); // Byte
-    tokens.set_df_save_restore_mem_encrypt(DfToggle::Auto); // Byte
-    tokens.set_df_mem_clear(DfToggle::Auto);
-    tokens.set_df_xgmi_tx_eq_mode(DfXgmiTxEqMode::Auto); // Byte
-    tokens.set_df_pstate_mode_select(DfPstateModeSelect::Auto);
-    tokens.set_df_cake_crc_threshold_bounds(DfCakeCrcThresholdBounds::Value(0x64)); // DWord; Percentage is 0.00001% * x
-    tokens.set_df_xgmi_config(DfXgmiLinkConfig::Auto); // Byte
+    tokens.set_df_group_d_platform(true)?;
+    tokens.set_df_bottom_io(0xb0)?; // Byte
+    tokens.set_df_pci_mmio_size(0x10000000)?; // DWord
+    tokens.set_df_remap_at_1tib(DfRemapAt1TiB::Auto)?; // Byte
+    tokens.set_df_invert_dram_map(DfToggle::Auto)?; // Byte
+    tokens.set_df_mem_interleaving(DfMemInterleaving::Auto)?; // Byte
+    tokens.set_df_mem_interleaving_size(DfMemInterleavingSize::Auto)?; // Byte
+    tokens.set_df_gmi_encrypt(DfToggle::Auto)?; // Byte
+    tokens.set_df_probe_filter(DfToggle::Auto)?; // Byte
+    tokens.set_df_xgmi_encrypt(DfToggle::Auto)?; // Byte
+    tokens.set_df_dram_numa_per_socket(DfDramNumaPerSocket::Auto)?; // Byte
+    tokens.set_df_4link_max_xgmi_speed(0xff)?; // Byte
+    tokens.set_df_3link_max_xgmi_speed(0xff)?; // Byte
+    tokens.set_df_save_restore_mem_encrypt(DfToggle::Auto)?; // Byte
+    tokens.set_df_mem_clear(DfToggle::Auto)?;
+    tokens.set_df_xgmi_tx_eq_mode(DfXgmiTxEqMode::Auto)?; // Byte
+    tokens.set_df_pstate_mode_select(DfPstateModeSelect::Auto)?;
+    tokens.set_df_cake_crc_threshold_bounds(DfCakeCrcThresholdBounds::Value(0x64))?; // DWord; Percentage is 0.00001% * x
+    tokens.set_df_xgmi_config(DfXgmiLinkConfig::Auto)?; // Byte
 
-    tokens.set_pcie_reset_control(true); // OBSOLETE 8
-    tokens.set_pcie_reset_gpio_pin(0xffffffff); // DWord
-    tokens.set_pcie_reset_pin_select(0x2); // Byte
+    tokens.set_pcie_reset_control(true)?; // OBSOLETE 8
+    tokens.set_pcie_reset_gpio_pin(0xffffffff)?; // DWord
+    tokens.set_pcie_reset_pin_select(0x2)?; // Byte
 
-    tokens.set_mem_user_timing_mode(MemUserTimingMode::Auto); // DWord
-    tokens.set_mem_self_refresh_exit_staggering(MemSelfRefreshExitStaggering::Disabled); // Byte
-    tokens.set_mem_uncorrected_ecc_retry_ddr4(true);
-    tokens.set_mem_controller_writing_crc_mode(MemControllerWritingCrcMode::Disabled);
-    tokens.set_mem_controller_writing_crc_max_replay(0x8); // Byte
-    tokens.set_mem_controller_writing_crc_limit(0x0); // Byte
-    tokens.set_u0xc9e9a1c9(0x8); // Byte
-    tokens.set_u0xd155798a(0xff); // Byte
-    tokens.set_sw_cmd_throt_cycles(0x0); // OBSOLETE 26
-    tokens.set_mem_sub_urg_ref_lower_bound(0x4); // Byte
+    tokens.set_mem_user_timing_mode(MemUserTimingMode::Auto)?; // DWord
+    tokens.set_mem_self_refresh_exit_staggering(MemSelfRefreshExitStaggering::Disabled)?; // Byte
+    tokens.set_mem_uncorrected_ecc_retry_ddr4(true)?;
+    tokens.set_mem_controller_writing_crc_mode(MemControllerWritingCrcMode::Disabled)?;
+    tokens.set_mem_controller_writing_crc_max_replay(0x8)?; // Byte
+    tokens.set_mem_controller_writing_crc_limit(0x0)?; // Byte
+    tokens.set_u0xc9e9a1c9(0x8)?; // Byte
+    tokens.set_u0xd155798a(0xff)?; // Byte
+    tokens.set_sw_cmd_throt_cycles(0x0)?; // OBSOLETE 26
+    tokens.set_mem_sub_urg_ref_lower_bound(0x4)?; // Byte
 
-    tokens.set_dimm_sensor_resolution(0x1); // OBSOLETE 18
-    tokens.set_dimm_sensor_lower(0xa); // OBSOLETE 38
-    tokens.set_dimm_sensor_upper(0x50); // OBSOLETE 36
-    tokens.set_dimm_sensor_critical(0x5f); // OBSOLETE 31
-    tokens.set_dimm_sensor_config(0x408); // OBSOLETE 32
-    tokens.set_dimm_3ds_sensor_critical(0x50); // Word // OBSOLETE 27; Milan
-    tokens.set_dimm_3ds_sensor_upper(0x42); // Word // OBSOLETE 29; Milan
+    tokens.set_dimm_sensor_resolution(0x1)?; // OBSOLETE 18
+    tokens.set_dimm_sensor_lower(0xa)?; // OBSOLETE 38
+    tokens.set_dimm_sensor_upper(0x50)?; // OBSOLETE 36
+    tokens.set_dimm_sensor_critical(0x5f)?; // OBSOLETE 31
+    tokens.set_dimm_sensor_config(0x408)?; // OBSOLETE 32
+    tokens.set_dimm_3ds_sensor_critical(0x50)?; // Word // OBSOLETE 27; Milan
+    tokens.set_dimm_3ds_sensor_upper(0x42)?; // Word // OBSOLETE 29; Milan
 
-    tokens.set_scrub_icache_rate(0x0); // OBSOLETE 33
-    tokens.set_scrub_dram_rate(0x0); // OBSOLETE 34
-    tokens.set_scrub_dcache_rate(0x0); // OBSOLETE 35
-    tokens.set_scrub_l2_rate(0x0); // OBSOLETE 28
-    tokens.set_scrub_l3_rate(0x0); // OBSOLETE 37
+    tokens.set_scrub_icache_rate(0x0)?; // OBSOLETE 33
+    tokens.set_scrub_dram_rate(0x0)?; // OBSOLETE 34
+    tokens.set_scrub_dcache_rate(0x0)?; // OBSOLETE 35
+    tokens.set_scrub_l2_rate(0x0)?; // OBSOLETE 28
+    tokens.set_scrub_l3_rate(0x0)?; // OBSOLETE 37
 
-    tokens.set_mem_bus_frequency_limit(MemClockValue::Ddr3200); // DWord
+    tokens.set_mem_bus_frequency_limit(MemClockValue::Ddr3200)?; // DWord
 
-    tokens.set_mem_power_down_mode(0x0); // DWord
-    tokens.set_mem_uma_size(0x0); // DWord
-    tokens.set_mem_uma_alignment(0xffffc0); // DWord
+    tokens.set_mem_power_down_mode(0x0)?; // DWord
+    tokens.set_mem_uma_size(0x0)?; // DWord
+    tokens.set_mem_uma_alignment(0xffffc0)?; // DWord
 
-    tokens.set_mem_clock_value(MemClockValue::Ddr2400); // DWord
+    tokens.set_mem_clock_value(MemClockValue::Ddr2400)?; // DWord
 
-    tokens.set_mem_action_on_bist_failure(MemActionOnBistFailure::DoNothing); // Byte
-    tokens.set_mem_mbist_aggressor_static_lane_control(false);
-    tokens.set_mem_mbist_tgt_static_lane_control(false);
-    tokens.set_mem_mbist_aggressor_on(false); // Obsolete
-    tokens.set_mem_mbist_worse_cas_granularity(0x0); // Byte
-    tokens.set_mem_mbist_read_data_eye_voltage_step(0x1); // Byte
-    tokens.set_mem_mbist_data_eye_silent_execution(false); // Byte
-    tokens.set_mem_mbist_aggressor_static_lane_val(0x0); // Byte
-    tokens.set_mem_mbist_tgt_static_lane_val(0x0); // Byte
-    tokens.set_mem_mbist_data_eye_type(MemMbistDataEyeType::_1dTiming); // Byte
-    tokens.set_mem_mbist_test_mode(MemMbistTestMode::PhysicalInterface); // Byte // MBIST AND OBSOLETE 1
-    tokens.set_mem_mbist_aggressor_static_lane_sel_ecc(0x0); // Byte
-    tokens.set_mem_mbist_read_data_eye_timing_step(0x1); // Byte
-    tokens.set_mem_mbist_data_eye_execution_repeat_count(0x1); // Byte // MBIST AND OBSOLETE 2
-    tokens.set_mem_mbist_tgt_static_lane_sel_ecc(0x0); // Byte // MBIST AND OBSOLETE 3
-    tokens.set_mem_mbist_pattern_length(0x3); // Byte
-    tokens.set_mem_mbist_halt_on_error(0x1); // Byte // MBIST AND OBSOLETE 4
-    tokens.set_mem_mbist_write_data_eye_voltage_step(0x1); // Byte
-    tokens.set_mem_mbist_per_bit_slave_die_report(0x0); // Byte
-    tokens.set_mem_mbist_write_data_eye_timing_step(0x1); // Byte
-    tokens.set_mem_mbist_aggressors_channels(MemMbistAggressorsChannels::Disabled); // Byte
-    tokens.set_mem_mbist_test(MemMbistTest::Disabled); // Byte // MBIST AND OBSOLETE 5
-    tokens.set_mem_mbist_pattern_select(MemMbistPatternSelect::Prbs); // Byte
-    tokens.set_mem_mbist_aggressor_static_lane_sel_lo(0x0); // DWord
-    tokens.set_mem_mbist_aggressor_static_lane_sel_hi(0x0); // DWord
-    tokens.set_mem_mbist_tgt_static_lane_sel_lo(0x0); // DWord
-    tokens.set_mem_mbist_tgt_static_lane_sel_hi(0x0); // DWord
+    tokens.set_mem_action_on_bist_failure(MemActionOnBistFailure::DoNothing)?; // Byte
+    tokens.set_mem_mbist_aggressor_static_lane_control(false)?;
+    tokens.set_mem_mbist_tgt_static_lane_control(false)?;
+    tokens.set_mem_mbist_aggressor_on(false)?; // Obsolete
+    tokens.set_mem_mbist_worse_cas_granularity(0x0)?; // Byte
+    tokens.set_mem_mbist_read_data_eye_voltage_step(0x1)?; // Byte
+    tokens.set_mem_mbist_data_eye_silent_execution(false)?; // Byte
+    tokens.set_mem_mbist_aggressor_static_lane_val(0x0)?; // Byte
+    tokens.set_mem_mbist_tgt_static_lane_val(0x0)?; // Byte
+    tokens.set_mem_mbist_data_eye_type(MemMbistDataEyeType::_1dTiming)?; // Byte
+    tokens.set_mem_mbist_test_mode(MemMbistTestMode::PhysicalInterface)?; // Byte // MBIST AND OBSOLETE 1
+    tokens.set_mem_mbist_aggressor_static_lane_sel_ecc(0x0)?; // Byte
+    tokens.set_mem_mbist_read_data_eye_timing_step(0x1)?; // Byte
+    tokens.set_mem_mbist_data_eye_execution_repeat_count(0x1)?; // Byte // MBIST AND OBSOLETE 2
+    tokens.set_mem_mbist_tgt_static_lane_sel_ecc(0x0)?; // Byte // MBIST AND OBSOLETE 3
+    tokens.set_mem_mbist_pattern_length(0x3)?; // Byte
+    tokens.set_mem_mbist_halt_on_error(0x1)?; // Byte // MBIST AND OBSOLETE 4
+    tokens.set_mem_mbist_write_data_eye_voltage_step(0x1)?; // Byte
+    tokens.set_mem_mbist_per_bit_slave_die_report(0x0)?; // Byte
+    tokens.set_mem_mbist_write_data_eye_timing_step(0x1)?; // Byte
+    tokens.set_mem_mbist_aggressors_channels(MemMbistAggressorsChannels::Disabled)?; // Byte
+    tokens.set_mem_mbist_test(MemMbistTest::Disabled)?; // Byte // MBIST AND OBSOLETE 5
+    tokens.set_mem_mbist_pattern_select(MemMbistPatternSelect::Prbs)?; // Byte
+    tokens.set_mem_mbist_aggressor_static_lane_sel_lo(0x0)?; // DWord
+    tokens.set_mem_mbist_aggressor_static_lane_sel_hi(0x0)?; // DWord
+    tokens.set_mem_mbist_tgt_static_lane_sel_lo(0x0)?; // DWord
+    tokens.set_mem_mbist_tgt_static_lane_sel_hi(0x0)?; // DWord
 
-    tokens.set_mem_self_heal_bist_timeout(0x2710); // DWord
+    tokens.set_mem_self_heal_bist_timeout(0x2710)?; // DWord
 
-    tokens.set_dxio_vga_api_enable(false);
-    tokens.set_dxio_phy_param_iqofc(DxioPhyParamIqofc::Value(0x7fffffff)); // DWord
-    tokens.set_dxio_phy_param_pole(DxioPhyParamPole::Skip); // DWord
-    tokens.set_dxio_phy_param_vga(DxioPhyParamVga::Skip); // DWord
-    tokens.set_dxio_phy_param_dc(DxioPhyParamDc::Skip); // DWord
+    tokens.set_dxio_vga_api_enable(false)?;
+    tokens.set_dxio_phy_param_iqofc(DxioPhyParamIqofc::Value(0x7fffffff))?; // DWord
+    tokens.set_dxio_phy_param_pole(DxioPhyParamPole::Skip)?; // DWord
+    tokens.set_dxio_phy_param_vga(DxioPhyParamVga::Skip)?; // DWord
+    tokens.set_dxio_phy_param_dc(DxioPhyParamDc::Skip)?; // DWord
 
     match processor_generation {
         ProcessorGeneration::Naples => {
             panic!("not supported");
         },
         ProcessorGeneration::Rome => {
-            tokens.set_mother_board_type_0(false);
-            tokens.set_mctp_reroute_enable(false);
-            tokens.set_iohc_mixed_rw_workaround(false);
-            tokens.set_df_sys_storage_at_top_of_mem(3); // FIXME: 0: distributed, 1: consolidated; 0xff: auto
-            tokens.set_u0x28eb57ad(0x1e); // 0x0E~0x3E; XXX
-            tokens.set_bmc_vga_io_enable(false);
-            tokens.set_bmc_vga_io_port(0);
-            tokens.set_bmc_vga_io_port_size(0);
-            tokens.set_bmc_vga_io_bar_to_replace(0);
-            tokens.set_bmc_gen2_tx_deemphasis(BmcGen2TxDeemphasis::Disabled);
+            tokens.set_mother_board_type_0(false)?;
+            tokens.set_mctp_reroute_enable(false)?;
+            tokens.set_iohc_mixed_rw_workaround(false)?;
+            tokens.set_df_sys_storage_at_top_of_mem(3)?; // FIXME: 0: distributed, 1: consolidated; 0xff: auto
+            tokens.set_u0x28eb57ad(0x1e)?; // 0x0E~0x3E; XXX
+            tokens.set_bmc_vga_io_enable(false)?;
+            tokens.set_bmc_vga_io_port(0)?;
+            tokens.set_bmc_vga_io_port_size(0)?;
+            tokens.set_bmc_vga_io_bar_to_replace(0)?;
+            tokens.set_bmc_gen2_tx_deemphasis(BmcGen2TxDeemphasis::Disabled)?;
         },
         ProcessorGeneration::Milan => {
-            tokens.set_gnb_additional_features(true); // [optional]
-            tokens.set_gnb_additional_feature_dsm(true);
-            tokens.set_mem_amp(true);
-            tokens.set_gnb_additional_feature_l3_performance_bias(true);
-            tokens.set_gnb_additional_feature_dsm_detector(true);
-            tokens.set_gnb_smu_df_pstate_fclk_limit(GnbSmuDfPstateFclkLimit::Auto);
-            tokens.set_gnb_off_ramp_stall(0xc8); // DWord // ?
+            tokens.set_gnb_additional_features(true)?; // [optional]
+            tokens.set_gnb_additional_feature_dsm(true)?;
+            tokens.set_mem_amp(true)?;
+            tokens.set_gnb_additional_feature_l3_performance_bias(true)?;
+            tokens.set_gnb_additional_feature_dsm_detector(true)?;
+            tokens.set_gnb_smu_df_pstate_fclk_limit(GnbSmuDfPstateFclkLimit::Auto)?;
+            tokens.set_gnb_off_ramp_stall(0xc8)?; // DWord // ?
         }
     }
 
-    Apcb::update_checksum(&mut buf).unwrap();
+    Apcb::update_checksum(&mut buf)?;
     let mut xbuf = &buf[..]; // TODO: cut off at APCB_SIZE
     let size = xbuf.len();
     bhd_directory.add_blob_entry(None, attrs, size.try_into().unwrap(), None, &mut |buf: &mut [u8]| {
@@ -1015,6 +1015,8 @@ fn bhd_add_apcb(processor_generation: ProcessorGeneration, bhd_directory: &mut B
         xbuf = b;
         Ok(bytes)
     }).unwrap();
+
+    Ok(())
 }
 
 #[derive(Debug, StructOpt)]
