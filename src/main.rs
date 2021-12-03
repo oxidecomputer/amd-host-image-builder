@@ -376,7 +376,7 @@ fn bhd_directory_add_reset_image(
             }
             for header in &binary.program_headers {
                 if header.p_type == goblin::elf::program_header::PT_LOAD {
-                    eprintln!("PROG {:x?}", header);
+                    //eprintln!("PROG {:x?}", header);
                     if header.p_memsz == 0 {
                         continue;
                     }
@@ -401,14 +401,14 @@ fn bhd_directory_add_reset_image(
                             holesz += (header.p_vaddr - last_vaddr) as usize;
                         }
                         if holesz > 0 {
-                            eprintln!("hole: {:x}", holesz);
+                            //eprintln!("hole: {:x}", holesz);
                             iov = Box::new(iov.chain(Hole::new(holesz))) as Box<dyn Read>;
                             totalsz += holesz;
                             holesz = 0;
                         }
                         let chunk = &buffer[header.p_offset as usize
                             ..(header.p_offset + header.p_filesz) as usize];
-                        eprintln!("chunk: {:x} @ {:x}", header.p_filesz, header.p_offset);
+                        //eprintln!("chunk: {:x} @ {:x}", header.p_filesz, header.p_offset);
                         iov = Box::new(iov.chain(chunk)) as Box<dyn Read>;
                         totalsz += header.p_filesz as usize;
                         if header.p_memsz > header.p_filesz {
@@ -418,26 +418,13 @@ fn bhd_directory_add_reset_image(
                     }
                 }
             }
-            for header in &binary.section_headers {
-                eprintln!("SECTION {:x?}", header);
-            }
-            if let Some(mut iter) = binary.iter_note_headers(&buffer) {
-                while let Some(Ok(a)) = iter.next() {
-                    eprintln!("NOTE HEADER {:x?}", a);
-                }
-            }
-            if let Some(mut iter) = binary.iter_note_sections(&buffer, None) {
-                while let Some(Ok(a)) = iter.next() {
-                    eprintln!("NOTE SECTION {:x?}", a);
-                }
-            }
             // SYMBOL "_BL_SPACE" Sym { st_name: 5342, st_info: 0x0 LOCAL NOTYPE, st_other: 0 DEFAULT, st_shndx: 65521, st_value: 0x29000, st_size: 0 }
             // The part of the program we copy into the flash image should be
             // of the same size as the space allocated at loader build time.
             let symsz = elf_symbol(&binary, "_BL_SPACE")
                 .ok_or(Error::IncompatibleExecutable)?
                 .st_value;
-            eprintln!("_BL_SPACE: {:x?}", symsz);
+            //eprintln!("_BL_SPACE: {:x?}", symsz);
             if totalsz != symsz as usize {
                 return Err(Error::IncompatibleExecutable);
             }
@@ -448,7 +435,7 @@ fn bhd_directory_add_reset_image(
             let sloader = elf_symbol(&binary, "__sloader")
                 .ok_or(Error::IncompatibleExecutable)?
                 .st_value;
-            eprintln!("__sloader: {:x?}", sloader);
+            //eprintln!("__sloader: {:x?}", sloader);
             if sloader != destination_origin.ok_or(Error::IncompatibleExecutable)? {
                 return Err(Error::IncompatibleExecutable);
             }
@@ -456,7 +443,7 @@ fn bhd_directory_add_reset_image(
             let eloader = elf_symbol(&binary, "__eloader")
                 .ok_or(Error::IncompatibleExecutable)?
                 .st_value;
-            eprintln!("__eloader: {:x?}", eloader);
+            //eprintln!("__eloader: {:x?}", eloader);
             if eloader != last_vaddr {
                 return Err(Error::IncompatibleExecutable);
             }
