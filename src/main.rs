@@ -541,7 +541,7 @@ fn bhd_add_apcb(processor_generation: ProcessorGeneration, bhd_directory: &mut B
     use amd_apcb::memory::*;
     use amd_apcb::memory::platform_specific_override;
     use amd_apcb::ApcbIoOptions;
-    use amd_apcb::{DfToggle, DfCakeCrcThresholdBounds, DxioPhyParamIqofc, DxioPhyParamPole, DxioPhyParamVga, DxioPhyParamDc, MemClockValue, FchSmbusSpeed, MemHealBistEnable, SecondPcieLinkMaxPayload, FchConsoleSerialPort, PspEnableDebugMode, BaudRate, MemTrainingHdtControl, SecondPcieLinkSpeed, DfXgmiTxEqMode, MemSelfRefreshExitStaggering, MemHealTestSelect, CcxSevAsidCount, FchConsoleOutSuperIoType, MemActionOnBistFailure, MemHealPprType, DfDramNumaPerSocket, DfMemInterleaving, DfMemInterleavingSize, WorkloadProfile, DfRemapAt1TiB, MemMbistDataEyeType, MemUserTimingMode, FchGppClkMap, TokenEntryId, ContextType, MemTsmeMode, MemMbistTest, BmcGen2TxDeemphasis, BmcLinkSpeed, MemDataPoison, DfXgmiLinkConfig, DfPstateModeSelect, EccSymbolSize, GnbSmuDfPstateFclkLimit, MemMaxActivityCount, MemNvdimmPowerSource, MemControllerWritingCrcMode, UmaMode, MemControllerPmuTrainingMode, MemMbistTestMode, MemMbistAggressorsChannels};
+    use amd_apcb::{DfToggle, DfCakeCrcThresholdBounds, DxioPhyParamIqofc, DxioPhyParamPole, DxioPhyParamVga, DxioPhyParamDc, MemClockValue, FchSmbusSpeed, MemHealBistEnable, SecondPcieLinkMaxPayload, FchConsoleSerialPort, PspEnableDebugMode, BaudRate, MemTrainingHdtControl, SecondPcieLinkSpeed, DfXgmiTxEqMode, MemSelfRefreshExitStaggering, MemHealTestSelect, CcxSevAsidCount, FchConsoleOutSuperIoType, MemActionOnBistFailure, MemHealPprType, DfDramNumaPerSocket, DfMemInterleaving, DfMemInterleavingSize, WorkloadProfile, DfRemapAt1TiB, MemMbistDataEyeType, MemUserTimingMode, FchGppClkMap, TokenEntryId, ContextType, MemTsmeMode, MemMbistTest, BmcGen2TxDeemphasis, BmcLinkSpeed, MemDataPoison, DfXgmiLinkConfig, DfPstateModeSelect, EccSymbolSize, GnbSmuDfPstateFclkLimit, MemMaxActivityCount, MemNvdimmPowerSource, MemControllerWritingCrcMode, UmaMode, MemControllerPmuTrainingMode, MemMbistTestMode, MemMbistAggressorsChannels, MemMbistPatternSelect};
     let mut buf: [u8; Apcb::MAX_SIZE] = [0xff; Apcb::MAX_SIZE];
     let mut apcb = Apcb::create(&mut buf, 1/*FIXME*/, &ApcbIoOptions::default()/*FIXME*/).unwrap();
     apcb.insert_group(GroupId::Memory, *b"MEMG").unwrap();
@@ -770,14 +770,57 @@ fn bhd_add_apcb(processor_generation: ProcessorGeneration, bhd_directory: &mut B
     // Note: apcb.insert_entry is done implicity
 
     let mut tokens = apcb.tokens_mut(0, BoardInstances::all(), PriorityLevels::from_level(PriorityLevel::Normal)).unwrap();
+
+    tokens.set_psp_measure_config(0x0);
+    tokens.set_psp_enable_debug_mode(PspEnableDebugMode::Disabled); // Byte
+    tokens.set_psp_tp_port(true);
+    tokens.set_psp_event_log_display(true);
+    tokens.set_psp_psb_auto_fuse(true);
+    tokens.set_psp_error_display(true);
+    tokens.set_psp_stop_on_error(false);
+    tokens.set_psp_syshub_watchdog_timer_interval(0xa28); // Word
+
+    tokens.set_abl_serial_baud_rate(BaudRate::_115200Baud); // Byte
+
+    tokens.set_pmu_training_mode(MemControllerPmuTrainingMode::_1D_2D); // OBSOLETE 24
+    tokens.set_mem_training_hdt_control(MemTrainingHdtControl::StageCompletionMessages1); // Byte ; FIXME: +1
+    tokens.set_display_pmu_training_results(false);
+    tokens.set_performance_tracing(false);
+    tokens.set_ecc_symbol_size(EccSymbolSize::x16); // OBSOLETE 30
+    tokens.set_cpu_fetch_from_spi_ap_base(0xfff00000); // DWord
+    tokens.set_vga_program(true);
+
     tokens.set_fch_console_out_mode(0);
+    tokens.set_fch_smbus_speed(FchSmbusSpeed::Value(0x2a)); // Byte; x in 66 MHz / (4 x); FIXME: Auto?!
+    tokens.set_fch_console_out_super_io_type(FchConsoleOutSuperIoType::Auto); // Byte
+    tokens.set_fch_console_out_basic_enable(0x0); // Byte // OBSOLETE 21
+    tokens.set_fch_console_out_serial_port(FchConsoleSerialPort::Uart0Mmio); // Byte
+    tokens.set_fch_gpp_clk_map(FchGppClkMap::Auto); // Word
+    tokens.set_fch_rom3_base_high(0x0); // DWord
+
+    tokens.set_ccx_min_sev_asid(0x1); // DWord
+    tokens.set_ccx_ppin_opt_in(false);
+    tokens.set_ccx_sev_asid_count(CcxSevAsidCount::_509); // Byte
+
+    tokens.set_bmc_init_before_dram(false);
+    tokens.set_bmc_link_speed(BmcLinkSpeed::PcieGen1);
+    tokens.set_bmc_start_lane(0x81); // Byte // OBSOLETE 23
+    tokens.set_bmc_end_lane(0x81); // Byte // OBSOLETE 9
+    tokens.set_bmc_socket(0x0); // Byte // OBSOLETE 19
+    tokens.set_bmc_device(0x5); // Byte // OBSOLETE 25
+    tokens.set_bmc_function(0x2); // Byte // OBSOLETE 11
+    tokens.set_configure_second_pcie_link(false);
+    tokens.set_second_pcie_link_max_payload(SecondPcieLinkMaxPayload::HardwareDefault); // Byte
+    tokens.set_second_pcie_link_speed(SecondPcieLinkSpeed::Gen2); // Byte
+
+    tokens.set_mem_quad_rank_capable(true); // OBSOLETE 6
+    tokens.set_mem_sodimm_capable(true);
+    tokens.set_mem_rdimm_capable(true);
     tokens.set_mem_lrdimm_capable(true); // ? // leaving this off is bad
     tokens.set_mem_mode_unganged(true); // ? // leaving this off is bad
-    tokens.set_psp_tp_port(true);
     tokens.set_mem_dimm_type_ddr3_capable(false); // ? // leaving this off is bad
-    tokens.set_psp_event_log_display(true);
+    tokens.set_mem_dimm_type_lpddr3_capable(false);
     tokens.set_mem_force_power_down_throttle_enable(false);
-    tokens.set_psp_psb_auto_fuse(true);
     tokens.set_mem_dqs_training_control(true);
     tokens.set_mem_enable_parity(true);
     tokens.set_mem_udimm_capable(true);
@@ -786,19 +829,12 @@ fn bhd_add_apcb(processor_generation: ProcessorGeneration, bhd_directory: &mut B
     tokens.set_mem_pstate(true);
     tokens.set_mem_limit_memory_to_below_1_TiB(true);
     tokens.set_mem_enable_bank_swizzle(false);
-    tokens.set_vga_program(true);
     tokens.set_mem_spd_read_optimization_ddr4(true);
-    tokens.set_df_group_d_platform(true);
     tokens.set_mem_hole_remapping(true);
-    tokens.set_ccx_ppin_opt_in(false);
     tokens.set_mem_oc_vddio_control(false);
     tokens.set_mem_enable_chip_select_interleaving(false);
-    tokens.set_configure_second_pcie_link(false);
     tokens.set_mem_uma_above_4_GiB(true);
-    tokens.set_mem_mbist_aggressor_static_lane_control(false);
-    tokens.set_mem_sodimm_capable(true);
     tokens.set_mem_ignore_spd_checksum(true);
-    tokens.set_mem_rdimm_capable(true);
     tokens.set_mem_ecc_sync_flood(false);
     tokens.set_u0x8f84dcb4(false); // Bool
     tokens.set_nvdimm_n_disable(false);
@@ -806,119 +842,80 @@ fn bhd_add_apcb(processor_generation: ProcessorGeneration, bhd_directory: &mut B
     tokens.set_mem_dram_double_refresh_rate(0x0); // Byte
     // TODO: Try to remove and boot
     tokens.set_mem_dram_double_refresh_rate_unused(false); // Bool
-    tokens.set_display_pmu_training_results(false);
     tokens.set_mem_sw_cmd_throttle_enable(false);
     tokens.set_mem_enable_bank_group_swap_alt(true);
-    tokens.set_mem_dimm_type_lpddr3_capable(false);
     tokens.set_mem_on_die_thermal_sensor(true);
     tokens.set_mem_all_clocks(true);
     tokens.set_mem_enable_power_down(true);
-    tokens.set_dxio_vga_api_enable(false);
     tokens.set_mem_uncorrected_ecc_retry_ddr4(true);
     tokens.set_mem_odts_cmd_throttle_enable(true);
     tokens.set_mem_clear(false);
     tokens.set_mem_post_package_repair_enable(true);
     tokens.set_mem_tsme_mode(MemTsmeMode::Disabled);
     tokens.set_mem_ddr4_force_data_mask_disable(false);
-    tokens.set_psp_error_display(true);
-    tokens.set_mem_ecc_redirection(false);
-    tokens.set_mem_mbist_victim_static_lane_control(false);
-    tokens.set_mem_ddr_route_balanced_tee(false);
-    tokens.set_mem_quad_rank_capable(true); // OBSOLETE 6
-    tokens.set_psp_stop_on_error(false);
-    tokens.set_mem_temp_controlled_refresh_enable(false);
-    tokens.set_performance_tracing(false);
-    tokens.set_mem_temp_controlled_extended_refresh(false); // OBSOLETE 7
-    tokens.set_pcie_reset_control(true); // OBSOLETE 8
     tokens.set_mem_enable_ecc_feature(true);
-    tokens.set_bmc_init_before_dram(false);
+    tokens.set_mem_ecc_redirection(false);
+    tokens.set_mem_ddr_route_balanced_tee(false);
+    tokens.set_mem_temp_controlled_refresh_enable(false);
+    tokens.set_mem_temp_controlled_extended_refresh(false); // OBSOLETE 7
     tokens.set_mem_restore_control(false);
-    tokens.set_mem_mbist_aggressor_on(false); // Obsolete
     tokens.set_mem_override_dimm_spd_max_activity_count(MemMaxActivityCount::Auto); // Byte
-    tokens.set_df_gmi_encrypt(DfToggle::Auto); // Byte
     tokens.set_mem_urg_ref_limit(0x6); // Byte
-    tokens.set_bmc_end_lane(0x81); // Byte // OBSOLETE 9
     tokens.set_u0x190305df(0x0); // Byte // OBSOLETE 10
-    tokens.set_bmc_function(0x2); // Byte // OBSOLETE 11
     tokens.set_uma_mode(UmaMode::Auto); // OBSOLETE 12
     tokens.set_workload_profile(WorkloadProfile::Disabled); // Byte
-    tokens.set_mem_mbist_worse_cas_granularity(0x0); // Byte
-    tokens.set_fch_smbus_speed(FchSmbusSpeed::Value(0x2a)); // Byte; x in 66 MHz / (4 x); FIXME: Auto?!
-    tokens.set_df_mem_interleaving_size(DfMemInterleavingSize::Auto); // Byte
     tokens.set_mem_nvdimm_power_source(MemNvdimmPowerSource::DeviceManaged); // OBSOLETE 13
-    tokens.set_df_dram_numa_per_socket(DfDramNumaPerSocket::Auto); // Byte
-    tokens.set_mem_mbist_read_data_eye_voltage_step(0x1); // Byte
-    tokens.set_df_remap_at_1tib(DfRemapAt1TiB::Auto); // Byte
     tokens.set_mem_dram_addresss_command_parity_retry_count(0x1); // Byte
-    tokens.set_df_4link_max_xgmi_speed(0xff); // Byte
-    tokens.set_mem_mbist_data_eye_silent_execution(false); // Byte
-    tokens.set_mem_mbist_aggressor_static_lane_val(0x0); // Byte
     tokens.set_mem_data_poison(MemDataPoison::Enabled); // Byte // OBSOLETE 14
-    tokens.set_mem_mbist_victim_static_lane_val(0x0); // Byte
-    tokens.set_mem_mbist_data_eye_type(MemMbistDataEyeType::_1dTiming); // Byte
-    tokens.set_df_3link_max_xgmi_speed(0xff); // Byte
-    tokens.set_mem_heal_ppr_type(MemHealPprType::SoftRepair); // Byte
-    tokens.set_ccx_sev_asid_count(CcxSevAsidCount::_509); // Byte
-    tokens.set_mem_mbist_test_mode(MemMbistTestMode::PhysicalInterface); // Byte // MBIST AND OBSOLETE 1
-    tokens.set_mem_mbist_aggressor_static_lane_sel_ecc(0x0); // Byte
-    tokens.set_mem_mbist_read_data_eye_timing_step(0x1); // Byte
-    tokens.set_mem_heal_test_select(MemHealTestSelect::Normal); // Byte
     tokens.set_u0x5985083a(0xff); // Byte
-    tokens.set_fch_console_out_super_io_type(FchConsoleOutSuperIoType::Auto); // Byte
+    tokens.set_mem_heal_ppr_type(MemHealPprType::SoftRepair); // Byte
+    tokens.set_mem_heal_test_select(MemHealTestSelect::Normal); // Byte
     tokens.set_mem_heal_max_bank_fails(0x3); // Byte
+    tokens.set_mem_heal_bist_enable(MemHealBistEnable::Disabled); // Byte
     tokens.set_mem_rcd_parity(true); // Byte
-    tokens.set_df_invert_dram_map(DfToggle::Auto); // Byte
-    tokens.set_df_probe_filter(DfToggle::Auto); // Byte
     tokens.set_odts_cmd_throttle_cycles(0x57); // Byte // OBSOLETE 15
-    tokens.set_df_xgmi_encrypt(DfToggle::Auto); // Byte
     tokens.set_u0x6c4ccf38(0x0); // Byte // OBSOLETE 16
-    tokens.set_df_save_restore_mem_encrypt(DfToggle::Auto); // Byte
-    tokens.set_mem_controller_writing_crc_mode(MemControllerWritingCrcMode::Disabled);
-    tokens.set_mem_controller_writing_crc_max_replay(0x8); // Byte
-    tokens.set_bmc_socket(0x0); // Byte // OBSOLETE 19
-    tokens.set_second_pcie_link_speed(SecondPcieLinkSpeed::Gen2); // Byte
-    tokens.set_pcie_reset_pin_select(0x2); // Byte
-    tokens.set_mem_mbist_data_eye_execution_repeat_count(0x1); // Byte // MBIST AND OBSOLETE 2
-    tokens.set_df_bottom_io(0xb0); // Byte
+
     tokens.set_mem_data_scramble(0x1); // Byte // OBSOLETE 20
-    tokens.set_bmc_link_speed(BmcLinkSpeed::PcieGen1);
-    tokens.set_df_mem_clear(DfToggle::Auto);
-    tokens.set_fch_console_out_basic_enable(0x0); // Byte // OBSOLETE 21
-    tokens.set_mem_mbist_victim_static_lane_sel_ecc(0x0); // Byte // MBIST AND OBSOLETE 3
     tokens.set_mem_dram_vref_range(0x0); // OBSOLETE 22
     tokens.set_mem_cpu_vref_range(0x0); // Byte // OBSOLETE 17
-    tokens.set_df_xgmi_tx_eq_mode(DfXgmiTxEqMode::Auto); // Byte
-    tokens.set_abl_serial_baud_rate(BaudRate::_115200Baud); // Byte
-    tokens.set_mem_mbist_pattern_length(0x3); // Byte
     tokens.set_u0xae7f0df4(0xff); // Byte
+
+    tokens.set_df_group_d_platform(true);
+    tokens.set_df_bottom_io(0xb0); // Byte
+    tokens.set_df_pci_mmio_size(0x10000000); // DWord
+    tokens.set_df_remap_at_1tib(DfRemapAt1TiB::Auto); // Byte
+    tokens.set_df_invert_dram_map(DfToggle::Auto); // Byte
+    tokens.set_df_mem_interleaving(DfMemInterleaving::Auto); // Byte
+    tokens.set_df_mem_interleaving_size(DfMemInterleavingSize::Auto); // Byte
+    tokens.set_df_gmi_encrypt(DfToggle::Auto); // Byte
+    tokens.set_df_probe_filter(DfToggle::Auto); // Byte
+    tokens.set_df_xgmi_encrypt(DfToggle::Auto); // Byte
+    tokens.set_df_dram_numa_per_socket(DfDramNumaPerSocket::Auto); // Byte
+    tokens.set_df_4link_max_xgmi_speed(0xff); // Byte
+    tokens.set_df_3link_max_xgmi_speed(0xff); // Byte
+    tokens.set_df_save_restore_mem_encrypt(DfToggle::Auto); // Byte
+    tokens.set_df_mem_clear(DfToggle::Auto);
+    tokens.set_df_xgmi_tx_eq_mode(DfXgmiTxEqMode::Auto); // Byte
     tokens.set_df_pstate_mode_select(DfPstateModeSelect::Auto);
-    tokens.set_mem_training_hdt_control(MemTrainingHdtControl::StageCompletionMessages1); // Byte ; FIXME: +1
+    tokens.set_df_cake_crc_threshold_bounds(DfCakeCrcThresholdBounds::Value(0x64)); // DWord; Percentage is 0.00001% * x
     tokens.set_df_xgmi_config(DfXgmiLinkConfig::Auto); // Byte
-    tokens.set_mem_mbist_halt_on_error(0x1); // Byte // MBIST AND OBSOLETE 4
-    tokens.set_bmc_start_lane(0x81); // Byte // OBSOLETE 23
+
+    tokens.set_pcie_reset_control(true); // OBSOLETE 8
+    tokens.set_pcie_reset_gpio_pin(0xffffffff); // DWord
+    tokens.set_pcie_reset_pin_select(0x2); // Byte
+
+    tokens.set_mem_user_timing_mode(MemUserTimingMode::Auto); // DWord
     tokens.set_mem_self_refresh_exit_staggering(MemSelfRefreshExitStaggering::Disabled); // Byte
-    tokens.set_pmu_training_mode(MemControllerPmuTrainingMode::_1D_2D); // OBSOLETE 24
     tokens.set_mem_uncorrected_ecc_retry_ddr4(true);
+    tokens.set_mem_controller_writing_crc_mode(MemControllerWritingCrcMode::Disabled);
+    tokens.set_mem_controller_writing_crc_max_replay(0x8); // Byte
     tokens.set_mem_controller_writing_crc_limit(0x0); // Byte
     tokens.set_u0xc9e9a1c9(0x8); // Byte
-    tokens.set_mem_action_on_bist_failure(MemActionOnBistFailure::DoNothing); // Byte
-    tokens.set_mem_mbist_write_data_eye_voltage_step(0x1); // Byte
-    tokens.set_df_mem_interleaving(DfMemInterleaving::Auto); // Byte
-    tokens.set_mem_mbist_per_bit_slave_die_report(0x0); // Byte
-    tokens.set_psp_enable_debug_mode(PspEnableDebugMode::Disabled); // Byte
     tokens.set_u0xd155798a(0xff); // Byte
-    tokens.set_bmc_device(0x5); // Byte // OBSOLETE 25
-    tokens.set_mem_mbist_write_data_eye_timing_step(0x1); // Byte
-    tokens.set_mem_mbist_aggressors_channels(MemMbistAggressorsChannels::Disabled); // Byte
     tokens.set_sw_cmd_throt_cycles(0x0); // OBSOLETE 26
-    tokens.set_mem_mbist_test(MemMbistTest::Disabled); // Byte // MBIST AND OBSOLETE 5
-    tokens.set_second_pcie_link_max_payload(SecondPcieLinkMaxPayload::HardwareDefault); // Byte
     tokens.set_mem_sub_urg_ref_lower_bound(0x4); // Byte
-    tokens.set_mem_mbist_pattern_select(0x0); // Byte
-    tokens.set_mem_heal_bist_enable(MemHealBistEnable::Disabled); // Byte
-    tokens.set_fch_console_out_serial_port(FchConsoleSerialPort::Uart0Mmio); // Byte
-    tokens.set_scrub_l2_rate(0x0); // OBSOLETE 28
-    tokens.set_ecc_symbol_size(EccSymbolSize::x16); // OBSOLETE 30
+
     tokens.set_dimm_sensor_resolution(0x1); // OBSOLETE 18
     tokens.set_dimm_sensor_lower(0xa); // OBSOLETE 38
     tokens.set_dimm_sensor_upper(0x50); // OBSOLETE 36
@@ -926,34 +923,56 @@ fn bhd_add_apcb(processor_generation: ProcessorGeneration, bhd_directory: &mut B
     tokens.set_dimm_sensor_config(0x408); // OBSOLETE 32
     tokens.set_dimm_3ds_sensor_critical(0x50); // Word // OBSOLETE 27; Milan
     tokens.set_dimm_3ds_sensor_upper(0x42); // Word // OBSOLETE 29; Milan
+
     tokens.set_scrub_icache_rate(0x0); // OBSOLETE 33
     tokens.set_scrub_dram_rate(0x0); // OBSOLETE 34
     tokens.set_scrub_dcache_rate(0x0); // OBSOLETE 35
+    tokens.set_scrub_l2_rate(0x0); // OBSOLETE 28
     tokens.set_scrub_l3_rate(0x0); // OBSOLETE 37
-    tokens.set_fch_gpp_clk_map(FchGppClkMap::Auto); // Word
-    tokens.set_psp_syshub_watchdog_timer_interval(0xa28); // Word
-    tokens.set_dxio_phy_param_dc(DxioPhyParamDc::Skip); // DWord
-    tokens.set_mem_power_down_mode(0x0); // DWord
+
     tokens.set_mem_bus_frequency_limit(MemClockValue::Ddr3200); // DWord
+
+    tokens.set_mem_power_down_mode(0x0); // DWord
     tokens.set_mem_uma_size(0x0); // DWord
-    tokens.set_df_pci_mmio_size(0x10000000); // DWord
-    tokens.set_fch_rom3_base_high(0x0); // DWord
     tokens.set_mem_uma_alignment(0xffffc0); // DWord
-    tokens.set_pcie_reset_gpio_pin(0xffffffff); // DWord
-    tokens.set_mem_mbist_aggressor_static_lane_sel_i32(0x0); // DWord
-    tokens.set_dxio_phy_param_iqofc(DxioPhyParamIqofc::Value(0x7fffffff)); // DWord
-    tokens.set_mem_mbist_victim_static_lane_sel_i32(0x0); // DWord
-    tokens.set_df_cake_crc_threshold_bounds(DfCakeCrcThresholdBounds::Value(0x64)); // DWord; Percentage is 0.00001% * x
-    tokens.set_ccx_min_sev_asid(0x1); // DWord
-    tokens.set_mem_mbist_victim_static_lane_sel_u32(0x0); // DWord
-    tokens.set_dxio_phy_param_pole(DxioPhyParamPole::Skip); // DWord
-    tokens.set_mem_self_heal_bist_timeout(0x2710); // DWord
+
     tokens.set_mem_clock_value(MemClockValue::Ddr2400); // DWord
-    tokens.set_cpu_fetch_from_spi_ap_base(0xfff00000); // DWord
-    tokens.set_psp_measure_config(0x0);
+
+    tokens.set_mem_action_on_bist_failure(MemActionOnBistFailure::DoNothing); // Byte
+    tokens.set_mem_mbist_aggressor_static_lane_control(false);
+    tokens.set_mem_mbist_tgt_static_lane_control(false);
+    tokens.set_mem_mbist_aggressor_on(false); // Obsolete
+    tokens.set_mem_mbist_worse_cas_granularity(0x0); // Byte
+    tokens.set_mem_mbist_read_data_eye_voltage_step(0x1); // Byte
+    tokens.set_mem_mbist_data_eye_silent_execution(false); // Byte
+    tokens.set_mem_mbist_aggressor_static_lane_val(0x0); // Byte
+    tokens.set_mem_mbist_tgt_static_lane_val(0x0); // Byte
+    tokens.set_mem_mbist_data_eye_type(MemMbistDataEyeType::_1dTiming); // Byte
+    tokens.set_mem_mbist_test_mode(MemMbistTestMode::PhysicalInterface); // Byte // MBIST AND OBSOLETE 1
+    tokens.set_mem_mbist_aggressor_static_lane_sel_ecc(0x0); // Byte
+    tokens.set_mem_mbist_read_data_eye_timing_step(0x1); // Byte
+    tokens.set_mem_mbist_data_eye_execution_repeat_count(0x1); // Byte // MBIST AND OBSOLETE 2
+    tokens.set_mem_mbist_tgt_static_lane_sel_ecc(0x0); // Byte // MBIST AND OBSOLETE 3
+    tokens.set_mem_mbist_pattern_length(0x3); // Byte
+    tokens.set_mem_mbist_halt_on_error(0x1); // Byte // MBIST AND OBSOLETE 4
+    tokens.set_mem_mbist_write_data_eye_voltage_step(0x1); // Byte
+    tokens.set_mem_mbist_per_bit_slave_die_report(0x0); // Byte
+    tokens.set_mem_mbist_write_data_eye_timing_step(0x1); // Byte
+    tokens.set_mem_mbist_aggressors_channels(MemMbistAggressorsChannels::Disabled); // Byte
+    tokens.set_mem_mbist_test(MemMbistTest::Disabled); // Byte // MBIST AND OBSOLETE 5
+    tokens.set_mem_mbist_pattern_select(MemMbistPatternSelect::Prbs); // Byte
+    tokens.set_mem_mbist_aggressor_static_lane_sel_lo(0x0); // DWord
+    tokens.set_mem_mbist_aggressor_static_lane_sel_hi(0x0); // DWord
+    tokens.set_mem_mbist_tgt_static_lane_sel_lo(0x0); // DWord
+    tokens.set_mem_mbist_tgt_static_lane_sel_hi(0x0); // DWord
+
+    tokens.set_mem_self_heal_bist_timeout(0x2710); // DWord
+
+    tokens.set_dxio_vga_api_enable(false);
+    tokens.set_dxio_phy_param_iqofc(DxioPhyParamIqofc::Value(0x7fffffff)); // DWord
+    tokens.set_dxio_phy_param_pole(DxioPhyParamPole::Skip); // DWord
     tokens.set_dxio_phy_param_vga(DxioPhyParamVga::Skip); // DWord
-    tokens.set_mem_mbist_aggressor_static_lane_sel_u32(0x0); // DWord
-    tokens.set_mem_user_timing_mode(MemUserTimingMode::Auto); // DWord
+    tokens.set_dxio_phy_param_dc(DxioPhyParamDc::Skip); // DWord
 
     match processor_generation {
         ProcessorGeneration::Naples => {
