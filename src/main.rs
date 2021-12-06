@@ -1299,25 +1299,6 @@ fn bhd_add_apcb(
         &[&amd_apcb::memory::platform_tuning::Terminator::new()],
     )?;
 
-    apcb.insert_group(GroupId::Token, *b"TOKN")?;
-    apcb.insert_entry(
-        EntryId::Token(TokenEntryId::Bool),
-        0,
-        BoardInstances::all(),
-        ContextType::Tokens,
-        PriorityLevels::from_level(PriorityLevel::Normal),
-        &[],
-    )?;
-    // TODO: priority level ?
-    // mem_uncorrected_ecc_retry_ddr4 has TWO entries with the same id on Rome and Milan. Fake one of them.
-    apcb.insert_token(
-        EntryId::Token(TokenEntryId::Bool),
-        0,
-        BoardInstances::all(),
-        0xbff00125,
-        1,
-    )?;
-
     // Note: apcb.insert_entry is done implicity
 
     let mut tokens = apcb.tokens_mut(
@@ -1403,6 +1384,7 @@ fn bhd_add_apcb(
     tokens.set_mem_all_clocks(true)?;
     tokens.set_mem_enable_power_down(true)?;
     tokens.set_mem_uncorrected_ecc_retry_ddr4(true)?;
+    tokens.set_cbs_mem_uncorrected_ecc_retry_ddr4(true)?;
     tokens.set_mem_odts_cmd_throttle_enable(true)?;
     tokens.set_mem_clear(false)?;
     tokens.set_mem_post_package_repair_enable(true)?;
@@ -1462,7 +1444,6 @@ fn bhd_add_apcb(
 
     tokens.set_mem_user_timing_mode(MemUserTimingMode::Auto)?; // DWord
     tokens.set_mem_self_refresh_exit_staggering(MemSelfRefreshExitStaggering::Disabled)?; // Byte
-    tokens.set_mem_uncorrected_ecc_retry_ddr4(true)?;
     tokens.set_mem_controller_writing_crc_mode(MemControllerWritingCrcMode::Disabled)?;
     tokens.set_mem_controller_writing_crc_max_replay(0x8)?; // Byte
     tokens.set_mem_controller_writing_crc_limit(0x0)?; // Byte
