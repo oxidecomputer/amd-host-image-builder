@@ -1373,7 +1373,7 @@ fn bhd_add_apcb(
     tokens.set_mem_ignore_spd_checksum(true)?;
     tokens.set_mem_ecc_sync_flood(false)?;
     tokens.set_u0x8f84dcb4(false)?; // Bool
-    tokens.set_nvdimm_n_disable(false)?;
+    tokens.set_mem_nvdimm_n_disable(false)?;
     tokens.set_u0x96176308(true)?; // Bool
     tokens.set_mem_dram_double_refresh_rate(0x0)?; // Byte
                                                    // TODO: Try to remove and boot
@@ -1402,7 +1402,7 @@ fn bhd_add_apcb(
     tokens.set_uma_mode(UmaMode::Auto)?; // OBSOLETE 12
     tokens.set_workload_profile(WorkloadProfile::Disabled)?; // Byte
     tokens.set_mem_nvdimm_power_source(MemNvdimmPowerSource::DeviceManaged)?; // OBSOLETE 13
-    tokens.set_mem_dram_addresss_command_parity_retry_count(0x1)?; // Byte
+    tokens.set_mem_dram_address_command_parity_retry_count(0x1)?; // Byte
     tokens.set_mem_data_poison(MemDataPoison::Enabled)?; // Byte // OBSOLETE 14
     tokens.set_u0x5985083a(0xff)?; // Byte
     tokens.set_mem_heal_ppr_type(MemHealPprType::SoftRepair)?; // Byte
