@@ -1448,7 +1448,7 @@ fn bhd_add_apcb(
     tokens.set_mem_controller_writing_crc_mode(MemControllerWritingCrcMode::Disabled)?;
     tokens.set_mem_controller_writing_crc_max_replay(0x8)?; // Byte
     tokens.set_mem_controller_writing_crc_limit(0x0)?; // Byte
-    tokens.set_u0xc9e9a1c9(0x8)?; // Byte
+    tokens.set_mem_parity_error_max_replay_ddr4(8)?; // Byte
     tokens.set_mem_rdimm_timing_rcd_f0rc0f_additional_latency(MemRdimmTimingCmdParLatency::Auto)?;
     tokens.set_sw_cmd_throt_cycles(0x0)?; // OBSOLETE 26
     tokens.set_mem_sub_urg_ref_lower_bound(0x4)?; // Byte
