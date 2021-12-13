@@ -608,6 +608,7 @@ fn bhd_add_apcb(
         MemMbistTestMode, MemNvdimmPowerSource, MemSelfRefreshExitStaggering,
         MemTrainingHdtControl, MemTsmeMode, MemUserTimingMode, PspEnableDebugMode,
         SecondPcieLinkMaxPayload, SecondPcieLinkSpeed, TokenEntryId, UmaMode, WorkloadProfile,
+        MemRdimmTimingCmdParLatency,
     };
     let mut buf: [u8; Apcb::MAX_SIZE] = [0xff; Apcb::MAX_SIZE];
     let mut apcb = Apcb::create(
@@ -1448,7 +1449,7 @@ fn bhd_add_apcb(
     tokens.set_mem_controller_writing_crc_max_replay(0x8)?; // Byte
     tokens.set_mem_controller_writing_crc_limit(0x0)?; // Byte
     tokens.set_u0xc9e9a1c9(0x8)?; // Byte
-    tokens.set_u0xd155798a(0xff)?; // Byte
+    tokens.set_mem_rdimm_timing_rcd_f0rc0f_additional_latency(MemRdimmTimingCmdParLatency::Auto)?;
     tokens.set_sw_cmd_throt_cycles(0x0)?; // OBSOLETE 26
     tokens.set_mem_sub_urg_ref_lower_bound(0x4)?; // Byte
 
