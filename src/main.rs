@@ -926,6 +926,9 @@ fn bhd_add_apcb(
                 ],
             )?;
         }
+        _ => {
+            todo!();
+        }
     }
     let u = Ddr4DimmRanks::new().with_unpopulated(true);
     let s = Ddr4DimmRanks::new().with_single_rank(true);
@@ -1274,6 +1277,9 @@ fn bhd_add_apcb(
                 &[],
             )?;
         }
+        _ => {
+            todo!();
+        }
     }
 
     apcb.insert_struct_entry::<ExtVoltageControl>(
@@ -1538,6 +1544,9 @@ fn bhd_add_apcb(
             tokens.set_gnb_off_ramp_stall(0xc8)?; // DWord // ?
             tokens.set_mem_tsme_mode_milan(false)?;
         }
+        _ => {
+            todo!();
+        }
     }
 
     Apcb::update_checksum(&mut buf)?;
@@ -1612,6 +1621,7 @@ fn main() -> std::io::Result<()> {
         ProcessorGeneration::Milan => Path::new("amd-firmware").join("milan"),
         ProcessorGeneration::Rome => Path::new("amd-firmware").join("rome"),
         ProcessorGeneration::Naples => Path::new("amd-firmware").join("naples"),
+        _ => todo!(),
     };
     let mut psp_directory = efs
         .create_psp_directory(
@@ -1773,6 +1783,9 @@ fn main() -> std::io::Result<()> {
             }
             ProcessorGeneration::Naples => {
                 BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup)
+            }
+            _ => {
+                todo!();
             }
         },
     );
