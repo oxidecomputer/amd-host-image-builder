@@ -1390,7 +1390,6 @@ fn bhd_add_apcb(
     tokens.set_mem_odts_cmd_throttle_enable(true)?;
     tokens.set_mem_clear(false)?;
     tokens.set_mem_post_package_repair_enable(true)?;
-    tokens.set_mem_tsme_mode(MemTsmeMode::Disabled)?;
     tokens.set_mem_ddr4_force_data_mask_disable(false)?;
     tokens.set_mem_enable_ecc_feature(true)?;
     tokens.set_mem_ecc_redirection(false)?;
@@ -1527,6 +1526,7 @@ fn bhd_add_apcb(
             tokens.set_bmc_vga_io_port_size(0)?;
             tokens.set_bmc_vga_io_bar_to_replace(0)?;
             tokens.set_bmc_gen2_tx_deemphasis(BmcGen2TxDeemphasis::Disabled)?;
+            tokens.set_mem_tsme_mode_rome(MemTsmeMode::Disabled)?;
         }
         ProcessorGeneration::Milan => {
             tokens.set_gnb_additional_features(true)?; // [optional]
@@ -1536,6 +1536,7 @@ fn bhd_add_apcb(
             tokens.set_gnb_additional_feature_dsm_detector(true)?;
             tokens.set_gnb_smu_df_pstate_fclk_limit(GnbSmuDfPstateFclkLimit::Auto)?;
             tokens.set_gnb_off_ramp_stall(0xc8)?; // DWord // ?
+            tokens.set_mem_tsme_mode_milan(false)?;
         }
     }
 
