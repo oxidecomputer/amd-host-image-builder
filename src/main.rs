@@ -5,6 +5,7 @@ use amd_efs::{
 use core::cell::RefCell;
 use core::convert::TryFrom;
 use core::convert::TryInto;
+use core::num::NonZeroU8;
 use std::fs;
 use std::fs::File;
 use std::fs::OpenOptions;
@@ -608,7 +609,7 @@ fn bhd_add_apcb(
         MemMbistTestMode, MemNvdimmPowerSource, MemSelfRefreshExitStaggering,
         MemTrainingHdtControl, MemTsmeMode, MemUserTimingMode, PspEnableDebugMode,
         SecondPcieLinkMaxPayload, SecondPcieLinkSpeed, TokenEntryId, UmaMode, WorkloadProfile,
-        MemRdimmTimingCmdParLatency,
+        MemRdimmTimingCmdParLatency, MemThrottleCtrlRollWindowDepth,
     };
     let mut buf: [u8; Apcb::MAX_SIZE] = [0xff; Apcb::MAX_SIZE];
     let mut apcb = Apcb::create(
@@ -1405,7 +1406,7 @@ fn bhd_add_apcb(
     tokens.set_mem_nvdimm_power_source(MemNvdimmPowerSource::DeviceManaged)?; // OBSOLETE 13
     tokens.set_mem_dram_address_command_parity_retry_count(0x1)?; // Byte
     tokens.set_mem_data_poison(MemDataPoison::Enabled)?; // Byte // OBSOLETE 14
-    tokens.set_u0x5985083a(0xff)?; // Byte
+    tokens.set_mem_roll_window_depth(MemThrottleCtrlRollWindowDepth::Memclks(NonZeroU8::new(0xff).ok_or(amd_apcb::Error::TokenRange)?))?; // Byte
     tokens.set_mem_heal_ppr_type(MemHealPprType::SoftRepair)?; // Byte
     tokens.set_mem_heal_test_select(MemHealTestSelect::Normal)?; // Byte
     tokens.set_mem_heal_max_bank_fails(0x3)?; // Byte
