@@ -2185,8 +2185,8 @@ fn bhd_add_apcb(
 					.with_stop_on_first_fatal_error(false)
 					.with_enable_error_reporting_gpio(
 						false,
-					), // FIXME add values (which have fine defaults) eventually: enable_error_reporting, enable_error_reporting_gpio, enable_error_reporting_beep_codes, enable_using_handshake, input_port: 132.into(), input_port, output_delay, output_port
-				// FIXME: stop_on_first_fatal_error: false.into(), input_port_size: 4.into(), output_port_size: 4.into(), input_port_type: 6.into(), output_port_type: 6.into(), clear_acknowledgement: false.into(), error_reporting_gpio: Gpio { pin: 85, iomux_control: 1, bank_control: 192 }, enable_heart_beat: false.into() }
+					), // FIXME add values (which have fine defaults) eventually: enable_using_handshake, output_delay, output_port
+				// FIXME: output_port_size: 4.into(), input_port_type: 6.into(), output_port_type: 6.into(), enable_heart_beat: false.into() }
 				&[],
 			)?;
 		}
@@ -2213,8 +2213,8 @@ fn bhd_add_apcb(
 					.with_stop_on_first_fatal_error(false)
 					.with_enable_error_reporting_gpio(
 						false,
-					), // FIXME add values (which have fine defaults) eventually: enable_error_reporting, enable_error_reporting_gpio, enable_error_reporting_beep_codes, enable_using_handshake, input_port: 132.into(), input_port, output_delay, output_port
-				// FIXME: stop_on_first_fatal_error: false.into(), input_port_size: 4.into(), output_port_size: 4.into(), input_port_type: 6.into(), output_port_type: 6.into(), clear_acknowledgement: false.into(), error_reporting_gpio: Gpio { pin: 85, iomux_control: 1, bank_control: 192 }, enable_heart_beat: false.into() }
+					), // FIXME add values (which have fine defaults) eventually: enable_using_handshake, output_delay, output_port
+				// FIXME: output_port_size: 4.into(), input_port_type: 6.into(), output_port_type: 6.into(), enable_heart_beat: false.into() }
 				&[],
 			)?;
 		}
