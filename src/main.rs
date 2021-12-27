@@ -2495,7 +2495,6 @@ fn bhd_add_apcb(
 			tokens.set_mctp_reroute_enable(false)?;
 			tokens.set_iohc_mixed_rw_workaround(false)?;
 			tokens.set_df_sys_storage_at_top_of_mem(3)?; // FIXME: 0: distributed, 1: consolidated; 0xff: auto
-			tokens.set_u0x28eb57ad(0x1e)?; // 0x0E~0x3E; XXX
 			tokens.set_bmc_vga_io_enable(false)?;
 			tokens.set_bmc_vga_io_port(0)?;
 			tokens.set_bmc_vga_io_port_size(0)?;
