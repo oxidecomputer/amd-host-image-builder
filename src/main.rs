@@ -2715,13 +2715,13 @@ fn main() -> std::io::Result<()> {
 		)
 		.unwrap(); */
 		psp_entry_add_from_file(
-            &mut psp_directory,
-            None,
-            &PspDirectoryEntryAttrs::new()
-                .with_type_(PspDirectoryEntryType::PspBootloaderPublicKeysTable),
-            firmware_blob_directory_name.join("PSP-Key-DB.sbin"),
-        )
-        .unwrap();
+			&mut psp_directory,
+			None,
+			&PspDirectoryEntryAttrs::new()
+				.with_type_(PspDirectoryEntryType::PspBootloaderPublicKeysTable),
+			firmware_blob_directory_name.join("PSP-Key-DB.sbin"),
+		)
+		.unwrap();
 	}
 
 	//    let mut second_level_psp_directory = efs.create_second_level_psp_directory(AlignedLocation::try_from(0x2c_0000).unwrap(), AlignedLocation::try_from(0x2c_0000 + 0x12_0000).unwrap()).unwrap();
