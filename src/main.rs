@@ -2787,23 +2787,25 @@ fn main() -> std::io::Result<()> {
 		.unwrap();
 
 	bhd_add_apcb(
-        host_processor_generation,
-        &mut bhd_directory,
-        &match host_processor_generation {
-            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new()
-                .with_type_(BhdDirectoryEntryType::ApcbBackup)
-                .with_sub_program(1),
-            ProcessorGeneration::Rome => {
-                BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup)
-            }
-            ProcessorGeneration::Naples => {
-                BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup)
-            }
-            _ => {
-                todo!();
-            }
-        },
-    );
+		host_processor_generation,
+		&mut bhd_directory,
+		&match host_processor_generation {
+			ProcessorGeneration::Milan => {
+				BhdDirectoryEntryAttrs::new()
+					.with_type_(BhdDirectoryEntryType::ApcbBackup)
+					.with_sub_program(1)
+			}
+			ProcessorGeneration::Rome => {
+				BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup)
+			}
+			ProcessorGeneration::Naples => {
+				BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup)
+			}
+			_ => {
+				todo!();
+			}
+		}
+	);
 
 	bhd_directory
 		.add_apob_entry(None, BhdDirectoryEntryType::Apob, 0x400_0000)
