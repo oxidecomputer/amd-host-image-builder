@@ -668,7 +668,8 @@ fn bhd_add_apcb(
 		DxioPhyParamDc, DxioPhyParamIqofc, DxioPhyParamPole,
 		DxioPhyParamVga, EccSymbolSize, FchConsoleOutSuperIoType,
 		FchConsoleSerialPort, FchGppClkMap, FchSmbusSpeed,
-		GnbSmuDfPstateFclkLimit, MemActionOnBistFailure, MemClockValue,
+		GnbSmuDfPstateFclkLimit, MemActionOnBistFailure,
+		MemAutoRefreshFineGranMode, MemClockValue,
 		MemControllerPmuTrainingMode, MemControllerWritingCrcMode,
 		MemDataPoison, MemHealBistEnable, MemHealPprType,
 		MemHealTestSelect, MemMaxActivityCount,
@@ -2353,7 +2354,7 @@ fn bhd_add_apcb(
 		MemMaxActivityCount::Auto,
 	)?; // Byte
 	tokens.set_mem_urg_ref_limit(0x6)?; // Byte
-	tokens.set_u0x190305df(0x0)?; // Byte // OBSOLETE 10
+	tokens.set_mem_auto_refresh_fine_gran_mode(MemAutoRefreshFineGranMode::Fixed1Times)?; // OBSOLETE 10
 	tokens.set_uma_mode(UmaMode::Auto)?; // OBSOLETE 12
 	tokens.set_workload_profile(WorkloadProfile::Disabled)?; // Byte
 	tokens.set_mem_nvdimm_power_source(
