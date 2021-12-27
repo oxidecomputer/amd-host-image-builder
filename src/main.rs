@@ -2177,6 +2177,12 @@ fn bhd_add_apcb(
 					))
 					.with_input_port(0x84)
 					.with_input_port_size(PortSize::_32Bit)
+					.with_input_port_type(PortType::FchHtIo)
+					.with_output_port(0x80)
+					.with_output_port_size(PortSize::_32Bit)
+					.with_output_port_type(PortType::FchHtIo)
+					.with_output_delay(15000)
+					.with_enable_using_handshake(false)
 					.with_clear_acknowledgement(false)
 					.with_enable_heart_beat(false)
 					.with_enable_error_reporting_beep_codes(
@@ -2185,8 +2191,7 @@ fn bhd_add_apcb(
 					.with_stop_on_first_fatal_error(false)
 					.with_enable_error_reporting_gpio(
 						false,
-					), // FIXME add values (which have fine defaults) eventually: enable_using_handshake, output_delay, output_port
-				// FIXME: output_port_size: 4.into(), input_port_type: 6.into(), output_port_type: 6.into(), enable_heart_beat: false.into() }
+					),
 				&[],
 			)?;
 		}
@@ -2205,6 +2210,12 @@ fn bhd_add_apcb(
 					))
 					.with_input_port(0x84)
 					.with_input_port_size(PortSize::_32Bit)
+					.with_input_port_type(PortType::FchHtIo)
+					.with_output_port(0x80)
+					.with_output_port_size(PortSize::_32Bit)
+					.with_output_port_type(PortType::FchHtIo)
+					.with_output_delay(15000)
+					.with_enable_using_handshake(false)
 					.with_clear_acknowledgement(false)
 					.with_enable_heart_beat(false)
 					.with_enable_error_reporting_beep_codes(
@@ -2213,8 +2224,7 @@ fn bhd_add_apcb(
 					.with_stop_on_first_fatal_error(false)
 					.with_enable_error_reporting_gpio(
 						false,
-					), // FIXME add values (which have fine defaults) eventually: enable_using_handshake, output_delay, output_port
-				// FIXME: output_port_size: 4.into(), input_port_type: 6.into(), output_port_type: 6.into(), enable_heart_beat: false.into() }
+					),
 				&[],
 			)?;
 		}
