@@ -2333,8 +2333,6 @@ fn bhd_add_apcb(
 	tokens.set_mem_nvdimm_n_disable(false)?;
 	tokens.set_u0x96176308(true)?; // Bool
 	tokens.set_mem_dram_double_refresh_rate(0x0)?; // Byte
-					       // TODO: Try to remove and boot
-	tokens.set_mem_dram_double_refresh_rate_unused(false)?; // Bool
 	tokens.set_mem_sw_cmd_throttle_enable(false)?;
 	tokens.set_mem_enable_bank_group_swap_alt(true)?;
 	tokens.set_mem_on_die_thermal_sensor(true)?;
