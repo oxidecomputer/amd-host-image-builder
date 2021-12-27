@@ -661,7 +661,8 @@ fn bhd_add_apcb(
 	use amd_apcb::PriorityLevel;
 	use amd_apcb::PriorityLevels;
 	use amd_apcb::{
-		BaudRate, BmcGen2TxDeemphasis, BmcLinkSpeed, CcxSevAsidCount,
+		BaudRate, BmcGen2TxDeemphasis, BmcLinkSpeed, BmcRcbCheckingMode,
+		CcxSevAsidCount,
 		ContextType, DfCakeCrcThresholdBounds, DfDramNumaPerSocket,
 		DfMemInterleaving, DfMemInterleavingSize, DfPstateModeSelect,
 		DfRemapAt1TiB, DfToggle, DfXgmiLinkConfig, DfXgmiTxEqMode,
@@ -2380,7 +2381,7 @@ fn bhd_add_apcb(
 	tokens.set_mem_data_scramble(0x1)?; // Byte // OBSOLETE 20
 	tokens.set_mem_dram_vref_range(0x0)?; // OBSOLETE 22
 	tokens.set_mem_cpu_vref_range(0x0)?; // Byte // OBSOLETE 17
-	tokens.set_u0xae7f0df4(0xff)?; // Byte
+	//tokens.set_bmc_rcb_checking_mode(BmcRcbCheckingMode::Auto)?; // Byte
 
 	tokens.set_df_group_d_platform(true)?;
 	tokens.set_df_bottom_io(0xb0)?; // Byte
