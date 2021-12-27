@@ -2376,7 +2376,7 @@ fn bhd_add_apcb(
 	tokens.set_mem_heal_bist_enable(MemHealBistEnable::Disabled)?; // Byte
 	tokens.set_mem_rcd_parity(true)?; // Byte
 	tokens.set_odts_cmd_throttle_cycles(0x57)?; // Byte // OBSOLETE 15
-	tokens.set_u0x6c4ccf38(0x0)?; // Byte // OBSOLETE 16
+	//tokens.set_u0x6c4ccf38(0x0)?; // Byte // OBSOLETE 16
 
 	tokens.set_mem_data_scramble(0x1)?; // Byte // OBSOLETE 20
 	tokens.set_mem_dram_vref_range(0x0)?; // OBSOLETE 22
