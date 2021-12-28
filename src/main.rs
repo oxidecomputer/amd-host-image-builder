@@ -2495,6 +2495,7 @@ fn bhd_add_apcb(
 	tokens.set_dxio_phy_param_pole(DxioPhyParamPole::Skip)?; // DWord
 	tokens.set_dxio_phy_param_vga(DxioPhyParamVga::Skip)?; // DWord
 	tokens.set_dxio_phy_param_dc(DxioPhyParamDc::Skip)?; // DWord
+	tokens.set_df_sys_storage_at_top_of_mem(DfSysStorageAtTopOfMem::Auto)?;
 
 	match processor_generation {
 		ProcessorGeneration::Naples => {
@@ -2504,7 +2505,6 @@ fn bhd_add_apcb(
 			tokens.set_mother_board_type_0(false)?;
 			tokens.set_mctp_reroute_enable(false)?;
 			tokens.set_iohc_mixed_rw_workaround(false)?;
-			tokens.set_df_sys_storage_at_top_of_mem(DfSysStorageAtTopOfMem::Auto)?;
 			tokens.set_bmc_vga_io_enable(false)?;
 			tokens.set_bmc_vga_io_port(0)?;
 			tokens.set_bmc_vga_io_port_size(0)?;
