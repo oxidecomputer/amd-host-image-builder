@@ -665,7 +665,8 @@ fn bhd_add_apcb(
 		CcxSevAsidCount,
 		ContextType, DfCakeCrcThresholdBounds, DfDramNumaPerSocket,
 		DfMemInterleaving, DfMemInterleavingSize, DfPstateModeSelect,
-		DfRemapAt1TiB, DfToggle, DfXgmiLinkConfig, DfXgmiTxEqMode,
+		DfRemapAt1TiB, DfSysStorageAtTopOfMem, DfToggle,
+		DfXgmiLinkConfig, DfXgmiTxEqMode,
 		DxioPhyParamDc, DxioPhyParamIqofc, DxioPhyParamPole,
 		DxioPhyParamVga, EccSymbolSize, FchConsoleOutSuperIoType,
 		FchConsoleSerialPort, FchGppClkMap, FchSmbusSpeed,
@@ -2503,7 +2504,7 @@ fn bhd_add_apcb(
 			tokens.set_mother_board_type_0(false)?;
 			tokens.set_mctp_reroute_enable(false)?;
 			tokens.set_iohc_mixed_rw_workaround(false)?;
-			tokens.set_df_sys_storage_at_top_of_mem(3)?; // FIXME: 0: distributed, 1: consolidated; 0xff: auto
+			tokens.set_df_sys_storage_at_top_of_mem(DfSysStorageAtTopOfMem::Auto)?;
 			tokens.set_bmc_vga_io_enable(false)?;
 			tokens.set_bmc_vga_io_port(0)?;
 			tokens.set_bmc_vga_io_port_size(0)?;
