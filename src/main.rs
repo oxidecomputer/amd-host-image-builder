@@ -1,7 +1,8 @@
 use amd_efs::{
 	BhdDirectory, BhdDirectoryEntryAttrs, BhdDirectoryEntryType, Efs,
 	ProcessorGeneration, PspDirectory, PspDirectoryEntryAttrs,
-	PspDirectoryEntryType, PspSoftFuseChain,
+	PspDirectoryEntryType, PspSoftFuseChain, PspDirectoryEntry,
+	BhdDirectoryEntry, ValueOrLocation, DirectoryEntry,
 };
 use core::cell::RefCell;
 use core::convert::TryFrom;
@@ -24,7 +25,7 @@ use amd_apcb::Apcb;
 use amd_flash::{ErasableLocation, FlashRead, FlashWrite, Location};
 
 #[derive(Debug)]
-enum Error {
+pub enum Error {
 	Efs(amd_efs::Error),
 	IncompatibleExecutable,
 	Io(std::io::Error),
@@ -162,6 +163,7 @@ fn psp_entry_add_from_file(
 	attrs: &PspDirectoryEntryAttrs,
 	source_filename: PathBuf,
 ) -> amd_efs::Result<()> {
+	//eprintln!("FILE {:?}", source_filename);
 	let file = File::open(source_filename).unwrap();
 	let size: usize = file.metadata().unwrap().len().try_into().unwrap();
 	let mut source = BufReader::new(file);
@@ -256,6 +258,7 @@ fn bhd_entry_add_from_file(
 	ram_destination_address: Option<u64>,
 ) -> amd_efs::Result<()> {
 	let source_filename = source_filename.as_path();
+	//eprintln!("FILE {:?}", source_filename);
 	let file = File::open(source_filename).unwrap();
 	let size: usize = file.metadata().unwrap().len().try_into().unwrap();
 	bhd_entry_add_from_file_with_custom_size(
@@ -266,82 +269,6 @@ fn bhd_entry_add_from_file(
 		&source_filename,
 		ram_destination_address,
 	)
-}
-
-fn psp_directory_add_default_entries(
-	psp_directory: &mut PspDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
-	firmware_blob_directory_name: &PathBuf,
-) -> amd_efs::Result<()> {
-	psp_entry_add_from_file(
-		psp_directory,
-		None,
-		&PspDirectoryEntryAttrs::new()
-			.with_type_(PspDirectoryEntryType::AblPublicKey),
-		firmware_blob_directory_name.join("AblPubKey.bin"), // that was weird: "PspABLFw_gn.stkn", // imm
-	)?;
-
-	psp_directory.add_value_entry(
-		&PspDirectoryEntryAttrs::new()
-			.with_type_(PspDirectoryEntryType::PspSoftFuseChain),
-		PspSoftFuseChain::new()
-			.with_secure_debug_unlock(true)
-			.into(),
-	)?;
-
-	psp_entry_add_from_file(
-		psp_directory,
-		None,
-		&PspDirectoryEntryAttrs::new().with_type_(
-			PspDirectoryEntryType::SmuOffChipFirmware12,
-		),
-		firmware_blob_directory_name.join("SmuFirmware2.csbin"),
-	)?;
-	psp_entry_add_from_file(
-		psp_directory,
-		None,
-		&PspDirectoryEntryAttrs::new().with_type_(
-			PspDirectoryEntryType::PspEarlySecureUnlockDebugImage,
-		),
-		firmware_blob_directory_name.join("SecureDebugUnlock.sbin"),
-	)?;
-	psp_entry_add_from_file(
-		psp_directory,
-		None,
-		&PspDirectoryEntryAttrs::new()
-			.with_type_(PspDirectoryEntryType::WrappedIkek),
-		firmware_blob_directory_name.join("PspIkek.bin"), // imm
-	)?;
-	psp_entry_add_from_file(
-		psp_directory,
-		None,
-		&PspDirectoryEntryAttrs::new()
-			.with_type_(PspDirectoryEntryType::PspTokenUnlockData),
-		firmware_blob_directory_name.join("SecureEmptyToken.bin"), // imm
-	)?;
-	psp_entry_add_from_file(
-		psp_directory,
-		None,
-		&PspDirectoryEntryAttrs::new().with_type_(
-			PspDirectoryEntryType::SecurityPolicyBinary,
-		),
-		firmware_blob_directory_name.join("RsmuSecPolicy.sbin"),
-	)?;
-	psp_entry_add_from_file(
-		psp_directory,
-		None,
-		&PspDirectoryEntryAttrs::new()
-			.with_type_(PspDirectoryEntryType::Mp5Firmware),
-		firmware_blob_directory_name.join("Mp5.csbin"),
-	)?;
-	psp_entry_add_from_file(
-		psp_directory,
-		None,
-		&PspDirectoryEntryAttrs::new()
-			.with_type_(PspDirectoryEntryType::Abl0),
-		firmware_blob_directory_name
-			.join("AgesaBootloader_U_prod.csbin"),
-	)?;
-	Ok(())
 }
 
 fn bhd_entry_add_from_file_if_present(
@@ -540,110 +467,122 @@ fn bhd_directory_add_reset_image(
 	Ok(())
 }
 
-fn bhd_directory_add_default_entries(
-	bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
-	firmware_blob_directory_name: &PathBuf,
-) -> amd_efs::Result<()> {
-	bhd_entry_add_from_file(
-		bhd_directory,
-		None,
-		&BhdDirectoryEntryAttrs::new()
-			.with_type_(
-				BhdDirectoryEntryType::PmuFirmwareInstructions,
-			)
-			.with_instance(1)
-			.with_sub_program(1),
-		firmware_blob_directory_name
-			.join("Appb_1D_Ddr4_Udimm_Imem.csbin"),
-		None,
-	)?;
-	bhd_entry_add_from_file(
-		bhd_directory,
-		None,
-		&BhdDirectoryEntryAttrs::new()
-			.with_type_(BhdDirectoryEntryType::PmuFirmwareData)
-			.with_instance(1)
-			.with_sub_program(1),
-		firmware_blob_directory_name
-			.join("Appb_1D_Ddr4_Udimm_Dmem.csbin"),
-		None,
-	)?;
+#[derive(serde::Serialize, serde::Deserialize)]
+pub enum SerdePspDirectoryEntryBody {
+	Value(u64),
+	Blob {
+		#[serde(default)]
+		flash_location: Option<Location>,
+		#[serde(default)]
+		size: Option<u32>, // FIXME u64
+	}
+}
 
-	bhd_entry_add_from_file(
-		bhd_directory,
-		None,
-		&BhdDirectoryEntryAttrs::new()
-			.with_type_(
-				BhdDirectoryEntryType::PmuFirmwareInstructions,
-			)
-			.with_instance(2)
-			.with_sub_program(1),
-		firmware_blob_directory_name
-			.join("Appb_1D_Ddr4_Rdimm_Imem.csbin"),
-		None,
-	)?;
-	bhd_entry_add_from_file(
-		bhd_directory,
-		None,
-		&BhdDirectoryEntryAttrs::new()
-			.with_type_(BhdDirectoryEntryType::PmuFirmwareData)
-			.with_instance(2)
-			.with_sub_program(1),
-		firmware_blob_directory_name
-			.join("Appb_1D_Ddr4_Rdimm_Dmem.csbin"),
-		None,
-	)?;
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct SerdePspDirectoryEntry {
+	#[serde(flatten)]
+	pub attrs: PspDirectoryEntryAttrs,
+	pub body: SerdePspDirectoryEntryBody,
+}
 
-	bhd_entry_add_from_file(
-		bhd_directory,
-		None,
-		&BhdDirectoryEntryAttrs::new()
-			.with_type_(
-				BhdDirectoryEntryType::PmuFirmwareInstructions,
-			)
-			.with_instance(4)
-			.with_sub_program(1),
-		firmware_blob_directory_name
-			.join("Appb_2D_Ddr4_Udimm_Imem.csbin"),
-		None,
-	)?;
-	bhd_entry_add_from_file(
-		bhd_directory,
-		None,
-		&BhdDirectoryEntryAttrs::new()
-			.with_type_(BhdDirectoryEntryType::PmuFirmwareData)
-			.with_instance(4)
-			.with_sub_program(1),
-		firmware_blob_directory_name
-			.join("Appb_2D_Ddr4_Udimm_Dmem.csbin"),
-		None,
-	)?;
+impl SerdePspDirectoryEntry {
+	pub fn load(config: &Self) -> Result<PspDirectoryEntry> {
+		match config.body {
+			SerdePspDirectoryEntryBody::Value(x) => {
+				Ok(PspDirectoryEntry::new_value(&config.attrs, x))
+			},
+			SerdePspDirectoryEntryBody::Blob { flash_location, size } => {
+				let size = size.unwrap();
+				Ok(PspDirectoryEntry::new_payload(&config.attrs, size, flash_location.unwrap()).unwrap()) // FIXME .map_err(|_| serde::ser::Error::custom("value unknown"))?
+			},
+		}
+	}
+	pub fn save(blob: &PspDirectoryEntry) -> Result<Self> {
+		let source = blob.source();
+		Ok(SerdePspDirectoryEntry {
+			attrs: PspDirectoryEntryAttrs::from(blob.attrs.get()), // .map_err(|_| serde::ser::Error::custom("value unknown"))?.into(),
+			body: match source {
+				ValueOrLocation::Value(x) => {
+					SerdePspDirectoryEntryBody::Value(x)
+				},
+				ValueOrLocation::Location(x) => {
+					let x: u32 = x.try_into().unwrap();
+					SerdePspDirectoryEntryBody::Blob {
+						flash_location: Some(x.into()), // FIXME
+						size: blob.size(),
+					}
+				},
+			},
+		})
+	}
+}
 
-	bhd_entry_add_from_file(
-		bhd_directory,
-		None,
-		&BhdDirectoryEntryAttrs::new()
-			.with_type_(
-				BhdDirectoryEntryType::PmuFirmwareInstructions,
-			)
-			.with_instance(5)
-			.with_sub_program(1),
-		firmware_blob_directory_name
-			.join("Appb_2D_Ddr4_Rdimm_Imem.csbin"),
-		None,
-	)?;
-	bhd_entry_add_from_file(
-		bhd_directory,
-		None,
-		&BhdDirectoryEntryAttrs::new()
-			.with_type_(BhdDirectoryEntryType::PmuFirmwareData)
-			.with_instance(5)
-			.with_sub_program(1),
-		firmware_blob_directory_name
-			.join("Appb_2D_Ddr4_Rdimm_Dmem.csbin"),
-		None,
-	)?;
-	Ok(())
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct SerdePspEntry {
+	pub source: PathBuf,
+	pub target: SerdePspDirectoryEntry,
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+pub enum SerdeBhdDirectoryEntryBody {
+	Blob {
+		#[serde(default)]
+		flash_location: Option<Location>,
+		#[serde(default)]
+		size: Option<u32>, // FIXME u64 ?
+		#[serde(default)]
+		ram_destination_address: Option<u64>,
+	}
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct SerdeBhdDirectoryEntry {
+	#[serde(flatten)]
+	pub attrs: BhdDirectoryEntryAttrs,
+	pub body: SerdeBhdDirectoryEntryBody,
+}
+
+impl SerdeBhdDirectoryEntry {
+	pub fn load(config: &Self) -> Result<BhdDirectoryEntry> {
+		match config.body {
+			SerdeBhdDirectoryEntryBody::Blob { flash_location, size, ram_destination_address } => {
+				let flash_location = flash_location.unwrap();
+				let size = size.unwrap();
+				Ok(BhdDirectoryEntry::new_payload(&config.attrs, size, flash_location, ram_destination_address).unwrap()) // FIXME .map_err(|_| serde::ser::Error::custom("value unknown"))?
+			},
+		}
+	}
+	pub fn save(blob: &BhdDirectoryEntry) -> Result<Self> {
+		let source = blob.source();
+		Ok(SerdeBhdDirectoryEntry {
+			attrs: BhdDirectoryEntryAttrs::from(blob.attrs.get()), // .map_err(|_| serde::ser::Error::custom("value unknown"))?.into(),
+			body: match source {
+				ValueOrLocation::Value(x) => {
+					todo!();
+				},
+				ValueOrLocation::Location(x) => {
+					let x: u32 = x.try_into().unwrap();
+					SerdeBhdDirectoryEntryBody::Blob {
+						flash_location: Some(x), // FIXME
+						size: blob.size(),
+						ram_destination_address: blob.destination_location(),
+					}
+				},
+			},
+		})
+	}
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct SerdeBhdEntry {
+	pub source: PathBuf,
+	pub target: SerdeBhdDirectoryEntry,
+}
+
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct SerdeConfig {
+	psp_entries: Vec<SerdePspEntry>,
+	bhd_entries: Vec<SerdeBhdEntry>,
 }
 
 fn bhd_add_apcb(
@@ -2574,6 +2513,17 @@ struct Opts {
 
 	#[structopt(short = "r", long = "reset-image", parse(from_os_str))]
 	reset_image_filename: PathBuf,
+
+	#[structopt(short = "c", long = "config", parse(from_os_str))]
+	efs_configuration_filename: PathBuf,
+}
+
+fn read_config_from_file<P: AsRef<Path> + std::fmt::Debug>(path: P) -> Result<SerdeConfig> { // , Box<Error>
+	//eprintln!("config_from_file {:?}", path);
+	let file = File::open(path).unwrap();
+	let reader = BufReader::new(file);
+	let result = serde_json::from_reader(reader).unwrap();
+	Ok(result)
 }
 
 fn main() -> std::io::Result<()> {
@@ -2621,110 +2571,47 @@ fn main() -> std::io::Result<()> {
 		}
 		_ => todo!(),
 	};
+
+	let config = read_config_from_file(Path::new(&opts.efs_configuration_filename)).unwrap();
 	let mut psp_directory = efs
 		.create_psp_directory(
 			AlignedLocation::try_from(0x12_0000).unwrap(),
 			AlignedLocation::try_from(0x24_0000).unwrap(),
 		)
 		.unwrap();
-	psp_entry_add_from_file(
-		&mut psp_directory,
-		None,
-		&PspDirectoryEntryAttrs::new()
-			.with_type_(PspDirectoryEntryType::AmdPublicKey),
-		firmware_blob_directory_name.join("AmdPubKey.tkn"),
-	)
-	.unwrap();
-	psp_entry_add_from_file(
-		&mut psp_directory,
-		None,
-		&PspDirectoryEntryAttrs::new()
-			.with_type_(PspDirectoryEntryType::PspBootloader),
-		firmware_blob_directory_name.join("PspBootLoader.sbin"),
-	)
-	.unwrap();
-	psp_entry_add_from_file(
-		&mut psp_directory,
-		None,
-		&PspDirectoryEntryAttrs::new().with_type_(
-			PspDirectoryEntryType::PspRecoveryBootloader,
-		),
-		firmware_blob_directory_name.join("PspRecoveryBootLoader.sbin"),
-	)
-	.unwrap();
-	psp_entry_add_from_file(
-		&mut psp_directory,
-		None,
-		&PspDirectoryEntryAttrs::new()
-			.with_type_(PspDirectoryEntryType::SmuOffChipFirmware8),
-		firmware_blob_directory_name.join("SmuFirmware.csbin"),
-	)
-	.unwrap();
-	if host_processor_generation != ProcessorGeneration::Rome {
-		// Note: Cannot remove this entry (otherwise postcode 0xE022 error).
-		psp_entry_add_from_file(
-			&mut psp_directory,
-			None,
-			&PspDirectoryEntryAttrs::new().with_type_(
-				PspDirectoryEntryType::AmdSecureDebugKey,
-			),
-			firmware_blob_directory_name
-				.join("SecureDebugToken.stkn"),
-		)
-		.unwrap();
-	}
-	psp_directory_add_default_entries(
-		&mut psp_directory,
-		&firmware_blob_directory_name,
-	)
-	.unwrap();
-	psp_entry_add_from_file(
-		&mut psp_directory,
-		None,
-		&PspDirectoryEntryAttrs::new()
-			.with_type_(PspDirectoryEntryType::DxioPhySramFirmware),
-		firmware_blob_directory_name.join("PhyFw.sbin"),
-	)
-	.unwrap();
+	for entry in config.psp_entries {
+		let body = entry.target.body;
 
-	if host_processor_generation == ProcessorGeneration::Rome {
-		psp_entry_add_from_file(
-			&mut psp_directory,
-			None,
-			&PspDirectoryEntryAttrs::new().with_type_(
-				PspDirectoryEntryType::DxioPhySramPublicKey,
-			),
-			firmware_blob_directory_name.join("PhyFwSb4kr.stkn"),
-		)
-		.unwrap();
-		psp_entry_add_from_file(
-			&mut psp_directory,
-			None,
-			&PspDirectoryEntryAttrs::new().with_type_(
-				PspDirectoryEntryType::PmuPublicKey,
-			),
-			firmware_blob_directory_name
-				.join("Starship-PMU-FW.stkn"),
-		)
-		.unwrap();
-	} else {
-		/* optional psp_entry_add_from_file(
-		    &mut psp_directory,
-		    None,
-		    &PspDirectoryEntryAttrs::new()
-			.with_type_(PspDirectoryEntryType::DrtmTa),
-		    firmware_blob_directory_name.join("PSP-DRTM.sbin"),
-		)
-		.unwrap(); */
-		psp_entry_add_from_file(
-			&mut psp_directory,
-			None,
-			&PspDirectoryEntryAttrs::new()
-				.with_type_(PspDirectoryEntryType::PspBootloaderPublicKeysTable),
-			firmware_blob_directory_name.join("PSP-Key-DB.sbin"),
-		)
-		.unwrap();
+		match body {
+			SerdePspDirectoryEntryBody::Value(x) => {
+				psp_directory.add_value_entry(
+					&entry.target.attrs,
+					x, // TODO: Nicer type.
+				).unwrap();
+			},
+			SerdePspDirectoryEntryBody::Blob { flash_location, size } => {
+				let x: Option<Location> = match flash_location {
+					Some(x) => Some(x.try_into().unwrap()),
+					None => None
+				};
+				psp_entry_add_from_file(
+					&mut psp_directory,
+					match x {
+						Some(x) => Some(x.try_into().unwrap()),
+						None => None
+					},
+					&entry.target.attrs,
+					firmware_blob_directory_name.join(entry.source),
+				).unwrap();
+			},
+		}
 	}
+
+//	psp_directory_add_default_entries(
+//		&mut psp_directory,
+//		&firmware_blob_directory_name,
+//	)
+//	.unwrap();
 
 	//    let mut second_level_psp_directory = efs.create_second_level_psp_directory(AlignedLocation::try_from(0x2c_0000).unwrap(), AlignedLocation::try_from(0x2c_0000 + 0x12_0000).unwrap()).unwrap();
 	//
@@ -2809,6 +2696,29 @@ fn main() -> std::io::Result<()> {
 		}
 	);
 
+	for entry in config.bhd_entries {
+		let body = entry.target.body;
+
+		match body {
+			SerdeBhdDirectoryEntryBody::Blob { flash_location, size, ram_destination_address } => {
+				let x: Option<Location> = match flash_location {
+					Some(x) => Some(x.try_into().unwrap()),
+					None => None
+				};
+				bhd_entry_add_from_file(
+					&mut bhd_directory,
+					match x {
+						Some(x) => Some(x.try_into().unwrap()),
+						None => None
+					},
+					&entry.target.attrs,
+					firmware_blob_directory_name.join(entry.source),
+					ram_destination_address
+				).unwrap();
+			},
+		}
+	}
+
 	bhd_directory
 		.add_apob_entry(None, BhdDirectoryEntryType::Apob, 0x400_0000)
 		.unwrap();
@@ -2816,11 +2726,6 @@ fn main() -> std::io::Result<()> {
 	bhd_directory_add_reset_image(
 		&mut bhd_directory,
 		&opts.reset_image_filename,
-	)
-	.unwrap();
-	bhd_directory_add_default_entries(
-		&mut bhd_directory,
-		&firmware_blob_directory_name,
 	)
 	.unwrap();
 
