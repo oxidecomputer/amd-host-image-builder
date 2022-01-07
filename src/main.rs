@@ -3,6 +3,7 @@ use amd_efs::{
 	ProcessorGeneration, PspDirectory, PspDirectoryEntryAttrs,
 	PspDirectoryEntryType, PspSoftFuseChain, PspDirectoryEntry,
 	BhdDirectoryEntry, ValueOrLocation, DirectoryEntry,
+	DirectoryAdditionalInfo, AddressMode,
 };
 use core::cell::RefCell;
 use core::convert::TryFrom;
@@ -23,6 +24,17 @@ use structopt::StructOpt;
 use amd_apcb::Apcb;
 //use amd_efs::ProcessorGeneration;
 use amd_flash::{ErasableLocation, FlashRead, FlashWrite, Location};
+
+#[test]
+fn test_bitfield_serde() {
+	let config = r#"{
+	"max_size": 2,
+	"base_address": 3,
+	"address_mode": "PhysicalAddress"
+}"#;
+	let result: DirectoryAdditionalInfo = serde_json::from_str(config).unwrap();
+	assert_eq!(result.address_mode(), AddressMode::PhysicalAddress);
+}
 
 #[derive(Debug)]
 pub enum Error {
