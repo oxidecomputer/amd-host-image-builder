@@ -1,4 +1,5 @@
 {
+	"processor_generation": "Rome",
 	"psp_entries": [
 		{
 			"source": "AmdPubKey.tkn",
@@ -40,18 +41,6 @@
 			"source": "SmuFirmware.csbin",
 			"target": {
 				"type_": "SmuOffChipFirmware8",
-				"sub_program": 0,
-				"rom_id": 0,
-				"body": {
-					"Blob": {
-					}
-				}
-			}
-		},
-		{
-			"source": "SecureDebugToken.stkn",
-			"target": {
-				"type_": "AmdSecureDebugKey",
 				"sub_program": 0,
 				"rom_id": 0,
 				"body": {
@@ -180,9 +169,21 @@
 			}
 		},
 		{
-			"source": "PSP-Key-DB.sbin",
+			"source": "PhyFwSb4kr.stkn",
 			"target": {
-				"type_": "PspBootloaderPublicKeysTable",
+				"type_": "DxioPhySramPublicKey",
+				"sub_program": 0,
+				"rom_id": 0,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "Starship-PMU-FW.stkn",
+			"target": {
+				"type_": "PmuPublicKey",
 				"sub_program": 0,
 				"rom_id": 0,
 				"body": {

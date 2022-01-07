@@ -581,6 +581,7 @@ pub struct SerdeBhdEntry {
 
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct SerdeConfig {
+	processor_generation: ProcessorGeneration,
 	psp_entries: Vec<SerdePspEntry>,
 	bhd_entries: Vec<SerdeBhdEntry>,
 }
@@ -2505,9 +2506,6 @@ fn bhd_add_apcb(
 	about = "Build host flash image for AMD Zen CPUs."
 )]
 struct Opts {
-	#[structopt(short = "g", long = "generation")]
-	host_processor_generation: ProcessorGeneration,
-
 	#[structopt(short = "o", long = "output-file", parse(from_os_str))]
 	output_filename: PathBuf,
 
@@ -2548,7 +2546,8 @@ fn main() -> std::io::Result<()> {
 		position = position.advance(ERASABLE_BLOCK_SIZE).unwrap();
 	}
 	assert!(Location::from(position) == IMAGE_SIZE);
-	let host_processor_generation = opts.host_processor_generation;
+	let config = read_config_from_file(Path::new(&opts.efs_configuration_filename)).unwrap();
+	let host_processor_generation = config.processor_generation;
 	let mut efs = match Efs::<_, ERASABLE_BLOCK_SIZE>::create(
 		storage,
 		host_processor_generation,
@@ -2572,7 +2571,6 @@ fn main() -> std::io::Result<()> {
 		_ => todo!(),
 	};
 
-	let config = read_config_from_file(Path::new(&opts.efs_configuration_filename)).unwrap();
 	let mut psp_directory = efs
 		.create_psp_directory(
 			AlignedLocation::try_from(0x12_0000).unwrap(),
