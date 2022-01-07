@@ -1,0 +1,341 @@
+{
+	"psp_entries": [
+		{
+			"source": "AmdPubKey.tkn",
+			"target": {
+				"type_": "AmdPublicKey",
+				"sub_program": 0,
+				"rom_id": 0,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "PspBootLoader.sbin",
+			"target": {
+				"type_": "PspBootloader",
+				"sub_program": 0,
+				"rom_id": 0,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "PspRecoveryBootLoader.sbin",
+			"target": {
+				"type_": "PspRecoveryBootloader",
+				"sub_program": 0,
+				"rom_id": 0,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "SmuFirmware.csbin",
+			"target": {
+				"type_": "SmuOffChipFirmware8",
+				"sub_program": 0,
+				"rom_id": 0,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "SecureDebugToken.stkn",
+			"target": {
+				"type_": "AmdSecureDebugKey",
+				"sub_program": 0,
+				"rom_id": 0,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "AblPubKey.bin",
+			"target": {
+				"type_": "AblPublicKey",
+				"sub_program": 0,
+				"rom_id": 0,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "/dev/null",
+			"target": {
+				"type_": "PspSoftFuseChain",
+				"sub_program": 0,
+				"rom_id": 0,
+				"body": {
+					"Value": 1
+				}
+			}
+		},
+		{
+			"source": "SmuFirmware2.csbin",
+			"target": {
+				"type_": "SmuOffChipFirmware12",
+				"sub_program": 0,
+				"rom_id": 0,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "SecureDebugUnlock.sbin",
+			"target": {
+				"type_": "PspEarlySecureUnlockDebugImage",
+				"sub_program": 0,
+				"rom_id": 0,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "PspIkek.bin",
+			"target": {
+				"type_": "WrappedIkek",
+				"sub_program": 0,
+				"rom_id": 0,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "SecureEmptyToken.bin",
+			"target": {
+				"type_": "PspTokenUnlockData",
+				"sub_program": 0,
+				"rom_id": 0,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "RsmuSecPolicy.sbin",
+			"target": {
+				"type_": "SecurityPolicyBinary",
+				"sub_program": 0,
+				"rom_id": 0,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "Mp5.csbin",
+			"target": {
+				"type_": "Mp5Firmware",
+				"sub_program": 0,
+				"rom_id": 0,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "AgesaBootloader_U_prod.csbin",
+			"target": {
+				"type_": "Abl0",
+				"sub_program": 0,
+				"rom_id": 0,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "PhyFw.sbin",
+			"target": {
+				"type_": "DxioPhySramFirmware",
+				"sub_program": 0,
+				"rom_id": 0,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "PSP-Key-DB.sbin",
+			"target": {
+				"type_": "PspBootloaderPublicKeysTable",
+				"sub_program": 0,
+				"rom_id": 0,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		}
+	],
+	"bhd_entries": [
+		{
+			"source": "Appb_1D_Ddr4_Udimm_Imem.csbin",
+			"target": {
+				"type_": "PmuFirmwareInstructions",
+				"region_type": "Normal",
+				"read_only": false,
+				"instance": 1,
+				"sub_program": 1,
+				"rom_id": 0,
+				"reset_image": false,
+				"copy_image": false,
+				"compressed": false,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "Appb_1D_Ddr4_Udimm_Dmem.csbin",
+			"target": {
+				"type_": "PmuFirmwareData",
+				"region_type": "Normal",
+				"read_only": false,
+				"instance": 1,
+				"sub_program": 1,
+				"rom_id": 0,
+				"reset_image": false,
+				"copy_image": false,
+				"compressed": false,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "Appb_1D_Ddr4_Rdimm_Imem.csbin",
+			"target": {
+				"type_": "PmuFirmwareInstructions",
+				"region_type": "Normal",
+				"read_only": false,
+				"instance": 2,
+				"sub_program": 1,
+				"rom_id": 0,
+				"reset_image": false,
+				"copy_image": false,
+				"compressed": false,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "Appb_1D_Ddr4_Rdimm_Dmem.csbin",
+			"target": {
+				"type_": "PmuFirmwareData",
+				"region_type": "Normal",
+				"read_only": false,
+				"instance": 2,
+				"sub_program": 1,
+				"rom_id": 0,
+				"reset_image": false,
+				"copy_image": false,
+				"compressed": false,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "Appb_2D_Ddr4_Udimm_Imem.csbin",
+			"target": {
+				"type_": "PmuFirmwareInstructions",
+				"region_type": "Normal",
+				"read_only": false,
+				"instance": 4,
+				"sub_program": 1,
+				"rom_id": 0,
+				"reset_image": false,
+				"copy_image": false,
+				"compressed": false,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "Appb_2D_Ddr4_Udimm_Dmem.csbin",
+			"target": {
+				"type_": "PmuFirmwareData",
+				"region_type": "Normal",
+				"read_only": false,
+				"instance": 4,
+				"sub_program": 1,
+				"rom_id": 0,
+				"reset_image": false,
+				"copy_image": false,
+				"compressed": false,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "Appb_2D_Ddr4_Rdimm_Imem.csbin",
+			"target": {
+				"type_": "PmuFirmwareInstructions",
+				"region_type": "Normal",
+				"read_only": false,
+				"instance": 5,
+				"sub_program": 1,
+				"rom_id": 0,
+				"reset_image": false,
+				"copy_image": false,
+				"compressed": false,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "Appb_2D_Ddr4_Rdimm_Dmem.csbin",
+			"target": {
+				"type_": "PmuFirmwareData",
+				"region_type": "Normal",
+				"read_only": false,
+				"instance": 5,
+				"sub_program": 1,
+				"rom_id": 0,
+				"reset_image": false,
+				"copy_image": false,
+				"compressed": false,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		}
+	]
+}
