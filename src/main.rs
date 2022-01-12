@@ -2800,10 +2800,10 @@ fn main() -> std::io::Result<()> {
 			.with_type_(
 				BhdDirectoryEntryType::PmuFirmwareInstructions,
 			)
-			.with_instance(8)
+			.with_instance(10)
 			.with_sub_program(1),
 		firmware_blob_directory_name
-			.join("Appb_BIST_Ddr4_Udimm_Imem.csbin"),
+			.join("Appb_BIST_Ddr4_Lrdimm_Imem.csbin"),
 		None,
 	)
 	.unwrap();
@@ -2812,10 +2812,10 @@ fn main() -> std::io::Result<()> {
 		None,
 		&BhdDirectoryEntryAttrs::new()
 			.with_type_(BhdDirectoryEntryType::PmuFirmwareData)
-			.with_instance(8)
+			.with_instance(10)
 			.with_sub_program(1),
 		firmware_blob_directory_name
-			.join("Appb_BIST_Ddr4_Udimm_Dmem.csbin"),
+			.join("Appb_BIST_Ddr4_Lrdimm_Dmem.csbin"),
 		None,
 	)
 	.unwrap();
