@@ -337,6 +337,115 @@
 					}
 				}
 			}
+		},
+		{
+			"source": "Appb_BIST_Ddr4_Udimm_Imem.csbin",
+			"target": {
+				"type_": "PmuFirmwareInstructions",
+				"region_type": "Normal",
+				"read_only": false,
+				"instance": 8,
+				"sub_program": 1,
+				"rom_id": 0,
+				"reset_image": false,
+				"copy_image": false,
+				"compressed": false,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "Appb_BIST_Ddr4_Udimm_Dmem.csbin",
+			"target": {
+				"type_": "PmuFirmwareData",
+				"region_type": "Normal",
+				"read_only": false,
+				"instance": 8,
+				"sub_program": 1,
+				"rom_id": 0,
+				"reset_image": false,
+				"copy_image": false,
+				"compressed": false,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "Appb_BIST_Ddr4_Rdimm_Imem.csbin",
+			"target": {
+				"type_": "PmuFirmwareData",
+				"region_type": "Normal",
+				"read_only": false,
+				"instance": 9,
+				"sub_program": 1,
+				"rom_id": 0,
+				"reset_image": false,
+				"copy_image": false,
+				"compressed": false,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "Appb_BIST_Ddr4_Rdimm_Dmem.csbin",
+			"target": {
+				"type_": "PmuFirmwareData",
+				"region_type": "Normal",
+				"read_only": false,
+				"instance": 9,
+				"sub_program": 1,
+				"rom_id": 0,
+				"reset_image": false,
+				"copy_image": false,
+				"compressed": false,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "Appb_BIST_Ddr4_Lrdimm_Imem.csbin",
+			"target": {
+				"type_": "PmuFirmwareInstructions",
+				"region_type": "Normal",
+				"read_only": false,
+				"instance": 10,
+				"sub_program": 1,
+				"rom_id": 0,
+				"reset_image": false,
+				"copy_image": false,
+				"compressed": false,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
+		},
+		{
+			"source": "Appb_BIST_Ddr4_Lrdimm_Dmem.csbin",
+			"target": {
+				"type_": "PmuFirmwareData",
+				"region_type": "Normal",
+				"read_only": false,
+				"instance": 10,
+				"sub_program": 1,
+				"rom_id": 0,
+				"reset_image": false,
+				"copy_image": false,
+				"compressed": false,
+				"body": {
+					"Blob": {
+					}
+				}
+			}
 		}
+
 	]
 }
