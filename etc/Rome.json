@@ -166,11 +166,8 @@
 			"source": "Appb_1D_Ddr4_Udimm_Imem.csbin",
 			"target": {
 				"type_": "PmuFirmwareInstructions",
-				"read_only": false,
 				"instance": 1,
 				"sub_program": 1,
-				"reset_image": false,
-				"copy_image": false,
 				"compressed": false,
 				"body": {
 					"Blob": {
@@ -182,11 +179,8 @@
 			"source": "Appb_1D_Ddr4_Udimm_Dmem.csbin",
 			"target": {
 				"type_": "PmuFirmwareData",
-				"read_only": false,
 				"instance": 1,
 				"sub_program": 1,
-				"reset_image": false,
-				"copy_image": false,
 				"compressed": false,
 				"body": {
 					"Blob": {
@@ -198,11 +192,8 @@
 			"source": "Appb_1D_Ddr4_Rdimm_Imem.csbin",
 			"target": {
 				"type_": "PmuFirmwareInstructions",
-				"read_only": false,
 				"instance": 2,
 				"sub_program": 1,
-				"reset_image": false,
-				"copy_image": false,
 				"compressed": false,
 				"body": {
 					"Blob": {
@@ -214,11 +205,8 @@
 			"source": "Appb_1D_Ddr4_Rdimm_Dmem.csbin",
 			"target": {
 				"type_": "PmuFirmwareData",
-				"read_only": false,
 				"instance": 2,
 				"sub_program": 1,
-				"reset_image": false,
-				"copy_image": false,
 				"compressed": false,
 				"body": {
 					"Blob": {
@@ -230,11 +218,8 @@
 			"source": "Appb_2D_Ddr4_Udimm_Imem.csbin",
 			"target": {
 				"type_": "PmuFirmwareInstructions",
-				"read_only": false,
 				"instance": 4,
 				"sub_program": 1,
-				"reset_image": false,
-				"copy_image": false,
 				"compressed": false,
 				"body": {
 					"Blob": {
@@ -246,11 +231,8 @@
 			"source": "Appb_2D_Ddr4_Udimm_Dmem.csbin",
 			"target": {
 				"type_": "PmuFirmwareData",
-				"read_only": false,
 				"instance": 4,
 				"sub_program": 1,
-				"reset_image": false,
-				"copy_image": false,
 				"compressed": false,
 				"body": {
 					"Blob": {
@@ -262,11 +244,8 @@
 			"source": "Appb_2D_Ddr4_Rdimm_Imem.csbin",
 			"target": {
 				"type_": "PmuFirmwareInstructions",
-				"read_only": false,
 				"instance": 5,
 				"sub_program": 1,
-				"reset_image": false,
-				"copy_image": false,
 				"compressed": false,
 				"body": {
 					"Blob": {
@@ -278,11 +257,8 @@
 			"source": "Appb_2D_Ddr4_Rdimm_Dmem.csbin",
 			"target": {
 				"type_": "PmuFirmwareData",
-				"read_only": false,
 				"instance": 5,
 				"sub_program": 1,
-				"reset_image": false,
-				"copy_image": false,
 				"compressed": false,
 				"body": {
 					"Blob": {
