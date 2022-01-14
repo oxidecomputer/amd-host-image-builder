@@ -490,10 +490,20 @@ pub enum SerdePspDirectoryEntryBody {
 	}
 }
 
+impl Default for SerdePspDirectoryEntryBody {
+	fn default() -> Self {
+		Self::Blob {
+			flash_location: None,
+			size: None,
+		}
+	}
+}
+
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct SerdePspDirectoryEntry {
 	#[serde(flatten)]
 	pub attrs: PspDirectoryEntryAttrs,
+	#[serde(default)]
 	pub body: SerdePspDirectoryEntryBody,
 }
 
