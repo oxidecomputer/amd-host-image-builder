@@ -5,50 +5,30 @@
 			"source": "AmdPubKey.tkn",
 			"target": {
 				"type_": "AmdPublicKey",
-				"body": {
-					"Blob": {
-					}
-				}
 			}
 		},
 		{
 			"source": "PspBootLoader.sbin",
 			"target": {
 				"type_": "PspBootloader",
-				"body": {
-					"Blob": {
-					}
-				}
 			}
 		},
 		{
 			"source": "PspRecoveryBootLoader.sbin",
 			"target": {
 				"type_": "PspRecoveryBootloader",
-				"body": {
-					"Blob": {
-					}
-				}
 			}
 		},
 		{
 			"source": "SmuFirmware.csbin",
 			"target": {
 				"type_": "SmuOffChipFirmware8",
-				"body": {
-					"Blob": {
-					}
-				}
 			}
 		},
 		{
 			"source": "AblPubKey.bin",
 			"target": {
 				"type_": "AblPublicKey",
-				"body": {
-					"Blob": {
-					}
-				}
 			}
 		},
 		{
@@ -64,100 +44,60 @@
 			"source": "SmuFirmware2.csbin",
 			"target": {
 				"type_": "SmuOffChipFirmware12",
-				"body": {
-					"Blob": {
-					}
-				}
 			}
 		},
 		{
 			"source": "SecureDebugUnlock.sbin",
 			"target": {
 				"type_": "PspEarlySecureUnlockDebugImage",
-				"body": {
-					"Blob": {
-					}
-				}
 			}
 		},
 		{
 			"source": "PspIkek.bin",
 			"target": {
 				"type_": "WrappedIkek",
-				"body": {
-					"Blob": {
-					}
-				}
 			}
 		},
 		{
 			"source": "SecureEmptyToken.bin",
 			"target": {
 				"type_": "PspTokenUnlockData",
-				"body": {
-					"Blob": {
-					}
-				}
 			}
 		},
 		{
 			"source": "RsmuSecPolicy.sbin",
 			"target": {
 				"type_": "SecurityPolicyBinary",
-				"body": {
-					"Blob": {
-					}
-				}
 			}
 		},
 		{
 			"source": "Mp5.csbin",
 			"target": {
 				"type_": "Mp5Firmware",
-				"body": {
-					"Blob": {
-					}
-				}
 			}
 		},
 		{
 			"source": "AgesaBootloader_U_prod.csbin",
 			"target": {
 				"type_": "Abl0",
-				"body": {
-					"Blob": {
-					}
-				}
 			}
 		},
 		{
 			"source": "PhyFw.sbin",
 			"target": {
 				"type_": "DxioPhySramFirmware",
-				"body": {
-					"Blob": {
-					}
-				}
 			}
 		},
 		{
 			"source": "PhyFwSb4kr.stkn",
 			"target": {
 				"type_": "DxioPhySramPublicKey",
-				"body": {
-					"Blob": {
-					}
-				}
 			}
 		},
 		{
 			"source": "Starship-PMU-FW.stkn",
 			"target": {
 				"type_": "PmuPublicKey",
-				"body": {
-					"Blob": {
-					}
-				}
 			}
 		}
 	],
@@ -168,10 +108,6 @@
 				"type_": "PmuFirmwareInstructions",
 				"instance": 1,
 				"sub_program": 1,
-				"body": {
-					"Blob": {
-					}
-				}
 			}
 		},
 		{
@@ -180,10 +116,6 @@
 				"type_": "PmuFirmwareData",
 				"instance": 1,
 				"sub_program": 1,
-				"body": {
-					"Blob": {
-					}
-				}
 			}
 		},
 		{
@@ -192,10 +124,6 @@
 				"type_": "PmuFirmwareInstructions",
 				"instance": 2,
 				"sub_program": 1,
-				"body": {
-					"Blob": {
-					}
-				}
 			}
 		},
 		{
@@ -204,10 +132,6 @@
 				"type_": "PmuFirmwareData",
 				"instance": 2,
 				"sub_program": 1,
-				"body": {
-					"Blob": {
-					}
-				}
 			}
 		},
 		{
@@ -216,10 +140,6 @@
 				"type_": "PmuFirmwareInstructions",
 				"instance": 4,
 				"sub_program": 1,
-				"body": {
-					"Blob": {
-					}
-				}
 			}
 		},
 		{
@@ -228,10 +148,6 @@
 				"type_": "PmuFirmwareData",
 				"instance": 4,
 				"sub_program": 1,
-				"body": {
-					"Blob": {
-					}
-				}
 			}
 		},
 		{
@@ -240,10 +156,6 @@
 				"type_": "PmuFirmwareInstructions",
 				"instance": 5,
 				"sub_program": 1,
-				"body": {
-					"Blob": {
-					}
-				}
 			}
 		},
 		{
@@ -252,10 +164,6 @@
 				"type_": "PmuFirmwareData",
 				"instance": 5,
 				"sub_program": 1,
-				"body": {
-					"Blob": {
-					}
-				}
 			}
 		}
 	]
