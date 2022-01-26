@@ -2459,34 +2459,36 @@ fn bhd_add_apcb(
 	tokens.set_mem_action_on_bist_failure(
 		MemActionOnBistFailure::DoNothing,
 	)?; // Byte
-	tokens.set_mem_mbist_aggressor_static_lane_control(false)?;
-	tokens.set_mem_mbist_tgt_static_lane_control(false)?;
+
+	tokens.set_mem_mbist_test(MemMbistTest::Enabled)?; // Byte // MBIST AND OBSOLETE 5
+	tokens.set_mem_mbist_test_mode(MemMbistTestMode::DataEye)?; // Byte // MBIST AND OBSOLETE 1
 	tokens.set_mem_mbist_aggressor_on(false)?; // Obsolete
-	tokens.set_mem_mbist_worse_cas_granularity(0x0)?; // Byte
-	tokens.set_mem_mbist_read_data_eye_voltage_step(0x1)?; // Byte
-	tokens.set_mem_mbist_data_eye_silent_execution(false)?; // Byte
-	tokens.set_mem_mbist_aggressor_static_lane_val(0x0)?; // Byte
-	tokens.set_mem_mbist_tgt_static_lane_val(0x0)?; // Byte
-	tokens.set_mem_mbist_data_eye_type(MemMbistDataEyeType::_1dTiming)?; // Byte
-	tokens.set_mem_mbist_test_mode(MemMbistTestMode::PhysicalInterface)?; // Byte // MBIST AND OBSOLETE 1
-	tokens.set_mem_mbist_aggressor_static_lane_sel_ecc(0x0)?; // Byte
-	tokens.set_mem_mbist_read_data_eye_timing_step(0x1)?; // Byte
-	tokens.set_mem_mbist_data_eye_execution_repeat_count(0x1)?; // Byte // MBIST AND OBSOLETE 2
-	tokens.set_mem_mbist_tgt_static_lane_sel_ecc(0x0)?; // Byte // MBIST AND OBSOLETE 3
-	tokens.set_mem_mbist_pattern_length(0x3)?; // Byte
-	tokens.set_mem_mbist_halt_on_error(0x1)?; // Byte // MBIST AND OBSOLETE 4
-	tokens.set_mem_mbist_write_data_eye_voltage_step(0x1)?; // Byte
-	tokens.set_mem_mbist_per_bit_slave_die_report(0x0)?; // Byte
-	tokens.set_mem_mbist_write_data_eye_timing_step(0x1)?; // Byte
 	tokens.set_mem_mbist_aggressors_channels(
 		MemMbistAggressorsChannels::Disabled,
 	)?; // Byte
-	tokens.set_mem_mbist_test(MemMbistTest::Disabled)?; // Byte // MBIST AND OBSOLETE 5
+	tokens.set_mem_mbist_pattern_length(0x3)?; // Byte
 	tokens.set_mem_mbist_pattern_select(MemMbistPatternSelect::Prbs)?; // Byte
+
+	tokens.set_mem_mbist_aggressor_static_lane_control(false)?;
 	tokens.set_mem_mbist_aggressor_static_lane_sel_lo(0x0)?; // DWord
 	tokens.set_mem_mbist_aggressor_static_lane_sel_hi(0x0)?; // DWord
+	tokens.set_mem_mbist_aggressor_static_lane_sel_ecc(0x0)?; // Byte
+	tokens.set_mem_mbist_aggressor_static_lane_val(0x0)?; // Byte
+	tokens.set_mem_mbist_tgt_static_lane_control(false)?;
 	tokens.set_mem_mbist_tgt_static_lane_sel_lo(0x0)?; // DWord
 	tokens.set_mem_mbist_tgt_static_lane_sel_hi(0x0)?; // DWord
+	tokens.set_mem_mbist_tgt_static_lane_sel_ecc(0x0)?; // Byte // MBIST AND OBSOLETE 3
+	tokens.set_mem_mbist_tgt_static_lane_val(0x0)?; // Byte
+	tokens.set_mem_mbist_data_eye_type(MemMbistDataEyeType::_1dTiming)?; // Byte
+	tokens.set_mem_mbist_worse_cas_granularity(0x0)?; // Byte
+	tokens.set_mem_mbist_read_data_eye_voltage_step(0x1)?; // Byte
+	tokens.set_mem_mbist_read_data_eye_timing_step(0x1)?; // Byte
+	tokens.set_mem_mbist_write_data_eye_voltage_step(0x1)?; // Byte
+	tokens.set_mem_mbist_write_data_eye_timing_step(0x1)?; // Byte
+	tokens.set_mem_mbist_per_bit_slave_die_report(0x0)?; // Byte
+	tokens.set_mem_mbist_data_eye_silent_execution(false)?; // Byte
+	tokens.set_mem_mbist_data_eye_execution_repeat_count(0x1)?; // Byte // MBIST AND OBSOLETE 2
+	tokens.set_mem_mbist_halt_on_error(0x1)?; // Byte // MBIST AND OBSOLETE 4
 
 	tokens.set_mem_self_heal_bist_timeout(0x2710)?; // DWord
 
