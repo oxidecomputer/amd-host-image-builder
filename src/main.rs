@@ -480,6 +480,7 @@ fn bhd_directory_add_reset_image(
 }
 
 #[derive(serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
 pub enum SerdePspDirectoryEntryBody {
 	Value(u64),
 	Blob {
@@ -503,6 +504,7 @@ impl Default for SerdePspDirectoryEntryBody {
 pub struct SerdePspDirectoryEntry {
 	#[serde(flatten)]
 	pub attrs: PspDirectoryEntryAttrs,
+	#[serde(flatten)]
 	#[serde(default)]
 	pub body: SerdePspDirectoryEntryBody,
 }
@@ -546,6 +548,7 @@ pub struct SerdePspEntry {
 }
 
 #[derive(serde::Serialize, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
 pub enum SerdeBhdDirectoryEntryBody {
 	Blob {
 		#[serde(default)]
@@ -561,6 +564,8 @@ pub enum SerdeBhdDirectoryEntryBody {
 pub struct SerdeBhdDirectoryEntry {
 	#[serde(flatten)]
 	pub attrs: BhdDirectoryEntryAttrs,
+	#[serde(flatten)]
+	#[serde(default)]
 	pub body: SerdeBhdDirectoryEntryBody,
 }
 
@@ -592,6 +597,16 @@ impl SerdeBhdDirectoryEntry {
 				},
 			},
 		})
+	}
+}
+
+impl Default for SerdeBhdDirectoryEntryBody {
+	fn default() -> Self {
+		Self::Blob {
+			flash_location: None,
+			size: None,
+			ram_destination_address: None,
+		}
 	}
 }
 
@@ -2600,6 +2615,7 @@ fn main() -> std::io::Result<()> {
 		)
 		.unwrap();
 	for entry in config.psp_entries {
+		//eprintln!("{:?}", entry);
 		let body = entry.target.body;
 
 		match body {
