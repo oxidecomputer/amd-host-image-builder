@@ -32,7 +32,7 @@ fn test_bitfield_serde() {
 	"base_address": 3,
 	"address_mode": "PhysicalAddress"
 }"#;
-	let result: DirectoryAdditionalInfo = serde_json::from_str(config).unwrap();
+	let result: DirectoryAdditionalInfo = serde_yaml::from_str(config).unwrap();
 	assert_eq!(result.address_mode(), AddressMode::PhysicalAddress);
 }
 
@@ -2542,7 +2542,7 @@ fn read_config_from_file<P: AsRef<Path> + std::fmt::Debug>(path: P) -> Result<Se
 	//eprintln!("config_from_file {:?}", path);
 	let file = File::open(path).unwrap();
 	let reader = BufReader::new(file);
-	let result = serde_json::from_reader(reader).unwrap();
+	let result = serde_yaml::from_reader(reader).unwrap();
 	Ok(result)
 }
 
