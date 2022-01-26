@@ -1024,7 +1024,7 @@ fn bhd_add_apcb(
 			&platform_specific_override::MaxDimmsPerChannel::new(
 				SocketIds::ALL,
 				ChannelIds::Any,
-				1,
+				2,
 			)?, // FIXME check orig
 			&platform_specific_override::MaxChannelsPerSocket::new(
 				SocketIds::ALL,
