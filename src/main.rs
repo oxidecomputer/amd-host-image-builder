@@ -683,6 +683,7 @@ fn bhd_add_apcb(
 		MemTrainingHdtControl, MemTsmeMode, MemUserTimingMode,
 		PspEnableDebugMode, SecondPcieLinkMaxPayload,
 		SecondPcieLinkSpeed, TokenEntryId, UmaMode, WorkloadProfile,
+		DfXgmi4LinkMaxSpeed, DfXgmi3LinkMaxSpeed
 	};
 	let mut buf: [u8; Apcb::MAX_SIZE] = [0xff; Apcb::MAX_SIZE];
 	let mut apcb = Apcb::create(
@@ -2403,8 +2404,8 @@ fn bhd_add_apcb(
 	tokens.set_df_probe_filter(DfToggle::Auto)?; // Byte
 	tokens.set_df_xgmi_encrypt(DfToggle::Auto)?; // Byte
 	tokens.set_df_dram_numa_per_socket(DfDramNumaPerSocket::Auto)?; // Byte
-	tokens.set_df_4link_max_xgmi_speed(0xff)?; // Byte
-	tokens.set_df_3link_max_xgmi_speed(0xff)?; // Byte
+	tokens.set_df_4link_max_xgmi_speed(DfXgmi4LinkMaxSpeed::Auto)?; // Byte
+	tokens.set_df_3link_max_xgmi_speed(DfXgmi3LinkMaxSpeed::Auto)?; // Byte
 	tokens.set_df_save_restore_mem_encrypt(DfToggle::Auto)?; // Byte
 	tokens.set_df_mem_clear(DfToggle::Auto)?;
 	tokens.set_df_xgmi_tx_eq_mode(DfXgmiTxEqMode::Auto)?; // Byte
