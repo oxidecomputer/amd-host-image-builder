@@ -1,9 +1,15 @@
 use amd_efs::{
 	BhdDirectory, BhdDirectoryEntryAttrs, BhdDirectoryEntryType, Efs,
 	ProcessorGeneration, PspDirectory, PspDirectoryEntryAttrs,
-	PspDirectoryEntryType, PspSoftFuseChain, PspDirectoryEntry,
-	BhdDirectoryEntry, ValueOrLocation, DirectoryEntry,
-	DirectoryAdditionalInfo, AddressMode,
+	DirectoryEntry,
+};
+use amd_host_image_builder_config::{
+	SerdePspDirectoryEntry,
+	SerdePspDirectoryEntryBody,
+	SerdeBhdDirectoryEntry,
+	SerdeBhdDirectoryEntryBody,
+	Result,
+	Error,
 };
 use core::cell::RefCell;
 use core::convert::TryFrom;
@@ -21,6 +27,7 @@ use std::path::Path;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
+use amd_host_image_builder_config::SerdeConfig;
 use amd_apcb::Apcb;
 //use amd_efs::ProcessorGeneration;
 use amd_flash::{ErasableLocation, FlashRead, FlashWrite, Location};
@@ -34,22 +41,6 @@ fn test_bitfield_serde() {
 }"#;
 	let result: DirectoryAdditionalInfo = serde_yaml::from_str(config).unwrap();
 	assert_eq!(result.address_mode(), AddressMode::PhysicalAddress);
-}
-
-#[derive(Debug)]
-pub enum Error {
-	Efs(amd_efs::Error),
-	IncompatibleExecutable,
-	Io(std::io::Error),
-	ImageTooBig,
-}
-
-type Result<T> = core::result::Result<T, Error>;
-
-impl From<amd_efs::Error> for Error {
-	fn from(err: amd_efs::Error) -> Self {
-		Self::Efs(err)
-	}
 }
 
 mod hole;
@@ -477,150 +468,6 @@ fn bhd_directory_add_reset_image(
 		destination_origin,
 	)?;
 	Ok(())
-}
-
-#[derive(serde::Serialize, serde::Deserialize)]
-#[serde(deny_unknown_fields)]
-pub enum SerdePspDirectoryEntryBody {
-	Value(u64),
-	Blob {
-		#[serde(default)]
-		flash_location: Option<Location>,
-		#[serde(default)]
-		size: Option<u32>, // FIXME u64
-	}
-}
-
-impl Default for SerdePspDirectoryEntryBody {
-	fn default() -> Self {
-		Self::Blob {
-			flash_location: None,
-			size: None,
-		}
-	}
-}
-
-#[derive(serde::Serialize, serde::Deserialize)]
-pub struct SerdePspDirectoryEntry {
-	#[serde(flatten)]
-	pub attrs: PspDirectoryEntryAttrs,
-	#[serde(flatten)]
-	#[serde(default)]
-	pub body: SerdePspDirectoryEntryBody,
-}
-
-impl SerdePspDirectoryEntry {
-	pub fn load(config: &Self) -> Result<PspDirectoryEntry> {
-		match config.body {
-			SerdePspDirectoryEntryBody::Value(x) => {
-				Ok(PspDirectoryEntry::new_value(&config.attrs, x))
-			},
-			SerdePspDirectoryEntryBody::Blob { flash_location, size } => {
-				let size = size.unwrap();
-				Ok(PspDirectoryEntry::new_payload(&config.attrs, size, flash_location.unwrap()).unwrap()) // FIXME .map_err(|_| serde::ser::Error::custom("value unknown"))?
-			},
-		}
-	}
-	pub fn save(blob: &PspDirectoryEntry) -> Result<Self> {
-		let source = blob.source();
-		Ok(SerdePspDirectoryEntry {
-			attrs: PspDirectoryEntryAttrs::from(blob.attrs.get()), // .map_err(|_| serde::ser::Error::custom("value unknown"))?.into(),
-			body: match source {
-				ValueOrLocation::Value(x) => {
-					SerdePspDirectoryEntryBody::Value(x)
-				},
-				ValueOrLocation::Location(x) => {
-					let x: u32 = x.try_into().unwrap();
-					SerdePspDirectoryEntryBody::Blob {
-						flash_location: Some(x.into()), // FIXME
-						size: blob.size(),
-					}
-				},
-			},
-		})
-	}
-}
-
-#[derive(serde::Serialize, serde::Deserialize)]
-pub struct SerdePspEntry {
-	pub source: PathBuf,
-	pub target: SerdePspDirectoryEntry,
-}
-
-#[derive(serde::Serialize, serde::Deserialize)]
-#[serde(deny_unknown_fields)]
-pub enum SerdeBhdDirectoryEntryBody {
-	Blob {
-		#[serde(default)]
-		flash_location: Option<Location>,
-		#[serde(default)]
-		size: Option<u32>, // FIXME u64 ?
-		#[serde(default)]
-		ram_destination_address: Option<u64>,
-	}
-}
-
-#[derive(serde::Serialize, serde::Deserialize)]
-pub struct SerdeBhdDirectoryEntry {
-	#[serde(flatten)]
-	pub attrs: BhdDirectoryEntryAttrs,
-	#[serde(flatten)]
-	#[serde(default)]
-	pub body: SerdeBhdDirectoryEntryBody,
-}
-
-impl SerdeBhdDirectoryEntry {
-	pub fn load(config: &Self) -> Result<BhdDirectoryEntry> {
-		match config.body {
-			SerdeBhdDirectoryEntryBody::Blob { flash_location, size, ram_destination_address } => {
-				let flash_location = flash_location.unwrap();
-				let size = size.unwrap();
-				Ok(BhdDirectoryEntry::new_payload(&config.attrs, size, flash_location, ram_destination_address).unwrap()) // FIXME .map_err(|_| serde::ser::Error::custom("value unknown"))?
-			},
-		}
-	}
-	pub fn save(blob: &BhdDirectoryEntry) -> Result<Self> {
-		let source = blob.source();
-		Ok(SerdeBhdDirectoryEntry {
-			attrs: BhdDirectoryEntryAttrs::from(blob.attrs.get()), // .map_err(|_| serde::ser::Error::custom("value unknown"))?.into(),
-			body: match source {
-				ValueOrLocation::Value(x) => {
-					todo!();
-				},
-				ValueOrLocation::Location(x) => {
-					let x: u32 = x.try_into().unwrap();
-					SerdeBhdDirectoryEntryBody::Blob {
-						flash_location: Some(x), // FIXME
-						size: blob.size(),
-						ram_destination_address: blob.destination_location(),
-					}
-				},
-			},
-		})
-	}
-}
-
-impl Default for SerdeBhdDirectoryEntryBody {
-	fn default() -> Self {
-		Self::Blob {
-			flash_location: None,
-			size: None,
-			ram_destination_address: None,
-		}
-	}
-}
-
-#[derive(serde::Serialize, serde::Deserialize)]
-pub struct SerdeBhdEntry {
-	pub source: PathBuf,
-	pub target: SerdeBhdDirectoryEntry,
-}
-
-#[derive(serde::Serialize, serde::Deserialize)]
-pub struct SerdeConfig {
-	processor_generation: ProcessorGeneration,
-	psp_entries: Vec<SerdePspEntry>,
-	bhd_entries: Vec<SerdeBhdEntry>,
 }
 
 fn bhd_add_apcb(

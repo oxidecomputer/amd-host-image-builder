@@ -1,0 +1,13 @@
+[package]
+name = "amd-host-image-builder-config"
+version = "0.1.0"
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+amd-apcb = { path = "../../amd-apcb", features = ["std"] }
+amd-efs = { path = "../../amd-efs", features = ["std"] }
+amd-flash = { path = "../../amd-flash" }
+schemars = "0.8.8"
+serde = { version = "1.0", default-features = false, features = ["derive"] }

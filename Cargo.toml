@@ -2,6 +2,7 @@
 name = "amd-host-image-builder"
 version = "0.1.0"
 edition = "2018"
+build = "build/main.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -10,6 +11,14 @@ amd-apcb = { path = "../amd-apcb", features = ["std"] }
 amd-efs = { path = "../amd-efs", features = ["std"] }
 amd-flash = { path = "../amd-flash" }
 goblin = { version = "0.4", features = ["elf64", "endian_fd"] }
-serde = { version = "1.0", default-features = false, features = ["derive"] }
+#serde = { version = "1.0", default-features = false, features = ["derive"] }
 serde_yaml = "0.8"
 structopt = "0.3"
+amd-host-image-builder-config = { path = "amd-host-image-builder-config" }
+
+[build-dependencies]
+amd-apcb = { path = "../amd-apcb", features = ["std"] }
+amd-efs = { path = "../amd-efs", features = ["std"] }
+amd-host-image-builder-config = { path = "amd-host-image-builder-config" }
+schemars = "0.8.8"
+serde_json = "1.0.78"
