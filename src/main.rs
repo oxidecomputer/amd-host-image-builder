@@ -2343,7 +2343,7 @@ fn bhd_add_apcb(
 	tokens.set_mem_ecc_sync_flood(false)?;
 	tokens.set_mem_auto_refreshs_count_for_throttling(MemAutoRefreshsCountForThrottling::Enabled)?;
 	tokens.set_mem_nvdimm_n_disable(false)?;
-	tokens.set_u0x96176308(false)?; // Bool
+	tokens.set_general_capsule_mode(false)?; // Bool
 	tokens.set_mem_dram_double_refresh_rate(0x0)?; // Byte
 	tokens.set_mem_sw_cmd_throttle_enable(false)?;
 	tokens.set_mem_enable_bank_group_swap_alt(true)?;
