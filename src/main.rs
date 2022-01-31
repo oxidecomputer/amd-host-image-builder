@@ -2534,7 +2534,7 @@ fn bhd_add_apcb(
 		}
 	}
 
-	Apcb::update_checksum(&mut buf)?;
+	apcb.save()?;
 	let mut xbuf = &buf[..]; // TODO: cut off at APCB_SIZE
 	let size = xbuf.len();
 	bhd_directory
