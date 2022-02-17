@@ -2442,6 +2442,9 @@ fn main() -> std::io::Result<()> {
 			std::process::exit(1);
 		}
 	};
+	efs.set_spi_mode_bulldozer(config.spi_mode_bulldozer);
+	efs.set_spi_mode_zen_naples(config.spi_mode_zen_naples);
+	efs.set_spi_mode_zen_rome(config.spi_mode_zen_rome);
 	let firmware_blob_directory_name = match host_processor_generation {
 		ProcessorGeneration::Milan => {
 			Path::new("amd-firmware").join("milan")

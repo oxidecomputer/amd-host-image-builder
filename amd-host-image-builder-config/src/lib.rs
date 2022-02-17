@@ -4,6 +4,9 @@ use std::path::PathBuf;
 use amd_efs::DirectoryEntry;
 use amd_efs::BhdDirectoryEntry;
 use amd_efs::BhdDirectoryEntryAttrs;
+use amd_efs::EfhBulldozerSpiMode;
+use amd_efs::EfhNaplesSpiMode;
+use amd_efs::EfhRomeSpiMode;
 use amd_efs::ProcessorGeneration;
 use amd_efs::PspDirectoryEntry;
 use amd_efs::PspDirectoryEntryAttrs;
@@ -167,6 +170,12 @@ pub struct SerdeBhdEntry {
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 pub struct SerdeConfig {
 	pub processor_generation: ProcessorGeneration,
+	#[serde(default)]
+	pub spi_mode_bulldozer: EfhBulldozerSpiMode,
+	#[serde(default)]
+	pub spi_mode_zen_naples: EfhNaplesSpiMode,
+	#[serde(default)]
+	pub spi_mode_zen_rome: EfhRomeSpiMode,
 	pub psp_entries: Vec<SerdePspEntry>,
 	pub bhd_entries: Vec<SerdeBhdEntry>,
 }
