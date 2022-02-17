@@ -8,6 +8,8 @@ use amd_host_image_builder_config::{
 	SerdePspDirectoryEntryBody,
 	SerdeBhdDirectoryEntry,
 	SerdeBhdDirectoryEntryBody,
+	SerdePspDirectoryVariant,
+	SerdeBhdDirectoryVariant,
 	Result,
 	Error,
 };
@@ -2464,32 +2466,39 @@ fn main() -> std::io::Result<()> {
 			AlignedLocation::try_from(0x24_0000).unwrap(),
 		)
 		.unwrap();
-	for entry in config.psp_entries {
-		//eprintln!("{:?}", entry);
-		let body = entry.target.body;
+	match config.psp {
+		SerdePspDirectoryVariant::PspDirectory(serde_psp_directory) => {
+			for entry in serde_psp_directory.entries {
+				//eprintln!("{:?}", entry);
+				let body = entry.target.body;
 
-		match body {
-			SerdePspDirectoryEntryBody::Value(x) => {
-				psp_directory.add_value_entry(
-					&entry.target.attrs,
-					x, // TODO: Nicer type.
-				).unwrap();
-			},
-			SerdePspDirectoryEntryBody::Blob { flash_location, size } => {
-				let x: Option<Location> = match flash_location {
-					Some(x) => Some(x.try_into().unwrap()),
-					None => None
-				};
-				psp_entry_add_from_file(
-					&mut psp_directory,
-					match x {
-						Some(x) => Some(x.try_into().unwrap()),
-						None => None
+				match body {
+					SerdePspDirectoryEntryBody::Value(x) => {
+						psp_directory.add_value_entry(
+							&entry.target.attrs,
+							x, // TODO: Nicer type.
+						).unwrap();
 					},
-					&entry.target.attrs,
-					firmware_blob_directory_name.join(entry.source),
-				).unwrap();
-			},
+					SerdePspDirectoryEntryBody::Blob { flash_location, size } => {
+						let x: Option<Location> = match flash_location {
+							Some(x) => Some(x.try_into().unwrap()),
+							None => None
+						};
+						psp_entry_add_from_file(
+							&mut psp_directory,
+							match x {
+								Some(x) => Some(x.try_into().unwrap()),
+								None => None
+							},
+							&entry.target.attrs,
+							firmware_blob_directory_name.join(entry.source),
+						).unwrap();
+					},
+				}
+			}
+		}
+		_ => {
+			todo!();
 		}
 	}
 
@@ -2582,26 +2591,33 @@ fn main() -> std::io::Result<()> {
 		}
 	);
 
-	for entry in config.bhd_entries {
-		let body = entry.target.body;
+	match config.bhd {
+		SerdeBhdDirectoryVariant::BhdDirectory(serde_bhd_directory) => {
+			for entry in serde_bhd_directory.entries {
+				let body = entry.target.body;
 
-		match body {
-			SerdeBhdDirectoryEntryBody::Blob { flash_location, size, ram_destination_address } => {
-				let x: Option<Location> = match flash_location {
-					Some(x) => Some(x.try_into().unwrap()),
-					None => None
-				};
-				bhd_entry_add_from_file(
-					&mut bhd_directory,
-					match x {
-						Some(x) => Some(x.try_into().unwrap()),
-						None => None
+				match body {
+					SerdeBhdDirectoryEntryBody::Blob { flash_location, size, ram_destination_address } => {
+						let x: Option<Location> = match flash_location {
+							Some(x) => Some(x.try_into().unwrap()),
+							None => None
+						};
+						bhd_entry_add_from_file(
+							&mut bhd_directory,
+							match x {
+								Some(x) => Some(x.try_into().unwrap()),
+								None => None
+							},
+							&entry.target.attrs,
+							firmware_blob_directory_name.join(entry.source),
+							ram_destination_address
+						).unwrap();
 					},
-					&entry.target.attrs,
-					firmware_blob_directory_name.join(entry.source),
-					ram_destination_address
-				).unwrap();
-			},
+				}
+			}
+		}
+		_ => {
+			todo!();
 		}
 	}
 

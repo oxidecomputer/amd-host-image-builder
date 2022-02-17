@@ -168,6 +168,38 @@ pub struct SerdeBhdEntry {
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+pub struct SerdePspDirectory {
+	pub entries: Vec<SerdePspEntry>,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+pub struct SerdePspComboDirectory {
+	pub directories: Vec<SerdePspDirectory>,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+pub enum SerdePspDirectoryVariant {
+	PspDirectory(SerdePspDirectory),
+	PspComboDirectory(SerdePspComboDirectory),
+}
+
+#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+pub struct SerdeBhdDirectory {
+	pub entries: Vec<SerdeBhdEntry>,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+pub struct SerdeBhdComboDirectory {
+	pub directories: Vec<SerdeBhdDirectory>,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+pub enum SerdeBhdDirectoryVariant {
+	BhdDirectory(SerdeBhdDirectory),
+	BhdComboDirectory(SerdeBhdComboDirectory),
+}
+
+#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 pub struct SerdeConfig {
 	pub processor_generation: ProcessorGeneration,
 	#[serde(default)]
@@ -176,8 +208,8 @@ pub struct SerdeConfig {
 	pub spi_mode_zen_naples: EfhNaplesSpiMode,
 	#[serde(default)]
 	pub spi_mode_zen_rome: EfhRomeSpiMode,
-	pub psp_entries: Vec<SerdePspEntry>,
-	pub bhd_entries: Vec<SerdeBhdEntry>,
+	pub psp: SerdePspDirectoryVariant,
+	pub bhd: SerdeBhdDirectoryVariant,
 }
 
 #[cfg(test)]
