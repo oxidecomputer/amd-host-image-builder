@@ -1,5 +1,6 @@
 use std::convert::TryInto;
 use std::path::PathBuf;
+use std::collections::BTreeMap;
 
 use amd_efs::DirectoryEntry;
 use amd_efs::BhdDirectoryEntry;
@@ -11,6 +12,7 @@ use amd_efs::ProcessorGeneration;
 use amd_efs::PspDirectoryEntry;
 use amd_efs::PspDirectoryEntryAttrs;
 use amd_efs::ValueOrLocation;
+use amd_efs::ComboDirectoryEntryFilter;
 use amd_flash::Location;
 
 #[derive(Debug)]
@@ -174,7 +176,7 @@ pub struct SerdePspDirectory {
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 pub struct SerdePspComboDirectory {
-	pub directories: Vec<SerdePspDirectory>,
+	pub directories: BTreeMap<ComboDirectoryEntryFilter, SerdePspDirectory>,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
@@ -190,7 +192,7 @@ pub struct SerdeBhdDirectory {
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 pub struct SerdeBhdComboDirectory {
-	pub directories: Vec<SerdeBhdDirectory>,
+	pub directories: BTreeMap<ComboDirectoryEntryFilter, SerdeBhdDirectory>,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
