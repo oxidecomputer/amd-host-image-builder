@@ -2433,7 +2433,15 @@ fn main() -> std::io::Result<()> {
 	}
 	assert!(Location::from(position) == IMAGE_SIZE);
 	let config = read_config_from_file(Path::new(&opts.efs_configuration_filename)).unwrap();
-	let host_processor_generation = config.processor_generation;
+	let SerdeConfig {
+		processor_generation,
+		spi_mode_bulldozer,
+		spi_mode_zen_naples,
+		spi_mode_zen_rome,
+		psp,
+		bhd,
+	} = config;
+	let host_processor_generation = processor_generation;
 	let mut efs = match Efs::<_, ERASABLE_BLOCK_SIZE>::create(
 		storage,
 		host_processor_generation,
@@ -2444,9 +2452,9 @@ fn main() -> std::io::Result<()> {
 			std::process::exit(1);
 		}
 	};
-	efs.set_spi_mode_bulldozer(config.spi_mode_bulldozer);
-	efs.set_spi_mode_zen_naples(config.spi_mode_zen_naples);
-	efs.set_spi_mode_zen_rome(config.spi_mode_zen_rome);
+	efs.set_spi_mode_bulldozer(spi_mode_bulldozer);
+	efs.set_spi_mode_zen_naples(spi_mode_zen_naples);
+	efs.set_spi_mode_zen_rome(spi_mode_zen_rome);
 	let firmware_blob_directory_name = match host_processor_generation {
 		ProcessorGeneration::Milan => {
 			Path::new("amd-firmware").join("milan")
@@ -2466,7 +2474,7 @@ fn main() -> std::io::Result<()> {
 			AlignedLocation::try_from(0x24_0000).unwrap(),
 		)
 		.unwrap();
-	match config.psp {
+	match psp {
 		SerdePspDirectoryVariant::PspDirectory(serde_psp_directory) => {
 			for entry in serde_psp_directory.entries {
 				//eprintln!("{:?}", entry);
@@ -2591,7 +2599,7 @@ fn main() -> std::io::Result<()> {
 		}
 	);
 
-	match config.bhd {
+	match bhd {
 		SerdeBhdDirectoryVariant::BhdDirectory(serde_bhd_directory) => {
 			for entry in serde_bhd_directory.entries {
 				let body = entry.target.body;
