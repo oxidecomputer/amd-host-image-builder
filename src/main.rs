@@ -4,9 +4,7 @@ use amd_efs::{
 	DirectoryEntry,
 };
 use amd_host_image_builder_config::{
-	SerdePspDirectoryEntry,
 	SerdePspDirectoryEntryBody,
-	SerdeBhdDirectoryEntry,
 	SerdeBhdDirectoryEntryBody,
 	SerdePspDirectoryVariant,
 	SerdeBhdDirectoryVariant,
