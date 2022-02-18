@@ -485,9 +485,9 @@ fn bhd_add_apcb(
 	use amd_apcb::PriorityLevel;
 	use amd_apcb::PriorityLevels;
 	use amd_apcb::{
-		BaudRate, BmcGen2TxDeemphasis, BmcLinkSpeed, BmcRcbCheckingMode,
+		BaudRate, BmcGen2TxDeemphasis, BmcLinkSpeed, //BmcRcbCheckingMode,
 		CcxSevAsidCount,
-		ContextType, DfCakeCrcThresholdBounds, DfDramNumaPerSocket,
+		DfCakeCrcThresholdBounds, DfDramNumaPerSocket,
 		DfMemInterleaving, DfMemInterleavingSize, DfPstateModeSelect,
 		DfRemapAt1TiB, DfSysStorageAtTopOfMem, DfToggle,
 		DfXgmiLinkConfig, DfXgmiTxEqMode,
@@ -506,7 +506,7 @@ fn bhd_add_apcb(
 		MemSelfRefreshExitStaggering, MemThrottleCtrlRollWindowDepth,
 		MemTrainingHdtControl, MemTsmeMode, MemUserTimingMode,
 		PspEnableDebugMode, SecondPcieLinkMaxPayload,
-		SecondPcieLinkSpeed, TokenEntryId, UmaMode, WorkloadProfile,
+		SecondPcieLinkSpeed, UmaMode, WorkloadProfile,
 		DfXgmi4LinkMaxSpeed, DfXgmi3LinkMaxSpeed
 	};
 	let mut buf: [u8; Apcb::MAX_SIZE] = [0xff; Apcb::MAX_SIZE];
