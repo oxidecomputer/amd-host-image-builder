@@ -261,8 +261,12 @@ fn bhd_entry_add_from_file(
 	ram_destination_address: Option<u64>,
 ) -> amd_efs::Result<()> {
 	let source_filename = source_filename.as_path();
-	//eprintln!("FILE {:?}", source_filename);
-	let file = File::open(source_filename).unwrap();
+	let file = match File::open(source_filename) {
+		Ok(f) => f,
+		Err(e) => {
+			panic!("Could not open file {:?}: {}", source_filename, e);
+		}
+	};
 	let size: usize = file.metadata().unwrap().len().try_into().unwrap();
 	bhd_entry_add_from_file_with_custom_size(
 		directory,
