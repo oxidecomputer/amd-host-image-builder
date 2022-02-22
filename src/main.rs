@@ -1,7 +1,7 @@
 use amd_efs::{
 	BhdDirectory, BhdDirectoryEntryAttrs, BhdDirectoryEntryType, Efs,
 	ProcessorGeneration, PspDirectory, PspDirectoryEntryAttrs,
-	DirectoryEntry,
+	DirectoryEntry, AddressMode,
 };
 use amd_host_image_builder_config::{
 	SerdePspDirectoryEntryBody,
@@ -2475,6 +2475,7 @@ fn main() -> std::io::Result<()> {
 		.create_psp_directory(
 			AlignedLocation::try_from(0x12_0000).unwrap(),
 			AlignedLocation::try_from(0x24_0000).unwrap(),
+			AddressMode::EfsRelativeOffset,
 		)
 		.unwrap();
 	match psp {
@@ -2578,6 +2579,7 @@ fn main() -> std::io::Result<()> {
 			AlignedLocation::try_from(0x24_0000).unwrap(),
 			AlignedLocation::try_from(0x24_0000 + 0x8_0000)
 				.unwrap(),
+			AddressMode::EfsRelativeOffset,
 		)
 		.unwrap();
 
