@@ -2,6 +2,7 @@ use std::convert::TryInto;
 use std::path::PathBuf;
 use std::collections::BTreeMap;
 
+use amd_efs::AddressMode;
 use amd_efs::DirectoryEntry;
 use amd_efs::BhdDirectoryEntry;
 use amd_efs::BhdDirectoryEntryAttrs;
@@ -101,6 +102,7 @@ impl Default for SerdeBhdDirectoryEntryBody {
 }
 
 impl SerdePspDirectoryEntry {
+/*
 	pub fn load(config: &Self) -> Result<PspDirectoryEntry> {
 		match config.body {
 			SerdePspDirectoryEntryBody::Value(x) => {
@@ -113,7 +115,7 @@ impl SerdePspDirectoryEntry {
 		}
 	}
 	pub fn save(blob: &PspDirectoryEntry) -> Result<Self> {
-		let source = blob.source();
+		let source = blob.source(AddressMode::DirectoryRelativeOffset); // DirectoryRelativeOffset is the one that can always be overridden
 		Ok(SerdePspDirectoryEntry {
 			attrs: PspDirectoryEntryAttrs::from(blob.attrs.get()), // .map_err(|_| serde::ser::Error::custom("value unknown"))?.into(),
 			body: match source {
@@ -130,9 +132,11 @@ impl SerdePspDirectoryEntry {
 			},
 		})
 	}
+*/
 }
 
 impl SerdeBhdDirectoryEntry {
+/*
 	pub fn load(config: &Self) -> Result<BhdDirectoryEntry> {
 		match config.body {
 			SerdeBhdDirectoryEntryBody::Blob { flash_location, size, ram_destination_address } => {
@@ -143,7 +147,7 @@ impl SerdeBhdDirectoryEntry {
 		}
 	}
 	pub fn save(blob: &BhdDirectoryEntry) -> Result<Self> {
-		let source = blob.source();
+		let source = blob.source()?; // FIXME
 		Ok(SerdeBhdDirectoryEntry {
 			attrs: BhdDirectoryEntryAttrs::from(blob.attrs.get()), // .map_err(|_| serde::ser::Error::custom("value unknown"))?.into(),
 			body: match source {
@@ -161,6 +165,7 @@ impl SerdeBhdDirectoryEntry {
 			},
 		})
 	}
+*/
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
