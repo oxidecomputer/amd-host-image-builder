@@ -463,10 +463,11 @@ fn bhd_directory_add_reset_image(
 	bhd_entry_add_from_reader_with_custom_size(
 		bhd_directory,
 		None,
-		&BhdDirectoryEntryAttrs::new()
+		&BhdDirectoryEntryAttrs::builder()
 			.with_type_(BhdDirectoryEntryType::Bios)
 			.with_reset_image(true)
-			.with_copy_image(true),
+			.with_copy_image(true)
+			.build(),
 		sz,
 		&mut iov,
 		destination_origin,
@@ -878,224 +879,257 @@ fn bhd_add_apcb(
 				),
 				&[
 					Ddr4OdtPatElement::new(
-						Ddr4OdtPatDimmRankBitmaps::new(
+						Ddr4OdtPatDimmRankBitmaps::builder(
 						)
 						.with_dimm1(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_single_rank(
 									true,
-								),
+								)
+								.build(),
 						)
 						.with_dimm0(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_unpopulated(
 									true,
-								),
-						),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new(),
+								)
+								.build(),
+						)
+						.build(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder().build(),
 					),
 					Ddr4OdtPatElement::new(
-						Ddr4OdtPatDimmRankBitmaps::new(
+						Ddr4OdtPatDimmRankBitmaps::builder(
 						)
 						.with_dimm1(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_dual_rank(
 									true,
-								),
+								)
+								.build(),
 						)
 						.with_dimm0(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_unpopulated(
 									true,
-								),
-						),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new()
+								)
+								.build(),
+						)
+						.build(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(2)
 							.with_reading_pattern(
 								0,
-							),
-						OdtPatPatterns::new()
+							)
+							.build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(8)
 							.with_reading_pattern(
 								0,
-							),
+							)
+							.build(),
 					),
 					Ddr4OdtPatElement::new(
-						Ddr4OdtPatDimmRankBitmaps::new(
-						)
+						Ddr4OdtPatDimmRankBitmaps::builder()
 						.with_dimm1(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_unpopulated(
 									true,
-								),
+								)
+								.build(),
 						)
 						.with_dimm0(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_single_rank(
 									true,
-								),
-						),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new(),
+								)
+								.build(),
+						)
+						.build(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder().build(),
 					),
 					Ddr4OdtPatElement::new(
-						Ddr4OdtPatDimmRankBitmaps::new(
-						)
+						Ddr4OdtPatDimmRankBitmaps::builder()
 						.with_dimm1(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_unpopulated(
 									true,
-								),
+								)
+								.build(),
 						)
 						.with_dimm0(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_dual_rank(
 									true,
-								),
-						),
-						OdtPatPatterns::new()
+								)
+								.build(),
+						)
+						.build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(1)
 							.with_reading_pattern(
 								0,
-							),
-						OdtPatPatterns::new()
+							)
+							.build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(4)
 							.with_reading_pattern(
 								0,
-							),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new(),
+							)
+							.build(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder().build(),
 					),
 					Ddr4OdtPatElement::new(
-						Ddr4OdtPatDimmRankBitmaps::new(
-						)
+						Ddr4OdtPatDimmRankBitmaps::builder()
 						.with_dimm1(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_single_rank(
 									true,
-								),
+								)
+								.build(),
 						)
 						.with_dimm0(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_single_rank(
 									true,
-								),
-						),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new(),
+								)
+								.build(),
+						)
+						.build(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder().build(),
 					),
 					Ddr4OdtPatElement::new(
-						Ddr4OdtPatDimmRankBitmaps::new(
-						)
+						Ddr4OdtPatDimmRankBitmaps::builder()
 						.with_dimm1(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_dual_rank(
 									true,
-								),
+								)
+								.build(),
 						)
 						.with_dimm0(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_single_rank(
 									true,
-								),
-						),
-						OdtPatPatterns::new()
+								)
+								.build(),
+						)
+						.build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(2)
 							.with_reading_pattern(
 								2,
-							),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new()
+							)
+							.build(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(1)
 							.with_reading_pattern(
 								1,
-							),
-						OdtPatPatterns::new()
+							)
+							.build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(1)
 							.with_reading_pattern(
 								1,
-							),
+							)
+							.build(),
 					),
 					Ddr4OdtPatElement::new(
-						Ddr4OdtPatDimmRankBitmaps::new(
-						)
+						Ddr4OdtPatDimmRankBitmaps::builder()
 						.with_dimm1(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_single_rank(
 									true,
-								),
+								)
+								.build(),
 						)
 						.with_dimm0(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_dual_rank(
 									true,
-								),
-						),
-						OdtPatPatterns::new()
+								)
+								.build(),
+						)
+						.build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(2)
 							.with_reading_pattern(
 								2,
-							),
-						OdtPatPatterns::new()
+							)
+							.build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(2)
 							.with_reading_pattern(
 								2,
-							),
-						OdtPatPatterns::new()
+							)
+							.build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(1)
 							.with_reading_pattern(
 								1,
-							),
-						OdtPatPatterns::new(),
+							)
+							.build(),
+						OdtPatPatterns::builder().build(),
 					),
 					Ddr4OdtPatElement::new(
-						Ddr4OdtPatDimmRankBitmaps::new(
+						Ddr4OdtPatDimmRankBitmaps::builder(
 						)
 						.with_dimm1(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_dual_rank(
 									true,
-								),
+								)
+								.build(),
 						)
 						.with_dimm0(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_dual_rank(
 									true,
-								),
-						),
-						OdtPatPatterns::new()
+								)
+								.build(),
+						)
+						.build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(
 								0xa,
 							)
 							.with_reading_pattern(
 								0xa,
-							),
-						OdtPatPatterns::new()
+							)
+							.build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(
 								0xa,
 							)
 							.with_reading_pattern(
 								0xa,
-							),
-						OdtPatPatterns::new()
+							)
+							.build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(5)
 							.with_reading_pattern(
 								5,
-							),
-						OdtPatPatterns::new()
+							)
+							.build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(5)
 							.with_reading_pattern(
 								5,
-							),
+							)
+							.build(),
 					),
 				],
 			)?;
@@ -1113,224 +1147,258 @@ fn bhd_add_apcb(
 				),
 				&[
 					Ddr4OdtPatElement::new(
-						Ddr4OdtPatDimmRankBitmaps::new(
+						Ddr4OdtPatDimmRankBitmaps::builder(
 						)
 						.with_dimm1(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_single_rank(
 									true,
-								),
+								)
+								.build(),
 						)
 						.with_dimm0(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_unpopulated(
 									true,
-								),
-						),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new(),
+								)
+								.build(),
+						)
+						.build(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder().build(),
 					),
 					Ddr4OdtPatElement::new(
-						Ddr4OdtPatDimmRankBitmaps::new(
+						Ddr4OdtPatDimmRankBitmaps::builder(
 						)
 						.with_dimm1(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_dual_rank(
 									true,
-								),
+								)
+								.build(),
 						)
 						.with_dimm0(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_unpopulated(
 									true,
-								),
-						),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new()
+								)
+								.build(),
+						)
+						.build(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(4)
 							.with_reading_pattern(
 								0,
-							),
-						OdtPatPatterns::new()
+							)
+							.build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(8)
 							.with_reading_pattern(
 								0,
-							),
+							)
+							.build(),
 					),
 					Ddr4OdtPatElement::new(
-						Ddr4OdtPatDimmRankBitmaps::new(
+						Ddr4OdtPatDimmRankBitmaps::builder(
 						)
 						.with_dimm1(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_unpopulated(
 									true,
-								),
+								)
+								.build(),
 						)
 						.with_dimm0(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_single_rank(
 									true,
-								),
+								)
+								.build(),
 						),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder().build(),
 					),
 					Ddr4OdtPatElement::new(
-						Ddr4OdtPatDimmRankBitmaps::new(
+						Ddr4OdtPatDimmRankBitmaps::builder(
 						)
 						.with_dimm1(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_unpopulated(
 									true,
-								),
+								)
+								.build(),
 						)
 						.with_dimm0(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_dual_rank(
 									true,
-								),
-						),
-						OdtPatPatterns::new()
+								)
+								.build(),
+						)
+						.build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(1)
 							.with_reading_pattern(
 								0,
 							),
-						OdtPatPatterns::new()
+						OdtPatPatterns::builder()
 							.with_writing_pattern(2)
 							.with_reading_pattern(
 								0,
 							),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder().build(),
 					),
 					Ddr4OdtPatElement::new(
-						Ddr4OdtPatDimmRankBitmaps::new(
+						Ddr4OdtPatDimmRankBitmaps::builder(
 						)
 						.with_dimm1(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_single_rank(
 									true,
-								),
+								)
+								.build(),
 						)
 						.with_dimm0(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_single_rank(
 									true,
-								),
-						),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new(),
+								)
+								.build(),
+						)
+						.build(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder().build(),
 					),
 					Ddr4OdtPatElement::new(
-						Ddr4OdtPatDimmRankBitmaps::new(
+						Ddr4OdtPatDimmRankBitmaps::builder(
 						)
 						.with_dimm1(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_dual_rank(
 									true,
-								),
+								)
+								.build(),
 						)
 						.with_dimm0(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_single_rank(
 									true,
-								),
-						),
-						OdtPatPatterns::new()
+								)
+								.build(),
+						)
+						.build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(4)
 							.with_reading_pattern(
 								4,
 							),
-						OdtPatPatterns::new(),
-						OdtPatPatterns::new()
+						OdtPatPatterns::builder().build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(1)
 							.with_reading_pattern(
 								1,
-							),
-						OdtPatPatterns::new()
+							)
+							.build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(1)
 							.with_reading_pattern(
 								1,
-							),
+							)
+							.build(),
 					),
 					Ddr4OdtPatElement::new(
-						Ddr4OdtPatDimmRankBitmaps::new(
+						Ddr4OdtPatDimmRankBitmaps::builder(
 						)
 						.with_dimm1(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_single_rank(
 									true,
-								),
+								)
+								.build(),
 						)
 						.with_dimm0(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_dual_rank(
 									true,
-								),
-						),
-						OdtPatPatterns::new()
+								)
+								.build(),
+						)
+						.build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(4)
 							.with_reading_pattern(
 								4,
-							),
-						OdtPatPatterns::new()
+							)
+							.build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(4)
 							.with_reading_pattern(
 								4,
-							),
-						OdtPatPatterns::new()
+							)
+							.build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(1)
 							.with_reading_pattern(
 								1,
-							),
-						OdtPatPatterns::new(),
+							)
+							.build(),
+						OdtPatPatterns::builder().build(),
 					),
 					Ddr4OdtPatElement::new(
-						Ddr4OdtPatDimmRankBitmaps::new(
+						Ddr4OdtPatDimmRankBitmaps::builder(
 						)
 						.with_dimm1(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_dual_rank(
 									true,
-								),
+								)
+								.build(),
 						)
 						.with_dimm0(
-							Ddr4DimmRanks::new()
+							Ddr4DimmRanks::builder()
 								.with_dual_rank(
 									true,
-								),
-						),
-						OdtPatPatterns::new()
+								)
+								.build(),
+						)
+						.build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(
 								0xc,
 							)
 							.with_reading_pattern(
 								0xc,
-							),
-						OdtPatPatterns::new()
+							)
+							.build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(
 								0xc,
 							)
 							.with_reading_pattern(
 								0xc,
-							),
-						OdtPatPatterns::new()
+							)
+							.build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(3)
 							.with_reading_pattern(
 								3,
-							),
-						OdtPatPatterns::new()
+							)
+							.build(),
+						OdtPatPatterns::builder()
 							.with_writing_pattern(3)
 							.with_reading_pattern(
 								3,
-							),
+							)
+							.build(),
 					),
 				],
 			)?;
@@ -1339,12 +1407,13 @@ fn bhd_add_apcb(
 			todo!();
 		}
 	}
-	let u = Ddr4DimmRanks::new().with_unpopulated(true);
-	let s = Ddr4DimmRanks::new().with_single_rank(true);
-	let d = Ddr4DimmRanks::new().with_dual_rank(true);
-	let sd = Ddr4DimmRanks::new()
+	let u = Ddr4DimmRanks::builder().with_unpopulated(true).build();
+	let s = Ddr4DimmRanks::builder().with_single_rank(true).build();
+	let d = Ddr4DimmRanks::builder().with_dual_rank(true).build();
+	let sd = Ddr4DimmRanks::builder()
 		.with_single_rank(true)
-		.with_dual_rank(true); // s|d
+		.with_dual_rank(true) // s|d
+		.build();
 	apcb.insert_struct_array_as_entry::<RdimmDdr4CadBusElement>(
 		EntryId::Memory(MemoryEntryId::PsRdimmDdr4CadBus),
 		0,
@@ -1354,224 +1423,225 @@ fn bhd_add_apcb(
 			// dimm_slots_per_channel, ddr_rates, dimm0_ranks, dimm1_ranks, address_command_control
 			RdimmDdr4CadBusElement::new(
 				1,
-				DdrRates::new().with_ddr1600(true),
+				DdrRates::builder().with_ddr1600(true).build(),
 				sd,
 				u,
 				0x393939,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				1,
-				DdrRates::new().with_ddr1866(true),
+				DdrRates::builder().with_ddr1866(true).build(),
 				sd,
 				u,
 				0x373737,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				1,
-				DdrRates::new().with_ddr2133(true),
+				DdrRates::builder().with_ddr2133(true).build(),
 				sd,
 				u,
 				0x353535,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				1,
-				DdrRates::new().with_ddr2400(true),
+				DdrRates::builder().with_ddr2400(true).build(),
 				sd,
 				u,
 				0x333333,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				1,
-				DdrRates::new().with_ddr2667(true),
+				DdrRates::builder().with_ddr2667(true).build(),
 				sd,
 				u,
 				0x313131,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				1,
-				DdrRates::new().with_ddr2933(true),
+				DdrRates::builder().with_ddr2933(true).build(),
 				sd,
 				u,
 				0x2f2f2f,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				1,
-				DdrRates::new().with_ddr3200(true),
+				DdrRates::builder().with_ddr3200(true).build(),
 				sd,
 				u,
 				0x2d2d2d,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				2,
-				DdrRates::new().with_ddr1600(true),
+				DdrRates::builder().with_ddr1600(true).build(),
 				u,
 				sd,
 				0x393939,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				2,
-				DdrRates::new().with_ddr1600(true),
+				DdrRates::builder().with_ddr1600(true).build(),
 				sd,
 				u,
 				0x393939,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				2,
-				DdrRates::new().with_ddr1600(true),
+				DdrRates::builder().with_ddr1600(true).build(),
 				sd,
 				sd,
 				0x353939,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				2,
-				DdrRates::new().with_ddr1866(true),
+				DdrRates::builder().with_ddr1866(true).build(),
 				u,
 				sd,
 				0x373737,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				2,
-				DdrRates::new().with_ddr1866(true),
+				DdrRates::builder().with_ddr1866(true).build(),
 				sd,
 				u,
 				0x373737,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				2,
-				DdrRates::new().with_ddr1866(true),
+				DdrRates::builder().with_ddr1866(true).build(),
 				s,
 				s,
 				0x333939,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				2,
-				DdrRates::new().with_ddr1866(true),
+				DdrRates::builder().with_ddr1866(true).build(),
 				s,
 				d,
 				0x333737,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				2,
-				DdrRates::new().with_ddr1866(true),
+				DdrRates::builder().with_ddr1866(true).build(),
 				d,
 				sd,
 				0x333737,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				2,
-				DdrRates::new().with_ddr2133(true),
+				DdrRates::builder().with_ddr2133(true).build(),
 				u,
 				sd,
 				0x353535,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				2,
-				DdrRates::new().with_ddr2133(true),
+				DdrRates::builder().with_ddr2133(true).build(),
 				sd,
 				u,
 				0x353535,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				2,
-				DdrRates::new().with_ddr2133(true),
+				DdrRates::builder().with_ddr2133(true).build(),
 				sd,
 				sd,
 				0x313535,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				2,
-				DdrRates::new().with_ddr2400(true),
+				DdrRates::builder().with_ddr2400(true).build(),
 				u,
 				sd,
 				0x333333,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				2,
-				DdrRates::new().with_ddr2400(true),
+				DdrRates::builder().with_ddr2400(true).build(),
 				sd,
 				u,
 				0x333333,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				2,
-				DdrRates::new().with_ddr2400(true),
+				DdrRates::builder().with_ddr2400(true).build(),
 				sd,
 				sd,
 				0x2f3333,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				2,
-				DdrRates::new().with_ddr2667(true),
+				DdrRates::builder().with_ddr2667(true).build(),
 				u,
 				sd,
 				0x313131,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				2,
-				DdrRates::new().with_ddr2667(true),
+				DdrRates::builder().with_ddr2667(true).build(),
 				sd,
 				u,
 				0x313131,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				2,
-				DdrRates::new().with_ddr2667(true),
+				DdrRates::builder().with_ddr2667(true).build(),
 				sd,
 				sd,
 				0x2d3131,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				2,
-				DdrRates::new().with_ddr2933(true),
+				DdrRates::builder().with_ddr2933(true).build(),
 				u,
 				sd,
 				0x2f2f2f,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				2,
-				DdrRates::new().with_ddr2933(true),
+				DdrRates::builder().with_ddr2933(true).build(),
 				sd,
 				u,
 				0x2f2f2f,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				2,
-				DdrRates::new().with_ddr2933(true),
+				DdrRates::builder().with_ddr2933(true).build(),
 				sd,
 				sd,
 				0x2c2f2f,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				2,
-				DdrRates::new().with_ddr3200(true),
+				DdrRates::builder().with_ddr3200(true).build(),
 				u,
 				sd,
 				0x2d2d2d,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				2,
-				DdrRates::new().with_ddr3200(true),
+				DdrRates::builder().with_ddr3200(true).build(),
 				sd,
 				u,
 				0x2d2d2d,
 			)?,
 			RdimmDdr4CadBusElement::new(
 				2,
-				DdrRates::new().with_ddr3200(true),
+				DdrRates::builder().with_ddr3200(true).build(),
 				sd,
 				sd,
 				0x2a2d2d,
 			)?,
 		],
 	)?;
-	let ddr_rates = DdrRates::new()
+	let ddr_rates = DdrRates::builder()
 		.with_ddr3200(true)
 		.with_ddr2933(true)
 		.with_ddr2667(true)
 		.with_ddr2400(true)
 		.with_ddr2133(true)
 		.with_ddr1866(true)
-		.with_ddr1600(true);
+		.with_ddr1600(true)
+		.build();
 	apcb.insert_struct_array_as_entry::<Ddr4DataBusElement>(
 		EntryId::Memory(MemoryEntryId::PsRdimmDdr4DataBus),
 		0,
@@ -1691,10 +1761,10 @@ fn bhd_add_apcb(
 		],
 	)?;
 	let one_dimm = DimmsPerChannel::Specific(
-		DimmsPerChannelSelector::new().with_one_dimm(true),
+		DimmsPerChannelSelector::builder().with_one_dimm(true).build(),
 	);
 	let two_dimms = DimmsPerChannel::Specific(
-		DimmsPerChannelSelector::new().with_two_dimms(true),
+		DimmsPerChannelSelector::builder().with_two_dimms(true).build(),
 	);
 	let unsupported_speed = match processor_generation {
 		ProcessorGeneration::Rome => DdrSpeed::UnsupportedRome,
@@ -1965,7 +2035,7 @@ fn bhd_add_apcb(
 		],
 	)?;
 
-	let console_out = AblConsoleOutControl::new()
+	let console_out = AblConsoleOutControl::builder()
 		.with_enable_console_logging(true)
 		.with_enable_mem_flow_logging(true)
 		.with_enable_mem_setreg_logging(true)
@@ -1975,7 +2045,8 @@ fn bhd_add_apcb(
 		.with_enable_mem_pmu_sram_read_logging(false)
 		.with_enable_mem_pmu_sram_write_logging(false)
 		.with_enable_mem_test_verbose_logging(false)
-		.with_enable_mem_basic_output_logging(true);
+		.with_enable_mem_basic_output_logging(true)
+		.build();
 	apcb.insert_struct_entry::<ConsoleOutControl>(
 		EntryId::Memory(MemoryEntryId::ConsoleOutControl),
 		0,
@@ -2000,7 +2071,7 @@ fn bhd_add_apcb(
 				PriorityLevels::from_level(
 					PriorityLevel::Normal,
 				),
-				&ErrorOutControl116::new()
+				&ErrorOutControl116::builder()
 					.with_enable_error_reporting(false)
 					.with_error_reporting_gpio(Some(
 						Gpio::new(85, 1, 192),
@@ -2021,7 +2092,8 @@ fn bhd_add_apcb(
 					.with_stop_on_first_fatal_error(false)
 					.with_enable_error_reporting_gpio(
 						false,
-					),
+					)
+					.build(),
 				&[],
 			)?;
 		}
@@ -2033,7 +2105,7 @@ fn bhd_add_apcb(
 				PriorityLevels::from_level(
 					PriorityLevel::Normal,
 				),
-				&ErrorOutControl112::new()
+				&ErrorOutControl112::builder()
 					.with_enable_error_reporting(false)
 					.with_error_reporting_gpio(Some(
 						Gpio::new(85, 1, 192),
@@ -2054,7 +2126,8 @@ fn bhd_add_apcb(
 					.with_stop_on_first_fatal_error(false)
 					.with_enable_error_reporting_gpio(
 						false,
-					),
+					)
+					.build(),
 				&[],
 			)?;
 		}
@@ -2085,7 +2158,7 @@ fn bhd_add_apcb(
 		0,
 		BoardInstances::all(),
 		PriorityLevels::from_level(PriorityLevel::Normal),
-		&[&amd_apcb::memory::platform_tuning::Terminator::new()],
+		&[&amd_apcb::memory::platform_tuning::Terminator::builder().build()],
 	)?;
 
 	// Note: apcb.insert_entry is done implicity
@@ -2525,19 +2598,19 @@ fn main() -> std::io::Result<()> {
 	//    psp_entry_add_from_file(
 	//        &mut second_level_psp_directory,
 	//        None,
-	//        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::PspBootloader),
+	//        &PspDirectoryEntryAttrs::builder().with_type_(PspDirectoryEntryType::PspBootloader).build(),
 	//        firmware_blob_directory_name.join("PspBootLoader.sbin"),
 	//    ).unwrap();
 	//    psp_entry_add_from_file(
 	//        &mut second_level_psp_directory,
 	//        None,
-	//        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SmuOffChipFirmware8),
+	//        &PspDirectoryEntryAttrs::builder().with_type_(PspDirectoryEntryType::SmuOffChipFirmware8).build(),
 	//        firmware_blob_directory_name.join("SmuFirmware.csbin"),
 	//    ).unwrap();
 	//    psp_entry_add_from_file(
 	//        &mut second_level_psp_directory,
 	//        None,
-	//        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::AmdSecureDebugKey),
+	//        &PspDirectoryEntryAttrs::builder().with_type_(PspDirectoryEntryType::AmdSecureDebugKey).build(),
 	//        firmware_blob_directory_name.join("SecureDebugToken.stkn"),
 	//    ).unwrap(); // XXX cannot remove
 	//    psp_directory_add_default_entries(&mut second_level_psp_directory, &firmware_blob_directory_name).unwrap();
@@ -2545,21 +2618,21 @@ fn main() -> std::io::Result<()> {
 	// /* removed    psp_entry_add_from_file(
 	//        &mut second_level_psp_directory,
 	//        None,
-	//        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SevData),
+	//        &PspDirectoryEntryAttrs::builder().with_type_(PspDirectoryEntryType::SevData).build(),
 	//        firmware_blob_directory_name.join("SevData.unsorted"),
 	//    ).unwrap();
 	//
 	//    psp_entry_add_from_file(
 	//        &mut second_level_psp_directory,
 	//        None,
-	//        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::SevCode),
+	//        &PspDirectoryEntryAttrs::builder().with_type_(PspDirectoryEntryType::SevCode).build(),
 	//        firmware_blob_directory_name.join("SevCode.unsorted"),
 	//    ).unwrap();*/
 	//
 	//    psp_entry_add_from_file(
 	//        &mut second_level_psp_directory,
 	//        None,
-	//        &PspDirectoryEntryAttrs::new().with_type_(PspDirectoryEntryType::DxioPhySramFirmware),
+	//        &PspDirectoryEntryAttrs::builder().with_type_(PspDirectoryEntryType::DxioPhySramFirmware).build(),
 	//        firmware_blob_directory_name.join("PhyFw.sbin"),
 	//    ).unwrap();
 	//
@@ -2567,7 +2640,7 @@ fn main() -> std::io::Result<()> {
 	//        psp_entry_add_from_file(
 	//            &mut second_level_psp_directory,
 	//            None,
-	//            &PspDirectoryEntryAttrs::new()
+	//            &PspDirectoryEntryAttrs::builder()
 	//                .with_type_(PspDirectoryEntryType::PspBootloaderPublicKeysTable),
 	//            firmware_blob_directory_name.join("PSP-Key-DB.sbin"),
 	//        )
@@ -2588,15 +2661,16 @@ fn main() -> std::io::Result<()> {
 		&mut bhd_directory,
 		&match host_processor_generation {
 			ProcessorGeneration::Milan => {
-				BhdDirectoryEntryAttrs::new()
+				BhdDirectoryEntryAttrs::builder()
 					.with_type_(BhdDirectoryEntryType::ApcbBackup)
 					.with_sub_program(1)
+					.build()
 			}
 			ProcessorGeneration::Rome => {
-				BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup)
+				BhdDirectoryEntryAttrs::builder().with_type_(BhdDirectoryEntryType::ApcbBackup).build()
 			}
 			ProcessorGeneration::Naples => {
-				BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup)
+				BhdDirectoryEntryAttrs::builder().with_type_(BhdDirectoryEntryType::ApcbBackup).build()
 			}
 			_ => {
 				todo!();
@@ -2653,8 +2727,8 @@ fn main() -> std::io::Result<()> {
 	//        &mut secondary_bhd_directory,
 	//        None,
 	//        &match host_processor_generation {
-	//            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup).with_sub_program(1),
-	//            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup),
+	//            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::builder().with_type_(BhdDirectoryEntryType::ApcbBackup).with_sub_program(1).build(),
+	//            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::builder().with_type_(BhdDirectoryEntryType::ApcbBackup).build(),
 	//        },
 	//        Apcb::MAX_SIZE,
 	//        apcb_source_file_name.as_path(),
@@ -2666,8 +2740,8 @@ fn main() -> std::io::Result<()> {
 	//        &mut secondary_bhd_directory,
 	//        None,
 	//        &match host_processor_generation {
-	//            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup).with_instance(8).with_sub_program(1),
-	//            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup),
+	//            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::builder().with_type_(BhdDirectoryEntryType::ApcbBackup).with_instance(8).with_sub_program(1).build(),
+	//            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::builder().with_type_(BhdDirectoryEntryType::ApcbBackup).build(),
 	//        },
 	//        544,
 	//        Path::new("amd-firmware/MILAN-b/second-bhd/ApcbBackup_8.unsorted"),
@@ -2679,8 +2753,8 @@ fn main() -> std::io::Result<()> {
 	//        &mut secondary_bhd_directory,
 	//        None,
 	//        &match host_processor_generation {
-	//            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup).with_instance(9).with_sub_program(1),
-	//            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::ApcbBackup),
+	//            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::builder().with_type_(BhdDirectoryEntryType::ApcbBackup).with_instance(9).with_sub_program(1).build(),
+	//            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::builder().with_type_(BhdDirectoryEntryType::ApcbBackup).build(),
 	//        },
 	//        672,
 	//        Path::new("amd-firmware/MILAN-b/second-bhd/ApcbBackup_9.unsorted"),
@@ -2692,8 +2766,8 @@ fn main() -> std::io::Result<()> {
 	//        &mut secondary_bhd_directory,
 	//        None,
 	//        &match host_processor_generation {
-	//            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::Apcb).with_instance(0).with_sub_program(1),
-	//            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::Apcb),
+	//            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::builder().with_type_(BhdDirectoryEntryType::Apcb).with_instance(0).with_sub_program(1).build(),
+	//            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::builder().with_type_(BhdDirectoryEntryType::Apcb).build(),
 	//        },
 	//        4096,
 	//        Path::new("amd-firmware/MILAN-b/second-bhd/Apcb.unsorted"),
@@ -2705,8 +2779,8 @@ fn main() -> std::io::Result<()> {
 	//        &mut secondary_bhd_directory,
 	//        None,
 	//        &match host_processor_generation {
-	//            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::Apcb).with_instance(1).with_sub_program(1),
-	//            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::new().with_type_(BhdDirectoryEntryType::Apcb),
+	//            ProcessorGeneration::Milan => BhdDirectoryEntryAttrs::builder().with_type_(BhdDirectoryEntryType::Apcb).with_instance(1).with_sub_program(1).build(),
+	//            ProcessorGeneration::Rome => BhdDirectoryEntryAttrs::builder().with_type_(BhdDirectoryEntryType::Apcb).build(),
 	//        },
 	//        4096,
 	//        Path::new("amd-firmware/MILAN-b/second-bhd/Apcb_1.unsorted"),
@@ -2720,9 +2794,10 @@ fn main() -> std::io::Result<()> {
 	//    bhd_entry_add_from_file(
 	//        &mut secondary_bhd_directory,
 	//        None,
-	//        &BhdDirectoryEntryAttrs::new()
+	//        &BhdDirectoryEntryAttrs::builder()
 	//            .with_type_(BhdDirectoryEntryType::MicrocodePatch)
-	//            .with_instance(0),
+	//            .with_instance(0)
+	//            .build(),
 	//        Path::new("amd-firmware/MILAN-b/second-bhd/MicrocodePatch.unsorted").to_path_buf(),
 	//        None,
 	//    )
@@ -2731,9 +2806,10 @@ fn main() -> std::io::Result<()> {
 	//    bhd_entry_add_from_file(
 	//        &mut secondary_bhd_directory,
 	//        None,
-	//        &BhdDirectoryEntryAttrs::new()
+	//        &BhdDirectoryEntryAttrs::builder()
 	//            .with_type_(BhdDirectoryEntryType::MicrocodePatch)
-	//            .with_instance(1),
+	//            .with_instance(1)
+	//            .build(),
 	//        Path::new("amd-firmware/MILAN-b/second-bhd/MicrocodePatch_1.unsorted").to_path_buf(),
 	//        None,
 	//    )
@@ -2742,10 +2818,11 @@ fn main() -> std::io::Result<()> {
 	//    bhd_entry_add_from_file(
 	//        &mut secondary_bhd_directory,
 	//        None,
-	//        &BhdDirectoryEntryAttrs::new()
+	//        &BhdDirectoryEntryAttrs::builder()
 	//            .with_type_(BhdDirectoryEntryType::MicrocodePatch)
-	//            .with_instance(2),
-	//        Path::new("amd-firmware/MILAN-b/second-bhd/MicrocodePatch_2.unsorted").to_path_buf(),
+	//            .with_instance(2)
+	//            .build(),
+	//        Path::new()("amd-firmware/MILAN-b/second-bhd/MicrocodePatch_2.unsorted").to_path_buf(),
 	//        None,
 	//    )
 	//    .unwrap();
