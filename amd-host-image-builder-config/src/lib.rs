@@ -2,17 +2,12 @@ use std::convert::TryInto;
 use std::path::PathBuf;
 use std::collections::BTreeMap;
 
-use amd_efs::AddressMode;
-use amd_efs::DirectoryEntry;
-use amd_efs::BhdDirectoryEntry;
 use amd_efs::BhdDirectoryEntryAttrs;
 use amd_efs::EfhBulldozerSpiMode;
 use amd_efs::EfhNaplesSpiMode;
 use amd_efs::EfhRomeSpiMode;
 use amd_efs::ProcessorGeneration;
-use amd_efs::PspDirectoryEntry;
 use amd_efs::PspDirectoryEntryAttrs;
-use amd_efs::ValueOrLocation;
 use amd_efs::ComboDirectoryEntryFilter;
 use amd_flash::Location;
 
