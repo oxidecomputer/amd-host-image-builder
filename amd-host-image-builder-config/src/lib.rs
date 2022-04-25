@@ -48,6 +48,7 @@ impl Default for SerdePspDirectoryEntryBody {
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[serde(rename = "PspDirectoryEntry")]
 pub struct SerdePspDirectoryEntry {
 	#[serde(flatten)]
 	pub attrs: PspDirectoryEntryAttrs,
@@ -58,12 +59,14 @@ pub struct SerdePspDirectoryEntry {
 
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[serde(rename = "PspEntry")]
 pub struct SerdePspEntry {
 	pub source: PathBuf,
 	pub target: SerdePspDirectoryEntry,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[serde(rename = "BhdDirectoryEntryBody")]
 #[serde(deny_unknown_fields)]
 pub enum SerdeBhdDirectoryEntryBody {
 	Blob {
@@ -77,6 +80,7 @@ pub enum SerdeBhdDirectoryEntryBody {
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[serde(rename = "BhdDirectoryEntry")]
 pub struct SerdeBhdDirectoryEntry {
 	#[serde(flatten)]
 	pub attrs: BhdDirectoryEntryAttrs,
@@ -163,17 +167,20 @@ impl SerdeBhdDirectoryEntry {
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[serde(rename = "BhdEntry")]
 pub struct SerdeBhdEntry {
 	pub source: PathBuf,
 	pub target: SerdeBhdDirectoryEntry,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[serde(rename = "PspDirectory")]
 pub struct SerdePspDirectory {
 	pub entries: Vec<SerdePspEntry>,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[serde(rename = "PspComboDirectory")]
 pub struct SerdePspComboDirectory {
 	pub directories: BTreeMap<ComboDirectoryEntryFilter, SerdePspDirectory>,
 }
@@ -185,22 +192,26 @@ pub enum SerdePspDirectoryVariant {
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[serde(rename = "BhdDirectory")]
 pub struct SerdeBhdDirectory {
 	pub entries: Vec<SerdeBhdEntry>,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[serde(rename = "BhdComboDirectory")]
 pub struct SerdeBhdComboDirectory {
 	pub directories: BTreeMap<ComboDirectoryEntryFilter, SerdeBhdDirectory>,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[serde(rename = "BhdDirectoryVariant")]
 pub enum SerdeBhdDirectoryVariant {
 	BhdDirectory(SerdeBhdDirectory),
 	BhdComboDirectory(SerdeBhdComboDirectory),
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[serde(rename = "Config")]
 pub struct SerdeConfig {
 	pub processor_generation: ProcessorGeneration,
 	#[serde(default)]
