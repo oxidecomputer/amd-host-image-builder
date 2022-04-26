@@ -42,9 +42,9 @@ cat >/work/workaround/git <<'EOF'
 #!/bin/bash
 args=()
 while (( $# > 0 )); do
-	val=$1
-	val=${val//ssh:\/\/git@/https:\/\/}
-	val=${val//git@github.com:/https:\/\/github.com\/}
+	val="$1"
+	val="${val//ssh:\/\/git@/https:\/\/}"
+	val="${val//git@github.com:/https:\/\/github.com\/}"
 	if [[ "$val" != "$1" ]]; then
 		printf 'REGRET: transformed "%s" -> "%s"\n' "$1" "$val" >&2
 	fi
@@ -59,13 +59,6 @@ exec /usr/bin/git "${args[@]}"
 EOF
 chmod +x /work/workaround/git
 export PATH="/work/workaround:$PATH"
-
-#
-# Try to make sure it works:
-#
-which git
-git --version
-git ls-remote ssh://git@github.com/oxidecomputer/amd-flash
 
 #
 # Finally, require that cargo use the git CLI -- or, rather, our wrapper! --
