@@ -5,16 +5,6 @@
 enable = true
 
 #
-# This repository needs access to several other private repositories:
-#
-access_repos = [
-	"oxidecomputer/amd-apcb",
-	"oxidecomputer/amd-efs",
-	"oxidecomputer/amd-flash",
-	"oxidecomputer/nanobl-rs",
-]
-
-#
 # Require approval for pull requests made by users outside our organisation.
 #
 org_only = true
