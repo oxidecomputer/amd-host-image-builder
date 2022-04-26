@@ -39,6 +39,7 @@ fn test_bitfield_serde() {
 	"base_address": 3,
 	"address_mode": "PhysicalAddress"
 }"#;
+	use amd_efs::DirectoryAdditionalInfo;
 	let result: DirectoryAdditionalInfo = serde_yaml::from_str(config).unwrap();
 	assert_eq!(result.address_mode(), AddressMode::PhysicalAddress);
 }
