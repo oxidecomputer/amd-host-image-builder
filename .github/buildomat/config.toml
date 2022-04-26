@@ -11,6 +11,7 @@ access_repos = [
 	"oxidecomputer/amd-apcb",
 	"oxidecomputer/amd-efs",
 	"oxidecomputer/amd-flash",
+	"oxidecomputer/nanobl-rs",
 ]
 
 #
