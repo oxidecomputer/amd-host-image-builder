@@ -2233,13 +2233,13 @@ fn bhd_add_apcb(
 	tokens.set_mem_enable_bank_group_swap(true)?;
 	tokens.set_mem_channel_interleaving(false)?;
 	tokens.set_mem_pstate(true)?;
-	tokens.set_mem_limit_memory_to_below_1_TiB(true)?;
+	tokens.set_mem_limit_memory_to_below1_ti_b(true)?;
 	tokens.set_mem_enable_bank_swizzle(false)?;
 	tokens.set_mem_spd_read_optimization_ddr4(true)?;
 	tokens.set_mem_hole_remapping(true)?;
 	tokens.set_mem_oc_vddio_control(false)?;
 	tokens.set_mem_enable_chip_select_interleaving(false)?;
-	tokens.set_mem_uma_above_4_GiB(true)?;
+	tokens.set_mem_uma_above4_gi_b(true)?;
 	tokens.set_mem_ignore_spd_checksum(true)?;
 	tokens.set_mem_ecc_sync_flood(false)?;
 	tokens.set_mem_auto_refreshs_count_for_throttling(MemAutoRefreshsCountForThrottling::Enabled)?;
@@ -2297,7 +2297,7 @@ fn bhd_add_apcb(
 	tokens.set_df_group_d_platform(true)?;
 	tokens.set_df_bottom_io(0xb0)?; // Byte
 	tokens.set_df_pci_mmio_size(0x10000000)?; // DWord
-	tokens.set_df_remap_at_1tib(DfRemapAt1TiB::Auto)?; // Byte
+	tokens.set_df_remap_at1_ti_b(DfRemapAt1TiB::Auto)?; // Byte
 	tokens.set_df_invert_dram_map(DfToggle::Auto)?; // Byte
 	tokens.set_df_mem_interleaving(DfMemInterleaving::Auto)?; // Byte
 	tokens.set_df_mem_interleaving_size(DfMemInterleavingSize::Auto)?; // Byte
@@ -2305,8 +2305,8 @@ fn bhd_add_apcb(
 	tokens.set_df_probe_filter(DfToggle::Auto)?; // Byte
 	tokens.set_df_xgmi_encrypt(DfToggle::Auto)?; // Byte
 	tokens.set_df_dram_numa_per_socket(DfDramNumaPerSocket::Auto)?; // Byte
-	tokens.set_df_4link_max_xgmi_speed(DfXgmi4LinkMaxSpeed::Auto)?; // Byte
-	tokens.set_df_3link_max_xgmi_speed(DfXgmi3LinkMaxSpeed::Auto)?; // Byte
+	tokens.set_df4_link_max_xgmi_speed(DfXgmi4LinkMaxSpeed::Auto)?; // Byte
+	tokens.set_df3_link_max_xgmi_speed(DfXgmi3LinkMaxSpeed::Auto)?; // Byte
 	tokens.set_df_save_restore_mem_encrypt(DfToggle::Auto)?; // Byte
 	tokens.set_df_mem_clear(DfToggle::Auto)?;
 	tokens.set_df_xgmi_tx_eq_mode(DfXgmiTxEqMode::Auto)?; // Byte
@@ -2330,7 +2330,7 @@ fn bhd_add_apcb(
 	tokens.set_mem_controller_writing_crc_max_replay(0x8)?; // Byte
 	tokens.set_mem_controller_writing_crc_limit(0x0)?; // Byte
 	tokens.set_mem_parity_error_max_replay_ddr4(8)?; // Byte
-	tokens.set_mem_rdimm_timing_rcd_f0rc0f_additional_latency(
+	tokens.set_mem_rdimm_timing_rcd_f0_rc0_f_additional_latency(
 		MemRdimmTimingCmdParLatency::Auto,
 	)?;
 	tokens.set_sw_cmd_throt_cycles(0x0)?; // OBSOLETE 26
@@ -2341,8 +2341,8 @@ fn bhd_add_apcb(
 	tokens.set_dimm_sensor_upper(0x50)?; // OBSOLETE 36
 	tokens.set_dimm_sensor_critical(0x5f)?; // OBSOLETE 31
 	tokens.set_dimm_sensor_config(0x408)?; // OBSOLETE 32
-	tokens.set_dimm_3ds_sensor_critical(0x50)?; // Word // OBSOLETE 27; Milan
-	tokens.set_dimm_3ds_sensor_upper(0x42)?; // Word // OBSOLETE 29; Milan
+	tokens.set_dimm3_ds_sensor_critical(0x50)?; // Word // OBSOLETE 27; Milan
+	tokens.set_dimm3_ds_sensor_upper(0x42)?; // Word // OBSOLETE 29; Milan
 
 	tokens.set_scrub_icache_rate(0x0)?; // OBSOLETE 33
 	tokens.set_scrub_dram_rate(0x0)?; // OBSOLETE 34
@@ -2404,7 +2404,7 @@ fn bhd_add_apcb(
 			panic!("not supported");
 		}
 		ProcessorGeneration::Rome => {
-			tokens.set_mother_board_type_0(false)?;
+			tokens.set_mother_board_type0(false)?;
 			tokens.set_mctp_reroute_enable(false)?;
 			tokens.set_iohc_mixed_rw_workaround(false)?;
 			tokens.set_bmc_vga_io_enable(false)?;
