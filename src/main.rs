@@ -27,6 +27,8 @@ use std::path::Path;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
+mod static_config;
+
 use amd_host_image_builder_config::SerdeConfig;
 use amd_apcb::Apcb;
 //use amd_efs::ProcessorGeneration;
@@ -2547,8 +2549,8 @@ fn main() -> std::io::Result<()> {
 
 	let mut psp_directory = efs
 		.create_psp_directory(
-			AlignedLocation::try_from(0x12_0000).unwrap(),
-			AlignedLocation::try_from(0x24_0000).unwrap(),
+			AlignedLocation::try_from(static_config::PSP_BEGINNING).unwrap(),
+			AlignedLocation::try_from(static_config::PSP_END).unwrap(),
 			AddressMode::EfsRelativeOffset,
 		)
 		.unwrap();
@@ -2650,8 +2652,8 @@ fn main() -> std::io::Result<()> {
 
 	let mut bhd_directory = efs
 		.create_bhd_directory(
-			AlignedLocation::try_from(0x24_0000).unwrap(),
-			AlignedLocation::try_from(0x24_0000 + 0x8_0000)
+			AlignedLocation::try_from(static_config::BHD_BEGINNING).unwrap(),
+			AlignedLocation::try_from(static_config::BHD_END)
 				.unwrap(),
 			AddressMode::EfsRelativeOffset,
 		)
