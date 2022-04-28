@@ -2523,6 +2523,7 @@ fn main() -> std::io::Result<()> {
 	let mut efs = match Efs::<_, ERASABLE_BLOCK_SIZE>::create(
 		storage,
 		host_processor_generation,
+		static_config::EFH_BEGINNING,
 		Some(IMAGE_SIZE),
 	) {
 		Ok(efs) => efs,
