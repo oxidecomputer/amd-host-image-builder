@@ -33,6 +33,7 @@ use amd_host_image_builder_config::SerdeConfig;
 use amd_apcb::Apcb;
 //use amd_efs::ProcessorGeneration;
 use amd_flash::{ErasableLocation, FlashRead, FlashWrite, Location};
+use amd_efs::DirectoryFrontend;
 
 #[test]
 fn test_bitfield_serde() {
@@ -177,48 +178,7 @@ fn psp_entry_add_from_file(
 		payload_position,
 		attrs,
 		size.try_into().unwrap(),
-		&mut |buf: &mut [u8]| {
-			let mut cursor = 0;
-			loop {
-				let bytes = source
-					.read(&mut buf[cursor ..])
-					.map_err(|_| amd_efs::Error::Marshal)?;
-				if bytes == 0 {
-					return Ok(cursor);
-				}
-				cursor += bytes;
-			}
-		},
-	)?;
-	Ok(())
-}
-
-//
-// The comment in efs.rs:add_payload() states that the function passed into
-// directory.add_blob_entry() must not return a result smaller than the length
-// of the buffer passed into it unless there are no more contents.  This means
-// we cannot expect it to be called repeatedly, which is to say that we must
-// loop ourselves until the reader we are given returns no more data.  This
-// matters because it is *not* an error for a reader to return less data than
-// would have filled the buffer it was given, even if more data might be
-// available.
-//
-fn bhd_entry_add_from_reader_with_custom_size<T>(
-	directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
-	payload_position: Option<ErasableLocation<ERASABLE_BLOCK_SIZE>>,
-	attrs: &BhdDirectoryEntryAttrs,
-	size: usize,
-	source: &mut T,
-	ram_destination_address: Option<u64>,
-) -> amd_efs::Result<()>
-where
-	T: std::io::Read,
-{
-	directory.add_blob_entry(
-		payload_position,
-		attrs,
-		size.try_into().unwrap(),
-		ram_destination_address,
+		None,
 		&mut |buf: &mut [u8]| {
 			let mut cursor = 0;
 			loop {
@@ -246,8 +206,7 @@ fn bhd_entry_add_from_file_with_custom_size(
 	let file = File::open(source_filename).unwrap();
 	let mut reader = BufReader::new(file);
 
-	bhd_entry_add_from_reader_with_custom_size(
-		directory,
+	directory.add_from_reader_with_custom_size(
 		payload_position,
 		attrs,
 		size,
@@ -463,8 +422,7 @@ fn bhd_directory_add_reset_image(
 		eprintln!("Warning: No destination in RAM specified for Reset image.");
 	}
 
-	bhd_entry_add_from_reader_with_custom_size(
-		bhd_directory,
+	bhd_directory.add_from_reader_with_custom_size(
 		None,
 		&BhdDirectoryEntryAttrs::builder()
 			.with_type_(BhdDirectoryEntryType::Bios)
