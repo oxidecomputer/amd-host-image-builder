@@ -174,25 +174,14 @@ fn psp_entry_add_from_file(
 	let file = File::open(source_filename).unwrap();
 	let size: usize = file.metadata().unwrap().len().try_into().unwrap();
 	let mut source = BufReader::new(file);
-	directory.add_blob_entry(
+
+	directory.add_from_reader_with_custom_size(
 		payload_position,
 		attrs,
-		size.try_into().unwrap(),
+		size,
+		&mut source,
 		None,
-		&mut |buf: &mut [u8]| {
-			let mut cursor = 0;
-			loop {
-				let bytes = source
-					.read(&mut buf[cursor ..])
-					.map_err(|_| amd_efs::Error::Marshal)?;
-				if bytes == 0 {
-					return Ok(cursor);
-				}
-				cursor += bytes;
-			}
-		},
-	)?;
-	Ok(())
+	)
 }
 
 fn bhd_entry_add_from_file_with_custom_size(
