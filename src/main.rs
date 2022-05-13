@@ -229,26 +229,6 @@ fn bhd_entry_add_from_file(
 	)
 }
 
-fn bhd_entry_add_from_file_if_present(
-	directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
-	payload_position: Option<ErasableLocation<ERASABLE_BLOCK_SIZE>>,
-	attrs: &BhdDirectoryEntryAttrs,
-	source_filename: PathBuf,
-	ram_destination_address: Option<u64>,
-) -> amd_efs::Result<()> {
-	if source_filename.as_path().exists() {
-		bhd_entry_add_from_file(
-			directory,
-			payload_position,
-			attrs,
-			source_filename,
-			ram_destination_address,
-		)
-	} else {
-		Ok(())
-	}
-}
-
 fn elf_symbol(
 	binary: &goblin::elf::Elf,
 	key: &str,
