@@ -1,5 +1,6 @@
 
 use amd_flash::Location;
+use amd_efs::ProcessorGeneration;
 
 /* Coarse-grained flash locations (in Byte) */
 
@@ -11,4 +12,13 @@ pub(crate) const BHD_END: Location = 0x24_0000 + 0x3f_0000;
 
 // Note: This must not be changed.
 // It's hardcoded in the PSP bootloader and in amd-efs's "create" function.
-pub(crate) const EFH_BEGINNING: Location = 0xFA_0000;
+/// Note: It's intentionally duplicated so you can get an overview of the
+/// memory map by looking at this file. Especially should there be a new
+/// generation, you have to adapt this file--and that's on purpose.
+#[allow(non_snake_case)]
+pub(crate) const fn EFH_BEGINNING(processor_generation: ProcessorGeneration) -> Location {
+	match processor_generation {
+		ProcessorGeneration::Naples => 0x2_0000,
+		ProcessorGeneration::Rome | ProcessorGeneration::Milan => 0xFA_0000,
+        }
+}
