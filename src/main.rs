@@ -411,8 +411,25 @@ fn bhd_directory_add_reset_image(
 		eprintln!("Warning: No destination in RAM specified for Reset image.");
 	}
 
+	let beginning = ErasableLocation::try_from(
+		static_config::RESET_IMAGE_BEGINNING
+	)
+	.map_err(|_| Error::Efs(amd_efs::Error::Misaligned))?;
+	// round up:
+	let sz2 = if sz % ERASABLE_BLOCK_SIZE == 0 {
+		sz
+	} else {
+		sz.checked_add(ERASABLE_BLOCK_SIZE - (sz % ERASABLE_BLOCK_SIZE))
+			.ok_or_else(|| Error::ImageTooBig)?
+	};
+	let end = beginning
+		.advance(sz2)
+		.map_err(|_| Error::Efs(amd_efs::Error::Misaligned))?;
+	if Location::from(end) > static_config::RESET_IMAGE_END {
+		return Err(Error::ImageTooBig);
+	}
 	bhd_directory.add_from_reader_with_custom_size(
-		None,
+		Some(beginning),
 		&BhdDirectoryEntryAttrs::builder()
 			.with_type_(BhdDirectoryEntryType::Bios)
 			.with_reset_image(true)
