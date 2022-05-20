@@ -5,9 +5,10 @@ version = 3
 [[package]]
 name = "amd-apcb"
 version = "0.1.0"
-source = "git+ssh://git@github.com/oxidecomputer/amd-apcb.git?branch=main#fc4210e474749cca54054a1f3425ac1321b0b816"
+source = "git+ssh://git@github.com/oxidecomputer/amd-apcb.git?rev=a7e4446547d27cd43f13435d954333ae3e9babba#a7e4446547d27cd43f13435d954333ae3e9babba"
 dependencies = [
  "byteorder",
+ "four-cc",
  "memoffset",
  "modular-bitfield",
  "num-derive",
@@ -146,6 +147,16 @@ name = "fletcher"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c76f5d0a035d1543c4a3f2d2c84fe00214a6d688e4b8a1ac00a1699528bc6611"
+
+[[package]]
+name = "four-cc"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "92d73a076bdabd78c2f9045dba1b90664a655fa8372581c238596e1eb3a5e1b7"
+dependencies = [
+ "schemars",
+ "serde",
+]
 
 [[package]]
 name = "goblin"
