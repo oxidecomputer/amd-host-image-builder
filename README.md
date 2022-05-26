@@ -73,7 +73,7 @@ That means that the ELF entry point needs to be 16 bytes from the end of the las
 
 Also, the ELF file needs to be linked in a way that it actually specified *physical* addresses. After all, there's no MMU set up yet--so virtual addresses don't make any sense (and we expect each virtual address to be equal to the same physical address for our purposes).
 
-There should be ELF symbols `_BL_SPACE`, `__sloader` and `__eloader` available. Those are the expected start address of your program, the expected end address of your program, and the size of your loader program, respectively. The values of those special symbols are checked by `amd-host-image-builder` and it will fail if those are not what is expected.
+There should be ELF symbols `__sloader`, `__eloader` and `_BL_SPACE` available. Those are the expected start address of your program, the expected end address of your program, and the size of your loader program, respectively. The values of those special symbols are checked by `amd-host-image-builder` and it will fail if those are not what is expected.
 
 As a special bringup help, right now, it's also possible to specify a non-ELF file. In that case, it will be put into x86 RAM such that it's right before address 0x8000_0000). Other checks are not done--you are on your own. We reserve the right to remove this weird non-ELF file support at any point.
 
