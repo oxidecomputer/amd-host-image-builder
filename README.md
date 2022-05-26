@@ -76,3 +76,7 @@ Also, the ELF file needs to be linked in a way that it actually specified *physi
 There should be ELF symbols `_BL_SPACE`, `__sloader` and `__eloader` available. Those are the expected start address of your program, the expected end address of your program, and the size of your loader program, respectively. The values of those special symbols are checked by `amd-host-image-builder` and it will fail if those are not what is expected.
 
 As a special bringup help, right now, it's also possible to specify a non-ELF file. In that case, it will be put into x86 RAM such that it's right before address 0x8000_0000). Other checks are not done--you are on your own. We reserve the right to remove this weird non-ELF file support at any point.
+
+# Other models
+
+`amd-host-image-builder` also supports Rome. If you want to use that, please edit `etc/Rome.json` to your liking and then invoke `make rome` to get `Rome.img` which you can flash.
