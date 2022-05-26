@@ -260,8 +260,7 @@
 											"medium": false,
 											"event_logging": false,
 											"low": false,
-											"normal": true,
-											"_reserved_1": "0x00"
+											"normal": true
 										},
 										"key_size": "0x00",
 										"key_pos": "0x00",
@@ -605,8 +604,7 @@
 											"medium": false,
 											"event_logging": false,
 											"low": false,
-											"normal": true,
-											"_reserved_1": "0x00"
+											"normal": true
 										},
 										"key_size": "0x00",
 										"key_pos": "0x00",
@@ -772,8 +770,7 @@
 											"medium": false,
 											"event_logging": false,
 											"low": false,
-											"normal": true,
-											"_reserved_1": "0x00"
+											"normal": true
 										},
 										"key_size": "0x00",
 										"key_pos": "0x00",
@@ -799,32 +796,23 @@
 													"single_rank": false,
 													"dual_rank": false,
 													"quad_rank": false
-												},
-												"_reserved_1": "0x00000000"
+												}
 											},
 											"cs0_odt_patterns": {
 												"reading_pattern": "0x00",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x00",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x00"
 											},
 											"cs1_odt_patterns": {
 												"reading_pattern": "0x00",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x00",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x00"
 											},
 											"cs2_odt_patterns": {
 												"reading_pattern": "0x00",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x00",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x00"
 											},
 											"cs3_odt_patterns": {
 												"reading_pattern": "0x00",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x00",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x00"
 											}
 										},
 										{
@@ -846,32 +834,23 @@
 													"single_rank": false,
 													"dual_rank": false,
 													"quad_rank": false
-												},
-												"_reserved_1": "0x00000000"
+												}
 											},
 											"cs0_odt_patterns": {
 												"reading_pattern": "0x00",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x00",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x00"
 											},
 											"cs1_odt_patterns": {
 												"reading_pattern": "0x00",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x00",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x00"
 											},
 											"cs2_odt_patterns": {
 												"reading_pattern": "0x00",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x04",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x04"
 											},
 											"cs3_odt_patterns": {
 												"reading_pattern": "0x00",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x08",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x08"
 											}
 										},
 										{
@@ -893,32 +872,23 @@
 													"single_rank": false,
 													"dual_rank": false,
 													"quad_rank": false
-												},
-												"_reserved_1": "0x00000000"
+												}
 											},
 											"cs0_odt_patterns": {
 												"reading_pattern": "0x00",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x00",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x00"
 											},
 											"cs1_odt_patterns": {
 												"reading_pattern": "0x00",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x00",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x00"
 											},
 											"cs2_odt_patterns": {
 												"reading_pattern": "0x00",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x00",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x00"
 											},
 											"cs3_odt_patterns": {
 												"reading_pattern": "0x00",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x00",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x00"
 											}
 										},
 										{
@@ -940,32 +910,23 @@
 													"single_rank": false,
 													"dual_rank": false,
 													"quad_rank": false
-												},
-												"_reserved_1": "0x00000000"
+												}
 											},
 											"cs0_odt_patterns": {
 												"reading_pattern": "0x00",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x01",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x01"
 											},
 											"cs1_odt_patterns": {
 												"reading_pattern": "0x00",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x02",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x02"
 											},
 											"cs2_odt_patterns": {
 												"reading_pattern": "0x00",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x00",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x00"
 											},
 											"cs3_odt_patterns": {
 												"reading_pattern": "0x00",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x00",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x00"
 											}
 										},
 										{
@@ -987,32 +948,23 @@
 													"single_rank": false,
 													"dual_rank": false,
 													"quad_rank": false
-												},
-												"_reserved_1": "0x00000000"
+												}
 											},
 											"cs0_odt_patterns": {
 												"reading_pattern": "0x00",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x00",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x00"
 											},
 											"cs1_odt_patterns": {
 												"reading_pattern": "0x00",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x00",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x00"
 											},
 											"cs2_odt_patterns": {
 												"reading_pattern": "0x00",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x00",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x00"
 											},
 											"cs3_odt_patterns": {
 												"reading_pattern": "0x00",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x00",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x00"
 											}
 										},
 										{
@@ -1034,32 +986,23 @@
 													"single_rank": false,
 													"dual_rank": false,
 													"quad_rank": false
-												},
-												"_reserved_1": "0x00000000"
+												}
 											},
 											"cs0_odt_patterns": {
 												"reading_pattern": "0x04",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x04",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x04"
 											},
 											"cs1_odt_patterns": {
 												"reading_pattern": "0x00",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x00",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x00"
 											},
 											"cs2_odt_patterns": {
 												"reading_pattern": "0x01",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x01",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x01"
 											},
 											"cs3_odt_patterns": {
 												"reading_pattern": "0x01",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x01",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x01"
 											}
 										},
 										{
@@ -1081,32 +1024,23 @@
 													"single_rank": false,
 													"dual_rank": false,
 													"quad_rank": false
-												},
-												"_reserved_1": "0x00000000"
+												}
 											},
 											"cs0_odt_patterns": {
 												"reading_pattern": "0x04",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x04",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x04"
 											},
 											"cs1_odt_patterns": {
 												"reading_pattern": "0x04",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x04",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x04"
 											},
 											"cs2_odt_patterns": {
 												"reading_pattern": "0x01",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x01",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x01"
 											},
 											"cs3_odt_patterns": {
 												"reading_pattern": "0x00",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x00",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x00"
 											}
 										},
 										{
@@ -1128,32 +1062,23 @@
 													"single_rank": false,
 													"dual_rank": false,
 													"quad_rank": false
-												},
-												"_reserved_1": "0x00000000"
+												}
 											},
 											"cs0_odt_patterns": {
 												"reading_pattern": "0x0c",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x0c",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x0c"
 											},
 											"cs1_odt_patterns": {
 												"reading_pattern": "0x0c",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x0c",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x0c"
 											},
 											"cs2_odt_patterns": {
 												"reading_pattern": "0x03",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x03",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x03"
 											},
 											"cs3_odt_patterns": {
 												"reading_pattern": "0x03",
-												"_reserved_1": "0x00",
-												"writing_pattern": "0x03",
-												"_reserved_2": "0x00000000"
+												"writing_pattern": "0x03"
 											}
 										}
 									]
@@ -1173,8 +1098,7 @@
 											"medium": false,
 											"event_logging": false,
 											"low": false,
-											"normal": true,
-											"_reserved_1": "0x00"
+											"normal": true
 										},
 										"key_size": "0x00",
 										"key_pos": "0x00",
@@ -1184,42 +1108,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000001",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": true,
-												"_reserved_7": false,
 												"ddr1866": false,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -1246,42 +1150,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000001",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": true,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -1308,42 +1192,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000001",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": false,
-												"_reserved_8": false,
 												"ddr2133": true,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -1370,42 +1234,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000001",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": false,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": true,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -1432,42 +1276,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000001",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": false,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": true,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -1494,42 +1318,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000001",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": false,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": true,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -1556,42 +1360,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000001",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": false,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": true,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": true
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -1618,42 +1402,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": true,
-												"_reserved_7": false,
 												"ddr1866": false,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": true,
@@ -1680,42 +1444,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": true,
-												"_reserved_7": false,
 												"ddr1866": false,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -1742,42 +1486,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": true,
-												"_reserved_7": false,
 												"ddr1866": false,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -1804,42 +1528,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": true,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": true,
@@ -1866,42 +1570,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": true,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -1928,42 +1612,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": true,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -1990,42 +1654,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": true,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -2052,42 +1696,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": true,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -2114,42 +1738,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": false,
-												"_reserved_8": false,
 												"ddr2133": true,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": true,
@@ -2176,42 +1780,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": false,
-												"_reserved_8": false,
 												"ddr2133": true,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -2238,42 +1822,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": false,
-												"_reserved_8": false,
 												"ddr2133": true,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -2300,42 +1864,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": false,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": true,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": true,
@@ -2362,42 +1906,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": false,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": true,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -2424,42 +1948,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": false,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": true,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -2486,42 +1990,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": false,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": true,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": true,
@@ -2548,42 +2032,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": false,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": true,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -2610,42 +2074,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": false,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": true,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -2672,42 +2116,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": false,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": true,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": true,
@@ -2734,42 +2158,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": false,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": true,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -2796,42 +2200,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": false,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": true,
-												"_reserved_12": false,
-												"ddr3200": false,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": false
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -2858,42 +2242,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": false,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": true,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": true
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": true,
@@ -2920,42 +2284,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": false,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": true,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": true
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -2982,42 +2326,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": false,
-												"_reserved_7": false,
 												"ddr1866": false,
-												"_reserved_8": false,
 												"ddr2133": false,
-												"_reserved_9": false,
 												"ddr2400": false,
-												"_reserved_10": false,
 												"ddr2667": false,
-												"_reserved_11": false,
 												"ddr2933": false,
-												"_reserved_12": false,
-												"ddr3200": true,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": true
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -3058,8 +2382,7 @@
 											"medium": false,
 											"event_logging": false,
 											"low": false,
-											"normal": true,
-											"_reserved_1": "0x00"
+											"normal": true
 										},
 										"key_size": "0x00",
 										"key_pos": "0x00",
@@ -3069,42 +2392,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000001",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": true,
-												"_reserved_7": false,
 												"ddr1866": true,
-												"_reserved_8": false,
 												"ddr2133": true,
-												"_reserved_9": false,
 												"ddr2400": true,
-												"_reserved_10": false,
 												"ddr2667": true,
-												"_reserved_11": false,
 												"ddr2933": true,
-												"_reserved_12": false,
-												"ddr3200": true,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": true
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -3132,42 +2435,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000001",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": true,
-												"_reserved_7": false,
 												"ddr1866": true,
-												"_reserved_8": false,
 												"ddr2133": true,
-												"_reserved_9": false,
 												"ddr2400": true,
-												"_reserved_10": false,
 												"ddr2667": true,
-												"_reserved_11": false,
 												"ddr2933": true,
-												"_reserved_12": false,
-												"ddr3200": true,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": true
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -3195,42 +2478,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": true,
-												"_reserved_7": false,
 												"ddr1866": true,
-												"_reserved_8": false,
 												"ddr2133": true,
-												"_reserved_9": false,
 												"ddr2400": true,
-												"_reserved_10": false,
 												"ddr2667": true,
-												"_reserved_11": false,
 												"ddr2933": true,
-												"_reserved_12": false,
-												"ddr3200": true,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": true
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": true,
@@ -3258,42 +2521,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": true,
-												"_reserved_7": false,
 												"ddr1866": true,
-												"_reserved_8": false,
 												"ddr2133": true,
-												"_reserved_9": false,
 												"ddr2400": true,
-												"_reserved_10": false,
 												"ddr2667": true,
-												"_reserved_11": false,
 												"ddr2933": true,
-												"_reserved_12": false,
-												"ddr3200": true,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": true
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": true,
@@ -3321,42 +2564,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": true,
-												"_reserved_7": false,
 												"ddr1866": true,
-												"_reserved_8": false,
 												"ddr2133": true,
-												"_reserved_9": false,
 												"ddr2400": true,
-												"_reserved_10": false,
 												"ddr2667": true,
-												"_reserved_11": false,
 												"ddr2933": true,
-												"_reserved_12": false,
-												"ddr3200": true,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": true
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -3384,42 +2607,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": true,
-												"_reserved_7": false,
 												"ddr1866": true,
-												"_reserved_8": false,
 												"ddr2133": true,
-												"_reserved_9": false,
 												"ddr2400": true,
-												"_reserved_10": false,
 												"ddr2667": true,
-												"_reserved_11": false,
 												"ddr2933": true,
-												"_reserved_12": false,
-												"ddr3200": true,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": true
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -3447,42 +2650,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": true,
-												"_reserved_7": false,
 												"ddr1866": true,
-												"_reserved_8": false,
 												"ddr2133": true,
-												"_reserved_9": false,
 												"ddr2400": true,
-												"_reserved_10": false,
 												"ddr2667": true,
-												"_reserved_11": false,
 												"ddr2933": true,
-												"_reserved_12": false,
-												"ddr3200": true,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": true
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -3510,42 +2693,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": true,
-												"_reserved_7": false,
 												"ddr1866": true,
-												"_reserved_8": false,
 												"ddr2133": true,
-												"_reserved_9": false,
 												"ddr2400": true,
-												"_reserved_10": false,
 												"ddr2667": true,
-												"_reserved_11": false,
 												"ddr2933": true,
-												"_reserved_12": false,
-												"ddr3200": true,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": true
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -3573,42 +2736,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": true,
-												"_reserved_7": false,
 												"ddr1866": true,
-												"_reserved_8": false,
 												"ddr2133": true,
-												"_reserved_9": false,
 												"ddr2400": true,
-												"_reserved_10": false,
 												"ddr2667": true,
-												"_reserved_11": false,
 												"ddr2933": true,
-												"_reserved_12": false,
-												"ddr3200": true,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": true
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -3636,42 +2779,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": true,
-												"_reserved_7": false,
 												"ddr1866": true,
-												"_reserved_8": false,
 												"ddr2133": true,
-												"_reserved_9": false,
 												"ddr2400": true,
-												"_reserved_10": false,
 												"ddr2667": true,
-												"_reserved_11": false,
 												"ddr2933": true,
-												"_reserved_12": false,
-												"ddr3200": true,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": true
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -3713,8 +2836,7 @@
 											"medium": false,
 											"event_logging": false,
 											"low": false,
-											"normal": true,
-											"_reserved_1": "0x00"
+											"normal": true
 										},
 										"key_size": "0x00",
 										"key_pos": "0x00",
@@ -3727,8 +2849,7 @@
 													"one_dimm": true,
 													"two_dimms": false,
 													"three_dimms": false,
-													"four_dimms": false,
-													"_reserved_1": "0x00000000"
+													"four_dimms": false
 												}
 											},
 											"_reserved_": "0x00",
@@ -3750,8 +2871,7 @@
 													"one_dimm": true,
 													"two_dimms": false,
 													"three_dimms": false,
-													"four_dimms": false,
-													"_reserved_1": "0x00000000"
+													"four_dimms": false
 												}
 											},
 											"_reserved_": "0x00",
@@ -3773,8 +2893,7 @@
 													"one_dimm": false,
 													"two_dimms": true,
 													"three_dimms": false,
-													"four_dimms": false,
-													"_reserved_1": "0x00000000"
+													"four_dimms": false
 												}
 											},
 											"_reserved_": "0x00",
@@ -3796,8 +2915,7 @@
 													"one_dimm": false,
 													"two_dimms": true,
 													"three_dimms": false,
-													"four_dimms": false,
-													"_reserved_1": "0x00000000"
+													"four_dimms": false
 												}
 											},
 											"_reserved_": "0x00",
@@ -3819,8 +2937,7 @@
 													"one_dimm": false,
 													"two_dimms": true,
 													"three_dimms": false,
-													"four_dimms": false,
-													"_reserved_1": "0x00000000"
+													"four_dimms": false
 												}
 											},
 											"_reserved_": "0x00",
@@ -3842,8 +2959,7 @@
 													"one_dimm": false,
 													"two_dimms": true,
 													"three_dimms": false,
-													"four_dimms": false,
-													"_reserved_1": "0x00000000"
+													"four_dimms": false
 												}
 											},
 											"_reserved_": "0x00",
@@ -3865,8 +2981,7 @@
 													"one_dimm": false,
 													"two_dimms": true,
 													"three_dimms": false,
-													"four_dimms": false,
-													"_reserved_1": "0x00000000"
+													"four_dimms": false
 												}
 											},
 											"_reserved_": "0x00",
@@ -3899,8 +3014,7 @@
 											"medium": false,
 											"event_logging": false,
 											"low": false,
-											"normal": true,
-											"_reserved_1": "0x00"
+											"normal": true
 										},
 										"key_size": "0x00",
 										"key_pos": "0x00",
@@ -3913,8 +3027,7 @@
 													"one_dimm": true,
 													"two_dimms": false,
 													"three_dimms": false,
-													"four_dimms": false,
-													"_reserved_1": "0x00000000"
+													"four_dimms": false
 												}
 											},
 											"_reserved_": "0x00",
@@ -3936,8 +3049,7 @@
 													"one_dimm": true,
 													"two_dimms": false,
 													"three_dimms": false,
-													"four_dimms": false,
-													"_reserved_1": "0x00000000"
+													"four_dimms": false
 												}
 											},
 											"_reserved_": "0x00",
@@ -3959,8 +3071,7 @@
 													"one_dimm": false,
 													"two_dimms": true,
 													"three_dimms": false,
-													"four_dimms": false,
-													"_reserved_1": "0x00000000"
+													"four_dimms": false
 												}
 											},
 											"_reserved_": "0x00",
@@ -3982,8 +3093,7 @@
 													"one_dimm": false,
 													"two_dimms": true,
 													"three_dimms": false,
-													"four_dimms": false,
-													"_reserved_1": "0x00000000"
+													"four_dimms": false
 												}
 											},
 											"_reserved_": "0x00",
@@ -4005,8 +3115,7 @@
 													"one_dimm": false,
 													"two_dimms": true,
 													"three_dimms": false,
-													"four_dimms": false,
-													"_reserved_1": "0x00000000"
+													"four_dimms": false
 												}
 											},
 											"_reserved_": "0x00",
@@ -4028,8 +3137,7 @@
 													"one_dimm": false,
 													"two_dimms": true,
 													"three_dimms": false,
-													"four_dimms": false,
-													"_reserved_1": "0x00000000"
+													"four_dimms": false
 												}
 											},
 											"_reserved_": "0x00",
@@ -4051,8 +3159,7 @@
 													"one_dimm": false,
 													"two_dimms": true,
 													"three_dimms": false,
-													"four_dimms": false,
-													"_reserved_1": "0x00000000"
+													"four_dimms": false
 												}
 											},
 											"_reserved_": "0x00",
@@ -4085,8 +3192,7 @@
 											"medium": false,
 											"event_logging": false,
 											"low": false,
-											"normal": true,
-											"_reserved_1": "0x00"
+											"normal": true
 										},
 										"key_size": "0x00",
 										"key_pos": "0x00",
@@ -4099,8 +3205,7 @@
 													"one_dimm": true,
 													"two_dimms": false,
 													"three_dimms": false,
-													"four_dimms": false,
-													"_reserved_1": "0x00000000"
+													"four_dimms": false
 												}
 											},
 											"_reserved_": "0x00",
@@ -4122,8 +3227,7 @@
 													"one_dimm": false,
 													"two_dimms": true,
 													"three_dimms": false,
-													"four_dimms": false,
-													"_reserved_1": "0x00000000"
+													"four_dimms": false
 												}
 											},
 											"_reserved_": "0x00",
@@ -4145,8 +3249,7 @@
 													"one_dimm": false,
 													"two_dimms": true,
 													"three_dimms": false,
-													"four_dimms": false,
-													"_reserved_1": "0x00000000"
+													"four_dimms": false
 												}
 											},
 											"_reserved_": "0x00",
@@ -4179,8 +3282,7 @@
 											"medium": false,
 											"event_logging": false,
 											"low": false,
-											"normal": true,
-											"_reserved_1": "0x00"
+											"normal": true
 										},
 										"key_size": "0x00",
 										"key_pos": "0x00",
@@ -4193,8 +3295,7 @@
 													"one_dimm": true,
 													"two_dimms": false,
 													"three_dimms": false,
-													"four_dimms": false,
-													"_reserved_1": "0x00000000"
+													"four_dimms": false
 												}
 											},
 											"_reserved_": "0x00",
@@ -4216,8 +3317,7 @@
 													"one_dimm": false,
 													"two_dimms": true,
 													"three_dimms": false,
-													"four_dimms": false,
-													"_reserved_1": "0x00000000"
+													"four_dimms": false
 												}
 											},
 											"_reserved_": "0x00",
@@ -4239,8 +3339,7 @@
 													"one_dimm": false,
 													"two_dimms": true,
 													"three_dimms": false,
-													"four_dimms": false,
-													"_reserved_1": "0x00000000"
+													"four_dimms": false
 												}
 											},
 											"_reserved_": "0x00",
@@ -4273,8 +3372,7 @@
 											"medium": false,
 											"event_logging": false,
 											"low": false,
-											"normal": true,
-											"_reserved_1": "0x00"
+											"normal": true
 										},
 										"key_size": "0x00",
 										"key_pos": "0x00",
@@ -4284,42 +3382,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000001",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": true,
-												"_reserved_7": false,
 												"ddr1866": true,
-												"_reserved_8": false,
 												"ddr2133": true,
-												"_reserved_9": false,
 												"ddr2400": true,
-												"_reserved_10": false,
 												"ddr2667": true,
-												"_reserved_11": false,
 												"ddr2933": true,
-												"_reserved_12": false,
-												"ddr3200": true,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": true
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -4347,42 +3425,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": true,
-												"_reserved_7": false,
 												"ddr1866": true,
-												"_reserved_8": false,
 												"ddr2133": true,
-												"_reserved_9": false,
 												"ddr2400": true,
-												"_reserved_10": false,
 												"ddr2667": true,
-												"_reserved_11": false,
 												"ddr2933": true,
-												"_reserved_12": false,
-												"ddr3200": true,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": true
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": true,
@@ -4410,42 +3468,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": true,
-												"_reserved_7": false,
 												"ddr1866": true,
-												"_reserved_8": false,
 												"ddr2133": true,
-												"_reserved_9": false,
 												"ddr2400": true,
-												"_reserved_10": false,
 												"ddr2667": true,
-												"_reserved_11": false,
 												"ddr2933": true,
-												"_reserved_12": false,
-												"ddr3200": true,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": true
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -4473,42 +3511,22 @@
 										{
 											"dimm_slots_per_channel": "0x00000002",
 											"ddr_rates": {
-												"_reserved_1": false,
-												"_reserved_2": false,
-												"_reserved_3": false,
 												"ddr400": false,
 												"ddr533": false,
 												"ddr667": false,
 												"ddr800": false,
-												"_reserved_4": false,
 												"ddr1066": false,
-												"_reserved_5": false,
 												"ddr1333": false,
-												"_reserved_6": false,
 												"ddr1600": true,
-												"_reserved_7": false,
 												"ddr1866": true,
-												"_reserved_8": false,
 												"ddr2133": true,
-												"_reserved_9": false,
 												"ddr2400": true,
-												"_reserved_10": false,
 												"ddr2667": true,
-												"_reserved_11": false,
 												"ddr2933": true,
-												"_reserved_12": false,
-												"ddr3200": true,
-												"_reserved_13": false,
-												"_reserved_14": false,
-												"_reserved_15": false,
-												"_reserved_16": false,
-												"_reserved_17": false,
-												"_reserved_18": false,
-												"_reserved_19": false
+												"ddr3200": true
 											},
 											"vdd_io": {
-												"1.2 V": true,
-												"_reserved_1": 0
+												"1.2 V": true
 											},
 											"dimm0_ranks": {
 												"unpopulated": false,
@@ -4550,8 +3568,7 @@
 											"medium": false,
 											"event_logging": false,
 											"low": false,
-											"normal": true,
-											"_reserved_1": "0x00"
+											"normal": true
 										},
 										"key_size": "0x00",
 										"key_pos": "0x00",
@@ -4594,8 +3611,7 @@
 											"medium": false,
 											"event_logging": false,
 											"low": false,
-											"normal": true,
-											"_reserved_1": "0x00"
+											"normal": true
 										},
 										"key_size": "0x00",
 										"key_pos": "0x00",
@@ -4640,8 +3656,7 @@
 												"peak_attr": {
 													"peak_count": 8,
 													"pulse_width": 0,
-													"repeat_count": 0,
-													"_reserved_1": "0x00000000"
+													"repeat_count": 0
 												}
 											},
 											{
@@ -4650,8 +3665,7 @@
 												"peak_attr": {
 													"peak_count": 20,
 													"pulse_width": 0,
-													"repeat_count": 0,
-													"_reserved_1": "0x00000000"
+													"repeat_count": 0
 												}
 											},
 											{
@@ -4660,8 +3674,7 @@
 												"peak_attr": {
 													"peak_count": 20,
 													"pulse_width": 0,
-													"repeat_count": 0,
-													"_reserved_1": "0x00000000"
+													"repeat_count": 0
 												}
 											},
 											{
@@ -4670,8 +3683,7 @@
 												"peak_attr": {
 													"peak_count": 20,
 													"pulse_width": 0,
-													"repeat_count": 0,
-													"_reserved_1": "0x00000000"
+													"repeat_count": 0
 												}
 											},
 											{
@@ -4680,8 +3692,7 @@
 												"peak_attr": {
 													"peak_count": 20,
 													"pulse_width": 0,
-													"repeat_count": 0,
-													"_reserved_1": "0x00000000"
+													"repeat_count": 0
 												}
 											},
 											{
@@ -4690,8 +3701,7 @@
 												"peak_attr": {
 													"peak_count": 20,
 													"pulse_width": 0,
-													"repeat_count": 0,
-													"_reserved_1": "0x00000000"
+													"repeat_count": 0
 												}
 											},
 											{
@@ -4700,8 +3710,7 @@
 												"peak_attr": {
 													"peak_count": 20,
 													"pulse_width": 0,
-													"repeat_count": 0,
-													"_reserved_1": "0x00000000"
+													"repeat_count": 0
 												}
 											},
 											{
@@ -4710,8 +3719,7 @@
 												"peak_attr": {
 													"peak_count": 4,
 													"pulse_width": 0,
-													"repeat_count": 0,
-													"_reserved_1": "0x00000000"
+													"repeat_count": 0
 												}
 											}
 										],
@@ -4744,8 +3752,7 @@
 											"medium": false,
 											"event_logging": false,
 											"low": false,
-											"normal": true,
-											"_reserved_1": "0x00"
+											"normal": true
 										},
 										"key_size": "0x00",
 										"key_pos": "0x00",
@@ -4787,8 +3794,7 @@
 											"medium": false,
 											"event_logging": false,
 											"low": false,
-											"normal": true,
-											"_reserved_1": "0x00"
+											"normal": true
 										},
 										"key_size": "0x00",
 										"key_pos": "0x00",
@@ -4827,8 +3833,7 @@
 											"medium": false,
 											"event_logging": false,
 											"low": false,
-											"normal": true,
-											"_reserved_1": "0x00"
+											"normal": true
 										},
 										"key_size": "0x04",
 										"key_pos": "0x00",
@@ -5172,8 +4177,7 @@
 											"medium": false,
 											"event_logging": false,
 											"low": false,
-											"normal": true,
-											"_reserved_1": "0x00"
+											"normal": true
 										},
 										"key_size": "0x04",
 										"key_pos": "0x00",
@@ -5636,8 +4640,7 @@
 											"medium": false,
 											"event_logging": false,
 											"low": false,
-											"normal": true,
-											"_reserved_1": "0x00"
+											"normal": true
 										},
 										"key_size": "0x04",
 										"key_pos": "0x00",
@@ -5733,8 +4736,7 @@
 											"medium": false,
 											"event_logging": false,
 											"low": false,
-											"normal": true,
-											"_reserved_1": "0x00"
+											"normal": true
 										},
 										"key_size": "0x04",
 										"key_pos": "0x00",
