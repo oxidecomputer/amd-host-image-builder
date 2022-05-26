@@ -9,6 +9,7 @@ use amd_host_image_builder_config::{
 	SerdePspDirectoryVariant,
 	SerdeBhdDirectoryVariant,
 	SerdeBhdSource,
+	SerdePspEntrySource,
 	Result,
 	Error,
 };
@@ -2515,11 +2516,20 @@ fn main() -> std::io::Result<()> {
 				let body = entry.target.body;
 
 				match body {
-					SerdePspDirectoryEntryBody::Value(x) => {
-						psp_directory.add_value_entry(
-							&entry.target.attrs,
-							x, // TODO: Nicer type.
-						).unwrap();
+					SerdePspDirectoryEntryBody::Value => {
+						match entry.source {
+							SerdePspEntrySource::Value(x) => {
+								psp_directory.add_value_entry(
+									&entry.target.attrs,
+									x, // TODO: Nicer type.
+								).unwrap();
+							}
+							SerdePspEntrySource::BlobFile(_) => {
+								eprintln!("{:?}: It is not possible to store a Blob into a literal Value.",
+									entry.target.attrs);
+								std::process::exit(1);
+							}
+						}
 					},
 					SerdePspDirectoryEntryBody::Blob { flash_location, size } => {
 						let x: Option<Location> = match flash_location {
@@ -2533,7 +2543,14 @@ fn main() -> std::io::Result<()> {
 								None => None
 							},
 							&entry.target.attrs,
-							firmware_blob_directory_name.join(entry.source),
+							firmware_blob_directory_name.join(match entry.source {
+								SerdePspEntrySource::BlobFile(x) => x,
+								SerdePspEntrySource::Value(_) => {
+									eprintln!("Entry {:?}: It is not possible to store a literal Value into a Blob.",
+										entry.target.attrs);
+									std::process::exit(1);
+								}
+							}),
 						).unwrap();
 					},
 				}
@@ -2605,13 +2622,13 @@ fn main() -> std::io::Result<()> {
 								let buf = apcb.save_no_inc().unwrap();
 								let mut bufref = buf.as_ref();
 								bhd_directory.add_from_reader_with_custom_size(
-							                x.map(|y| y.try_into().unwrap()),
+									x.map(|y| y.try_into().unwrap()),
 									&entry.target.attrs,
-							                size.unwrap_or(bufref.len().try_into().unwrap()).try_into().unwrap(),
+									size.unwrap_or(bufref.len().try_into().unwrap()).try_into().unwrap(),
 									&mut bufref,
 									None,
 								).unwrap();
-							},
+							}
 						}
 					},
 				}

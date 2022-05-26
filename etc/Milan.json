@@ -4,7 +4,9 @@
 		"PspDirectory": {
 			"entries": [
 				{
-					"source": "AmdPubKey.tkn",
+					"source": {
+						"BlobFile": "AmdPubKey.tkn"
+					},
 					"target": {
 						"type": "AmdPublicKey",
 						"Blob": {
@@ -12,7 +14,9 @@
 					}
 				},
 				{
-					"source": "PspBootLoader.sbin",
+					"source": {
+						"BlobFile": "PspBootLoader.sbin"
+					},
 					"target": {
 						"type": "PspBootloader",
 						"Blob": {
@@ -20,7 +24,9 @@
 					}
 				},
 				{
-					"source": "PspRecoveryBootLoader.sbin",
+					"source": {
+						"BlobFile": "PspRecoveryBootLoader.sbin"
+					},
 					"target": {
 						"type": "PspRecoveryBootloader",
 						"Blob": {
@@ -28,7 +34,9 @@
 					}
 				},
 				{
-					"source": "SmuFirmware.csbin",
+					"source": {
+						"BlobFile": "SmuFirmware.csbin"
+					},
 					"target": {
 						"type": "SmuOffChipFirmware8",
 						"Blob": {
@@ -36,7 +44,9 @@
 					}
 				},
 				{
-					"source": "SecureDebugToken.stkn",
+					"source": {
+						"BlobFile": "SecureDebugToken.stkn"
+					},
 					"target": {
 						"type": "AmdSecureDebugKey",
 						"Blob": {
@@ -44,7 +54,9 @@
 					}
 				},
 				{
-					"source": "AblPubKey.bin",
+					"source": {
+						"BlobFile": "AblPubKey.bin"
+					},
 					"target": {
 						"type": "AblPublicKey",
 						"Blob": {
@@ -52,14 +64,18 @@
 					}
 				},
 				{
-					"source": "/dev/null",
+					"source": {
+						"Value": 1
+					},
 					"target": {
 						"type": "PspSoftFuseChain",
-						"Value": 1
+						"Value": null
 					}
 				},
 				{
-					"source": "SmuFirmware2.csbin",
+					"source": {
+						"BlobFile": "SmuFirmware2.csbin"
+					},
 					"target": {
 						"type": "SmuOffChipFirmware12",
 						"Blob": {
@@ -67,7 +83,9 @@
 					}
 				},
 				{
-					"source": "SecureDebugUnlock.sbin",
+					"source": {
+						"BlobFile": "SecureDebugUnlock.sbin"
+					},
 					"target": {
 						"type": "PspEarlySecureUnlockDebugImage",
 						"Blob": {
@@ -75,7 +93,9 @@
 					}
 				},
 				{
-					"source": "PspIkek.bin",
+					"source": {
+						"BlobFile": "PspIkek.bin"
+					},
 					"target": {
 						"type": "WrappedIkek",
 						"Blob": {
@@ -83,7 +103,9 @@
 					}
 				},
 				{
-					"source": "SecureEmptyToken.bin",
+					"source": {
+						"BlobFile": "SecureEmptyToken.bin"
+					},
 					"target": {
 						"type": "PspTokenUnlockData",
 						"Blob": {
@@ -91,7 +113,9 @@
 					}
 				},
 				{
-					"source": "RsmuSecPolicy.sbin",
+					"source": {
+						"BlobFile": "RsmuSecPolicy.sbin"
+					},
 					"target": {
 						"type": "SecurityPolicyBinary",
 						"Blob": {
@@ -99,7 +123,9 @@
 					}
 				},
 				{
-					"source": "Mp5.csbin",
+					"source": {
+						"BlobFile": "Mp5.csbin"
+					},
 					"target": {
 						"type": "Mp5Firmware",
 						"Blob": {
@@ -107,7 +133,9 @@
 					}
 				},
 				{
-					"source": "AgesaBootloader_U_prod.csbin",
+					"source": {
+						"BlobFile": "AgesaBootloader_U_prod.csbin"
+					},
 					"target": {
 						"type": "Abl0",
 						"Blob": {
@@ -115,7 +143,9 @@
 					}
 				},
 				{
-					"source": "PhyFw.sbin",
+					"source": {
+						"BlobFile": "PhyFw.sbin"
+					},
 					"target": {
 						"type": "DxioPhySramFirmware",
 						"Blob": {
@@ -123,7 +153,9 @@
 					}
 				},
 				{
-					"source": "PSP-Key-DB.sbin",
+					"source": {
+						"BlobFile": "PSP-Key-DB.sbin"
+					},
 					"target": {
 						"type": "PspBootloaderPublicKeysTable",
 						"Blob": {
