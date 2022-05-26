@@ -4,7 +4,7 @@ This tool builds a flash image for an AMD Zen system.
 
 # Setup
 
-First, please set up the environment such that you have the reqired AMD firmware and also the bootloader you want to use.
+First, please set up the environment such that you have the required AMD firmware and also the bootloader you want to use.
 
 This is done by executing the following commands:
 
@@ -24,13 +24,13 @@ Or, if you want to manually specify the command line:
 
 Here, the configuration file used is `etc/Milan.json`, and the reset image is `nanobl-rs/obj/nanobl-rs.elf`. Only specially-prepared ELF images can be used here. `amd-host-image-builder` extracts the sections that need to be persistent from the ELF file and stores them into the appropriate entries of the flash. Those entries will automatically be created and should NOT be specified in the JSON configuration file.
 
-The resulting image will be in `Milan.img` and can be flashed using [Humility](https://github.com/oxidecomputer/humility) or using a hardware flasher (CH341A etc).
+The resulting image will be in `Milan.img` and can be flashed using [humility qspi](https://github.com/oxidecomputer/humility)or using a hardware flasher (CH341A etc).
 
-The PSP will print debug messages to the serial port that can be configured in the settings below, see [PSP configuration].
+The PSP will print debug messages to the serial port that can be configured in the settings below, see [PSP configuration](#psp-configuration).
 
 # Configuration
 
-The configuration file is JSON. `make` also builds a schema and stores it into file `efs.schema.json`. It is recommended to use an editor that can use JSON schemas to help the author.
+The configuration file is JSON. `make` also builds a schema and stores it into file `efs.schema.json`. It is recommended to use an editor that can use JSON schemas to make editing the configuration easier.
 
 The configuration contains: processor generation, psp directory and bhd directory.
 
@@ -39,7 +39,7 @@ Each directory has any number of entries.
 Each entry has a `source` and a `target` field.
 
 Use the `source` field to specify how to construct the payload data for that entry.
-Possible fields in `source` are either `Value`, `ApcbJson` (and the inline configuration for the PSP) or `BlobFile` (and the name of a file to load and use as payload).
+Possible fields in `source` are either `Value` (and an immediate value to use), `ApcbJson` (and the inline configuration for the PSP) or `BlobFile` (and the name of a file to load and use as payload).
 
 Use the `target` field to specify where in the flash to put the result.
 Mandatory fields there are `type` (to specify what kind of entry it is supposed to go to), and either `Blob` or `Value`.
@@ -61,7 +61,7 @@ For example, there's an entry `ErrorOutControl` which you can use to configure P
 
 Under `tokens`, there's are tokens to configure later PSP messages. For example, the token `AblSerialBaudRate` configures the baud rate of the UART, `FchConsoleOutMode` to set whether PSP prints to an UART or not (0), `FchConsoleOutSerialPort` to set which UART to use (`SuperIo`, `Uart0Mmio`, or `Uart1Mmio`)--although that supposedly moved to `FchConsoleMode` in Milan.
 
-Settings should be set using the token, not the struct, if possible. The hope is that, one day, the structs will not be necessary at all anymore--and the token settings are preferred by the PSP anyhow.
+Settings should be set using the `tokens`, not the `Struct`s, if possible. The hope is that, one day, the structs will not be necessary at all anymore--and the token settings are preferred by the PSP anyhow.
 
 # Preparation of ELF files
 
