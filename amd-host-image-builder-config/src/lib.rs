@@ -1,6 +1,9 @@
 use std::path::PathBuf;
 use std::collections::BTreeMap;
 
+use amd_apcb::Apcb;
+use serde::Deserialize;
+
 use amd_efs::BhdDirectoryEntryAttrs;
 use amd_efs::EfhBulldozerSpiMode;
 use amd_efs::EfhNaplesSpiMode;
@@ -167,9 +170,18 @@ impl SerdeBhdDirectoryEntry {
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[serde(rename = "BhdSource")]
+pub enum SerdeBhdSource<'a> {
+	BlobFile(PathBuf),
+        #[serde(bound(deserialize = "Apcb<'a>: Deserialize<'de>"))]
+	ApcbJson(amd_apcb::Apcb<'a>),
+}
+
+#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "BhdEntry")]
-pub struct SerdeBhdEntry {
-	pub source: PathBuf,
+pub struct SerdeBhdEntry<'a> {
+	#[serde(bound(deserialize = "SerdeBhdSource<'a>: Deserialize<'de>"))]
+	pub source: SerdeBhdSource<'a>, // PathBuf,
 	pub target: SerdeBhdDirectoryEntry,
 }
 
@@ -193,26 +205,30 @@ pub enum SerdePspDirectoryVariant {
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "BhdDirectory")]
-pub struct SerdeBhdDirectory {
-	pub entries: Vec<SerdeBhdEntry>,
+pub struct SerdeBhdDirectory<'a> {
+	#[serde(bound(deserialize = "Vec<SerdeBhdEntry<'a>>: Deserialize<'de>"))]
+	pub entries: Vec<SerdeBhdEntry<'a>>,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "BhdComboDirectory")]
-pub struct SerdeBhdComboDirectory {
-	pub directories: BTreeMap<ComboDirectoryEntryFilter, SerdeBhdDirectory>,
+pub struct SerdeBhdComboDirectory<'a> {
+	#[serde(bound(deserialize = "BTreeMap<ComboDirectoryEntryFilter, SerdeBhdDirectory<'a>>: Deserialize<'de>"))]
+	pub directories: BTreeMap<ComboDirectoryEntryFilter, SerdeBhdDirectory<'a>>,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "BhdDirectoryVariant")]
-pub enum SerdeBhdDirectoryVariant {
-	BhdDirectory(SerdeBhdDirectory),
-	BhdComboDirectory(SerdeBhdComboDirectory),
+pub enum SerdeBhdDirectoryVariant<'a> {
+	#[serde(bound(deserialize = "SerdeBhdDirectory<'a>: Deserialize<'de>"))]
+	BhdDirectory(SerdeBhdDirectory<'a>),
+	#[serde(bound(deserialize = "SerdeBhdComboDirectory<'a>: Deserialize<'de>"))]
+	BhdComboDirectory(SerdeBhdComboDirectory<'a>),
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "Config")]
-pub struct SerdeConfig {
+pub struct SerdeConfig<'a> {
 	pub processor_generation: ProcessorGeneration,
 	#[serde(default)]
 	pub spi_mode_bulldozer: EfhBulldozerSpiMode,
@@ -221,7 +237,8 @@ pub struct SerdeConfig {
 	#[serde(default)]
 	pub spi_mode_zen_rome: EfhRomeSpiMode,
 	pub psp: SerdePspDirectoryVariant,
-	pub bhd: SerdeBhdDirectoryVariant,
+	#[serde(bound(deserialize = "SerdeBhdDirectoryVariant<'a>: Deserialize<'de>"))]
+	pub bhd: SerdeBhdDirectoryVariant<'a>,
 }
 
 #[cfg(test)]

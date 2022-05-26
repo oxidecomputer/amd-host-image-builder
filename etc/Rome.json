@@ -137,7 +137,9 @@
 		"BhdDirectory": {
 			"entries": [
 				{
-					"source": "Appb_1D_Ddr4_Udimm_Imem.csbin",
+					"source": {
+						"BlobFile": "Appb_1D_Ddr4_Udimm_Imem.csbin"
+					},
 					"target": {
 						"type": "PmuFirmwareInstructions",
 						"instance": 1,
@@ -147,7 +149,9 @@
 					}
 				},
 				{
-					"source": "Appb_1D_Ddr4_Udimm_Dmem.csbin",
+					"source": {
+						"BlobFile": "Appb_1D_Ddr4_Udimm_Dmem.csbin"
+					},
 					"target": {
 						"type": "PmuFirmwareData",
 						"instance": 1,
@@ -157,7 +161,9 @@
 					}
 				},
 				{
-					"source": "Appb_1D_Ddr4_Rdimm_Imem.csbin",
+					"source": {
+						"BlobFile": "Appb_1D_Ddr4_Rdimm_Imem.csbin"
+					},
 					"target": {
 						"type": "PmuFirmwareInstructions",
 						"instance": 2,
@@ -167,7 +173,9 @@
 					}
 				},
 				{
-					"source": "Appb_1D_Ddr4_Rdimm_Dmem.csbin",
+					"source": {
+						"BlobFile": "Appb_1D_Ddr4_Rdimm_Dmem.csbin"
+					},
 					"target": {
 						"type": "PmuFirmwareData",
 						"instance": 2,
@@ -177,7 +185,9 @@
 					}
 				},
 				{
-					"source": "Appb_2D_Ddr4_Udimm_Imem.csbin",
+					"source": {
+						"BlobFile": "Appb_2D_Ddr4_Udimm_Imem.csbin"
+					},
 					"target": {
 						"type": "PmuFirmwareInstructions",
 						"instance": 4,
@@ -187,7 +197,9 @@
 					}
 				},
 				{
-					"source": "Appb_2D_Ddr4_Udimm_Dmem.csbin",
+					"source": {
+						"BlobFile": "Appb_2D_Ddr4_Udimm_Dmem.csbin"
+					},
 					"target": {
 						"type": "PmuFirmwareData",
 						"instance": 4,
@@ -197,7 +209,9 @@
 					}
 				},
 				{
-					"source": "Appb_2D_Ddr4_Rdimm_Imem.csbin",
+					"source": {
+						"BlobFile": "Appb_2D_Ddr4_Rdimm_Imem.csbin"
+					},
 					"target": {
 						"type": "PmuFirmwareInstructions",
 						"instance": 5,
@@ -207,7 +221,9 @@
 					}
 				},
 				{
-					"source": "Appb_2D_Ddr4_Rdimm_Dmem.csbin",
+					"source": {
+						"BlobFile": "Appb_2D_Ddr4_Rdimm_Dmem.csbin"
+					},
 					"target": {
 						"type": "PmuFirmwareData",
 						"instance": 5,

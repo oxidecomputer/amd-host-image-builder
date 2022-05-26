@@ -8,6 +8,7 @@ use amd_host_image_builder_config::{
 	SerdeBhdDirectoryEntryBody,
 	SerdePspDirectoryVariant,
 	SerdeBhdDirectoryVariant,
+	SerdeBhdSource,
 	Result,
 	Error,
 };
@@ -442,6 +443,7 @@ fn bhd_directory_add_reset_image(
 	Ok(())
 }
 
+/*
 fn bhd_add_apcb(
 	processor_generation: ProcessorGeneration,
 	bhd_directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
@@ -484,8 +486,8 @@ fn bhd_add_apcb(
 	let mut buf: [u8; Apcb::MAX_SIZE] = [0xff; Apcb::MAX_SIZE];
 	let mut apcb = Apcb::create(
 		&mut buf,
-		1,                         /*FIXME*/
-		&ApcbIoOptions::default(), /*FIXME*/
+		1,                         //FIXME
+		&ApcbIoOptions::default(), //FIXME
 	)?;
 	apcb.insert_group(GroupId::Memory, *b"MEMG")?;
 	apcb.insert_struct_array_as_entry::<DimmInfoSmbusElement>(
@@ -2427,6 +2429,7 @@ fn bhd_add_apcb(
 
 	Ok(())
 }
+*/
 
 #[derive(Debug, StructOpt)]
 #[structopt(
@@ -2444,13 +2447,13 @@ struct Opts {
 	efs_configuration_filename: PathBuf,
 }
 
-fn read_config_from_file<P: AsRef<Path> + std::fmt::Debug>(path: P) -> Result<SerdeConfig> { // , Box<Error>
-	//eprintln!("config_from_file {:?}", path);
-	let file = File::open(path).unwrap();
-	let reader = BufReader::new(file);
-	let result = serde_yaml::from_reader(reader).unwrap();
-	Ok(result)
-}
+//fn read_config_from_file<P: AsRef<Path> + std::fmt::Debug>(path: P) -> Result<SerdeConfig<'_>> { // , Box<Error>
+//	//eprintln!("config_from_file {:?}", path);
+//	let file = File::open(path).unwrap();
+//	let reader = BufReader::new(file);
+//	let result = serde_yaml::from_reader(reader).unwrap();
+//	Ok(result)
+//}
 
 fn main() -> std::io::Result<()> {
 	//let args: Vec<String> = env::args().collect();
@@ -2474,7 +2477,13 @@ fn main() -> std::io::Result<()> {
 		position = position.advance(ERASABLE_BLOCK_SIZE).unwrap();
 	}
 	assert!(Location::from(position) == IMAGE_SIZE);
-	let config = read_config_from_file(Path::new(&opts.efs_configuration_filename)).unwrap();
+	let path = Path::new(&opts.efs_configuration_filename);
+	//let reader = BufReader::new(file);
+        let data = std::fs::read_to_string(path)?;
+        let config: SerdeConfig = serde_json::from_str(&data).unwrap();
+        //let config = serde_yaml::from_reader(reader).unwrap();
+
+	//let config = read_config_from_file(path).unwrap();
 	let SerdeConfig {
 		processor_generation,
 		spi_mode_bulldozer,
@@ -2624,6 +2633,7 @@ fn main() -> std::io::Result<()> {
 		)
 		.unwrap();
 
+/*
 	bhd_add_apcb(
 		host_processor_generation,
 		&mut bhd_directory,
@@ -2645,6 +2655,7 @@ fn main() -> std::io::Result<()> {
 			}
 		}
 	);
+*/
 
 	match bhd {
 		SerdeBhdDirectoryVariant::BhdDirectory(serde_bhd_directory) => {
@@ -2657,16 +2668,31 @@ fn main() -> std::io::Result<()> {
 							Some(x) => Some(x.try_into().unwrap()),
 							None => None
 						};
-						bhd_entry_add_from_file(
-							&mut bhd_directory,
-							match x {
-								Some(x) => Some(x.try_into().unwrap()),
-								None => None
+						match entry.source {
+							SerdeBhdSource::BlobFile(blob_filename) => {
+								bhd_entry_add_from_file(
+									&mut bhd_directory,
+									match x {
+										Some(x) => Some(x.try_into().unwrap()),
+										None => None
+									},
+									&entry.target.attrs,
+									firmware_blob_directory_name.join(blob_filename),
+									ram_destination_address
+								).unwrap();
+							}
+							SerdeBhdSource::ApcbJson(apcb) => {
+								let buf = apcb.save().unwrap();
+								let mut bufref = buf.as_ref();
+								bhd_directory.add_from_reader_with_custom_size(
+							                x.map(|y| y.try_into().unwrap()),
+									&entry.target.attrs,
+							                size.unwrap_or(bufref.len().try_into().unwrap()).try_into().unwrap(),
+									&mut bufref,
+									None,
+								).unwrap();
 							},
-							&entry.target.attrs,
-							firmware_blob_directory_name.join(entry.source),
-							ram_destination_address
-						).unwrap();
+						}
 					},
 				}
 			}
