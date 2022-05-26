@@ -15,6 +15,8 @@ Or, if you want to manually specify the command line:
 
     target/amd-host-image-builder -c etc/Milan.json -r nanobl-rs/obj/nanobl-rs.elf -o Milan.img
 
+Here, the configuration file used is `etc/Milan.json`, and the reset image is `nanobl-rs/obj/nanobl-rs.elf`. Only specially-prepared ELF images can be used here. `amd-host-image-builder` extracts the sections that need to be persistent from the ELF file and stores them into the appropriate entry of the flash.
+
 The resulting image will be in `Milan.img` and can be flashed using [Humility](https://github.com/oxidecomputer/humility) or using a hardware flasher (CH341A etc).
 
 The PSP will print debug messages to the serial port that can be configured in the settings below, see [PSP configuration].
@@ -53,3 +55,17 @@ For example, there's an entry `ErrorOutControl` which you can use to configure P
 Under `tokens`, there's are tokens to configure later PSP messages. For example, the token `AblSerialBaudRate` configures the baud rate of the UART, `FchConsoleOutMode` to set whether PSP prints to an UART or not (0), `FchConsoleOutSerialPort` to set which UART to use (`SuperIo`, `Uart0Mmio`, or `Uart1Mmio`)--although that supposedly moved to `FchConsoleMode` in Milan.
 
 Settings should be set using the token, not the struct, if possible. The hope is that one day, the structs will not be necessary at all anymore--and the token settings are preferred by the PSP anyhow.
+
+# Preparation of ELF files
+
+The PSP loads the reset image into memory like specified in the ELF file.
+
+Afterwards, the PSP will start the x86 CPU in real mode, and that CPU will start executing 16 Byte from the *end* of the reset image.
+
+That means that the ELF entry point needs to be 16 bytes from the end of the last segment--and that part needs to contain machine code that's valid for real mode.
+
+Also, the ELF file needs to be linked in a way that it actually specified *physical* addresses. After all, there's no MMU set up yet--no so virtual addresses make any sense.
+
+There should be ELF symbols `_BL_SPACE`, `__sloader` and `__eloader` available. Those are the expected start address of your program, the expected end address of your program, and the size of your loader program, respectively. The values of those special symbols are checked by `amd-host-image-builder` and it will fail if those are not what is expected.
+
+As a special bringup help, right now, it's also possible to specify a non-ELF file. In that case, it will be put into x86 RAM such that it's right before address 0x8000_0000). Other checks are not done--you are on your own. We reserve the right to remove this weird non-ELF file support at any point.
