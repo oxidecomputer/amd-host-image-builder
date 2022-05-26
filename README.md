@@ -14,7 +14,7 @@ This is done by executing the following commands:
 # Usage
 
 Then edit `etc/Milan.json` (or similar configuration file) to your liking.
-Then, build an image for Milan.img by the following commands:
+Then, build an image for Milan by the following commands:
 
     make milan
 
