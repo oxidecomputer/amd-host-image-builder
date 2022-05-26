@@ -2682,7 +2682,7 @@ fn main() -> std::io::Result<()> {
 								).unwrap();
 							}
 							SerdeBhdSource::ApcbJson(apcb) => {
-								let buf = apcb.save().unwrap();
+								let buf = apcb.save_no_inc().unwrap();
 								let mut bufref = buf.as_ref();
 								bhd_directory.add_from_reader_with_custom_size(
 							                x.map(|y| y.try_into().unwrap()),
