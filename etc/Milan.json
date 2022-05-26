@@ -255,11 +255,6 @@
 										"context_format": "Raw",
 										"unit_size": "0x00",
 										"priority_mask": {
-											"hard_force": false,
-											"high": false,
-											"medium": false,
-											"event_logging": false,
-											"low": false,
 											"normal": true
 										},
 										"key_size": "0x00",
@@ -599,11 +594,6 @@
 										"context_format": "Raw",
 										"unit_size": "0x00",
 										"priority_mask": {
-											"hard_force": false,
-											"high": false,
-											"medium": false,
-											"event_logging": false,
-											"low": false,
 											"normal": true
 										},
 										"key_size": "0x00",
@@ -765,11 +755,6 @@
 										"context_format": "Raw",
 										"unit_size": "0x00",
 										"priority_mask": {
-											"hard_force": false,
-											"high": false,
-											"medium": false,
-											"event_logging": false,
-											"low": false,
 											"normal": true
 										},
 										"key_size": "0x00",
@@ -1093,11 +1078,6 @@
 										"context_format": "Raw",
 										"unit_size": "0x00",
 										"priority_mask": {
-											"hard_force": false,
-											"high": false,
-											"medium": false,
-											"event_logging": false,
-											"low": false,
 											"normal": true
 										},
 										"key_size": "0x00",
@@ -2377,11 +2357,6 @@
 										"context_format": "Raw",
 										"unit_size": "0x00",
 										"priority_mask": {
-											"hard_force": false,
-											"high": false,
-											"medium": false,
-											"event_logging": false,
-											"low": false,
 											"normal": true
 										},
 										"key_size": "0x00",
@@ -2831,11 +2806,6 @@
 										"context_format": "Raw",
 										"unit_size": "0x00",
 										"priority_mask": {
-											"hard_force": false,
-											"high": false,
-											"medium": false,
-											"event_logging": false,
-											"low": false,
 											"normal": true
 										},
 										"key_size": "0x00",
@@ -3009,11 +2979,6 @@
 										"context_format": "Raw",
 										"unit_size": "0x00",
 										"priority_mask": {
-											"hard_force": false,
-											"high": false,
-											"medium": false,
-											"event_logging": false,
-											"low": false,
 											"normal": true
 										},
 										"key_size": "0x00",
@@ -3187,11 +3152,6 @@
 										"context_format": "Raw",
 										"unit_size": "0x00",
 										"priority_mask": {
-											"hard_force": false,
-											"high": false,
-											"medium": false,
-											"event_logging": false,
-											"low": false,
 											"normal": true
 										},
 										"key_size": "0x00",
@@ -3277,11 +3237,6 @@
 										"context_format": "Raw",
 										"unit_size": "0x00",
 										"priority_mask": {
-											"hard_force": false,
-											"high": false,
-											"medium": false,
-											"event_logging": false,
-											"low": false,
 											"normal": true
 										},
 										"key_size": "0x00",
@@ -3367,11 +3322,6 @@
 										"context_format": "Raw",
 										"unit_size": "0x00",
 										"priority_mask": {
-											"hard_force": false,
-											"high": false,
-											"medium": false,
-											"event_logging": false,
-											"low": false,
 											"normal": true
 										},
 										"key_size": "0x00",
@@ -3563,11 +3513,6 @@
 										"context_format": "Raw",
 										"unit_size": "0x00",
 										"priority_mask": {
-											"hard_force": false,
-											"high": false,
-											"medium": false,
-											"event_logging": false,
-											"low": false,
 											"normal": true
 										},
 										"key_size": "0x00",
@@ -3606,11 +3551,6 @@
 										"context_format": "Raw",
 										"unit_size": "0x00",
 										"priority_mask": {
-											"hard_force": false,
-											"high": false,
-											"medium": false,
-											"event_logging": false,
-											"low": false,
 											"normal": true
 										},
 										"key_size": "0x00",
@@ -3747,11 +3687,6 @@
 										"context_format": "Raw",
 										"unit_size": "0x00",
 										"priority_mask": {
-											"hard_force": false,
-											"high": false,
-											"medium": false,
-											"event_logging": false,
-											"low": false,
 											"normal": true
 										},
 										"key_size": "0x00",
@@ -3789,11 +3724,6 @@
 										"context_format": "Raw",
 										"unit_size": "0x00",
 										"priority_mask": {
-											"hard_force": false,
-											"high": false,
-											"medium": false,
-											"event_logging": false,
-											"low": false,
 											"normal": true
 										},
 										"key_size": "0x00",
@@ -3828,11 +3758,6 @@
 										"context_format": "SortAscending",
 										"unit_size": "0x08",
 										"priority_mask": {
-											"hard_force": false,
-											"high": false,
-											"medium": false,
-											"event_logging": false,
-											"low": false,
 											"normal": true
 										},
 										"key_size": "0x04",
@@ -4172,11 +4097,6 @@
 										"context_format": "SortAscending",
 										"unit_size": "0x08",
 										"priority_mask": {
-											"hard_force": false,
-											"high": false,
-											"medium": false,
-											"event_logging": false,
-											"low": false,
 											"normal": true
 										},
 										"key_size": "0x04",
@@ -4635,11 +4555,6 @@
 										"context_format": "SortAscending",
 										"unit_size": "0x08",
 										"priority_mask": {
-											"hard_force": false,
-											"high": false,
-											"medium": false,
-											"event_logging": false,
-											"low": false,
 											"normal": true
 										},
 										"key_size": "0x04",
@@ -4731,11 +4646,6 @@
 										"context_format": "SortAscending",
 										"unit_size": "0x08",
 										"priority_mask": {
-											"hard_force": false,
-											"high": false,
-											"medium": false,
-											"event_logging": false,
-											"low": false,
 											"normal": true
 										},
 										"key_size": "0x04",
