@@ -5869,10 +5869,11 @@
 						"type": "ApcbBackup",
 						"sub_program": 1,
 						"Blob": {
+							"size": 9216
 						}
 					}
 				},
-  			{
+				{
 					"source": {
 						"BlobFile": "Appb_1D_Ddr4_Udimm_Imem.csbin"
 					},

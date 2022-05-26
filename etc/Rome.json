@@ -5868,6 +5868,7 @@
 						"type": "ApcbBackup",
 						"sub_program": 0,
 						"Blob": {
+							"size": 9216
 						}
 					}
 				},
