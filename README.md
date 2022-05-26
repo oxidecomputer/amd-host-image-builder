@@ -2,14 +2,21 @@
 
 This tool builds a flash image for an AMD Zen system.
 
-# Usage
+# Setup
 
-First, edit `etc/Milan.json` (or similar configuration file).
-Then, build an image by the following commands:
+First, please set up the environment such that you have the reqired AMD firmware and also the bootloader you want to use.
+
+This is done by executing the following commands:
 
     git submodule init
     git submodule update
-    make
+
+# Usage
+
+Then edit `etc/Milan.json` (or similar configuration file) to your liking.
+Then, build an image for Milan.img by the following commands:
+
+    make milan
 
 Or, if you want to manually specify the command line:
 
