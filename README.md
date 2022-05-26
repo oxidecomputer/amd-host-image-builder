@@ -61,7 +61,7 @@ For example, there's an entry `ErrorOutControl` which you can use to configure P
 
 Under `tokens`, there's are tokens to configure later PSP messages. For example, the token `AblSerialBaudRate` configures the baud rate of the UART, `FchConsoleOutMode` to set whether PSP prints to an UART or not (0), `FchConsoleOutSerialPort` to set which UART to use (`SuperIo`, `Uart0Mmio`, or `Uart1Mmio`)--although that supposedly moved to `FchConsoleMode` in Milan.
 
-Settings should be set using the token, not the struct, if possible. The hope is that one day, the structs will not be necessary at all anymore--and the token settings are preferred by the PSP anyhow.
+Settings should be set using the token, not the struct, if possible. The hope is that, one day, the structs will not be necessary at all anymore--and the token settings are preferred by the PSP anyhow.
 
 # Preparation of ELF files
 
