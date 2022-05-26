@@ -32,7 +32,7 @@ pub type Result<T> = core::result::Result<T, Error>;
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub enum SerdePspDirectoryEntryBody {
-	Value(u64),
+	Value,
 	Blob {
 		#[serde(default)]
 		flash_location: Option<Location>,
@@ -62,9 +62,16 @@ pub struct SerdePspDirectoryEntry {
 
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[serde(rename = "PspEntrySource")]
+pub enum SerdePspEntrySource {
+	Value(u64),
+        BlobFile(PathBuf),
+}
+
+#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "PspEntry")]
 pub struct SerdePspEntry {
-	pub source: PathBuf,
+	pub source: SerdePspEntrySource,
 	pub target: SerdePspDirectoryEntry,
 }
 
