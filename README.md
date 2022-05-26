@@ -71,7 +71,7 @@ Afterwards, the PSP will start the x86 CPU in real mode, and that CPU will start
 
 That means that the ELF entry point needs to be 16 bytes from the end of the last segment--and that part needs to contain machine code that's valid for real mode.
 
-Also, the ELF file needs to be linked in a way that it actually specified *physical* addresses. After all, there's no MMU set up yet--no so virtual addresses make any sense.
+Also, the ELF file needs to be linked in a way that it actually specified *physical* addresses. After all, there's no MMU set up yet--so virtual addresses don't make any sense (and we expect each virtual address to be equal to the same physical address for our purposes).
 
 There should be ELF symbols `_BL_SPACE`, `__sloader` and `__eloader` available. Those are the expected start address of your program, the expected end address of your program, and the size of your loader program, respectively. The values of those special symbols are checked by `amd-host-image-builder` and it will fail if those are not what is expected.
 
