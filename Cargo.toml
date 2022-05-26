@@ -7,7 +7,7 @@ build = "build/main.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-amd-apcb = { git = "ssh://git@github.com/oxidecomputer/amd-apcb.git", rev = "6d12c1f16f5b9cfb13dee574fa80a5b79babb8b9", features = [] }
+amd-apcb = { git = "ssh://git@github.com/oxidecomputer/amd-apcb.git", rev = "fa12f378a4b6470e6481631c66f196f71c62e507", features = [] }
 amd-efs = { git = "ssh://git@github.com/oxidecomputer/amd-efs.git", rev = "68037041ace74da9519593c1cdeb9e17457c2199", features = ["std"] }
 amd-flash = { git = "ssh://git@github.com/oxidecomputer/amd-flash.git", branch = "main" }
 goblin = { version = "0.4", features = ["elf64", "endian_fd"] }
@@ -17,7 +17,7 @@ structopt = "0.3"
 amd-host-image-builder-config = { path = "amd-host-image-builder-config" }
 
 [build-dependencies]
-amd-apcb = { git = "ssh://git@github.com/oxidecomputer/amd-apcb.git", rev = "6d12c1f16f5b9cfb13dee574fa80a5b79babb8b9", features = [] }
+amd-apcb = { git = "ssh://git@github.com/oxidecomputer/amd-apcb.git", rev = "fa12f378a4b6470e6481631c66f196f71c62e507", features = [] }
 amd-efs = { git = "ssh://git@github.com/oxidecomputer/amd-efs.git", rev = "68037041ace74da9519593c1cdeb9e17457c2199", features = ["std"] }
 amd-host-image-builder-config = { path = "amd-host-image-builder-config" }
 schemars = "0.8.8"
