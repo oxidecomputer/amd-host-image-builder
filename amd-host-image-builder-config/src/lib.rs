@@ -31,19 +31,16 @@ pub type Result<T> = core::result::Result<T, Error>;
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
-pub enum SerdePspDirectoryEntryBody {
-	Value,
-	Blob {
-		#[serde(default)]
-		flash_location: Option<Location>,
-		#[serde(default)]
-		size: Option<u32>, // FIXME u64
-	}
+pub struct SerdePspDirectoryEntryBlob {
+	#[serde(default)]
+	pub flash_location: Option<Location>,
+	#[serde(default)]
+	pub size: Option<u32>, // FIXME u64
 }
 
-impl Default for SerdePspDirectoryEntryBody {
+impl Default for SerdePspDirectoryEntryBlob {
 	fn default() -> Self {
-		Self::Blob {
+		Self {
 			flash_location: None,
 			size: None,
 		}
@@ -56,8 +53,8 @@ pub struct SerdePspDirectoryEntry {
 	#[serde(flatten)]
 	pub attrs: PspDirectoryEntryAttrs,
 	#[serde(flatten)]
-	#[serde(default)]
-	pub body: SerdePspDirectoryEntryBody,
+	//#[serde(default)]
+	pub blob: Option<SerdePspDirectoryEntryBlob>,
 }
 
 
@@ -76,17 +73,15 @@ pub struct SerdePspEntry {
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
-#[serde(rename = "BhdDirectoryEntryBody")]
+#[serde(rename = "BhdDirectoryEntryBlob")]
 #[serde(deny_unknown_fields)]
-pub enum SerdeBhdDirectoryEntryBody {
-	Blob {
-		#[serde(default)]
-		flash_location: Option<Location>,
-		#[serde(default)]
-		size: Option<u32>, // FIXME u64 ?
-		#[serde(default)]
-		ram_destination_address: Option<u64>,
-	}
+pub struct SerdeBhdDirectoryEntryBlob {
+	#[serde(default)]
+	pub flash_location: Option<Location>,
+	#[serde(default)]
+	pub size: Option<u32>, // FIXME u64 ?
+	#[serde(default)]
+	pub ram_destination_address: Option<u64>,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
@@ -96,12 +91,12 @@ pub struct SerdeBhdDirectoryEntry {
 	pub attrs: BhdDirectoryEntryAttrs,
 	#[serde(flatten)]
 	#[serde(default)]
-	pub body: SerdeBhdDirectoryEntryBody,
+	pub blob: Option<SerdeBhdDirectoryEntryBlob>,
 }
 
-impl Default for SerdeBhdDirectoryEntryBody {
+impl Default for SerdeBhdDirectoryEntryBlob {
 	fn default() -> Self {
-		Self::Blob {
+		Self {
 			flash_location: None,
 			size: None,
 			ram_destination_address: None,
