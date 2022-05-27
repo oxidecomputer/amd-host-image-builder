@@ -31,7 +31,7 @@ fn main() {
 
 	if let Err(errors) = schema_validator.validate(&configuration_json) {
 		for error in errors {
-			eprintln!("validation error: {:#?}", error);
+			eprintln!("{}: validation error: {}", error.instance_path, error);
 		}
 		std::process::exit(2);
 	};
