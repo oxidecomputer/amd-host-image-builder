@@ -3,6 +3,7 @@ mod config_schema;
 use std::env;
 use std::fs::{self};
 use std::process;
+use valico::json_schema;
 
 fn main() {
 	// OUT_DIR is set by Cargo and it's where any additional build artifacts
@@ -28,12 +29,15 @@ fn main() {
 	let configuration_str = std::fs::read_to_string(configuration_filename).unwrap();
 	let configuration_json: serde_json::Value = serde_json::from_str(&configuration_str).unwrap();
 
-	let schema_validator = jsonschema_valid::Config::from_schema(&schema_json, Some(jsonschema_valid::schemas::Draft::Draft6)).unwrap();
+	let mut scope = json_schema::Scope::new();
+	let schema_validator = scope.compile_and_return(schema_json.clone(), false/* ban unknown; would fail on 'unpopulated' */).unwrap();
+	let state = schema_validator.validate(&configuration_json);
 
-	if let Err(errors) = schema_validator.validate(&configuration_json) {
+	if !state.is_valid() {
+		let errors = state.errors;
 		for error in errors {
-			eprintln!("validation error: {}", error);
+			eprintln!("validation error: {}, {}, {:#?}", error, error.get_title(), error.get_detail());
 		}
 		std::process::exit(2);
-	};
+	}
 }
