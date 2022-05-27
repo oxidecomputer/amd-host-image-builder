@@ -8,9 +8,7 @@
 						"BlobFile": "AmdPubKey.tkn"
 					},
 					"target": {
-						"type": "AmdPublicKey",
-						"Blob": {
-						}
+						"type": "AmdPublicKey"
 					}
 				},
 				{
@@ -18,9 +16,7 @@
 						"BlobFile": "PspBootLoader.sbin"
 					},
 					"target": {
-						"type": "PspBootloader",
-						"Blob": {
-						}
+						"type": "PspBootloader"
 					}
 				},
 				{
@@ -28,9 +24,7 @@
 						"BlobFile": "PspRecoveryBootLoader.sbin"
 					},
 					"target": {
-						"type": "PspRecoveryBootloader",
-						"Blob": {
-						}
+						"type": "PspRecoveryBootloader"
 					}
 				},
 				{
@@ -38,9 +32,7 @@
 						"BlobFile": "SmuFirmware.csbin"
 					},
 					"target": {
-						"type": "SmuOffChipFirmware8",
-						"Blob": {
-						}
+						"type": "SmuOffChipFirmware8"
 					}
 				},
 				{
@@ -48,9 +40,7 @@
 						"BlobFile": "AblPubKey.bin"
 					},
 					"target": {
-						"type": "AblPublicKey",
-						"Blob": {
-						}
+						"type": "AblPublicKey"
 					}
 				},
 				{
@@ -67,9 +57,7 @@
 						"BlobFile": "SmuFirmware2.csbin"
 					},
 					"target": {
-						"type": "SmuOffChipFirmware12",
-						"Blob": {
-						}
+						"type": "SmuOffChipFirmware12"
 					}
 				},
 				{
@@ -77,9 +65,7 @@
 						"BlobFile": "SecureDebugUnlock.sbin"
 					},
 					"target": {
-						"type": "PspEarlySecureUnlockDebugImage",
-						"Blob": {
-						}
+						"type": "PspEarlySecureUnlockDebugImage"
 					}
 				},
 				{
@@ -87,9 +73,7 @@
 						"BlobFile": "PspIkek.bin"
 					},
 					"target": {
-						"type": "WrappedIkek",
-						"Blob": {
-						}
+						"type": "WrappedIkek"
 					}
 				},
 				{
@@ -97,9 +81,7 @@
 						"BlobFile": "SecureEmptyToken.bin"
 					},
 					"target": {
-						"type": "PspTokenUnlockData",
-						"Blob": {
-						}
+						"type": "PspTokenUnlockData"
 					}
 				},
 				{
@@ -107,9 +89,7 @@
 						"BlobFile": "RsmuSecPolicy.sbin"
 					},
 					"target": {
-						"type": "SecurityPolicyBinary",
-						"Blob": {
-						}
+						"type": "SecurityPolicyBinary"
 					}
 				},
 				{
@@ -117,9 +97,7 @@
 						"BlobFile": "Mp5.csbin"
 					},
 					"target": {
-						"type": "Mp5Firmware",
-						"Blob": {
-						}
+						"type": "Mp5Firmware"
 					}
 				},
 				{
@@ -127,9 +105,7 @@
 						"BlobFile": "AgesaBootloader_U_prod.csbin"
 					},
 					"target": {
-						"type": "Abl0",
-						"Blob": {
-						}
+						"type": "Abl0"
 					}
 				},
 				{
@@ -137,9 +113,7 @@
 						"BlobFile": "PhyFw.sbin"
 					},
 					"target": {
-						"type": "DxioPhySramFirmware",
-						"Blob": {
-						}
+						"type": "DxioPhySramFirmware"
 					}
 				},
 				{
@@ -147,9 +121,7 @@
 						"BlobFile": "PhyFwSb4kr.stkn"
 					},
 					"target": {
-						"type": "DxioPhySramPublicKey",
-						"Blob": {
-						}
+						"type": "DxioPhySramPublicKey"
 					}
 				},
 				{
@@ -157,9 +129,7 @@
 						"BlobFile": "Starship-PMU-FW.stkn"
 					},
 					"target": {
-						"type": "PmuPublicKey",
-						"Blob": {
-						}
+						"type": "PmuPublicKey"
 					}
 				}
 			]
@@ -4824,9 +4794,7 @@
 					"target": {
 						"type": "PmuFirmwareInstructions",
 						"instance": 1,
-						"sub_program": 1,
-						"Blob": {
-						}
+						"sub_program": 1
 					}
 				},
 				{
@@ -4836,9 +4804,7 @@
 					"target": {
 						"type": "PmuFirmwareData",
 						"instance": 1,
-						"sub_program": 1,
-						"Blob": {
-						}
+						"sub_program": 1
 					}
 				},
 				{
@@ -4848,9 +4814,7 @@
 					"target": {
 						"type": "PmuFirmwareInstructions",
 						"instance": 2,
-						"sub_program": 1,
-						"Blob": {
-						}
+						"sub_program": 1
 					}
 				},
 				{
@@ -4860,9 +4824,7 @@
 					"target": {
 						"type": "PmuFirmwareData",
 						"instance": 2,
-						"sub_program": 1,
-						"Blob": {
-						}
+						"sub_program": 1
 					}
 				},
 				{
@@ -4872,9 +4834,7 @@
 					"target": {
 						"type": "PmuFirmwareInstructions",
 						"instance": 4,
-						"sub_program": 1,
-						"Blob": {
-						}
+						"sub_program": 1
 					}
 				},
 				{
@@ -4884,9 +4844,7 @@
 					"target": {
 						"type": "PmuFirmwareData",
 						"instance": 4,
-						"sub_program": 1,
-						"Blob": {
-						}
+						"sub_program": 1
 					}
 				},
 				{
@@ -4896,9 +4854,7 @@
 					"target": {
 						"type": "PmuFirmwareInstructions",
 						"instance": 5,
-						"sub_program": 1,
-						"Blob": {
-						}
+						"sub_program": 1
 					}
 				},
 				{
@@ -4908,9 +4864,7 @@
 					"target": {
 						"type": "PmuFirmwareData",
 						"instance": 5,
-						"sub_program": 1,
-						"Blob": {
-						}
+						"sub_program": 1
 					}
 				}
 			]

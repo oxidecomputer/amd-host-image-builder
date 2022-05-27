@@ -4,8 +4,8 @@ use amd_efs::{
 	DirectoryEntry, AddressMode,
 };
 use amd_host_image_builder_config::{
-	SerdePspDirectoryEntryBody,
-	SerdeBhdDirectoryEntryBody,
+	SerdePspDirectoryEntryBlob,
+	SerdeBhdDirectoryEntryBlob,
 	SerdePspDirectoryVariant,
 	SerdeBhdDirectoryVariant,
 	SerdeBhdSource,
@@ -2512,30 +2512,25 @@ fn main() -> std::io::Result<()> {
 	match psp {
 		SerdePspDirectoryVariant::PspDirectory(serde_psp_directory) => {
 			for entry in serde_psp_directory.entries {
-				//eprintln!("{:?}", entry);
-				let body = entry.target.body;
+				//eprintln!("{:?}", entry.target.attrs);
+				let blob_slot_settings = entry.target.blob;
+				// blob_slot_settings is optional.
+				// Value means no blob slot settings allowed
 
-				match body {
-					SerdePspDirectoryEntryBody::Value => {
-						match entry.source {
-							SerdePspEntrySource::Value(x) => {
-								psp_directory.add_value_entry(
-									&entry.target.attrs,
-									x, // TODO: Nicer type.
-								).unwrap();
-							}
-							SerdePspEntrySource::BlobFile(_) => {
-								eprintln!("{:?}: It is not possible to store a Blob into a literal Value.",
-									entry.target.attrs);
-								std::process::exit(1);
-							}
-						}
-					},
-					SerdePspDirectoryEntryBody::Blob { flash_location, size } => {
-						let x: Option<Location> = match flash_location {
-							Some(x) => Some(x.try_into().unwrap()),
-							None => None
+				match entry.source {
+					SerdePspEntrySource::Value(x) => {
+						// FIXME: assert!(blob_slot_settings.is_none()); fails for some reason
+						psp_directory.add_value_entry(
+							&entry.target.attrs,
+							x, // TODO: Nicer type.
+						).unwrap();
+					}
+					SerdePspEntrySource::BlobFile(blob_filename) => {
+						let (flash_location, size) = match blob_slot_settings {
+							Some(x) => (x.flash_location, x.size),
+							None => (None, None)
 						};
+						let x: Option<Location> = flash_location.map(|x| x.try_into().unwrap());
 						psp_entry_add_from_file(
 							&mut psp_directory,
 							match x {
@@ -2543,14 +2538,7 @@ fn main() -> std::io::Result<()> {
 								None => None
 							},
 							&entry.target.attrs,
-							firmware_blob_directory_name.join(match entry.source {
-								SerdePspEntrySource::BlobFile(x) => x,
-								SerdePspEntrySource::Value(_) => {
-									eprintln!("Entry {:?}: It is not possible to store a literal Value into a Blob.",
-										entry.target.attrs);
-									std::process::exit(1);
-								}
-							}),
+							firmware_blob_directory_name.join(blob_filename),
 						).unwrap();
 					},
 				}
@@ -2597,40 +2585,36 @@ fn main() -> std::io::Result<()> {
 	match bhd {
 		SerdeBhdDirectoryVariant::BhdDirectory(serde_bhd_directory) => {
 			for entry in serde_bhd_directory.entries {
-				let body = entry.target.body;
-
-				match body {
-					SerdeBhdDirectoryEntryBody::Blob { flash_location, size, ram_destination_address } => {
-						let x: Option<Location> = match flash_location {
-							Some(x) => Some(x.try_into().unwrap()),
-							None => None
-						};
-						match entry.source {
-							SerdeBhdSource::BlobFile(blob_filename) => {
-								bhd_entry_add_from_file(
-									&mut bhd_directory,
-									match x {
-										Some(x) => Some(x.try_into().unwrap()),
-										None => None
-									},
-									&entry.target.attrs,
-									firmware_blob_directory_name.join(blob_filename),
-									ram_destination_address
-								).unwrap();
-							}
-							SerdeBhdSource::ApcbJson(apcb) => {
-								let buf = apcb.save_no_inc().unwrap();
-								let mut bufref = buf.as_ref();
-								bhd_directory.add_from_reader_with_custom_size(
-									x.map(|y| y.try_into().unwrap()),
-									&entry.target.attrs,
-									size.unwrap_or(bufref.len().try_into().unwrap()).try_into().unwrap(),
-									&mut bufref,
-									None,
-								).unwrap();
-							}
-						}
-					},
+				let blob_slot_settings = entry.target.blob;
+				let (flash_location, size, ram_destination_address) = match blob_slot_settings {
+					Some(x) => (x.flash_location, x.size, x.ram_destination_address),
+					None => (None, None, None)
+				};
+				let x: Option<Location> = flash_location.map(|x| x.try_into().unwrap());
+				match entry.source {
+					SerdeBhdSource::BlobFile(blob_filename) => {
+						bhd_entry_add_from_file(
+							&mut bhd_directory,
+							match x {
+								Some(x) => Some(x.try_into().unwrap()),
+								None => None
+							},
+							&entry.target.attrs,
+							firmware_blob_directory_name.join(blob_filename),
+							ram_destination_address
+						).unwrap();
+					}
+					SerdeBhdSource::ApcbJson(apcb) => {
+						let buf = apcb.save_no_inc().unwrap();
+						let mut bufref = buf.as_ref();
+						bhd_directory.add_from_reader_with_custom_size(
+							x.map(|y| y.try_into().unwrap()),
+							&entry.target.attrs,
+							size.unwrap_or(bufref.len().try_into().unwrap()).try_into().unwrap(),
+							&mut bufref,
+							None,
+						).unwrap();
+					}
 				}
 			}
 		}
