@@ -3,7 +3,6 @@ mod config_schema;
 use std::env;
 use std::fs::{self};
 use std::process;
-use jsonschema::JSONSchema;
 
 fn main() {
 	// OUT_DIR is set by Cargo and it's where any additional build artifacts
@@ -23,15 +22,17 @@ fn main() {
 	let schema_filename = format!("{}/{}", out_dir.into_string().unwrap(), "efs.schema.json");
 	let schema_str = std::fs::read_to_string(schema_filename).unwrap();
 	let schema_json: serde_json::Value = serde_json::from_str(&schema_str).unwrap();
-	let schema_validator = JSONSchema::compile(&schema_json).unwrap();
+	//let schema_validator = JSONSchema::compile(&schema_json).unwrap();
 
 	let configuration_filename = "etc/Milan.json";
 	let configuration_str = std::fs::read_to_string(configuration_filename).unwrap();
 	let configuration_json: serde_json::Value = serde_json::from_str(&configuration_str).unwrap();
 
+	let schema_validator = jsonschema_valid::Config::from_schema(&schema_json, Some(jsonschema_valid::schemas::Draft::Draft6)).unwrap();
+
 	if let Err(errors) = schema_validator.validate(&configuration_json) {
 		for error in errors {
-			eprintln!("{}: validation error: {}", error.instance_path, error);
+			eprintln!("validation error: {}", error);
 		}
 		std::process::exit(2);
 	};

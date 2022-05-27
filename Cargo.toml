@@ -23,4 +23,5 @@ amd-efs = { git = "ssh://git@github.com/oxidecomputer/amd-efs.git", rev = "3fb60
 amd-host-image-builder-config = { path = "amd-host-image-builder-config" }
 schemars = "0.8.8"
 serde_json = "1.0.78"
-jsonschema = "0.16.0"
+#jsonschema = "0.16.0"
+jsonschema-valid = "0.4.0"
