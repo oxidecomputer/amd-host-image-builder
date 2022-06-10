@@ -217,6 +217,7 @@ fn bhd_entry_add_from_file(
 	attrs: &BhdDirectoryEntryAttrs,
 	source_filename: PathBuf,
 	ram_destination_address: Option<u64>,
+	target_size: Option<usize>,
 ) -> amd_efs::Result<()> {
 	let source_filename = source_filename.as_path();
 	let file = match File::open(source_filename) {
@@ -225,7 +226,18 @@ fn bhd_entry_add_from_file(
 			panic!("Could not open file {:?}: {}", source_filename, e);
 		}
 	};
-	let size: usize = file.metadata().unwrap().len().try_into().unwrap();
+	let filesize: usize = file.metadata().unwrap().len().try_into().unwrap();
+	let size = match target_size {
+		Some(x) => {
+			if filesize > x {
+				eprintln!("Configuration specifies slot size {} but contents {:?} have size {}. The contents to dot fit.", x, source_filename, filesize);
+			}
+			x
+		}
+		None => {
+			filesize
+		}
+	};
 	bhd_entry_add_from_file_with_custom_size(
 		directory,
 		payload_position,
@@ -593,7 +605,8 @@ fn main() -> std::io::Result<()> {
 							},
 							&entry.target.attrs,
 							firmware_blob_directory_name.join(blob_filename),
-							ram_destination_address
+							ram_destination_address,
+							size.map(|x| x as usize),
 						).unwrap();
 					}
 					SerdeBhdSource::ApcbJson(apcb) => {
