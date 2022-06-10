@@ -1,11 +1,12 @@
 use amd_efs::{
 	BhdDirectory, BhdDirectoryEntryAttrs, BhdDirectoryEntryType, Efs,
 	ProcessorGeneration, PspDirectory, PspDirectoryEntryAttrs,
-	DirectoryEntry, AddressMode,
+	//DirectoryEntry,
+    AddressMode,
 };
 use amd_host_image_builder_config::{
-	SerdePspDirectoryEntryBlob,
-	SerdeBhdDirectoryEntryBlob,
+	//SerdePspDirectoryEntryBlob,
+	//SerdeBhdDirectoryEntryBlob,
 	SerdePspDirectoryVariant,
 	SerdeBhdDirectoryVariant,
 	SerdeBhdSource,
@@ -16,7 +17,7 @@ use amd_host_image_builder_config::{
 use core::cell::RefCell;
 use core::convert::TryFrom;
 use core::convert::TryInto;
-use core::num::NonZeroU8;
+//use core::num::NonZeroU8;
 use std::fs;
 use std::fs::File;
 use std::fs::OpenOptions;
@@ -32,7 +33,7 @@ use structopt::StructOpt;
 mod static_config;
 
 use amd_host_image_builder_config::SerdeConfig;
-use amd_apcb::Apcb;
+//use amd_apcb::Apcb;
 //use amd_efs::ProcessorGeneration;
 use amd_flash::{ErasableLocation, FlashRead, FlashWrite, Location};
 use amd_efs::DirectoryFrontend;
@@ -67,13 +68,13 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashRead<ERASABLE_BLOCK_SIZE>
 		let mut file = self.file.borrow_mut();
 		match file.seek(SeekFrom::Start(location.into())) {
 			Ok(_) => {}
-			Err(e) => {
+			Err(_e) => {
 				return Err(amd_flash::Error::Io);
 			}
 		}
 		match file.read_exact(buffer) {
 			Ok(()) => Ok(buffer.len()),
-			Err(e) => {
+			Err(_e) => {
 				return Err(amd_flash::Error::Io);
 			}
 		}
@@ -87,7 +88,7 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashRead<ERASABLE_BLOCK_SIZE>
 		let mut file = self.file.borrow_mut();
 		match file.seek(SeekFrom::Start(location.into())) {
 			Ok(_) => {}
-			Err(e) => {
+			Err(_e) => {
 				return Err(amd_flash::Error::Io);
 			}
 		}
@@ -96,7 +97,7 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashRead<ERASABLE_BLOCK_SIZE>
 				assert!(size == ERASABLE_BLOCK_SIZE);
 				Ok(())
 			}
-			Err(e) => {
+			Err(_e) => {
 				return Err(amd_flash::Error::Io);
 			}
 		}
@@ -114,7 +115,7 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashWrite<ERASABLE_BLOCK_SIZE>
 		let mut file = self.file.borrow_mut();
 		match file.seek(SeekFrom::Start(location.into())) {
 			Ok(_) => {}
-			Err(e) => {
+			Err(_e) => {
 				return Err(amd_flash::Error::Io);
 			}
 		}
@@ -124,7 +125,7 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashWrite<ERASABLE_BLOCK_SIZE>
 				assert!(size == ERASABLE_BLOCK_SIZE);
 				Ok(())
 			}
-			Err(e) => {
+			Err(_e) => {
 				return Err(amd_flash::Error::Io);
 			}
 		}
@@ -138,7 +139,7 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashWrite<ERASABLE_BLOCK_SIZE>
 		let mut file = self.file.borrow_mut();
 		match file.seek(SeekFrom::Start(location.into())) {
 			Ok(_) => {}
-			Err(e) => {
+			Err(_e) => {
 				return Err(amd_flash::Error::Io);
 			}
 		}
@@ -147,7 +148,7 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashWrite<ERASABLE_BLOCK_SIZE>
 				assert!(size == ERASABLE_BLOCK_SIZE);
 				Ok(())
 			}
-			Err(e) => {
+			Err(_e) => {
 				return Err(amd_flash::Error::Io);
 			}
 		}
@@ -2499,7 +2500,6 @@ fn main() -> std::io::Result<()> {
 		ProcessorGeneration::Naples => {
 			Path::new("amd-firmware").join("naples")
 		}
-		_ => todo!(),
 	};
 
 	let mut psp_directory = efs
@@ -2526,7 +2526,7 @@ fn main() -> std::io::Result<()> {
 						).unwrap();
 					}
 					SerdePspEntrySource::BlobFile(blob_filename) => {
-						let (flash_location, size) = match blob_slot_settings {
+						let (flash_location, _size) = match blob_slot_settings {
 							Some(x) => (x.flash_location, x.size),
 							None => (None, None)
 						};
