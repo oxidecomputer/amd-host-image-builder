@@ -171,15 +171,43 @@ const IMAGE_SIZE: u32 = 16 * 1024 * 1024;
 const ERASABLE_BLOCK_SIZE: usize = 0x1000;
 type AlignedLocation = ErasableLocation<ERASABLE_BLOCK_SIZE>;
 
+/// Open SOURCE_FILENAME and checks its size.
+/// If TARGET_SIZE is given, make sure the file is at most as big as that.
+/// If file is too big, error out.
+/// Otherwise, return the size to use for the entry payload.
+fn size_file(source_filename: &Path, target_size: Option<usize>) -> amd_efs::Result<(File, usize)> {
+	let file = match File::open(source_filename) {
+		Ok(f) => f,
+		Err(e) => {
+			panic!("Could not open file {:?}: {}", source_filename, e);
+		}
+	};
+	let filesize: usize = file.metadata().unwrap().len().try_into().unwrap();
+	match target_size {
+		Some(x) => {
+			if filesize > x {
+				panic!("Configuration specifies slot size {} but contents {:?} have size {}. The contents do not fit.", x, source_filename, filesize);
+			} else {
+				Ok((file, x))
+			}
+		}
+		None => {
+			Ok((file, filesize))
+		}
+	}
+}
+
+/// Add entry from file SOURCE_FILENAME.  Size the payload of entry to TARGET_SIZE.
+/// Errors out if file SOURCE_FILENAME is bigger than TARGET_SIZE.
 fn psp_entry_add_from_file_with_custom_size(
 	directory: &mut PspDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
 	payload_position: Option<ErasableLocation<ERASABLE_BLOCK_SIZE>>,
 	attrs: &PspDirectoryEntryAttrs,
-	size: usize,
+	target_size: Option<usize>,
 	source_filename: &Path,
 ) -> amd_efs::Result<()> {
 	//eprintln!("FILE {:?}", source_filename);
-	let file = File::open(source_filename).unwrap();
+	let (file, size) = size_file(source_filename, target_size)?;
 	let mut source = BufReader::new(file);
 
 	directory.add_from_reader_with_custom_size(
@@ -199,42 +227,26 @@ fn psp_entry_add_from_file(
 	target_size: Option<usize>,
 ) -> amd_efs::Result<()> {
 	let source_filename = source_filename.as_path();
-	let file = match File::open(source_filename) {
-		Ok(f) => f,
-		Err(e) => {
-			panic!("Could not open file {:?}: {}", source_filename, e);
-		}
-	};
-	let filesize: usize = file.metadata().unwrap().len().try_into().unwrap();
-	let size = match target_size {
-		Some(x) => {
-			if filesize > x {
-				panic!("Configuration specifies slot size {} but contents {:?} have size {}. The contents do not fit.", x, source_filename, filesize);
-			}
-			x
-		}
-		None => {
-			filesize
-		}
-	};
 	psp_entry_add_from_file_with_custom_size(
 		directory,
 		payload_position,
 		attrs,
-		size,
+		target_size,
 		&source_filename,
 	)
 }
 
+/// Add entry from file SOURCE_FILENAME.  Size the payload of entry to TARGET_SIZE.
+/// Errors out if file SOURCE_FILENAME is bigger than TARGET_SIZE.
 fn bhd_entry_add_from_file_with_custom_size(
 	directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
 	payload_position: Option<ErasableLocation<ERASABLE_BLOCK_SIZE>>,
 	attrs: &BhdDirectoryEntryAttrs,
-	size: usize,
+	target_size: Option<usize>,
 	source_filename: &Path,
 	ram_destination_address: Option<u64>,
 ) -> amd_efs::Result<()> {
-	let file = File::open(source_filename).unwrap();
+	let (file, size) = size_file(source_filename, target_size)?;
 	let mut reader = BufReader::new(file);
 
 	directory.add_from_reader_with_custom_size(
@@ -255,29 +267,11 @@ fn bhd_entry_add_from_file(
 	target_size: Option<usize>,
 ) -> amd_efs::Result<()> {
 	let source_filename = source_filename.as_path();
-	let file = match File::open(source_filename) {
-		Ok(f) => f,
-		Err(e) => {
-			panic!("Could not open file {:?}: {}", source_filename, e);
-		}
-	};
-	let filesize: usize = file.metadata().unwrap().len().try_into().unwrap();
-	let size = match target_size {
-		Some(x) => {
-			if filesize > x {
-				eprintln!("Configuration specifies slot size {} but contents {:?} have size {}. The contents to dot fit.", x, source_filename, filesize);
-			}
-			x
-		}
-		None => {
-			filesize
-		}
-	};
 	bhd_entry_add_from_file_with_custom_size(
 		directory,
 		payload_position,
 		attrs,
-		size,
+		target_size,
 		&source_filename,
 		ram_destination_address,
 	)
