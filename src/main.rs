@@ -63,12 +63,14 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashRead<ERASABLE_BLOCK_SIZE>
 		match file.seek(SeekFrom::Start(location.into())) {
 			Ok(_) => {}
 			Err(e) => {
+				eprintln!("Error seeking in flash image: {:?}", e);
 				return Err(amd_flash::Error::Io);
 			}
 		}
 		match file.read_exact(buffer) {
 			Ok(()) => Ok(buffer.len()),
 			Err(e) => {
+				eprintln!("Error reading from flash image: {:?}", e);
 				return Err(amd_flash::Error::Io);
 			}
 		}
@@ -83,6 +85,7 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashRead<ERASABLE_BLOCK_SIZE>
 		match file.seek(SeekFrom::Start(location.into())) {
 			Ok(_) => {}
 			Err(e) => {
+				eprintln!("Error seeking in flash image: {:?}", e);
 				return Err(amd_flash::Error::Io);
 			}
 		}
@@ -92,6 +95,7 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashRead<ERASABLE_BLOCK_SIZE>
 				Ok(())
 			}
 			Err(e) => {
+				eprintln!("Error reading from flash image: {:?}", e);
 				return Err(amd_flash::Error::Io);
 			}
 		}
@@ -110,6 +114,7 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashWrite<ERASABLE_BLOCK_SIZE>
 		match file.seek(SeekFrom::Start(location.into())) {
 			Ok(_) => {}
 			Err(e) => {
+				eprintln!("Error seeking in flash image: {:?}", e);
 				return Err(amd_flash::Error::Io);
 			}
 		}
@@ -120,6 +125,7 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashWrite<ERASABLE_BLOCK_SIZE>
 				Ok(())
 			}
 			Err(e) => {
+				eprintln!("Error writing to flash image: {:?}", e);
 				return Err(amd_flash::Error::Io);
 			}
 		}
@@ -134,6 +140,7 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashWrite<ERASABLE_BLOCK_SIZE>
 		match file.seek(SeekFrom::Start(location.into())) {
 			Ok(_) => {}
 			Err(e) => {
+				eprintln!("Error seeking in flash image: {:?}", e);
 				return Err(amd_flash::Error::Io);
 			}
 		}
@@ -143,6 +150,7 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashWrite<ERASABLE_BLOCK_SIZE>
 				Ok(())
 			}
 			Err(e) => {
+				eprintln!("Error writing to flash image: {:?}", e);
 				return Err(amd_flash::Error::Io);
 			}
 		}
