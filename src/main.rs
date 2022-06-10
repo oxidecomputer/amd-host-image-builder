@@ -49,6 +49,7 @@ use hole::Hole;
 
 struct FlashImage {
 	file: RefCell<File>,
+	filename: PathBuf,
 }
 
 impl<const ERASABLE_BLOCK_SIZE: usize> FlashRead<ERASABLE_BLOCK_SIZE>
@@ -63,14 +64,14 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashRead<ERASABLE_BLOCK_SIZE>
 		match file.seek(SeekFrom::Start(location.into())) {
 			Ok(_) => {}
 			Err(e) => {
-				eprintln!("Error seeking in flash image: {:?}", e);
+				eprintln!("Error seeking in flash image {:?}: {:?}", self.filename, e);
 				return Err(amd_flash::Error::Io);
 			}
 		}
 		match file.read_exact(buffer) {
 			Ok(()) => Ok(buffer.len()),
 			Err(e) => {
-				eprintln!("Error reading from flash image: {:?}", e);
+				eprintln!("Error reading from flash image {:?}: {:?}", self.filename, e);
 				return Err(amd_flash::Error::Io);
 			}
 		}
@@ -85,7 +86,7 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashRead<ERASABLE_BLOCK_SIZE>
 		match file.seek(SeekFrom::Start(location.into())) {
 			Ok(_) => {}
 			Err(e) => {
-				eprintln!("Error seeking in flash image: {:?}", e);
+				eprintln!("Error seeking in flash image {:?}: {:?}", self.filename, e);
 				return Err(amd_flash::Error::Io);
 			}
 		}
@@ -95,7 +96,7 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashRead<ERASABLE_BLOCK_SIZE>
 				Ok(())
 			}
 			Err(e) => {
-				eprintln!("Error reading from flash image: {:?}", e);
+				eprintln!("Error reading from flash image {:?}: {:?}", self.filename, e);
 				return Err(amd_flash::Error::Io);
 			}
 		}
@@ -114,7 +115,7 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashWrite<ERASABLE_BLOCK_SIZE>
 		match file.seek(SeekFrom::Start(location.into())) {
 			Ok(_) => {}
 			Err(e) => {
-				eprintln!("Error seeking in flash image: {:?}", e);
+				eprintln!("Error seeking in flash image {:?}: {:?}", self.filename, e);
 				return Err(amd_flash::Error::Io);
 			}
 		}
@@ -125,7 +126,7 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashWrite<ERASABLE_BLOCK_SIZE>
 				Ok(())
 			}
 			Err(e) => {
-				eprintln!("Error writing to flash image: {:?}", e);
+				eprintln!("Error writing to flash image {:?}: {:?}", self.filename, e);
 				return Err(amd_flash::Error::Io);
 			}
 		}
@@ -140,7 +141,7 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashWrite<ERASABLE_BLOCK_SIZE>
 		match file.seek(SeekFrom::Start(location.into())) {
 			Ok(_) => {}
 			Err(e) => {
-				eprintln!("Error seeking in flash image: {:?}", e);
+				eprintln!("Error seeking in flash image {:?}: {:?}", self.filename, e);
 				return Err(amd_flash::Error::Io);
 			}
 		}
@@ -150,7 +151,7 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashWrite<ERASABLE_BLOCK_SIZE>
 				Ok(())
 			}
 			Err(e) => {
-				eprintln!("Error writing to flash image: {:?}", e);
+				eprintln!("Error writing to flash image {:?}: {:?}", self.filename, e);
 				return Err(amd_flash::Error::Io);
 			}
 		}
@@ -158,9 +159,10 @@ impl<const ERASABLE_BLOCK_SIZE: usize> FlashWrite<ERASABLE_BLOCK_SIZE>
 }
 
 impl FlashImage {
-	fn new(file: File) -> Self {
+	fn new(file: File, filename: &Path) -> Self {
 		Self {
 			file: RefCell::new(file),
+			filename: filename.to_path_buf(),
 		}
 	}
 }
@@ -455,14 +457,14 @@ fn main() -> std::io::Result<()> {
 	//let args: Vec<String> = env::args().collect();
 	let opts = Opts::from_args();
 
-	let filename = opts.output_filename;
+	let filename = &opts.output_filename;
 	let file = OpenOptions::new()
 		.read(true)
 		.write(true)
 		.create(true)
 		.open(filename)?;
 	file.set_len(IMAGE_SIZE.into())?;
-	let mut storage = FlashImage::new(file);
+	let mut storage = FlashImage::new(file, &filename);
 	let mut position: AlignedLocation = 0.try_into().unwrap();
 	while Location::from(position) < IMAGE_SIZE {
 		FlashWrite::<ERASABLE_BLOCK_SIZE>::erase_block(
