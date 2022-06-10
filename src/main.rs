@@ -180,7 +180,6 @@ fn psp_entry_add_from_file_with_custom_size(
 ) -> amd_efs::Result<()> {
 	//eprintln!("FILE {:?}", source_filename);
 	let file = File::open(source_filename).unwrap();
-	//let size: usize = file.metadata().unwrap().len().try_into().unwrap();
 	let mut source = BufReader::new(file);
 
 	directory.add_from_reader_with_custom_size(
