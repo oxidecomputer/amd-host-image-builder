@@ -79,3 +79,14 @@ As a special bringup help, right now, it's also possible to specify a non-ELF fi
 # Other models
 
 `amd-host-image-builder` also supports Rome. If you want to use that, please edit `etc/Rome.json` to your liking and then invoke `make rome` to get `Rome.img` which you can flash.
+
+# Using older configuration files
+
+We had used JSON before, but now switched to JSON5.
+
+In order to convert your old configuration files, you can use the following commands:
+
+    sed -e 's;"\(0x[^"]*\)";\1;' etc/Milan.json > etc/Milan.efs.json5
+    rm etc/Milan.json
+
+Please adapt the file names above as necessary.

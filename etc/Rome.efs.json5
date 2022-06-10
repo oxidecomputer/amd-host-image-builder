@@ -144,83 +144,83 @@
 							"version": "0.1.0",
 							"header": {
 								"signature": "APCB",
-								"header_size": "0x0080",
+								"header_size": 0x0080,
 								"version": 48,
-								"apcb_size": "0x00001278",
-								"unique_apcb_instance": "0x00000002",
-								"checksum_byte": "0xa1",
+								"apcb_size": 0x00001278,
+								"unique_apcb_instance": 0x00000002,
+								"checksum_byte": 0xa1,
 								"_reserved_1": [
-									"0x00",
-									"0x00",
-									"0x00"
+									0x00,
+									0x00,
+									0x00
 								],
 								"_reserved_2": [
-									"0x00000000",
-									"0x00000000",
-									"0x00000000"
+									0x00000000,
+									0x00000000,
+									0x00000000
 								]
 							},
 							"v3_header_ext": {
 								"signature": "ECB2",
-								"_reserved_1": "0x0000",
-								"_reserved_2": "0x0010",
+								"_reserved_1": 0x0000,
+								"_reserved_2": 0x0010,
 								"struct_version": 18,
 								"data_version": 256,
-								"ext_header_size": "0x00000060",
-								"_reserved_3": "0x0000",
-								"_reserved_4": "0xffff",
-								"_reserved_5": "0x0040",
-								"_reserved_6": "0x0000",
+								"ext_header_size": 0x00000060,
+								"_reserved_3": 0x0000,
+								"_reserved_4": 0xffff,
+								"_reserved_5": 0x0040,
+								"_reserved_6": 0x0000,
 								"_reserved_7": [
-									"0x00000000",
-									"0x00000000"
+									0x00000000,
+									0x00000000
 								],
-								"data_offset": "0x0058",
-								"header_checksum": "0x00",
-								"_reserved_8": "0x00",
+								"data_offset": 0x0058,
+								"header_checksum": 0x00,
+								"_reserved_8": 0x00,
 								"_reserved_9": [
-									"0x00000000",
-									"0x00000000",
-									"0x00000000"
+									0x00000000,
+									0x00000000,
+									0x00000000
 								],
 								"integrity_sign": [
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00",
-									"0x00"
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00,
+									0x00
 								],
 								"_reserved_10": [
-									"0x00000000",
-									"0x00000000",
-									"0x00000000"
+									0x00000000,
+									0x00000000,
+									0x00000000
 								],
 								"signature_ending": "BCBA"
 							},
@@ -228,385 +228,385 @@
 								{
 									"header": {
 										"signature": "MEMG",
-										"group_id": "0x1704",
-										"header_size": "0x0010",
-										"version": "0x0001",
-										"_reserved_": "0x0000",
-										"group_size": "0x00000bc0"
+										"group_id": 0x1704,
+										"header_size": 0x0010,
+										"version": 0x0001,
+										"_reserved_": 0x0000,
+										"group_size": 0x00000bc0
 									}
 								},
 								{
 									"header": {
 										"signature": "TOKN",
-										"group_id": "0x3000",
-										"header_size": "0x0010",
-										"version": "0x0001",
-										"_reserved_": "0x0000",
-										"group_size": "0x00000638"
+										"group_id": 0x3000,
+										"header_size": 0x0010,
+										"version": 0x0001,
+										"_reserved_": 0x0000,
+										"group_size": 0x00000638
 									}
 								}
 							],
 							"entries": [
 								{
 									"header": {
-										"group_id": "0x1704",
-										"entry_id": "0x0031",
-										"entry_size": "0x0110",
-										"instance_id": "0x0000",
+										"group_id": 0x1704,
+										"entry_id": 0x0031,
+										"entry_size": 0x0110,
+										"instance_id": 0x0000,
 										"context_type": "Struct",
 										"context_format": "Raw",
-										"unit_size": "0x00",
+										"unit_size": 0x00,
 										"priority_mask": {
 											"normal": true
 										},
-										"key_size": "0x00",
-										"key_pos": "0x00",
-										"board_instance_mask": "0xffff"
+										"key_size": 0x00,
+										"key_pos": 0x00,
+										"board_instance_mask": 0xffff
 									},
 									"DimmInfoSmbusElement": [
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x00",
-											"channel_id": "0x00",
-											"dimm_id": "0x00",
-											"dimm_smbus_address": "0xa0",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x80"
+											"socket_id": 0x00,
+											"channel_id": 0x00,
+											"dimm_id": 0x00,
+											"dimm_smbus_address": 0xa0,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x80
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x00",
-											"channel_id": "0x00",
-											"dimm_id": "0x01",
-											"dimm_smbus_address": "0xa2",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x80"
+											"socket_id": 0x00,
+											"channel_id": 0x00,
+											"dimm_id": 0x01,
+											"dimm_smbus_address": 0xa2,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x80
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x00",
-											"channel_id": "0x01",
-											"dimm_id": "0x00",
-											"dimm_smbus_address": "0xa4",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x80"
+											"socket_id": 0x00,
+											"channel_id": 0x01,
+											"dimm_id": 0x00,
+											"dimm_smbus_address": 0xa4,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x80
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x00",
-											"channel_id": "0x01",
-											"dimm_id": "0x01",
-											"dimm_smbus_address": "0xa6",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x80"
+											"socket_id": 0x00,
+											"channel_id": 0x01,
+											"dimm_id": 0x01,
+											"dimm_smbus_address": 0xa6,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x80
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x00",
-											"channel_id": "0x02",
-											"dimm_id": "0x00",
-											"dimm_smbus_address": "0xa8",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x80"
+											"socket_id": 0x00,
+											"channel_id": 0x02,
+											"dimm_id": 0x00,
+											"dimm_smbus_address": 0xa8,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x80
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x00",
-											"channel_id": "0x02",
-											"dimm_id": "0x01",
-											"dimm_smbus_address": "0xaa",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x80"
+											"socket_id": 0x00,
+											"channel_id": 0x02,
+											"dimm_id": 0x01,
+											"dimm_smbus_address": 0xaa,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x80
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x00",
-											"channel_id": "0x03",
-											"dimm_id": "0x00",
-											"dimm_smbus_address": "0xac",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x80"
+											"socket_id": 0x00,
+											"channel_id": 0x03,
+											"dimm_id": 0x00,
+											"dimm_smbus_address": 0xac,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x80
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x00",
-											"channel_id": "0x03",
-											"dimm_id": "0x01",
-											"dimm_smbus_address": "0xae",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x80"
+											"socket_id": 0x00,
+											"channel_id": 0x03,
+											"dimm_id": 0x01,
+											"dimm_smbus_address": 0xae,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x80
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x00",
-											"channel_id": "0x04",
-											"dimm_id": "0x00",
-											"dimm_smbus_address": "0xa0",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x40"
+											"socket_id": 0x00,
+											"channel_id": 0x04,
+											"dimm_id": 0x00,
+											"dimm_smbus_address": 0xa0,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x40
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x00",
-											"channel_id": "0x04",
-											"dimm_id": "0x01",
-											"dimm_smbus_address": "0xa2",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x40"
+											"socket_id": 0x00,
+											"channel_id": 0x04,
+											"dimm_id": 0x01,
+											"dimm_smbus_address": 0xa2,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x40
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x00",
-											"channel_id": "0x05",
-											"dimm_id": "0x00",
-											"dimm_smbus_address": "0xa4",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x40"
+											"socket_id": 0x00,
+											"channel_id": 0x05,
+											"dimm_id": 0x00,
+											"dimm_smbus_address": 0xa4,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x40
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x00",
-											"channel_id": "0x05",
-											"dimm_id": "0x01",
-											"dimm_smbus_address": "0xa6",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x40"
+											"socket_id": 0x00,
+											"channel_id": 0x05,
+											"dimm_id": 0x01,
+											"dimm_smbus_address": 0xa6,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x40
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x00",
-											"channel_id": "0x06",
-											"dimm_id": "0x00",
-											"dimm_smbus_address": "0xa8",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x40"
+											"socket_id": 0x00,
+											"channel_id": 0x06,
+											"dimm_id": 0x00,
+											"dimm_smbus_address": 0xa8,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x40
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x00",
-											"channel_id": "0x06",
-											"dimm_id": "0x01",
-											"dimm_smbus_address": "0xaa",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x40"
+											"socket_id": 0x00,
+											"channel_id": 0x06,
+											"dimm_id": 0x01,
+											"dimm_smbus_address": 0xaa,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x40
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x00",
-											"channel_id": "0x07",
-											"dimm_id": "0x00",
-											"dimm_smbus_address": "0xac",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x40"
+											"socket_id": 0x00,
+											"channel_id": 0x07,
+											"dimm_id": 0x00,
+											"dimm_smbus_address": 0xac,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x40
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x00",
-											"channel_id": "0x07",
-											"dimm_id": "0x01",
-											"dimm_smbus_address": "0xae",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x40"
+											"socket_id": 0x00,
+											"channel_id": 0x07,
+											"dimm_id": 0x01,
+											"dimm_smbus_address": 0xae,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x40
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x01",
-											"channel_id": "0x00",
-											"dimm_id": "0x00",
-											"dimm_smbus_address": "0xa0",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x20"
+											"socket_id": 0x01,
+											"channel_id": 0x00,
+											"dimm_id": 0x00,
+											"dimm_smbus_address": 0xa0,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x20
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x01",
-											"channel_id": "0x00",
-											"dimm_id": "0x01",
-											"dimm_smbus_address": "0xa2",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x20"
+											"socket_id": 0x01,
+											"channel_id": 0x00,
+											"dimm_id": 0x01,
+											"dimm_smbus_address": 0xa2,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x20
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x01",
-											"channel_id": "0x01",
-											"dimm_id": "0x00",
-											"dimm_smbus_address": "0xa4",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x20"
+											"socket_id": 0x01,
+											"channel_id": 0x01,
+											"dimm_id": 0x00,
+											"dimm_smbus_address": 0xa4,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x20
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x01",
-											"channel_id": "0x01",
-											"dimm_id": "0x01",
-											"dimm_smbus_address": "0xa6",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x20"
+											"socket_id": 0x01,
+											"channel_id": 0x01,
+											"dimm_id": 0x01,
+											"dimm_smbus_address": 0xa6,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x20
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x01",
-											"channel_id": "0x02",
-											"dimm_id": "0x00",
-											"dimm_smbus_address": "0xa8",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x20"
+											"socket_id": 0x01,
+											"channel_id": 0x02,
+											"dimm_id": 0x00,
+											"dimm_smbus_address": 0xa8,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x20
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x01",
-											"channel_id": "0x02",
-											"dimm_id": "0x01",
-											"dimm_smbus_address": "0xaa",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x20"
+											"socket_id": 0x01,
+											"channel_id": 0x02,
+											"dimm_id": 0x01,
+											"dimm_smbus_address": 0xaa,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x20
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x01",
-											"channel_id": "0x03",
-											"dimm_id": "0x00",
-											"dimm_smbus_address": "0xac",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x20"
+											"socket_id": 0x01,
+											"channel_id": 0x03,
+											"dimm_id": 0x00,
+											"dimm_smbus_address": 0xac,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x20
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x01",
-											"channel_id": "0x03",
-											"dimm_id": "0x01",
-											"dimm_smbus_address": "0xae",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x20"
+											"socket_id": 0x01,
+											"channel_id": 0x03,
+											"dimm_id": 0x01,
+											"dimm_smbus_address": 0xae,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x20
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x01",
-											"channel_id": "0x04",
-											"dimm_id": "0x00",
-											"dimm_smbus_address": "0xa0",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x10"
+											"socket_id": 0x01,
+											"channel_id": 0x04,
+											"dimm_id": 0x00,
+											"dimm_smbus_address": 0xa0,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x10
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x01",
-											"channel_id": "0x04",
-											"dimm_id": "0x01",
-											"dimm_smbus_address": "0xa2",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x10"
+											"socket_id": 0x01,
+											"channel_id": 0x04,
+											"dimm_id": 0x01,
+											"dimm_smbus_address": 0xa2,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x10
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x01",
-											"channel_id": "0x05",
-											"dimm_id": "0x00",
-											"dimm_smbus_address": "0xa4",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x10"
+											"socket_id": 0x01,
+											"channel_id": 0x05,
+											"dimm_id": 0x00,
+											"dimm_smbus_address": 0xa4,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x10
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x01",
-											"channel_id": "0x05",
-											"dimm_id": "0x01",
-											"dimm_smbus_address": "0xa6",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x10"
+											"socket_id": 0x01,
+											"channel_id": 0x05,
+											"dimm_id": 0x01,
+											"dimm_smbus_address": 0xa6,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x10
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x01",
-											"channel_id": "0x06",
-											"dimm_id": "0x00",
-											"dimm_smbus_address": "0xa8",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x10"
+											"socket_id": 0x01,
+											"channel_id": 0x06,
+											"dimm_id": 0x00,
+											"dimm_smbus_address": 0xa8,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x10
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x01",
-											"channel_id": "0x06",
-											"dimm_id": "0x01",
-											"dimm_smbus_address": "0xaa",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x10"
+											"socket_id": 0x01,
+											"channel_id": 0x06,
+											"dimm_id": 0x01,
+											"dimm_smbus_address": 0xaa,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x10
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x01",
-											"channel_id": "0x07",
-											"dimm_id": "0x00",
-											"dimm_smbus_address": "0xac",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x10"
+											"socket_id": 0x01,
+											"channel_id": 0x07,
+											"dimm_id": 0x00,
+											"dimm_smbus_address": 0xac,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x10
 										},
 										{
 											"dimm_slot_present": true,
-											"socket_id": "0x01",
-											"channel_id": "0x07",
-											"dimm_id": "0x01",
-											"dimm_smbus_address": "0xae",
-											"i2c_mux_address": "0x94",
-											"mux_control_address": "0x03",
-											"mux_channel": "0x10"
+											"socket_id": 0x01,
+											"channel_id": 0x07,
+											"dimm_id": 0x01,
+											"dimm_smbus_address": 0xae,
+											"i2c_mux_address": 0x94,
+											"mux_control_address": 0x03,
+											"mux_channel": 0x10
 										}
 									]
 								},
 								{
 									"header": {
-										"group_id": "0x1704",
-										"entry_id": "0x0040",
-										"entry_size": "0x0048",
-										"instance_id": "0x0000",
+										"group_id": 0x1704,
+										"entry_id": 0x0040,
+										"entry_size": 0x0048,
+										"instance_id": 0x0000,
 										"context_type": "Struct",
 										"context_format": "Raw",
-										"unit_size": "0x00",
+										"unit_size": 0x00,
 										"priority_mask": {
 											"normal": true
 										},
-										"key_size": "0x00",
-										"key_pos": "0x00",
-										"board_instance_mask": "0xffff"
+										"key_size": 0x00,
+										"key_pos": 0x00,
+										"board_instance_mask": 0xffff
 									},
 									"platform_specific_overrides": [
 										{
 											"MemclkMap": {
-												"type_": "0x07",
-												"payload_size": "0x0b",
+												"type_": 0x07,
+												"payload_size": 0x0b,
 												"sockets": {
 													"socket_0": true,
 													"socket_1": true,
@@ -620,21 +620,21 @@
 												"channels": "Any",
 												"dimms": "Any",
 												"connections": [
-													"0x00",
-													"0x01",
-													"0x02",
-													"0x03",
-													"0x00",
-													"0x00",
-													"0x00",
-													"0x00"
+													0x00,
+													0x01,
+													0x02,
+													0x03,
+													0x00,
+													0x00,
+													0x00,
+													0x00
 												]
 											}
 										},
 										{
 											"CkeTristateMap": {
-												"type_": "0x01",
-												"payload_size": "0x07",
+												"type_": 0x01,
+												"payload_size": 0x07,
 												"sockets": {
 													"socket_0": true,
 													"socket_1": true,
@@ -648,17 +648,17 @@
 												"channels": "Any",
 												"dimms": "Any",
 												"connections": [
-													"0x00",
-													"0x01",
-													"0x02",
-													"0x03"
+													0x00,
+													0x01,
+													0x02,
+													0x03
 												]
 											}
 										},
 										{
 											"OdtTristateMap": {
-												"type_": "0x02",
-												"payload_size": "0x07",
+												"type_": 0x02,
+												"payload_size": 0x07,
 												"sockets": {
 													"socket_0": true,
 													"socket_1": true,
@@ -672,17 +672,17 @@
 												"channels": "Any",
 												"dimms": "Any",
 												"connections": [
-													"0x00",
-													"0x01",
-													"0x02",
-													"0x03"
+													0x00,
+													0x01,
+													0x02,
+													0x03
 												]
 											}
 										},
 										{
 											"CsTristateMap": {
-												"type_": "0x03",
-												"payload_size": "0x0b",
+												"type_": 0x03,
+												"payload_size": 0x0b,
 												"sockets": {
 													"socket_0": true,
 													"socket_1": true,
@@ -696,21 +696,21 @@
 												"channels": "Any",
 												"dimms": "Any",
 												"connections": [
-													"0x00",
-													"0x01",
-													"0x02",
-													"0x03",
-													"0x00",
-													"0x00",
-													"0x00",
-													"0x00"
+													0x00,
+													0x01,
+													0x02,
+													0x03,
+													0x00,
+													0x00,
+													0x00,
+													0x00
 												]
 											}
 										},
 										{
 											"MaxDimmsPerChannel": {
-												"type_": "0x04",
-												"payload_size": "0x04",
+												"type_": 0x04,
+												"payload_size": 0x04,
 												"sockets": {
 													"socket_0": true,
 													"socket_1": true,
@@ -723,13 +723,13 @@
 												},
 												"channels": "Any",
 												"dimms": "Any",
-												"value": "0x01"
+												"value": 0x01
 											}
 										},
 										{
 											"MaxChannelsPerSocket": {
-												"type_": "0x08",
-												"payload_size": "0x04",
+												"type_": 0x08,
+												"payload_size": 0x04,
 												"sockets": {
 													"socket_0": true,
 													"socket_1": true,
@@ -742,26 +742,26 @@
 												},
 												"channels": "Any",
 												"dimms": "Any",
-												"value": "0x08"
+												"value": 0x08
 											}
 										}
 									]
 								},
 								{
 									"header": {
-										"group_id": "0x1704",
-										"entry_id": "0x0046",
-										"entry_size": "0x00b0",
-										"instance_id": "0x0000",
+										"group_id": 0x1704,
+										"entry_id": 0x0046,
+										"entry_size": 0x00b0,
+										"instance_id": 0x0000,
 										"context_type": "Struct",
 										"context_format": "Raw",
-										"unit_size": "0x00",
+										"unit_size": 0x00,
 										"priority_mask": {
 											"normal": true
 										},
-										"key_size": "0x00",
-										"key_pos": "0x00",
-										"board_instance_mask": "0xffff"
+										"key_size": 0x00,
+										"key_pos": 0x00,
+										"board_instance_mask": 0xffff
 									},
 									"Ddr4OdtPatElement": [
 										{
@@ -786,20 +786,20 @@
 												}
 											},
 											"cs0_odt_patterns": {
-												"reading_pattern": "0x00",
-												"writing_pattern": "0x00"
+												"reading_pattern": 0x00,
+												"writing_pattern": 0x00
 											},
 											"cs1_odt_patterns": {
-												"reading_pattern": "0x00",
-												"writing_pattern": "0x00"
+												"reading_pattern": 0x00,
+												"writing_pattern": 0x00
 											},
 											"cs2_odt_patterns": {
-												"reading_pattern": "0x00",
-												"writing_pattern": "0x00"
+												"reading_pattern": 0x00,
+												"writing_pattern": 0x00
 											},
 											"cs3_odt_patterns": {
-												"reading_pattern": "0x00",
-												"writing_pattern": "0x00"
+												"reading_pattern": 0x00,
+												"writing_pattern": 0x00
 											}
 										},
 										{
@@ -824,20 +824,20 @@
 												}
 											},
 											"cs0_odt_patterns": {
-												"reading_pattern": "0x00",
-												"writing_pattern": "0x00"
+												"reading_pattern": 0x00,
+												"writing_pattern": 0x00
 											},
 											"cs1_odt_patterns": {
-												"reading_pattern": "0x00",
-												"writing_pattern": "0x00"
+												"reading_pattern": 0x00,
+												"writing_pattern": 0x00
 											},
 											"cs2_odt_patterns": {
-												"reading_pattern": "0x00",
-												"writing_pattern": "0x02"
+												"reading_pattern": 0x00,
+												"writing_pattern": 0x02
 											},
 											"cs3_odt_patterns": {
-												"reading_pattern": "0x00",
-												"writing_pattern": "0x08"
+												"reading_pattern": 0x00,
+												"writing_pattern": 0x08
 											}
 										},
 										{
@@ -862,20 +862,20 @@
 												}
 											},
 											"cs0_odt_patterns": {
-												"reading_pattern": "0x00",
-												"writing_pattern": "0x00"
+												"reading_pattern": 0x00,
+												"writing_pattern": 0x00
 											},
 											"cs1_odt_patterns": {
-												"reading_pattern": "0x00",
-												"writing_pattern": "0x00"
+												"reading_pattern": 0x00,
+												"writing_pattern": 0x00
 											},
 											"cs2_odt_patterns": {
-												"reading_pattern": "0x00",
-												"writing_pattern": "0x00"
+												"reading_pattern": 0x00,
+												"writing_pattern": 0x00
 											},
 											"cs3_odt_patterns": {
-												"reading_pattern": "0x00",
-												"writing_pattern": "0x00"
+												"reading_pattern": 0x00,
+												"writing_pattern": 0x00
 											}
 										},
 										{
@@ -900,20 +900,20 @@
 												}
 											},
 											"cs0_odt_patterns": {
-												"reading_pattern": "0x00",
-												"writing_pattern": "0x01"
+												"reading_pattern": 0x00,
+												"writing_pattern": 0x01
 											},
 											"cs1_odt_patterns": {
-												"reading_pattern": "0x00",
-												"writing_pattern": "0x04"
+												"reading_pattern": 0x00,
+												"writing_pattern": 0x04
 											},
 											"cs2_odt_patterns": {
-												"reading_pattern": "0x00",
-												"writing_pattern": "0x00"
+												"reading_pattern": 0x00,
+												"writing_pattern": 0x00
 											},
 											"cs3_odt_patterns": {
-												"reading_pattern": "0x00",
-												"writing_pattern": "0x00"
+												"reading_pattern": 0x00,
+												"writing_pattern": 0x00
 											}
 										},
 										{
@@ -938,20 +938,20 @@
 												}
 											},
 											"cs0_odt_patterns": {
-												"reading_pattern": "0x00",
-												"writing_pattern": "0x00"
+												"reading_pattern": 0x00,
+												"writing_pattern": 0x00
 											},
 											"cs1_odt_patterns": {
-												"reading_pattern": "0x00",
-												"writing_pattern": "0x00"
+												"reading_pattern": 0x00,
+												"writing_pattern": 0x00
 											},
 											"cs2_odt_patterns": {
-												"reading_pattern": "0x00",
-												"writing_pattern": "0x00"
+												"reading_pattern": 0x00,
+												"writing_pattern": 0x00
 											},
 											"cs3_odt_patterns": {
-												"reading_pattern": "0x00",
-												"writing_pattern": "0x00"
+												"reading_pattern": 0x00,
+												"writing_pattern": 0x00
 											}
 										},
 										{
@@ -976,20 +976,20 @@
 												}
 											},
 											"cs0_odt_patterns": {
-												"reading_pattern": "0x02",
-												"writing_pattern": "0x02"
+												"reading_pattern": 0x02,
+												"writing_pattern": 0x02
 											},
 											"cs1_odt_patterns": {
-												"reading_pattern": "0x00",
-												"writing_pattern": "0x00"
+												"reading_pattern": 0x00,
+												"writing_pattern": 0x00
 											},
 											"cs2_odt_patterns": {
-												"reading_pattern": "0x01",
-												"writing_pattern": "0x01"
+												"reading_pattern": 0x01,
+												"writing_pattern": 0x01
 											},
 											"cs3_odt_patterns": {
-												"reading_pattern": "0x01",
-												"writing_pattern": "0x01"
+												"reading_pattern": 0x01,
+												"writing_pattern": 0x01
 											}
 										},
 										{
@@ -1014,20 +1014,20 @@
 												}
 											},
 											"cs0_odt_patterns": {
-												"reading_pattern": "0x02",
-												"writing_pattern": "0x02"
+												"reading_pattern": 0x02,
+												"writing_pattern": 0x02
 											},
 											"cs1_odt_patterns": {
-												"reading_pattern": "0x02",
-												"writing_pattern": "0x02"
+												"reading_pattern": 0x02,
+												"writing_pattern": 0x02
 											},
 											"cs2_odt_patterns": {
-												"reading_pattern": "0x01",
-												"writing_pattern": "0x01"
+												"reading_pattern": 0x01,
+												"writing_pattern": 0x01
 											},
 											"cs3_odt_patterns": {
-												"reading_pattern": "0x00",
-												"writing_pattern": "0x00"
+												"reading_pattern": 0x00,
+												"writing_pattern": 0x00
 											}
 										},
 										{
@@ -1052,43 +1052,43 @@
 												}
 											},
 											"cs0_odt_patterns": {
-												"reading_pattern": "0x0a",
-												"writing_pattern": "0x0a"
+												"reading_pattern": 0x0a,
+												"writing_pattern": 0x0a
 											},
 											"cs1_odt_patterns": {
-												"reading_pattern": "0x0a",
-												"writing_pattern": "0x0a"
+												"reading_pattern": 0x0a,
+												"writing_pattern": 0x0a
 											},
 											"cs2_odt_patterns": {
-												"reading_pattern": "0x05",
-												"writing_pattern": "0x05"
+												"reading_pattern": 0x05,
+												"writing_pattern": 0x05
 											},
 											"cs3_odt_patterns": {
-												"reading_pattern": "0x05",
-												"writing_pattern": "0x05"
+												"reading_pattern": 0x05,
+												"writing_pattern": 0x05
 											}
 										}
 									]
 								},
 								{
 									"header": {
-										"group_id": "0x1704",
-										"entry_id": "0x0047",
-										"entry_size": "0x0448",
-										"instance_id": "0x0000",
+										"group_id": 0x1704,
+										"entry_id": 0x0047,
+										"entry_size": 0x0448,
+										"instance_id": 0x0000,
 										"context_type": "Struct",
 										"context_format": "Raw",
-										"unit_size": "0x00",
+										"unit_size": 0x00,
 										"priority_mask": {
 											"normal": true
 										},
-										"key_size": "0x00",
-										"key_pos": "0x00",
-										"board_instance_mask": "0xffff"
+										"key_size": 0x00,
+										"key_pos": 0x00,
+										"board_instance_mask": 0xffff
 									},
 									"RdimmDdr4CadBusElement": [
 										{
-											"dimm_slots_per_channel": "0x00000001",
+											"dimm_slots_per_channel": 0x00000001,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -1120,17 +1120,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x00393939",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x00393939,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000001",
+											"dimm_slots_per_channel": 0x00000001,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -1162,17 +1162,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x00373737",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x00373737,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000001",
+											"dimm_slots_per_channel": 0x00000001,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -1204,17 +1204,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x00353535",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x00353535,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000001",
+											"dimm_slots_per_channel": 0x00000001,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -1246,17 +1246,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x00333333",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x00333333,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000001",
+											"dimm_slots_per_channel": 0x00000001,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -1288,17 +1288,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x00313131",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x00313131,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000001",
+											"dimm_slots_per_channel": 0x00000001,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -1330,17 +1330,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x002f2f2f",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x002f2f2f,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000001",
+											"dimm_slots_per_channel": 0x00000001,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -1372,17 +1372,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x002d2d2d",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x002d2d2d,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -1414,17 +1414,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x00393939",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x00393939,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -1456,17 +1456,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x00393939",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x00393939,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -1498,17 +1498,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x00353939",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x00353939,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -1540,17 +1540,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x00373737",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x00373737,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -1582,17 +1582,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x00373737",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x00373737,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -1624,17 +1624,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x00333939",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x00333939,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -1666,17 +1666,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x00333737",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x00333737,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -1708,17 +1708,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x00333737",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x00333737,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -1750,17 +1750,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x00353535",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x00353535,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -1792,17 +1792,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x00353535",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x00353535,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -1834,17 +1834,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x00313535",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x00313535,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -1876,17 +1876,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x00333333",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x00333333,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -1918,17 +1918,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x00333333",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x00333333,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -1960,17 +1960,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x002f3333",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x002f3333,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -2002,17 +2002,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x00313131",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x00313131,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -2044,17 +2044,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x00313131",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x00313131,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -2086,17 +2086,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x002d3131",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x002d3131,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -2128,17 +2128,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x002f2f2f",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x002f2f2f,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -2170,17 +2170,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x002f2f2f",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x002f2f2f,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -2212,17 +2212,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x002c2f2f",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x002c2f2f,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -2254,17 +2254,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x002d2d2d",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x002d2d2d,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -2296,17 +2296,17 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x002d2d2d",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x002d2d2d,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
 											"clk_drive_strength": "30 Ω"
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -2338,10 +2338,10 @@
 												"quad_rank": false
 											},
 											"gear_down_mode": false,
-											"_reserved_": "0x0000",
+											"_reserved_": 0x0000,
 											"slow_mode": false,
-											"_reserved_2": "0x0000",
-											"address_command_control": "0x002a2d2d",
+											"_reserved_2": 0x0000,
+											"address_command_control": 0x002a2d2d,
 											"cke_drive_strength": "30 Ω",
 											"cs_odt_drive_strength": "30 Ω",
 											"address_command_drive_strength": "30 Ω",
@@ -2351,23 +2351,23 @@
 								},
 								{
 									"header": {
-										"group_id": "0x1704",
-										"entry_id": "0x0048",
-										"entry_size": "0x0218",
-										"instance_id": "0x0000",
+										"group_id": 0x1704,
+										"entry_id": 0x0048,
+										"entry_size": 0x0218,
+										"instance_id": 0x0000,
 										"context_type": "Struct",
 										"context_format": "Raw",
-										"unit_size": "0x00",
+										"unit_size": 0x00,
 										"priority_mask": {
 											"normal": true
 										},
-										"key_size": "0x00",
-										"key_pos": "0x00",
-										"board_instance_mask": "0xffff"
+										"key_size": 0x00,
+										"key_pos": 0x00,
+										"board_instance_mask": 0xffff
 									},
 									"Ddr4DataBusElement": [
 										{
-											"dimm_slots_per_channel": "0x00000001",
+											"dimm_slots_per_channel": 0x00000001,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -2401,16 +2401,16 @@
 											"rtt_nom": "Off",
 											"rtt_wr": "Off",
 											"rtt_park": "48 Ω",
-											"dq_drive_strength": "0x0000003e",
-											"dqs_drive_strength": "0x0000003e",
-											"odt_drive_strength": "0x00000018",
-											"pmu_phy_vref": "0x0000005b",
+											"dq_drive_strength": 0x0000003e,
+											"dqs_drive_strength": 0x0000003e,
+											"odt_drive_strength": 0x00000018,
+											"pmu_phy_vref": 0x0000005b,
 											"vref_dq": {
 												"Range1": "74.95%"
 											}
 										},
 										{
-											"dimm_slots_per_channel": "0x00000001",
+											"dimm_slots_per_channel": 0x00000001,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -2444,16 +2444,16 @@
 											"rtt_nom": "60 Ω",
 											"rtt_wr": "Off",
 											"rtt_park": "240 Ω",
-											"dq_drive_strength": "0x0000003e",
-											"dqs_drive_strength": "0x0000003e",
-											"odt_drive_strength": "0x00000018",
-											"pmu_phy_vref": "0x0000005d",
+											"dq_drive_strength": 0x0000003e,
+											"dqs_drive_strength": 0x0000003e,
+											"odt_drive_strength": 0x00000018,
+											"pmu_phy_vref": 0x0000005d,
 											"vref_dq": {
 												"Range1": "74.95%"
 											}
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -2487,16 +2487,16 @@
 											"rtt_nom": "Off",
 											"rtt_wr": "Off",
 											"rtt_park": "48 Ω",
-											"dq_drive_strength": "0x0000003e",
-											"dqs_drive_strength": "0x0000003e",
-											"odt_drive_strength": "0x00000018",
-											"pmu_phy_vref": "0x0000005b",
+											"dq_drive_strength": 0x0000003e,
+											"dqs_drive_strength": 0x0000003e,
+											"odt_drive_strength": 0x00000018,
+											"pmu_phy_vref": 0x0000005b,
 											"vref_dq": {
 												"Range1": "74.95%"
 											}
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -2530,16 +2530,16 @@
 											"rtt_nom": "60 Ω",
 											"rtt_wr": "Off",
 											"rtt_park": "240 Ω",
-											"dq_drive_strength": "0x0000003e",
-											"dqs_drive_strength": "0x0000003e",
-											"odt_drive_strength": "0x00000018",
-											"pmu_phy_vref": "0x0000005d",
+											"dq_drive_strength": 0x0000003e,
+											"dqs_drive_strength": 0x0000003e,
+											"odt_drive_strength": 0x00000018,
+											"pmu_phy_vref": 0x0000005d,
 											"vref_dq": {
 												"Range1": "74.95%"
 											}
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -2574,16 +2574,16 @@
 											"rtt_nom": "Off",
 											"rtt_wr": "Off",
 											"rtt_park": "48 Ω",
-											"dq_drive_strength": "0x0000003e",
-											"dqs_drive_strength": "0x0000003e",
-											"odt_drive_strength": "0x00000018",
-											"pmu_phy_vref": "0x0000005b",
+											"dq_drive_strength": 0x0000003e,
+											"dqs_drive_strength": 0x0000003e,
+											"odt_drive_strength": 0x00000018,
+											"pmu_phy_vref": 0x0000005b,
 											"vref_dq": {
 												"Range1": "74.95%"
 											}
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -2617,16 +2617,16 @@
 											"rtt_nom": "Off",
 											"rtt_wr": "80 Ω",
 											"rtt_park": "34 Ω",
-											"dq_drive_strength": "0x0000003e",
-											"dqs_drive_strength": "0x0000003e",
-											"odt_drive_strength": "0x00000018",
-											"pmu_phy_vref": "0x00000068",
+											"dq_drive_strength": 0x0000003e,
+											"dqs_drive_strength": 0x0000003e,
+											"odt_drive_strength": 0x00000018,
+											"pmu_phy_vref": 0x00000068,
 											"vref_dq": {
 												"Range1": "78.85%"
 											}
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -2660,16 +2660,16 @@
 											"rtt_nom": "34 Ω",
 											"rtt_wr": "120 Ω",
 											"rtt_park": "240 Ω",
-											"dq_drive_strength": "0x0000003e",
-											"dqs_drive_strength": "0x0000003e",
-											"odt_drive_strength": "0x00000018",
-											"pmu_phy_vref": "0x00000067",
+											"dq_drive_strength": 0x0000003e,
+											"dqs_drive_strength": 0x0000003e,
+											"odt_drive_strength": 0x00000018,
+											"pmu_phy_vref": 0x00000067,
 											"vref_dq": {
 												"Range1": "80.80%"
 											}
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -2703,16 +2703,16 @@
 											"rtt_nom": "60 Ω",
 											"rtt_wr": "Off",
 											"rtt_park": "240 Ω",
-											"dq_drive_strength": "0x0000003e",
-											"dqs_drive_strength": "0x0000003e",
-											"odt_drive_strength": "0x00000018",
-											"pmu_phy_vref": "0x0000005d",
+											"dq_drive_strength": 0x0000003e,
+											"dqs_drive_strength": 0x0000003e,
+											"odt_drive_strength": 0x00000018,
+											"pmu_phy_vref": 0x0000005d,
 											"vref_dq": {
 												"Range1": "74.95%"
 											}
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -2746,16 +2746,16 @@
 											"rtt_nom": "34 Ω",
 											"rtt_wr": "120 Ω",
 											"rtt_park": "240 Ω",
-											"dq_drive_strength": "0x0000003e",
-											"dqs_drive_strength": "0x0000003e",
-											"odt_drive_strength": "0x00000018",
-											"pmu_phy_vref": "0x00000067",
+											"dq_drive_strength": 0x0000003e,
+											"dqs_drive_strength": 0x0000003e,
+											"odt_drive_strength": 0x00000018,
+											"pmu_phy_vref": 0x00000067,
 											"vref_dq": {
 												"Range1": "80.80%"
 											}
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -2789,10 +2789,10 @@
 											"rtt_nom": "60 Ω",
 											"rtt_wr": "120 Ω",
 											"rtt_park": "240 Ω",
-											"dq_drive_strength": "0x0000003e",
-											"dqs_drive_strength": "0x0000003e",
-											"odt_drive_strength": "0x00000018",
-											"pmu_phy_vref": "0x0000006a",
+											"dq_drive_strength": 0x0000003e,
+											"dqs_drive_strength": 0x0000003e,
+											"odt_drive_strength": 0x00000018,
+											"pmu_phy_vref": 0x0000006a,
 											"vref_dq": {
 												"Range1": "79.50%"
 											}
@@ -2801,19 +2801,19 @@
 								},
 								{
 									"header": {
-										"group_id": "0x1704",
-										"entry_id": "0x0049",
-										"entry_size": "0x0080",
-										"instance_id": "0x0000",
+										"group_id": 0x1704,
+										"entry_id": 0x0049,
+										"entry_size": 0x0080,
+										"instance_id": 0x0000,
 										"context_type": "Struct",
 										"context_format": "Raw",
-										"unit_size": "0x00",
+										"unit_size": 0x00,
 										"priority_mask": {
 											"normal": true
 										},
-										"key_size": "0x00",
-										"key_pos": "0x00",
-										"board_instance_mask": "0xffff"
+										"key_size": 0x00,
+										"key_pos": 0x00,
+										"board_instance_mask": 0xffff
 									},
 									"MaxFreqElement": [
 										{
@@ -2825,17 +2825,17 @@
 													"four_dimms": false
 												}
 											},
-											"_reserved_": "0x00",
+											"_reserved_": 0x00,
 											"conditions": [
-												"0x0001",
-												"0x0001",
-												"0x0000",
-												"0x0000"
+												0x0001,
+												0x0001,
+												0x0000,
+												0x0000
 											],
 											"speeds": [
-												"0x0640",
-												"0x0899",
-												"0x0899"
+												0x0640,
+												0x0899,
+												0x0899
 											]
 										},
 										{
@@ -2847,17 +2847,17 @@
 													"four_dimms": false
 												}
 											},
-											"_reserved_": "0x00",
+											"_reserved_": 0x00,
 											"conditions": [
-												"0x0001",
-												"0x0000",
-												"0x0001",
-												"0x0000"
+												0x0001,
+												0x0000,
+												0x0001,
+												0x0000
 											],
 											"speeds": [
-												"0x0640",
-												"0x0899",
-												"0x0899"
+												0x0640,
+												0x0899,
+												0x0899
 											]
 										},
 										{
@@ -2869,17 +2869,17 @@
 													"four_dimms": false
 												}
 											},
-											"_reserved_": "0x00",
+											"_reserved_": 0x00,
 											"conditions": [
-												"0x0001",
-												"0x0001",
-												"0x0000",
-												"0x0000"
+												0x0001,
+												0x0001,
+												0x0000,
+												0x0000
 											],
 											"speeds": [
-												"0x0640",
-												"0x0899",
-												"0x0899"
+												0x0640,
+												0x0899,
+												0x0899
 											]
 										},
 										{
@@ -2891,17 +2891,17 @@
 													"four_dimms": false
 												}
 											},
-											"_reserved_": "0x00",
+											"_reserved_": 0x00,
 											"conditions": [
-												"0x0001",
-												"0x0000",
-												"0x0001",
-												"0x0000"
+												0x0001,
+												0x0000,
+												0x0001,
+												0x0000
 											],
 											"speeds": [
-												"0x0640",
-												"0x0899",
-												"0x0899"
+												0x0640,
+												0x0899,
+												0x0899
 											]
 										},
 										{
@@ -2913,17 +2913,17 @@
 													"four_dimms": false
 												}
 											},
-											"_reserved_": "0x00",
+											"_reserved_": 0x00,
 											"conditions": [
-												"0x0002",
-												"0x0002",
-												"0x0000",
-												"0x0000"
+												0x0002,
+												0x0002,
+												0x0000,
+												0x0000
 											],
 											"speeds": [
-												"0x05bb",
-												"0x0899",
-												"0x0899"
+												0x05bb,
+												0x0899,
+												0x0899
 											]
 										},
 										{
@@ -2935,17 +2935,17 @@
 													"four_dimms": false
 												}
 											},
-											"_reserved_": "0x00",
+											"_reserved_": 0x00,
 											"conditions": [
-												"0x0002",
-												"0x0001",
-												"0x0001",
-												"0x0000"
+												0x0002,
+												0x0001,
+												0x0001,
+												0x0000
 											],
 											"speeds": [
-												"0x05bb",
-												"0x0899",
-												"0x0899"
+												0x05bb,
+												0x0899,
+												0x0899
 											]
 										},
 										{
@@ -2957,36 +2957,36 @@
 													"four_dimms": false
 												}
 											},
-											"_reserved_": "0x00",
+											"_reserved_": 0x00,
 											"conditions": [
-												"0x0002",
-												"0x0000",
-												"0x0002",
-												"0x0000"
+												0x0002,
+												0x0000,
+												0x0002,
+												0x0000
 											],
 											"speeds": [
-												"0x05bb",
-												"0x0899",
-												"0x0899"
+												0x05bb,
+												0x0899,
+												0x0899
 											]
 										}
 									]
 								},
 								{
 									"header": {
-										"group_id": "0x1704",
-										"entry_id": "0x004a",
-										"entry_size": "0x0080",
-										"instance_id": "0x0000",
+										"group_id": 0x1704,
+										"entry_id": 0x004a,
+										"entry_size": 0x0080,
+										"instance_id": 0x0000,
 										"context_type": "Struct",
 										"context_format": "Raw",
-										"unit_size": "0x00",
+										"unit_size": 0x00,
 										"priority_mask": {
 											"normal": true
 										},
-										"key_size": "0x00",
-										"key_pos": "0x00",
-										"board_instance_mask": "0xffff"
+										"key_size": 0x00,
+										"key_pos": 0x00,
+										"board_instance_mask": 0xffff
 									},
 									"MaxFreqElement": [
 										{
@@ -2998,17 +2998,17 @@
 													"four_dimms": false
 												}
 											},
-											"_reserved_": "0x00",
+											"_reserved_": 0x00,
 											"conditions": [
-												"0x0001",
-												"0x0001",
-												"0x0000",
-												"0x0000"
+												0x0001,
+												0x0001,
+												0x0000,
+												0x0000
 											],
 											"speeds": [
-												"0x0640",
-												"0x0899",
-												"0x0899"
+												0x0640,
+												0x0899,
+												0x0899
 											]
 										},
 										{
@@ -3020,17 +3020,17 @@
 													"four_dimms": false
 												}
 											},
-											"_reserved_": "0x00",
+											"_reserved_": 0x00,
 											"conditions": [
-												"0x0001",
-												"0x0000",
-												"0x0001",
-												"0x0000"
+												0x0001,
+												0x0000,
+												0x0001,
+												0x0000
 											],
 											"speeds": [
-												"0x0640",
-												"0x0899",
-												"0x0899"
+												0x0640,
+												0x0899,
+												0x0899
 											]
 										},
 										{
@@ -3042,17 +3042,17 @@
 													"four_dimms": false
 												}
 											},
-											"_reserved_": "0x00",
+											"_reserved_": 0x00,
 											"conditions": [
-												"0x0001",
-												"0x0001",
-												"0x0000",
-												"0x0000"
+												0x0001,
+												0x0001,
+												0x0000,
+												0x0000
 											],
 											"speeds": [
-												"0x0640",
-												"0x0899",
-												"0x0899"
+												0x0640,
+												0x0899,
+												0x0899
 											]
 										},
 										{
@@ -3064,17 +3064,17 @@
 													"four_dimms": false
 												}
 											},
-											"_reserved_": "0x00",
+											"_reserved_": 0x00,
 											"conditions": [
-												"0x0001",
-												"0x0000",
-												"0x0001",
-												"0x0000"
+												0x0001,
+												0x0000,
+												0x0001,
+												0x0000
 											],
 											"speeds": [
-												"0x0640",
-												"0x0899",
-												"0x0899"
+												0x0640,
+												0x0899,
+												0x0899
 											]
 										},
 										{
@@ -3086,17 +3086,17 @@
 													"four_dimms": false
 												}
 											},
-											"_reserved_": "0x00",
+											"_reserved_": 0x00,
 											"conditions": [
-												"0x0002",
-												"0x0002",
-												"0x0000",
-												"0x0000"
+												0x0002,
+												0x0002,
+												0x0000,
+												0x0000
 											],
 											"speeds": [
-												"0x0640",
-												"0x0899",
-												"0x0899"
+												0x0640,
+												0x0899,
+												0x0899
 											]
 										},
 										{
@@ -3108,17 +3108,17 @@
 													"four_dimms": false
 												}
 											},
-											"_reserved_": "0x00",
+											"_reserved_": 0x00,
 											"conditions": [
-												"0x0002",
-												"0x0001",
-												"0x0001",
-												"0x0000"
+												0x0002,
+												0x0001,
+												0x0001,
+												0x0000
 											],
 											"speeds": [
-												"0x0640",
-												"0x0899",
-												"0x0899"
+												0x0640,
+												0x0899,
+												0x0899
 											]
 										},
 										{
@@ -3130,36 +3130,36 @@
 													"four_dimms": false
 												}
 											},
-											"_reserved_": "0x00",
+											"_reserved_": 0x00,
 											"conditions": [
-												"0x0002",
-												"0x0000",
-												"0x0002",
-												"0x0000"
+												0x0002,
+												0x0000,
+												0x0002,
+												0x0000
 											],
 											"speeds": [
-												"0x0640",
-												"0x0899",
-												"0x0899"
+												0x0640,
+												0x0899,
+												0x0899
 											]
 										}
 									]
 								},
 								{
 									"header": {
-										"group_id": "0x1704",
-										"entry_id": "0x004b",
-										"entry_size": "0x0040",
-										"instance_id": "0x0000",
+										"group_id": 0x1704,
+										"entry_id": 0x004b,
+										"entry_size": 0x0040,
+										"instance_id": 0x0000,
 										"context_type": "Struct",
 										"context_format": "Raw",
-										"unit_size": "0x00",
+										"unit_size": 0x00,
 										"priority_mask": {
 											"normal": true
 										},
-										"key_size": "0x00",
-										"key_pos": "0x00",
-										"board_instance_mask": "0xffff"
+										"key_size": 0x00,
+										"key_pos": 0x00,
+										"board_instance_mask": 0xffff
 									},
 									"MaxFreqElement": [
 										{
@@ -3171,17 +3171,17 @@
 													"four_dimms": false
 												}
 											},
-											"_reserved_": "0x00",
+											"_reserved_": 0x00,
 											"conditions": [
-												"0x0001",
-												"0x0000",
-												"0x0001",
-												"0x0000"
+												0x0001,
+												0x0000,
+												0x0001,
+												0x0000
 											],
 											"speeds": [
-												"0x0640",
-												"0x0899",
-												"0x0899"
+												0x0640,
+												0x0899,
+												0x0899
 											]
 										},
 										{
@@ -3193,17 +3193,17 @@
 													"four_dimms": false
 												}
 											},
-											"_reserved_": "0x00",
+											"_reserved_": 0x00,
 											"conditions": [
-												"0x0001",
-												"0x0000",
-												"0x0001",
-												"0x0000"
+												0x0001,
+												0x0000,
+												0x0001,
+												0x0000
 											],
 											"speeds": [
-												"0x05bb",
-												"0x0899",
-												"0x0899"
+												0x05bb,
+												0x0899,
+												0x0899
 											]
 										},
 										{
@@ -3215,36 +3215,36 @@
 													"four_dimms": false
 												}
 											},
-											"_reserved_": "0x00",
+											"_reserved_": 0x00,
 											"conditions": [
-												"0x0002",
-												"0x0000",
-												"0x0002",
-												"0x0000"
+												0x0002,
+												0x0000,
+												0x0002,
+												0x0000
 											],
 											"speeds": [
-												"0x0535",
-												"0x0899",
-												"0x0899"
+												0x0535,
+												0x0899,
+												0x0899
 											]
 										}
 									]
 								},
 								{
 									"header": {
-										"group_id": "0x1704",
-										"entry_id": "0x004c",
-										"entry_size": "0x0040",
-										"instance_id": "0x0000",
+										"group_id": 0x1704,
+										"entry_id": 0x004c,
+										"entry_size": 0x0040,
+										"instance_id": 0x0000,
 										"context_type": "Struct",
 										"context_format": "Raw",
-										"unit_size": "0x00",
+										"unit_size": 0x00,
 										"priority_mask": {
 											"normal": true
 										},
-										"key_size": "0x00",
-										"key_pos": "0x00",
-										"board_instance_mask": "0xffff"
+										"key_size": 0x00,
+										"key_pos": 0x00,
+										"board_instance_mask": 0xffff
 									},
 									"MaxFreqElement": [
 										{
@@ -3256,17 +3256,17 @@
 													"four_dimms": false
 												}
 											},
-											"_reserved_": "0x00",
+											"_reserved_": 0x00,
 											"conditions": [
-												"0x0001",
-												"0x0000",
-												"0x0001",
-												"0x0000"
+												0x0001,
+												0x0000,
+												0x0001,
+												0x0000
 											],
 											"speeds": [
-												"0x0640",
-												"0x0899",
-												"0x0899"
+												0x0640,
+												0x0899,
+												0x0899
 											]
 										},
 										{
@@ -3278,17 +3278,17 @@
 													"four_dimms": false
 												}
 											},
-											"_reserved_": "0x00",
+											"_reserved_": 0x00,
 											"conditions": [
-												"0x0001",
-												"0x0000",
-												"0x0001",
-												"0x0000"
+												0x0001,
+												0x0000,
+												0x0001,
+												0x0000
 											],
 											"speeds": [
-												"0x0640",
-												"0x0899",
-												"0x0899"
+												0x0640,
+												0x0899,
+												0x0899
 											]
 										},
 										{
@@ -3300,40 +3300,40 @@
 													"four_dimms": false
 												}
 											},
-											"_reserved_": "0x00",
+											"_reserved_": 0x00,
 											"conditions": [
-												"0x0002",
-												"0x0000",
-												"0x0002",
-												"0x0000"
+												0x0002,
+												0x0000,
+												0x0002,
+												0x0000
 											],
 											"speeds": [
-												"0x0640",
-												"0x0899",
-												"0x0899"
+												0x0640,
+												0x0899,
+												0x0899
 											]
 										}
 									]
 								},
 								{
 									"header": {
-										"group_id": "0x1704",
-										"entry_id": "0x004d",
-										"entry_size": "0x00e0",
-										"instance_id": "0x0000",
+										"group_id": 0x1704,
+										"entry_id": 0x004d,
+										"entry_size": 0x00e0,
+										"instance_id": 0x0000,
 										"context_type": "Struct",
 										"context_format": "Raw",
-										"unit_size": "0x00",
+										"unit_size": 0x00,
 										"priority_mask": {
 											"normal": true
 										},
-										"key_size": "0x00",
-										"key_pos": "0x00",
-										"board_instance_mask": "0xffff"
+										"key_size": 0x00,
+										"key_pos": 0x00,
+										"board_instance_mask": 0xffff
 									},
 									"Ddr4DataBusElement": [
 										{
-											"dimm_slots_per_channel": "0x00000001",
+											"dimm_slots_per_channel": 0x00000001,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -3367,16 +3367,16 @@
 											"rtt_nom": "60 Ω",
 											"rtt_wr": "Off",
 											"rtt_park": "240 Ω",
-											"dq_drive_strength": "0x0000003e",
-											"dqs_drive_strength": "0x0000003e",
-											"odt_drive_strength": "0x00000018",
-											"pmu_phy_vref": "0x0000005b",
+											"dq_drive_strength": 0x0000003e,
+											"dqs_drive_strength": 0x0000003e,
+											"odt_drive_strength": 0x00000018,
+											"pmu_phy_vref": 0x0000005b,
 											"vref_dq": {
 												"Range1": "71.70%"
 											}
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -3410,16 +3410,16 @@
 											"rtt_nom": "60 Ω",
 											"rtt_wr": "Off",
 											"rtt_park": "240 Ω",
-											"dq_drive_strength": "0x0000003e",
-											"dqs_drive_strength": "0x0000003e",
-											"odt_drive_strength": "0x00000018",
-											"pmu_phy_vref": "0x0000005b",
+											"dq_drive_strength": 0x0000003e,
+											"dqs_drive_strength": 0x0000003e,
+											"odt_drive_strength": 0x00000018,
+											"pmu_phy_vref": 0x0000005b,
 											"vref_dq": {
 												"Range1": "71.70%"
 											}
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -3453,16 +3453,16 @@
 											"rtt_nom": "60 Ω",
 											"rtt_wr": "Off",
 											"rtt_park": "240 Ω",
-											"dq_drive_strength": "0x0000003e",
-											"dqs_drive_strength": "0x0000003e",
-											"odt_drive_strength": "0x00000018",
-											"pmu_phy_vref": "0x0000005b",
+											"dq_drive_strength": 0x0000003e,
+											"dqs_drive_strength": 0x0000003e,
+											"odt_drive_strength": 0x00000018,
+											"pmu_phy_vref": 0x0000005b,
 											"vref_dq": {
 												"Range1": "71.70%"
 											}
 										},
 										{
-											"dimm_slots_per_channel": "0x00000002",
+											"dimm_slots_per_channel": 0x00000002,
 											"ddr_rates": {
 												"ddr400": false,
 												"ddr533": false,
@@ -3496,10 +3496,10 @@
 											"rtt_nom": "60 Ω",
 											"rtt_wr": "120 Ω",
 											"rtt_park": "240 Ω",
-											"dq_drive_strength": "0x0000003e",
-											"dqs_drive_strength": "0x0000003e",
-											"odt_drive_strength": "0x00000018",
-											"pmu_phy_vref": "0x00000068",
+											"dq_drive_strength": 0x0000003e,
+											"dqs_drive_strength": 0x0000003e,
+											"odt_drive_strength": 0x00000018,
+											"pmu_phy_vref": 0x00000068,
 											"vref_dq": {
 												"Range1": "77.55%"
 											}
@@ -3508,19 +3508,19 @@
 								},
 								{
 									"header": {
-										"group_id": "0x1704",
-										"entry_id": "0x0050",
-										"entry_size": "0x0024",
-										"instance_id": "0x0000",
+										"group_id": 0x1704,
+										"entry_id": 0x0050,
+										"entry_size": 0x0024,
+										"instance_id": 0x0000,
 										"context_type": "Struct",
 										"context_format": "Raw",
-										"unit_size": "0x00",
+										"unit_size": 0x00,
 										"priority_mask": {
 											"normal": true
 										},
-										"key_size": "0x00",
-										"key_pos": "0x00",
-										"board_instance_mask": "0xffff"
+										"key_size": 0x00,
+										"key_pos": 0x00,
+										"board_instance_mask": 0xffff
 									},
 									"ConsoleOutControl": {
 										"abl_console_out_control": {
@@ -3534,45 +3534,45 @@
 											"enable_mem_pmu_sram_write_logging": false,
 											"enable_mem_test_verbose_logging": false,
 											"enable_mem_basic_output_logging": true,
-											"_reserved_": "0x0000",
-											"abl_console_port": "0x00000080"
+											"_reserved_": 0x0000,
+											"abl_console_port": 0x00000080
 										},
 										"abl_breakpoint_control": {
 											"enable_breakpoint": false,
 											"break_on_all_dies": false
 										},
-										"_reserved_": "0x0000"
+										"_reserved_": 0x0000
 									}
 								},
 								{
 									"header": {
-										"group_id": "0x1704",
-										"entry_id": "0x0052",
-										"entry_size": "0x0080",
-										"instance_id": "0x0000",
+										"group_id": 0x1704,
+										"entry_id": 0x0052,
+										"entry_size": 0x0080,
+										"instance_id": 0x0000,
 										"context_type": "Struct",
 										"context_format": "Raw",
-										"unit_size": "0x00",
+										"unit_size": 0x00,
 										"priority_mask": {
 											"normal": true
 										},
-										"key_size": "0x00",
-										"key_pos": "0x00",
-										"board_instance_mask": "0xffff"
+										"key_size": 0x00,
+										"key_pos": 0x00,
+										"board_instance_mask": 0xffff
 									},
 									"ErrorOutControl112": {
 										"enable_error_reporting": false,
 										"enable_error_reporting_gpio": false,
 										"enable_error_reporting_beep_codes": false,
 										"enable_using_handshake": false,
-										"input_port": "0x00000084",
-										"output_delay": "0x00003a98",
-										"output_port": "0x00000080",
+										"input_port": 0x00000084,
+										"output_delay": 0x00003a98,
+										"output_port": 0x00000080,
 										"stop_on_first_fatal_error": false,
 										"_reserved_": [
-											"0x00",
-											"0x00",
-											"0x00"
+											0x00,
+											0x00,
+											0x00
 										],
 										"input_port_size": "32 Bit",
 										"output_port_size": "32 Bit",
@@ -3581,15 +3581,15 @@
 										"clear_acknowledgement": false,
 										"_reserved_before_gpio": [],
 										"error_reporting_gpio": {
-											"pin": "0x55",
-											"iomux_control": "0x01",
-											"bank_control": "0xc0"
+											"pin": 0x55,
+											"iomux_control": 0x01,
+											"bank_control": 0xc0
 										},
 										"_reserved_after_gpio": [],
 										"beep_code_table": [
 											{
 												"custom_error_type": "General",
-												"peak_map": "0x0001",
+												"peak_map": 0x0001,
 												"peak_attr": {
 													"peak_count": 8,
 													"pulse_width": 0,
@@ -3598,7 +3598,7 @@
 											},
 											{
 												"custom_error_type": "Memory",
-												"peak_map": "0x0002",
+												"peak_map": 0x0002,
 												"peak_attr": {
 													"peak_count": 20,
 													"pulse_width": 0,
@@ -3607,7 +3607,7 @@
 											},
 											{
 												"custom_error_type": "Df",
-												"peak_map": "0x0003",
+												"peak_map": 0x0003,
 												"peak_attr": {
 													"peak_count": 20,
 													"pulse_width": 0,
@@ -3616,7 +3616,7 @@
 											},
 											{
 												"custom_error_type": "Ccx",
-												"peak_map": "0x0004",
+												"peak_map": 0x0004,
 												"peak_attr": {
 													"peak_count": 20,
 													"pulse_width": 0,
@@ -3625,7 +3625,7 @@
 											},
 											{
 												"custom_error_type": "Gnb",
-												"peak_map": "0x0005",
+												"peak_map": 0x0005,
 												"peak_attr": {
 													"peak_count": 20,
 													"pulse_width": 0,
@@ -3634,7 +3634,7 @@
 											},
 											{
 												"custom_error_type": "Psp",
-												"peak_map": "0x0006",
+												"peak_map": 0x0006,
 												"peak_attr": {
 													"peak_count": 20,
 													"pulse_width": 0,
@@ -3643,7 +3643,7 @@
 											},
 											{
 												"custom_error_type": "Smu",
-												"peak_map": "0x0007",
+												"peak_map": 0x0007,
 												"peak_attr": {
 													"peak_count": 20,
 													"pulse_width": 0,
@@ -3652,7 +3652,7 @@
 											},
 											{
 												"custom_error_type": "Unknown",
-												"peak_map": "0x0002",
+												"peak_map": 0x0002,
 												"peak_attr": {
 													"peak_count": 4,
 													"pulse_width": 0,
@@ -3663,74 +3663,74 @@
 										"enable_heart_beat": false,
 										"enable_power_good_gpio": false,
 										"power_good_gpio": {
-											"pin": "0x00",
-											"iomux_control": "0x00",
-											"bank_control": "0x00"
+											"pin": 0x00,
+											"iomux_control": 0x00,
+											"bank_control": 0x00
 										},
 										"_reserved_end": [
-											"0x00",
-											"0x00",
-											"0x00"
+											0x00,
+											0x00,
+											0x00
 										]
 									}
 								},
 								{
 									"header": {
-										"group_id": "0x1704",
-										"entry_id": "0x0053",
-										"entry_size": "0x0030",
-										"instance_id": "0x0000",
+										"group_id": 0x1704,
+										"entry_id": 0x0053,
+										"entry_size": 0x0030,
+										"instance_id": 0x0000,
 										"context_type": "Struct",
 										"context_format": "Raw",
-										"unit_size": "0x00",
+										"unit_size": 0x00,
 										"priority_mask": {
 											"normal": true
 										},
-										"key_size": "0x00",
-										"key_pos": "0x00",
-										"board_instance_mask": "0xffff"
+										"key_size": 0x00,
+										"key_pos": 0x00,
+										"board_instance_mask": 0xffff
 									},
 									"ExtVoltageControl": {
 										"enabled": true,
 										"_reserved_": [
-											"0x00",
-											"0x00",
-											"0x00"
+											0x00,
+											0x00,
+											0x00
 										],
-										"input_port": "0x00000084",
-										"output_port": "0x00000080",
+										"input_port": 0x00000084,
+										"output_port": 0x00000080,
 										"input_port_size": "32 Bit",
 										"output_port_size": "32 Bit",
 										"input_port_type": "FchHtIo",
 										"output_port_type": "FchHtIo",
 										"clear_acknowledgement": false,
 										"_reserved_2": [
-											"0x00",
-											"0x00",
-											"0x00"
+											0x00,
+											0x00,
+											0x00
 										]
 									}
 								},
 								{
 									"header": {
-										"group_id": "0x1704",
-										"entry_id": "0x0075",
-										"entry_size": "0x0014",
-										"instance_id": "0x0000",
+										"group_id": 0x1704,
+										"entry_id": 0x0075,
+										"entry_size": 0x0014,
+										"instance_id": 0x0000,
 										"context_type": "Struct",
 										"context_format": "Raw",
-										"unit_size": "0x00",
+										"unit_size": 0x00,
 										"priority_mask": {
 											"normal": true
 										},
-										"key_size": "0x00",
-										"key_pos": "0x00",
-										"board_instance_mask": "0xffff"
+										"key_size": 0x00,
+										"key_pos": 0x00,
+										"board_instance_mask": 0xffff
 									},
 									"platform_tuning": [
 										{
 											"Terminator": {
-												"type_": "0xfeef"
+												"type_": 0xfeef
 											}
 										},
 										{
@@ -3747,19 +3747,19 @@
 								},
 								{
 									"header": {
-										"group_id": "0x3000",
-										"entry_id": "0x0000",
-										"entry_size": "0x0200",
-										"instance_id": "0x0000",
+										"group_id": 0x3000,
+										"entry_id": 0x0000,
+										"entry_size": 0x0200,
+										"instance_id": 0x0000,
 										"context_type": "Tokens",
 										"context_format": "SortAscending",
-										"unit_size": "0x08",
+										"unit_size": 0x08,
 										"priority_mask": {
 											"normal": true
 										},
-										"key_size": "0x04",
-										"key_pos": "0x00",
-										"board_instance_mask": "0xffff"
+										"key_size": 0x04,
+										"key_pos": 0x00,
+										"board_instance_mask": 0xffff
 									},
 									"tokens": [
 										{
@@ -4076,19 +4076,19 @@
 								},
 								{
 									"header": {
-										"group_id": "0x3000",
-										"entry_id": "0x0001",
-										"entry_size": "0x02e0",
-										"instance_id": "0x0000",
+										"group_id": 0x3000,
+										"entry_id": 0x0001,
+										"entry_size": 0x02e0,
+										"instance_id": 0x0000,
 										"context_type": "Tokens",
 										"context_format": "SortAscending",
-										"unit_size": "0x08",
+										"unit_size": 0x08,
 										"priority_mask": {
 											"normal": true
 										},
-										"key_size": "0x04",
-										"key_pos": "0x00",
-										"board_instance_mask": "0xffff"
+										"key_size": 0x04,
+										"key_pos": 0x00,
+										"board_instance_mask": 0xffff
 									},
 									"tokens": [
 										{
@@ -4108,12 +4108,12 @@
 										},
 										{
 											"Byte": {
-												"MemUrgRefLimit": "0x06"
+												"MemUrgRefLimit": 0x06
 											}
 										},
 										{
 											"Byte": {
-												"BmcEndLane": "0x81"
+												"BmcEndLane": 0x81
 											}
 										},
 										{
@@ -4123,7 +4123,7 @@
 										},
 										{
 											"Byte": {
-												"BmcFunction": "0x02"
+												"BmcFunction": 0x02
 											}
 										},
 										{
@@ -4138,7 +4138,7 @@
 										},
 										{
 											"Byte": {
-												"MemMbistWorseCasGranularity": "0x00"
+												"MemMbistWorseCasGranularity": 0x00
 											}
 										},
 										{
@@ -4165,7 +4165,7 @@
 										},
 										{
 											"Byte": {
-												"BmcVgaIoBarToReplace": "0x00"
+												"BmcVgaIoBarToReplace": 0x00
 											}
 										},
 										{
@@ -4175,7 +4175,7 @@
 										},
 										{
 											"Byte": {
-												"MemMbistReadDataEyeVoltageStep": "0x01"
+												"MemMbistReadDataEyeVoltageStep": 0x01
 											}
 										},
 										{
@@ -4185,7 +4185,7 @@
 										},
 										{
 											"Byte": {
-												"MemDramAddressCommandParityRetryCount": "0x01"
+												"MemDramAddressCommandParityRetryCount": 0x01
 											}
 										},
 										{
@@ -4200,12 +4200,12 @@
 										},
 										{
 											"Byte": {
-												"MemMbistAggressorStaticLaneVal": "0x00"
+												"MemMbistAggressorStaticLaneVal": 0x00
 											}
 										},
 										{
 											"Byte": {
-												"MemDramDoubleRefreshRate": "0x00"
+												"MemDramDoubleRefreshRate": 0x00
 											}
 										},
 										{
@@ -4215,7 +4215,7 @@
 										},
 										{
 											"Byte": {
-												"MemMbistTgtStaticLaneVal": "0x00"
+												"MemMbistTgtStaticLaneVal": 0x00
 											}
 										},
 										{
@@ -4245,12 +4245,12 @@
 										},
 										{
 											"Byte": {
-												"MemMbistAggressorStaticLaneSelEcc": "0x00"
+												"MemMbistAggressorStaticLaneSelEcc": 0x00
 											}
 										},
 										{
 											"Byte": {
-												"MemMbistReadDataEyeTimingStep": "0x01"
+												"MemMbistReadDataEyeTimingStep": 0x01
 											}
 										},
 										{
@@ -4272,7 +4272,7 @@
 										},
 										{
 											"Byte": {
-												"MemHealMaxBankFails": "0x03"
+												"MemHealMaxBankFails": 0x03
 											}
 										},
 										{
@@ -4292,12 +4292,12 @@
 										},
 										{
 											"Byte": {
-												"OdtsCmdThrottleCycles": "0x57"
+												"OdtsCmdThrottleCycles": 0x57
 											}
 										},
 										{
 											"Byte": {
-												"MemControllerWritingCrcMaxReplay": "0x08"
+												"MemControllerWritingCrcMaxReplay": 0x08
 											}
 										},
 										{
@@ -4307,7 +4307,7 @@
 										},
 										{
 											"Byte": {
-												"MemCpuVrefRange": "0x00"
+												"MemCpuVrefRange": 0x00
 											}
 										},
 										{
@@ -4322,12 +4322,12 @@
 										},
 										{
 											"Byte": {
-												"DimmSensorResolution": "0x01"
+												"DimmSensorResolution": 0x01
 											}
 										},
 										{
 											"Byte": {
-												"BmcSocket": "0x00"
+												"BmcSocket": 0x00
 											}
 										},
 										{
@@ -4337,22 +4337,22 @@
 										},
 										{
 											"Byte": {
-												"PcieResetPinSelect": "0x02"
+												"PcieResetPinSelect": 0x02
 											}
 										},
 										{
 											"Byte": {
-												"MemMbistDataEyeExecutionRepeatCount": "0x01"
+												"MemMbistDataEyeExecutionRepeatCount": 0x01
 											}
 										},
 										{
 											"Byte": {
-												"DfBottomIo": "0xb0"
+												"DfBottomIo": 0xb0
 											}
 										},
 										{
 											"Byte": {
-												"MemDataScramble": "0x01"
+												"MemDataScramble": 0x01
 											}
 										},
 										{
@@ -4367,17 +4367,17 @@
 										},
 										{
 											"Byte": {
-												"FchConsoleOutBasicEnable": "0x00"
+												"FchConsoleOutBasicEnable": 0x00
 											}
 										},
 										{
 											"Byte": {
-												"MemMbistTgtStaticLaneSelEcc": "0x00"
+												"MemMbistTgtStaticLaneSelEcc": 0x00
 											}
 										},
 										{
 											"Byte": {
-												"MemDramVrefRange": "0x00"
+												"MemDramVrefRange": 0x00
 											}
 										},
 										{
@@ -4392,7 +4392,7 @@
 										},
 										{
 											"Byte": {
-												"MemMbistPatternLength": "0x03"
+												"MemMbistPatternLength": 0x03
 											}
 										},
 										{
@@ -4412,12 +4412,12 @@
 										},
 										{
 											"Byte": {
-												"MemMbistHaltOnError": "0x01"
+												"MemMbistHaltOnError": 0x01
 											}
 										},
 										{
 											"Byte": {
-												"BmcStartLane": "0x81"
+												"BmcStartLane": 0x81
 											}
 										},
 										{
@@ -4437,12 +4437,12 @@
 										},
 										{
 											"Byte": {
-												"MemControllerWritingCrcLimit": "0x00"
+												"MemControllerWritingCrcLimit": 0x00
 											}
 										},
 										{
 											"Byte": {
-												"MemParityErrorMaxReplayDdr4": "0x08"
+												"MemParityErrorMaxReplayDdr4": 0x08
 											}
 										},
 										{
@@ -4452,7 +4452,7 @@
 										},
 										{
 											"Byte": {
-												"MemMbistWriteDataEyeVoltageStep": "0x01"
+												"MemMbistWriteDataEyeVoltageStep": 0x01
 											}
 										},
 										{
@@ -4462,7 +4462,7 @@
 										},
 										{
 											"Byte": {
-												"MemMbistPerBitSlaveDieReport": "0x00"
+												"MemMbistPerBitSlaveDieReport": 0x00
 											}
 										},
 										{
@@ -4482,12 +4482,12 @@
 										},
 										{
 											"Byte": {
-												"BmcDevice": "0x05"
+												"BmcDevice": 0x05
 											}
 										},
 										{
 											"Byte": {
-												"MemMbistWriteDataEyeTimingStep": "0x01"
+												"MemMbistWriteDataEyeTimingStep": 0x01
 											}
 										},
 										{
@@ -4497,12 +4497,12 @@
 										},
 										{
 											"Byte": {
-												"SwCmdThrotCycles": "0x00"
+												"SwCmdThrotCycles": 0x00
 											}
 										},
 										{
 											"Byte": {
-												"FchConsoleOutMode": "0x00"
+												"FchConsoleOutMode": 0x00
 											}
 										},
 										{
@@ -4517,7 +4517,7 @@
 										},
 										{
 											"Byte": {
-												"MemSubUrgRefLowerBound": "0x04"
+												"MemSubUrgRefLowerBound": 0x04
 											}
 										},
 										{
@@ -4537,7 +4537,7 @@
 										},
 										{
 											"Byte": {
-												"BmcVgaIoPortSize": "0x00"
+												"BmcVgaIoPortSize": 0x00
 											}
 										},
 										{
@@ -4549,39 +4549,39 @@
 								},
 								{
 									"header": {
-										"group_id": "0x3000",
-										"entry_id": "0x0002",
-										"entry_size": "0x0088",
-										"instance_id": "0x0000",
+										"group_id": 0x3000,
+										"entry_id": 0x0002,
+										"entry_size": 0x0088,
+										"instance_id": 0x0000,
 										"context_type": "Tokens",
 										"context_format": "SortAscending",
-										"unit_size": "0x08",
+										"unit_size": 0x08,
 										"priority_mask": {
 											"normal": true
 										},
-										"key_size": "0x04",
-										"key_pos": "0x00",
-										"board_instance_mask": "0xffff"
+										"key_size": 0x04,
+										"key_pos": 0x00,
+										"board_instance_mask": 0xffff
 									},
 									"tokens": [
 										{
 											"Word": {
-												"BmcVgaIoPort": "0x0000"
+												"BmcVgaIoPort": 0x0000
 											}
 										},
 										{
 											"Word": {
-												"Dimm3DsSensorCritical": "0x0050"
+												"Dimm3DsSensorCritical": 0x0050
 											}
 										},
 										{
 											"Word": {
-												"ScrubL2Rate": "0x0000"
+												"ScrubL2Rate": 0x0000
 											}
 										},
 										{
 											"Word": {
-												"Dimm3DsSensorUpper": "0x0042"
+												"Dimm3DsSensorUpper": 0x0042
 											}
 										},
 										{
@@ -4591,73 +4591,73 @@
 										},
 										{
 											"Word": {
-												"DimmSensorCritical": "0x005f"
+												"DimmSensorCritical": 0x005f
 											}
 										},
 										{
 											"Word": {
-												"DimmSensorConfig": "0x0408"
+												"DimmSensorConfig": 0x0408
 											}
 										},
 										{
 											"Word": {
-												"ScrubIcacheRate": "0x0000"
+												"ScrubIcacheRate": 0x0000
 											}
 										},
 										{
 											"Word": {
-												"ScrubDramRate": "0x0000"
+												"ScrubDramRate": 0x0000
 											}
 										},
 										{
 											"Word": {
-												"ScrubDcacheRate": "0x0000"
+												"ScrubDcacheRate": 0x0000
 											}
 										},
 										{
 											"Word": {
-												"DimmSensorUpper": "0x0050"
+												"DimmSensorUpper": 0x0050
 											}
 										},
 										{
 											"Word": {
-												"ScrubL3Rate": "0x0000"
+												"ScrubL3Rate": 0x0000
 											}
 										},
 										{
 											"Word": {
-												"DimmSensorLower": "0x000a"
+												"DimmSensorLower": 0x000a
 											}
 										},
 										{
 											"Unknown": {
 												"entry_id": "Word",
-												"tag": "0xcd7e6983",
-												"value": "0x0000ffff"
+												"tag": 0xcd7e6983,
+												"value": 0x0000ffff
 											}
 										},
 										{
 											"Word": {
-												"PspSyshubWatchdogTimerInterval": "0x0a28"
+												"PspSyshubWatchdogTimerInterval": 0x0a28
 											}
 										}
 									]
 								},
 								{
 									"header": {
-										"group_id": "0x3000",
-										"entry_id": "0x0004",
-										"entry_size": "0x00c0",
-										"instance_id": "0x0000",
+										"group_id": 0x3000,
+										"entry_id": 0x0004,
+										"entry_size": 0x00c0,
+										"instance_id": 0x0000,
 										"context_type": "Tokens",
 										"context_format": "SortAscending",
-										"unit_size": "0x08",
+										"unit_size": 0x08,
 										"priority_mask": {
 											"normal": true
 										},
-										"key_size": "0x04",
-										"key_pos": "0x00",
-										"board_instance_mask": "0xffff"
+										"key_size": 0x04,
+										"key_pos": 0x00,
+										"board_instance_mask": 0xffff
 									},
 									"tokens": [
 										{
@@ -4667,7 +4667,7 @@
 										},
 										{
 											"Dword": {
-												"MemPowerDownMode": "0x00000000"
+												"MemPowerDownMode": 0x00000000
 											}
 										},
 										{
@@ -4677,44 +4677,44 @@
 										},
 										{
 											"Dword": {
-												"MemUmaSize": "0x00000000"
+												"MemUmaSize": 0x00000000
 											}
 										},
 										{
 											"Dword": {
-												"DfPciMmioSize": "0x10000000"
+												"DfPciMmioSize": 0x10000000
 											}
 										},
 										{
 											"Dword": {
-												"FchRom3BaseHigh": "0x00000000"
+												"FchRom3BaseHigh": 0x00000000
 											}
 										},
 										{
 											"Dword": {
-												"MemUmaAlignment": "0x00ffffc0"
+												"MemUmaAlignment": 0x00ffffc0
 											}
 										},
 										{
 											"Dword": {
-												"PcieResetGpioPin": "0xffffffff"
+												"PcieResetGpioPin": 0xffffffff
 											}
 										},
 										{
 											"Dword": {
-												"MemMbistAggressorStaticLaneSelLo": "0x00000000"
+												"MemMbistAggressorStaticLaneSelLo": 0x00000000
 											}
 										},
 										{
 											"Unknown": {
 												"entry_id": "Dword",
-												"tag": "0x7e6069c5",
-												"value": "0x7fffffff"
+												"tag": 0x7e6069c5,
+												"value": 0x7fffffff
 											}
 										},
 										{
 											"Dword": {
-												"MemMbistTgtStaticLaneSelLo": "0x00000000"
+												"MemMbistTgtStaticLaneSelLo": 0x00000000
 											}
 										},
 										{
@@ -4726,12 +4726,12 @@
 										},
 										{
 											"Dword": {
-												"CcxMinSevAsid": "0x00000001"
+												"CcxMinSevAsid": 0x00000001
 											}
 										},
 										{
 											"Dword": {
-												"MemMbistTgtStaticLaneSelHi": "0x00000000"
+												"MemMbistTgtStaticLaneSelHi": 0x00000000
 											}
 										},
 										{
@@ -4741,7 +4741,7 @@
 										},
 										{
 											"Dword": {
-												"MemSelfHealBistTimeout": "0x00002710"
+												"MemSelfHealBistTimeout": 0x00002710
 											}
 										},
 										{
@@ -4751,12 +4751,12 @@
 										},
 										{
 											"Dword": {
-												"CpuFetchFromSpiApBase": "0xfff00000"
+												"CpuFetchFromSpiApBase": 0xfff00000
 											}
 										},
 										{
 											"Dword": {
-												"PspMeasureConfig": "0x00000000"
+												"PspMeasureConfig": 0x00000000
 											}
 										},
 										{
@@ -4766,7 +4766,7 @@
 										},
 										{
 											"Dword": {
-												"MemMbistAggressorStaticLaneSelHi": "0x00000000"
+												"MemMbistAggressorStaticLaneSelHi": 0x00000000
 											}
 										},
 										{
