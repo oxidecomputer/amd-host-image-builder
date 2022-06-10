@@ -1,15 +1,11 @@
 use amd_efs::{
-	BhdDirectory, BhdDirectoryEntryAttrs, BhdDirectoryEntryType, Efs,
-	ProcessorGeneration, PspDirectory, PspDirectoryEntryAttrs,
-	AddressMode,
+	AddressMode, BhdDirectory, BhdDirectoryEntryAttrs,
+	BhdDirectoryEntryType, Efs, ProcessorGeneration, PspDirectory,
+	PspDirectoryEntryAttrs,
 };
 use amd_host_image_builder_config::{
-	SerdePspDirectoryVariant,
-	SerdeBhdDirectoryVariant,
-	SerdeBhdSource,
-	SerdePspEntrySource,
-	Result,
-	Error,
+	Error, Result, SerdeBhdDirectoryVariant, SerdeBhdSource,
+	SerdePspDirectoryVariant, SerdePspEntrySource,
 };
 use core::cell::RefCell;
 use core::convert::TryFrom;
@@ -28,9 +24,9 @@ use structopt::StructOpt;
 
 mod static_config;
 
-use amd_host_image_builder_config::SerdeConfig;
-use amd_flash::{ErasableLocation, FlashRead, FlashWrite, Location};
 use amd_efs::DirectoryFrontend;
+use amd_flash::{ErasableLocation, FlashRead, FlashWrite, Location};
+use amd_host_image_builder_config::SerdeConfig;
 
 #[test]
 fn test_bitfield_serde() {
@@ -40,7 +36,8 @@ fn test_bitfield_serde() {
 	"address_mode": "PhysicalAddress"
 }"#;
 	use amd_efs::DirectoryAdditionalInfo;
-	let result: DirectoryAdditionalInfo = serde_yaml::from_str(config).unwrap();
+	let result: DirectoryAdditionalInfo =
+		serde_yaml::from_str(config).unwrap();
 	assert_eq!(result.address_mode(), AddressMode::PhysicalAddress);
 }
 
@@ -175,14 +172,21 @@ type AlignedLocation = ErasableLocation<ERASABLE_BLOCK_SIZE>;
 /// If TARGET_SIZE is given, make sure the file is at most as big as that.
 /// If file is too big, error out.
 /// Otherwise, return the size to use for the entry payload.
-fn size_file(source_filename: &Path, target_size: Option<usize>) -> amd_efs::Result<(File, usize)> {
+fn size_file(
+	source_filename: &Path,
+	target_size: Option<usize>,
+) -> amd_efs::Result<(File, usize)> {
 	let file = match File::open(source_filename) {
 		Ok(f) => f,
 		Err(e) => {
-			panic!("Could not open file {:?}: {}", source_filename, e);
+			panic!(
+				"Could not open file {:?}: {}",
+				source_filename, e
+			);
 		}
 	};
-	let filesize: usize = file.metadata().unwrap().len().try_into().unwrap();
+	let filesize: usize =
+		file.metadata().unwrap().len().try_into().unwrap();
 	match target_size {
 		Some(x) => {
 			if filesize > x {
@@ -191,9 +195,7 @@ fn size_file(source_filename: &Path, target_size: Option<usize>) -> amd_efs::Res
 				Ok((file, x))
 			}
 		}
-		None => {
-			Ok((file, filesize))
-		}
+		None => Ok((file, filesize)),
 	}
 }
 
@@ -440,7 +442,7 @@ fn bhd_directory_add_reset_image(
 	}
 
 	let beginning = ErasableLocation::try_from(
-		static_config::RESET_IMAGE_BEGINNING
+		static_config::RESET_IMAGE_BEGINNING,
 	)
 	.map_err(|_| Error::Efs(amd_efs::Error::Misaligned))?;
 	// round up:
@@ -518,9 +520,9 @@ fn main() -> std::io::Result<()> {
 	assert!(Location::from(position) == IMAGE_SIZE);
 	let path = Path::new(&opts.efs_configuration_filename);
 	//let reader = BufReader::new(file);
-        let data = std::fs::read_to_string(path)?;
-        let config: SerdeConfig = serde_json::from_str(&data).unwrap();
-        //let config = serde_yaml::from_reader(reader).unwrap();
+	let data = std::fs::read_to_string(path)?;
+	let config: SerdeConfig = serde_json::from_str(&data).unwrap();
+	//let config = serde_yaml::from_reader(reader).unwrap();
 
 	//let config = read_config_from_file(path).unwrap();
 	let SerdeConfig {
@@ -561,8 +563,10 @@ fn main() -> std::io::Result<()> {
 
 	let mut psp_directory = efs
 		.create_psp_directory(
-			AlignedLocation::try_from(static_config::PSP_BEGINNING).unwrap(),
-			AlignedLocation::try_from(static_config::PSP_END).unwrap(),
+			AlignedLocation::try_from(static_config::PSP_BEGINNING)
+				.unwrap(),
+			AlignedLocation::try_from(static_config::PSP_END)
+				.unwrap(),
 			AddressMode::EfsRelativeOffset,
 		)
 		.unwrap();
@@ -577,17 +581,27 @@ fn main() -> std::io::Result<()> {
 				match entry.source {
 					SerdePspEntrySource::Value(x) => {
 						// FIXME: assert!(blob_slot_settings.is_none()); fails for some reason
-						psp_directory.add_value_entry(
-							&entry.target.attrs,
-							x, // TODO: Nicer type.
-						).unwrap();
+						psp_directory
+							.add_value_entry(
+								&entry.target
+									.attrs,
+								x, // TODO: Nicer type.
+							)
+							.unwrap();
 					}
-					SerdePspEntrySource::BlobFile(blob_filename) => {
+					SerdePspEntrySource::BlobFile(
+						blob_filename,
+					) => {
 						let (flash_location, size) = match blob_slot_settings {
 							Some(x) => (x.flash_location, x.size),
 							None => (None, None)
 						};
-						let x: Option<Location> = flash_location.map(|x| x.try_into().unwrap());
+						let x: Option<Location> =
+							flash_location.map(
+								|x| {
+									x.try_into().unwrap()
+								},
+							);
 						psp_entry_add_from_file(
 							&mut psp_directory,
 							match x {
@@ -598,7 +612,7 @@ fn main() -> std::io::Result<()> {
 							firmware_blob_directory_name.join(blob_filename),
 							size.map(|x| x as usize),
 						).unwrap();
-					},
+					}
 				}
 			}
 		}
@@ -609,7 +623,8 @@ fn main() -> std::io::Result<()> {
 
 	let mut bhd_directory = efs
 		.create_bhd_directory(
-			AlignedLocation::try_from(static_config::BHD_BEGINNING).unwrap(),
+			AlignedLocation::try_from(static_config::BHD_BEGINNING)
+				.unwrap(),
 			AlignedLocation::try_from(static_config::BHD_END)
 				.unwrap(),
 			AddressMode::EfsRelativeOffset,
@@ -620,13 +635,24 @@ fn main() -> std::io::Result<()> {
 		SerdeBhdDirectoryVariant::BhdDirectory(serde_bhd_directory) => {
 			for entry in serde_bhd_directory.entries {
 				let blob_slot_settings = entry.target.blob;
-				let (flash_location, size, ram_destination_address) = match blob_slot_settings {
-					Some(x) => (x.flash_location, x.size, x.ram_destination_address),
-					None => (None, None, None)
+				let (
+					flash_location,
+					size,
+					ram_destination_address,
+				) = match blob_slot_settings {
+					Some(x) => (
+						x.flash_location,
+						x.size,
+						x.ram_destination_address,
+					),
+					None => (None, None, None),
 				};
-				let x: Option<Location> = flash_location.map(|x| x.try_into().unwrap());
+				let x: Option<Location> = flash_location
+					.map(|x| x.try_into().unwrap());
 				match entry.source {
-					SerdeBhdSource::BlobFile(blob_filename) => {
+					SerdeBhdSource::BlobFile(
+						blob_filename,
+					) => {
 						bhd_entry_add_from_file(
 							&mut bhd_directory,
 							match x {
@@ -640,7 +666,9 @@ fn main() -> std::io::Result<()> {
 						).unwrap();
 					}
 					SerdeBhdSource::ApcbJson(apcb) => {
-						let buf = apcb.save_no_inc().unwrap();
+						let buf = apcb
+							.save_no_inc()
+							.unwrap();
 						let mut bufref = buf.as_ref();
 						bhd_directory.add_from_reader_with_custom_size(
 							x.map(|y| y.try_into().unwrap()),
