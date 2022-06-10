@@ -1,6 +1,5 @@
-
-use amd_flash::Location;
 use amd_efs::ProcessorGeneration;
+use amd_flash::Location;
 
 /* Coarse-grained flash locations (in Byte) */
 
@@ -19,9 +18,13 @@ pub(crate) const RESET_IMAGE_END: Location = 0xFA_0000;
 /// memory map by looking at this file. Especially should there be a new
 /// generation, you have to adapt this file--and that's on purpose.
 #[allow(non_snake_case)]
-pub(crate) const fn EFH_BEGINNING(processor_generation: ProcessorGeneration) -> Location {
+pub(crate) const fn EFH_BEGINNING(
+	processor_generation: ProcessorGeneration,
+) -> Location {
 	match processor_generation {
 		ProcessorGeneration::Naples => 0x2_0000,
-		ProcessorGeneration::Rome | ProcessorGeneration::Milan => 0xFA_0000,
-        }
+		ProcessorGeneration::Rome | ProcessorGeneration::Milan => {
+			0xFA_0000
+		}
+	}
 }
