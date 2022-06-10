@@ -521,7 +521,7 @@ fn main() -> std::io::Result<()> {
 	let path = Path::new(&opts.efs_configuration_filename);
 	//let reader = BufReader::new(file);
 	let data = std::fs::read_to_string(path)?;
-	let config: SerdeConfig = serde_json::from_str(&data).unwrap();
+	let config: SerdeConfig = json5::from_str(&data).unwrap();
 	//let config = serde_yaml::from_reader(reader).unwrap();
 
 	//let config = read_config_from_file(path).unwrap();
