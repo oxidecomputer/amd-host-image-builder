@@ -171,15 +171,16 @@ const IMAGE_SIZE: u32 = 16 * 1024 * 1024;
 const ERASABLE_BLOCK_SIZE: usize = 0x1000;
 type AlignedLocation = ErasableLocation<ERASABLE_BLOCK_SIZE>;
 
-fn psp_entry_add_from_file(
+fn psp_entry_add_from_file_with_custom_size(
 	directory: &mut PspDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
 	payload_position: Option<ErasableLocation<ERASABLE_BLOCK_SIZE>>,
 	attrs: &PspDirectoryEntryAttrs,
-	source_filename: PathBuf,
+	size: usize,
+	source_filename: &Path,
 ) -> amd_efs::Result<()> {
 	//eprintln!("FILE {:?}", source_filename);
 	let file = File::open(source_filename).unwrap();
-	let size: usize = file.metadata().unwrap().len().try_into().unwrap();
+	//let size: usize = file.metadata().unwrap().len().try_into().unwrap();
 	let mut source = BufReader::new(file);
 
 	directory.add_from_reader_with_custom_size(
@@ -188,6 +189,41 @@ fn psp_entry_add_from_file(
 		size,
 		&mut source,
 		None,
+	)
+}
+
+fn psp_entry_add_from_file(
+	directory: &mut PspDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
+	payload_position: Option<ErasableLocation<ERASABLE_BLOCK_SIZE>>,
+	attrs: &PspDirectoryEntryAttrs,
+	source_filename: PathBuf,
+	target_size: Option<usize>,
+) -> amd_efs::Result<()> {
+	let source_filename = source_filename.as_path();
+	let file = match File::open(source_filename) {
+		Ok(f) => f,
+		Err(e) => {
+			panic!("Could not open file {:?}: {}", source_filename, e);
+		}
+	};
+	let filesize: usize = file.metadata().unwrap().len().try_into().unwrap();
+	let size = match target_size {
+		Some(x) => {
+			if filesize > x {
+				eprintln!("Configuration specifies slot size {} but contents {:?} have size {}. The contents to dot fit.", x, source_filename, filesize);
+			}
+			x
+		}
+		None => {
+			filesize
+		}
+	};
+	psp_entry_add_from_file_with_custom_size(
+		directory,
+		payload_position,
+		attrs,
+		size,
+		&source_filename,
 	)
 }
 
@@ -567,6 +603,7 @@ fn main() -> std::io::Result<()> {
 							},
 							&entry.target.attrs,
 							firmware_blob_directory_name.join(blob_filename),
+							size.map(|x| x as usize),
 						).unwrap();
 					},
 				}
