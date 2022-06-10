@@ -1,11 +1,9 @@
 use amd_efs::{
 	BhdDirectory, BhdDirectoryEntryAttrs, BhdDirectoryEntryType, Efs,
 	ProcessorGeneration, PspDirectory, PspDirectoryEntryAttrs,
-	DirectoryEntry, AddressMode,
+	AddressMode,
 };
 use amd_host_image_builder_config::{
-	SerdePspDirectoryEntryBlob,
-	SerdeBhdDirectoryEntryBlob,
 	SerdePspDirectoryVariant,
 	SerdeBhdDirectoryVariant,
 	SerdeBhdSource,
@@ -16,7 +14,6 @@ use amd_host_image_builder_config::{
 use core::cell::RefCell;
 use core::convert::TryFrom;
 use core::convert::TryInto;
-use core::num::NonZeroU8;
 use std::fs;
 use std::fs::File;
 use std::fs::OpenOptions;
@@ -32,8 +29,6 @@ use structopt::StructOpt;
 mod static_config;
 
 use amd_host_image_builder_config::SerdeConfig;
-use amd_apcb::Apcb;
-//use amd_efs::ProcessorGeneration;
 use amd_flash::{ErasableLocation, FlashRead, FlashWrite, Location};
 use amd_efs::DirectoryFrontend;
 
