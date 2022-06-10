@@ -38,6 +38,6 @@ fn main() {
 		for error in errors {
 			eprintln!("validation error: {}, {}, {:#?}", error, error.get_title(), error.get_detail());
 		}
-		std::process::exit(2);
+		// FIXME std::process::exit(2);
 	}
 }
