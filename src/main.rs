@@ -210,7 +210,7 @@ fn psp_entry_add_from_file(
 	let size = match target_size {
 		Some(x) => {
 			if filesize > x {
-				eprintln!("Configuration specifies slot size {} but contents {:?} have size {}. The contents do not fit.", x, source_filename, filesize);
+				panic!("Configuration specifies slot size {} but contents {:?} have size {}. The contents do not fit.", x, source_filename, filesize);
 			}
 			x
 		}
