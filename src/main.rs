@@ -506,7 +506,6 @@ fn main() -> std::io::Result<()> {
 		ProcessorGeneration::Naples => {
 			Path::new("amd-firmware").join("naples")
 		}
-		_ => todo!(),
 	};
 
 	let mut psp_directory = efs
