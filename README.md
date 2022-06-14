@@ -86,7 +86,7 @@ We had used JSON before, but now switched to JSON5.
 
 In order to convert your old configuration files, you can use the following commands:
 
-    sed -e 's;"\(0x[^"]*\)";\1;' etc/Milan.json > etc/Milan.efs.json5
+    sed -e 's;"\(0x[^"]*\)";\1;' -e 's;"\([a-zA-Z_][a-zA-Z0-9_]*\)":;\1:;' etc/Milan.json > etc/Milan.efs.json5
     rm etc/Milan.json
 
 Please adapt the file names above as necessary.
