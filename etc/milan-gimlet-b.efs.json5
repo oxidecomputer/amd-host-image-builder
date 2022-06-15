@@ -722,7 +722,7 @@
 												},
 												channels: "Any",
 												dimms: "Any",
-												value: 0x01
+												value: 0x02
 											}
 										},
 										{
