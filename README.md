@@ -18,6 +18,10 @@ Then, build an image for Milan by the following commands:
 
     make milan-ethanol-x
 
+It's possible to specify `NANOBL_FLAGS_FOR_CARGO=...` at the end of that line in order to pass flags for the bootloader nanobl. An example would be to enable feature flags via `NANOBL_FLAGS_FOR_CARGO="-F <feature>"` ...
+
+If you do so, it's recommended to run `make -C nanobl-rs clean` beforehand since changes in those flags do not necessarily make nanobl rebuild things.
+
 Or, if you want to manually specify the command line:
 
     target/amd-host-image-builder -c etc/milan-ethanol-x.efs.json5 -r nanobl-rs/obj/nanobl-rs.elf -o milan-ethanol-x.img
