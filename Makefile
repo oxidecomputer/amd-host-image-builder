@@ -4,7 +4,7 @@ all: milan rome
 CARGO = cargo
 
 nanobl-rs/obj/nanobl-rs.elf:
-	make -C nanobl-rs
+	$(MAKE) -C nanobl-rs
 
 milan: nanobl-rs/obj/nanobl-rs.elf
 	$(CARGO) run -- -c etc/Milan.efs.json5 -r nanobl-rs/obj/nanobl-rs.elf -o Milan.img
