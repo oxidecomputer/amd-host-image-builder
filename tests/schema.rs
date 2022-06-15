@@ -11,17 +11,18 @@ fn test_schema() {
 	// Make sure our test efs config validates using the schema we just
 	// generated.
 	let schema_json: serde_json::Value =
-		serde_json::from_str(SCHEMA_STR).unwrap();
+		serde_json::from_str(SCHEMA_STR).expect("Schema");
 	let configuration_filename =
 		Path::new("test-inputs").join("Milan.efs.json5");
-	let configuration_str =
-		std::fs::read_to_string(configuration_filename).unwrap();
+	let configuration_str = std::fs::read_to_string(configuration_filename)
+		.expect("configuration");
 	let configuration_json: serde_json::Value =
-		json5::from_str(&configuration_str).unwrap();
+		json5::from_str(&configuration_str)
+			.expect("configuration be valid JSON");
 	let mut scope = json_schema::Scope::new();
 	let schema_validator = scope
 		.compile_and_return(schema_json.clone(), false)
-		.unwrap();
+		.expect("schema be valid");
 	let state = schema_validator.validate(&configuration_json);
 	if !state.is_valid() {
 		let errors = state.errors;
