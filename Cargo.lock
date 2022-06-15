@@ -67,6 +67,7 @@ dependencies = [
  "amd-host-image-builder-config",
  "goblin",
  "json5",
+ "pathsep",
  "schemars",
  "serde_json",
  "structopt",
@@ -466,6 +467,12 @@ name = "paste"
 version = "1.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0c520e05135d6e763148b6426a837e239041653ba7becd2e538c076c738025fc"
+
+[[package]]
+name = "pathsep"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fa223c370cb326ed75922e69aef96c669a2021545115bfa9778bb640ea575499"
 
 [[package]]
 name = "percent-encoding"
