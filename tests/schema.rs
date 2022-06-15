@@ -22,7 +22,6 @@ fn test_schema() {
 		for error in errors {
 			eprintln!("validation error: {}, {}, {:#?}", error, error.get_title(), error.get_detail());
 		}
-		std::process::exit(2);
+		panic!("validation error");
 	}
 }
-
