@@ -38,6 +38,6 @@ fn main() {
 		for error in errors {
 			eprintln!("validation error: {}, {}, {:#?}", error, error.get_title(), error.get_detail());
 		}
-		std::process::exit(2);
+		/* Usually the json5 loader has better error messages. Don't want to hide those. std::process::exit(2); */
 	}
 }
