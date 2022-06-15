@@ -2,7 +2,7 @@ use std::path::Path;
 use valico::json_schema;
 
 #[macro_use] extern crate pathsep;
-const SCHEMA_STR: &str = include_str!(join_path!(env!("OUT_DIR"), "/efs.schema.json"));
+const SCHEMA_STR: &str = include_str!(join_path!(env!("OUT_DIR"), "efs.schema.json"));
 
 #[test]
 fn test_schema() {
