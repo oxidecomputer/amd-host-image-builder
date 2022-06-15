@@ -4,7 +4,7 @@ all: milan-ethanol-x rome-ethanol-x milan-gimlet-b
 CARGO = cargo
 
 nanobl-rs/obj/nanobl-rs.elf:
-	$(MAKE) -C nanobl-rs
+	$(MAKE) -C nanobl-rs FLAGS_FOR_CARGO="$(NANOBL_FLAGS_FOR_CARGO)"
 
 milan-ethanol-x: nanobl-rs/obj/nanobl-rs.elf
 	$(CARGO) run -- -c etc/milan-ethanol-x.efs.json5 -r nanobl-rs/obj/nanobl-rs.elf -o milan-ethanol-x.img
@@ -17,6 +17,7 @@ milan-gimlet-b: nanobl-rs/obj/nanobl-rs.elf
 
 clean:
 	rm -rf target
+	$(MAKE) -C nanobl-rs clean
 
 tests:
 	$(CARGO) test
