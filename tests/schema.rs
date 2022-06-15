@@ -6,10 +6,8 @@ const SCHEMA_STR: &str = include_str!(join_path!(env!("OUT_DIR"), "efs.schema.js
 
 #[test]
 fn test_schema() {
-	// Make sure at least our default config in etc/Milan.json validates
-	// using the schema we just generated.
-	//let schema_filename = Path::new(&out_dir).join("efs.schema.json");
-	//let schema_str = std::fs::read_to_string(schema_filename).unwrap();
+	// Make sure our test efs config validates using the schema we just
+	// generated.
 	let schema_json: serde_json::Value = serde_json::from_str(SCHEMA_STR).unwrap();
 	let configuration_filename = Path::new("test-inputs").join("Milan.efs.json5");
 	let configuration_str = std::fs::read_to_string(configuration_filename).unwrap();
