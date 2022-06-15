@@ -17,11 +17,13 @@ structopt = "0.3"
 amd-host-image-builder-config = { path = "amd-host-image-builder-config" }
 json5 = "0.4.1"
 
+[dev-dependencies]
+valico = "2"
+
 [build-dependencies]
 amd-apcb = { git = "ssh://git@github.com/oxidecomputer/amd-apcb.git", rev = "f604f272c656f905fd4084fd7bf3f21b5c645963", features = ["serde", "schemars"] }
 amd-efs = { git = "ssh://git@github.com/oxidecomputer/amd-efs.git", rev = "3fb60906b0803d6ea6df148b5a19a73622ec285b", features = ["std", "serde", "schemars"] }
 amd-host-image-builder-config = { path = "amd-host-image-builder-config" }
 schemars = "0.8.8"
 serde_json = "1.0.78"
-valico = "2"
 json5 = "0.4.1"
