@@ -2,6 +2,7 @@ mod config_schema;
 
 use std::env;
 use std::fs::{self};
+use std::path::Path;
 use std::process;
 use valico::json_schema;
 
@@ -20,11 +21,11 @@ fn main() {
 
 	// Make sure at least our default config in etc/Milan.json validates
 	// using the schema we just generated.
-	let schema_filename = format!("{}/{}", out_dir.into_string().unwrap(), "efs.schema.json");
+	let schema_filename = Path::new(&out_dir).join("efs.schema.json");
 	let schema_str = std::fs::read_to_string(schema_filename).unwrap();
 	let schema_json: serde_json::Value = serde_json::from_str(&schema_str).unwrap();
 
-	let configuration_filename = "etc/Milan.efs.json5";
+	let configuration_filename = Path::new("etc").join("Milan.efs.json5");
 	let configuration_str = std::fs::read_to_string(configuration_filename).unwrap();
 	let configuration_json: serde_json::Value = json5::from_str(&configuration_str).unwrap();
 
