@@ -23,7 +23,6 @@ fn main() {
 	let schema_filename = format!("{}/{}", out_dir.into_string().unwrap(), "efs.schema.json");
 	let schema_str = std::fs::read_to_string(schema_filename).unwrap();
 	let schema_json: serde_json::Value = serde_json::from_str(&schema_str).unwrap();
-	//let schema_validator = JSONSchema::compile(&schema_json).unwrap();
 
 	let configuration_filename = "etc/Milan.efs.json5";
 	let configuration_str = std::fs::read_to_string(configuration_filename).unwrap();
