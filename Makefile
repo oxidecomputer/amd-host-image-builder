@@ -1,5 +1,5 @@
 all: milan rome
-.PHONY: rome milan all clean
+.PHONY: rome milan all clean tests
 
 nanobl-rs/obj/nanobl-rs.elf:
 	make -C nanobl-rs
@@ -12,3 +12,6 @@ rome: nanobl-rs/obj/nanobl-rs.elf
 
 clean:
 	rm -rf target
+
+tests:
+	cargo test
