@@ -11,7 +11,7 @@ fn test_schema() {
 	//let schema_filename = Path::new(&out_dir).join("efs.schema.json");
 	//let schema_str = std::fs::read_to_string(schema_filename).unwrap();
 	let schema_json: serde_json::Value = serde_json::from_str(SCHEMA_STR).unwrap();
-	let configuration_filename = Path::new("etc").join("Milan.efs.json5");
+	let configuration_filename = Path::new("test-inputs").join("Milan.efs.json5");
 	let configuration_str = std::fs::read_to_string(configuration_filename).unwrap();
 	let configuration_json: serde_json::Value = json5::from_str(&configuration_str).unwrap();
 	let mut scope = json_schema::Scope::new();
