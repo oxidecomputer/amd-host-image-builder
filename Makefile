@@ -1,16 +1,19 @@
-all: milan rome
-.PHONY: rome milan all clean tests
+all: milan-ethanol-x rome-ethanol-x milan-gimlet-b
+.PHONY: milan-ethanol-x rome-ethanol-x milan-gimlet-b all clean tests
 
 CARGO = cargo
 
 nanobl-rs/obj/nanobl-rs.elf:
 	$(MAKE) -C nanobl-rs
 
-milan: nanobl-rs/obj/nanobl-rs.elf
-	$(CARGO) run -- -c etc/Milan.efs.json5 -r nanobl-rs/obj/nanobl-rs.elf -o Milan.img
+milan-ethanol-x: nanobl-rs/obj/nanobl-rs.elf
+	$(CARGO) run -- -c etc/milan-ethanol-x.efs.json5 -r nanobl-rs/obj/nanobl-rs.elf -o milan-ethanol-x.img
 
-rome: nanobl-rs/obj/nanobl-rs.elf
-	$(CARGO) run -- -c etc/Rome.efs.json5 -r nanobl-rs/obj/nanobl-rs.elf -o Rome.img
+rome-ethanol-x: nanobl-rs/obj/nanobl-rs.elf
+	$(CARGO) run -- -c etc/rome-ethanol-x.efs.json5 -r nanobl-rs/obj/nanobl-rs.elf -o rome-ethanol-x.img
+
+milan-gimlet-b: nanobl-rs/obj/nanobl-rs.elf
+	$(CARGO) run -- -c etc/milan-gimlet-b.efs.json5 -r nanobl-rs/obj/nanobl-rs.elf -o milan-gimlet-b.img
 
 clean:
 	rm -rf target
