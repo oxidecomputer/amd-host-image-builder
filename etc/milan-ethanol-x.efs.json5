@@ -4356,7 +4356,7 @@
 										},
 										{
 											Byte: {
-												DfBottomIo: 0xb0
+												DfBottomIo: 0x80
 											}
 										},
 										{
