@@ -19,6 +19,7 @@ json5 = "0.4.1"
 
 [dev-dependencies]
 valico = "2"
+pathsep="0.1.1"
 
 [build-dependencies]
 amd-apcb = { git = "ssh://git@github.com/oxidecomputer/amd-apcb.git", rev = "f604f272c656f905fd4084fd7bf3f21b5c645963", features = ["serde", "schemars"] }
