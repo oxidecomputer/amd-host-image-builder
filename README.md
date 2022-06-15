@@ -13,18 +13,18 @@ This is done by executing the following commands:
 
 # Usage
 
-Then edit `etc/Milan.json` (or similar configuration file) to your liking.
+Then edit `etc/milan-ethanol-x.efs.json5` (or similar configuration file) to your liking.
 Then, build an image for Milan by the following commands:
 
-    make milan
+    make milan-ethanol-x
 
 Or, if you want to manually specify the command line:
 
-    target/amd-host-image-builder -c etc/Milan.json -r nanobl-rs/obj/nanobl-rs.elf -o Milan.img
+    target/amd-host-image-builder -c etc/milan-ethanol-x.efs.json5 -r nanobl-rs/obj/nanobl-rs.elf -o milan-ethanol-x.img
 
-Here, the configuration file used is `etc/Milan.json`, and the reset image is `nanobl-rs/obj/nanobl-rs.elf`. Only specially-prepared ELF images can be used here. `amd-host-image-builder` extracts the sections that need to be persistent from the ELF file and stores them into the appropriate entries of the flash. Those entries will automatically be created and should NOT be specified in the JSON configuration file.
+Here, the configuration file used is `etc/milan-ethanol-x.efs.json5`, and the reset image is `nanobl-rs/obj/nanobl-rs.elf`. Only specially-prepared ELF images can be used here. `amd-host-image-builder` extracts the sections that need to be persistent from the ELF file and stores them into the appropriate entries of the flash. Those entries will automatically be created and should NOT be specified in the JSON configuration file.
 
-The resulting image will be in `Milan.img` and can be flashed using [humility qspi](https://github.com/oxidecomputer/humility) or using a hardware flasher (CH341A etc).
+The resulting image will be in `milan-ethanol-x.img` and can be flashed using [humility qspi](https://github.com/oxidecomputer/humility) or using a hardware flasher (CH341A etc).
 
 The PSP will print debug messages to the serial port that can be configured in the settings below, see [PSP configuration](#psp-configuration).
 
