@@ -13,10 +13,10 @@ This is done by executing the following commands:
 
 # Usage
 
-Then edit `etc/milan-ethanol-x.efs.json5` (or similar configuration file) to your liking.
+Then edit `etc/milan-gimlet-b.efs.json5` (or similar configuration file) to your liking.
 Then, build an image for Milan by the following commands:
 
-    make milan-ethanol-x
+    make milan-gimlet-b
 
 It's possible to specify `NANOBL_FLAGS_FOR_CARGO=...` at the end of that line in order to pass flags for the bootloader nanobl. An example would be to enable feature flags via `NANOBL_FLAGS_FOR_CARGO="-F <feature>"` ...
 
@@ -24,11 +24,11 @@ If you do so, it's recommended to run `make -C nanobl-rs clean` beforehand since
 
 Or, if you want to manually specify the command line:
 
-    target/amd-host-image-builder -c etc/milan-ethanol-x.efs.json5 -r nanobl-rs/obj/nanobl-rs.elf -o milan-ethanol-x.img
+    target/amd-host-image-builder -c etc/milan-gimlet-b.efs.json5 -r nanobl-rs/obj/nanobl-rs.elf -o milan-gimlet-b.img
 
-Here, the configuration file used is `etc/milan-ethanol-x.efs.json5`, and the reset image is `nanobl-rs/obj/nanobl-rs.elf`. Only specially-prepared ELF images can be used here. `amd-host-image-builder` extracts the sections that need to be persistent from the ELF file and stores them into the appropriate entries of the flash. Those entries will automatically be created and should NOT be specified in the JSON configuration file.
+Here, the configuration file used is `etc/milan-gimlet-b.efs.json5`, and the reset image is `nanobl-rs/obj/nanobl-rs.elf`. Only specially-prepared ELF images can be used here. `amd-host-image-builder` extracts the sections that need to be persistent from the ELF file and stores them into the appropriate entries of the flash. Those entries will automatically be created and should NOT be specified in the JSON configuration file.
 
-The resulting image will be in `milan-ethanol-x.img` and can be flashed using [humility qspi](https://github.com/oxidecomputer/humility) or using a hardware flasher (CH341A etc).
+The resulting image will be in `milan-gimlet-b.img` and can be flashed using [humility qspi](https://github.com/oxidecomputer/humility) or using a hardware flasher (CH341A etc).
 
 The PSP will print debug messages to the serial port that can be configured in the settings below, see [PSP configuration](#psp-configuration).
 
