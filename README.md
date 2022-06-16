@@ -82,7 +82,7 @@ As a special bringup help, right now, it's also possible to specify a non-ELF fi
 
 # Other models
 
-`amd-host-image-builder` also supports Rome. If you want to use that, please edit `etc/Rome.json` to your liking and then invoke `make rome` to get `Rome.img` which you can flash.
+`amd-host-image-builder` also supports Rome. If you want to use that, please edit `etc/rome-ethanol-x.efs.json5` to your liking and then invoke `make rome-ethanol-x` to get `rome-ethanol-x.img` which you can flash.
 
 # Using older configuration files
 
