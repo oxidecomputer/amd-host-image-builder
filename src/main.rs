@@ -186,7 +186,11 @@ fn size_file(
 		}
 	};
 	let filesize: usize =
-		file.metadata().unwrap().len().try_into().unwrap();
+		file.metadata()
+			.map_err(|_| amd_efs::Error::Io(amd_flash::Error::Io))?
+			.len()
+			.try_into()
+			.map_err(|_| amd_efs::Error::Io(amd_flash::Error::Io))?;
 	match target_size {
 		Some(x) => {
 			if filesize > x {
@@ -490,9 +494,9 @@ struct Opts {
 
 //fn read_config_from_file<P: AsRef<Path> + std::fmt::Debug>(path: P) -> Result<SerdeConfig<'_>> { // , Box<Error>
 //	//eprintln!("config_from_file {:?}", path);
-//	let file = File::open(path).unwrap();
+//	let file = File::open(path)?;
 //	let reader = BufReader::new(file);
-//	let result = serde_yaml::from_reader(reader).unwrap();
+//	let result = serde_yaml::from_reader(reader)?;
 //	Ok(result)
 //}
 
@@ -501,6 +505,12 @@ fn main() -> std::io::Result<()> {
 	let opts = Opts::from_args();
 
 	let filename = &opts.output_filename;
+	let efs_to_io_error = |e| std::io::Error::new(std::io::ErrorKind::Other, format!("EFS error: {:?} in file {:?}", e, filename));
+	let flash_to_io_error = |e| std::io::Error::new(std::io::ErrorKind::Other, format!("Flash error: {:?} in file {:?}", e, filename));
+	let apcb_to_io_error = |e| std::io::Error::new(std::io::ErrorKind::Other, format!("APCB error: {:?} in file {:?}", e, opts.efs_configuration_filename));
+	let json5_to_io_error = |e| std::io::Error::new(std::io::ErrorKind::Other, format!("JSON5 error: {:?} in file {:?}", e, opts.efs_configuration_filename));
+	let amd_host_image_builder_config_error_to_io_error = |e: amd_host_image_builder_config::Error| std::io::Error::new(std::io::ErrorKind::Other, format!("Config error: {:?} in file {:?}", e, opts.reset_image_filename));
+
 	let file = OpenOptions::new()
 		.read(true)
 		.write(true)
@@ -508,23 +518,23 @@ fn main() -> std::io::Result<()> {
 		.open(filename)?;
 	file.set_len(IMAGE_SIZE.into())?;
 	let mut storage = FlashImage::new(file, &filename);
-	let mut position: AlignedLocation = 0.try_into().unwrap();
+	let mut position: AlignedLocation = 0.try_into()
+		.map_err(flash_to_io_error)?;
 	while Location::from(position) < IMAGE_SIZE {
 		FlashWrite::<ERASABLE_BLOCK_SIZE>::erase_block(
 			&mut storage,
 			position,
 		)
-		.unwrap();
-		position = position.advance(ERASABLE_BLOCK_SIZE).unwrap();
+			.map_err(flash_to_io_error)?;
+		position = position.advance(ERASABLE_BLOCK_SIZE)
+			.map_err(flash_to_io_error)?;
 	}
 	assert!(Location::from(position) == IMAGE_SIZE);
 	let path = Path::new(&opts.efs_configuration_filename);
-	//let reader = BufReader::new(file);
 	let data = std::fs::read_to_string(path)?;
-	let config: SerdeConfig = json5::from_str(&data).unwrap();
-	//let config = serde_yaml::from_reader(reader).unwrap();
+	let config: SerdeConfig = json5::from_str(&data)
+		.map_err(json5_to_io_error)?;
 
-	//let config = read_config_from_file(path).unwrap();
 	let SerdeConfig {
 		processor_generation,
 		spi_mode_bulldozer,
@@ -564,12 +574,12 @@ fn main() -> std::io::Result<()> {
 	let mut psp_directory = efs
 		.create_psp_directory(
 			AlignedLocation::try_from(static_config::PSP_BEGINNING)
-				.unwrap(),
+				.map_err(flash_to_io_error)?,
 			AlignedLocation::try_from(static_config::PSP_END)
-				.unwrap(),
+				.map_err(flash_to_io_error)?,
 			AddressMode::EfsRelativeOffset,
 		)
-		.unwrap();
+		.map_err(efs_to_io_error)?;
 	match psp {
 		SerdePspDirectoryVariant::PspDirectory(serde_psp_directory) => {
 			for entry in serde_psp_directory.entries {
@@ -587,7 +597,7 @@ fn main() -> std::io::Result<()> {
 									.attrs,
 								x, // TODO: Nicer type.
 							)
-							.unwrap();
+							.map_err(efs_to_io_error)?;
 					}
 					SerdePspEntrySource::BlobFile(
 						blob_filename,
@@ -599,19 +609,21 @@ fn main() -> std::io::Result<()> {
 						let x: Option<Location> =
 							flash_location.map(
 								|x| {
-									x.try_into().unwrap()
+									x.try_into().unwrap() // infallible
 								},
 							);
 						psp_entry_add_from_file(
 							&mut psp_directory,
 							match x {
-								Some(x) => Some(x.try_into().unwrap()),
+								Some(x) => Some(x.try_into()
+									.map_err(flash_to_io_error)?),
 								None => None
 							},
 							&entry.target.attrs,
 							firmware_blob_directory_name.join(blob_filename),
 							size.map(|x| x as usize),
-						).unwrap();
+						)
+							.map_err(efs_to_io_error)?;
 					}
 				}
 			}
@@ -624,12 +636,12 @@ fn main() -> std::io::Result<()> {
 	let mut bhd_directory = efs
 		.create_bhd_directory(
 			AlignedLocation::try_from(static_config::BHD_BEGINNING)
-				.unwrap(),
+				.map_err(flash_to_io_error)?,
 			AlignedLocation::try_from(static_config::BHD_END)
-				.unwrap(),
+				.map_err(flash_to_io_error)?,
 			AddressMode::EfsRelativeOffset,
 		)
-		.unwrap();
+		.map_err(efs_to_io_error)?;
 
 	match bhd {
 		SerdeBhdDirectoryVariant::BhdDirectory(serde_bhd_directory) => {
@@ -648,7 +660,8 @@ fn main() -> std::io::Result<()> {
 					None => (None, None, None),
 				};
 				let x: Option<Location> = flash_location
-					.map(|x| x.try_into().unwrap());
+					.map(|x| x.try_into()
+						.unwrap()); // infallible
 				match entry.source {
 					SerdeBhdSource::BlobFile(
 						blob_filename,
@@ -656,27 +669,32 @@ fn main() -> std::io::Result<()> {
 						bhd_entry_add_from_file(
 							&mut bhd_directory,
 							match x {
-								Some(x) => Some(x.try_into().unwrap()),
+								Some(x) => Some(x.try_into()
+									.map_err(flash_to_io_error)?),
 								None => None
 							},
 							&entry.target.attrs,
 							firmware_blob_directory_name.join(blob_filename),
 							ram_destination_address,
 							size.map(|x| x as usize),
-						).unwrap();
+						).map_err(efs_to_io_error)?;
 					}
 					SerdeBhdSource::ApcbJson(apcb) => {
 						let buf = apcb
 							.save_no_inc()
-							.unwrap();
+							.map_err(apcb_to_io_error)?;
 						let mut bufref = buf.as_ref();
 						bhd_directory.add_from_reader_with_custom_size(
-							x.map(|y| y.try_into().unwrap()),
+							x.and_then(|y| y.try_into().ok()),
 							&entry.target.attrs,
-							size.unwrap_or(bufref.len().try_into().unwrap()).try_into().unwrap(),
+							size.unwrap_or(bufref.len().try_into()
+								.map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, format!("EFS sizing error: {:?}", e)))?)
+								.try_into()
+								.map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, format!("EFS sizing error: {:?}", e)))?,
 							&mut bufref,
 							None,
-						).unwrap();
+						)
+							.map_err(efs_to_io_error)?;
 					}
 				}
 			}
@@ -688,13 +706,13 @@ fn main() -> std::io::Result<()> {
 
 	bhd_directory
 		.add_apob_entry(None, BhdDirectoryEntryType::Apob, 0x400_0000)
-		.unwrap();
+		.map_err(efs_to_io_error)?;
 
 	bhd_directory_add_reset_image(
 		&mut bhd_directory,
 		&opts.reset_image_filename,
 	)
-	.unwrap();
+		.map_err(amd_host_image_builder_config_error_to_io_error)?;
 
 	Ok(())
 }
