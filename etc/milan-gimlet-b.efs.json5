@@ -109,7 +109,7 @@
 				},
 				{
 					source: {
-						BlobFile: "AgesaBootloader_U_prod.csbin"
+						BlobFile: "TypeId0x30_AgesaBootLoaderU_RS.csbin"
 					},
 					target: {
 						type: "Abl0"
@@ -4396,7 +4396,7 @@
 										},
 										{
 											Byte: {
-												AblSerialBaudRate: "115200 Baud"
+												AblSerialBaudRate: "3000000 Baud"
 											}
 										},
 										{
