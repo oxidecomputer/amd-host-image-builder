@@ -109,7 +109,7 @@
 				},
 				{
 					source: {
-						BlobFile: "TypeId0x30_AgesaBootLoaderU_RS.csbin"
+						BlobFile: "AgesaBootloader_U_prod_GN.csbin"
 					},
 					target: {
 						type: "Abl0"
@@ -4506,7 +4506,7 @@
 										},
 										{
 											Byte: {
-												FchConsoleOutMode: 0x00
+												FchConsoleOutMode: 0x01
 											}
 										},
 										{
