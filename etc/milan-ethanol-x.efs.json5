@@ -109,7 +109,7 @@
 				},
 				{
 					source: {
-						BlobFile: "AgesaBootloader_U_prod.csbin"
+						BlobFile: "AgesaBootloader_U_prod_GN.csbin"
 					},
 					target: {
 						type: "Abl0"
