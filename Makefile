@@ -15,6 +15,9 @@ rome-ethanol-x: nanobl-rs/obj/nanobl-rs.elf
 milan-gimlet-b: nanobl-rs/obj/nanobl-rs.elf
 	$(CARGO) run -- -c etc/milan-gimlet-b.efs.json5 -r nanobl-rs/obj/nanobl-rs.elf -o milan-gimlet-b.img
 
+milan-gimlet-b-mbist-cfg: nanobl-rs/obj/nanobl-rs.elf
+	$(CARGO) run -- -c etc/milan-gimlet-b-mbist-cfg.efs.json5 -r nanobl-rs/obj/nanobl-rs.elf -o milan-gimlet-b-mbist-cfg.img
+
 clean:
 	rm -rf target
 	$(MAKE) -C nanobl-rs clean
