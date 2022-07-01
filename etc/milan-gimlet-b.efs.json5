@@ -109,7 +109,7 @@
 				},
 				{
 					source: {
-						BlobFile: "AgesaBootloader_U_prod.csbin"
+						BlobFile: "AgesaBootloader_U_prod_GN.csbin"
 					},
 					target: {
 						type: "Abl0"
@@ -145,7 +145,7 @@
 								signature: "APCB",
 								header_size: 0x0080,
 								version: 48,
-								apcb_size: 0x00001274,
+								apcb_size: 0x0000127c,
 								unique_apcb_instance: 0x00000002,
 								checksum_byte: 0x79,
 								_reserved_1: [
@@ -4092,7 +4092,7 @@
 									header: {
 										group_id: 0x3000,
 										entry_id: 0x0001,
-										entry_size: 0x02c8,
+										entry_size: 0x02d0,
 										instance_id: 0x0000,
 										context_type: "Tokens",
 										context_format: "SortAscending",
@@ -4312,6 +4312,11 @@
 										{
 											Byte: {
 												DfXgmiEncrypt: "Auto"
+											}
+										},
+										{
+											Byte: {
+												MemPmuBistTestSelect: 7
 											}
 										},
 										{
