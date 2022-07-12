@@ -163,7 +163,6 @@ impl FlashImage {
 	}
 }
 
-const IMAGE_SIZE: u32 = 16 * 1024 * 1024;
 const ERASABLE_BLOCK_SIZE: usize = 0x1000;
 type AlignedLocation = ErasableLocation<ERASABLE_BLOCK_SIZE>;
 
@@ -545,11 +544,11 @@ fn main() -> std::io::Result<()> {
 		.write(true)
 		.create(true)
 		.open(filename)?;
-	file.set_len(IMAGE_SIZE.into())?;
+	file.set_len(static_config::IMAGE_SIZE.into())?;
 	let mut storage = FlashImage::new(file, &filename);
 	let mut position: AlignedLocation =
 		0.try_into().map_err(flash_to_io_error)?;
-	while Location::from(position) < IMAGE_SIZE {
+	while Location::from(position) < static_config::IMAGE_SIZE {
 		FlashWrite::<ERASABLE_BLOCK_SIZE>::erase_block(
 			&mut storage,
 			position,
@@ -559,7 +558,7 @@ fn main() -> std::io::Result<()> {
 			.advance(ERASABLE_BLOCK_SIZE)
 			.map_err(flash_to_io_error)?;
 	}
-	assert!(Location::from(position) == IMAGE_SIZE);
+	assert!(Location::from(position) == static_config::IMAGE_SIZE);
 	let path = Path::new(&opts.efs_configuration_filename);
 	let data = std::fs::read_to_string(path)?;
 	let config: SerdeConfig =
@@ -578,7 +577,7 @@ fn main() -> std::io::Result<()> {
 		storage,
 		host_processor_generation,
 		static_config::EFH_BEGINNING(host_processor_generation),
-		Some(IMAGE_SIZE),
+		Some(static_config::IMAGE_SIZE),
 	) {
 		Ok(efs) => efs,
 		Err(e) => {
