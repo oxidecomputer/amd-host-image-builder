@@ -36,8 +36,7 @@ fn test_bitfield_serde() {
 	"address_mode": "PhysicalAddress"
 }"#;
 	use amd_efs::DirectoryAdditionalInfo;
-	let result: DirectoryAdditionalInfo =
-		json5::from_str(config).unwrap();
+	let result: DirectoryAdditionalInfo = json5::from_str(config).unwrap();
 	assert_eq!(result.address_mode(), AddressMode::PhysicalAddress);
 }
 
@@ -185,12 +184,12 @@ fn size_file(
 			);
 		}
 	};
-	let filesize: usize =
-		file.metadata()
-			.map_err(|_| amd_efs::Error::Io(amd_flash::Error::Io))?
-			.len()
-			.try_into()
-			.map_err(|_| amd_efs::Error::Io(amd_flash::Error::Io))?;
+	let filesize: usize = file
+		.metadata()
+		.map_err(|_| amd_efs::Error::Io(amd_flash::Error::Io))?
+		.len()
+		.try_into()
+		.map_err(|_| amd_efs::Error::Io(amd_flash::Error::Io))?;
 	match target_size {
 		Some(x) => {
 			if filesize > x {
@@ -492,24 +491,51 @@ struct Opts {
 	efs_configuration_filename: PathBuf,
 }
 
-//fn read_config_from_file<P: AsRef<Path> + std::fmt::Debug>(path: P) -> Result<SerdeConfig<'_>> { // , Box<Error>
-//	//eprintln!("config_from_file {:?}", path);
-//	let file = File::open(path)?;
-//	let reader = BufReader::new(file);
-//	let result = serde_yaml::from_reader(reader)?;
-//	Ok(result)
-//}
-
 fn main() -> std::io::Result<()> {
 	//let args: Vec<String> = env::args().collect();
 	let opts = Opts::from_args();
 
 	let filename = &opts.output_filename;
-	let efs_to_io_error = |e| std::io::Error::new(std::io::ErrorKind::Other, format!("EFS error: {:?} in file {:?}", e, filename));
-	let flash_to_io_error = |e| std::io::Error::new(std::io::ErrorKind::Other, format!("Flash error: {:?} in file {:?}", e, filename));
-	let apcb_to_io_error = |e| std::io::Error::new(std::io::ErrorKind::Other, format!("APCB error: {:?} in file {:?}", e, opts.efs_configuration_filename));
-	let json5_to_io_error = |e| std::io::Error::new(std::io::ErrorKind::Other, format!("JSON5 error: {:?} in file {:?}", e, opts.efs_configuration_filename));
-	let amd_host_image_builder_config_error_to_io_error = |e: amd_host_image_builder_config::Error| std::io::Error::new(std::io::ErrorKind::Other, format!("Config error: {:?} in file {:?}", e, opts.reset_image_filename));
+	let efs_to_io_error = |e| {
+		std::io::Error::new(
+			std::io::ErrorKind::Other,
+			format!("EFS error: {:?} in file {:?}", e, filename),
+		)
+	};
+	let flash_to_io_error = |e| {
+		std::io::Error::new(
+			std::io::ErrorKind::Other,
+			format!("Flash error: {:?} in file {:?}", e, filename),
+		)
+	};
+	let apcb_to_io_error = |e| {
+		std::io::Error::new(
+			std::io::ErrorKind::Other,
+			format!(
+				"APCB error: {:?} in file {:?}",
+				e, opts.efs_configuration_filename
+			),
+		)
+	};
+	let json5_to_io_error = |e| {
+		std::io::Error::new(
+			std::io::ErrorKind::Other,
+			format!(
+				"JSON5 error: {:?} in file {:?}",
+				e, opts.efs_configuration_filename
+			),
+		)
+	};
+	let amd_host_image_builder_config_error_to_io_error =
+		|e: amd_host_image_builder_config::Error| {
+			std::io::Error::new(
+				std::io::ErrorKind::Other,
+				format!(
+					"Config error: {:?} in file {:?}",
+					e, opts.reset_image_filename
+				),
+			)
+		};
 
 	let file = OpenOptions::new()
 		.read(true)
@@ -518,22 +544,23 @@ fn main() -> std::io::Result<()> {
 		.open(filename)?;
 	file.set_len(IMAGE_SIZE.into())?;
 	let mut storage = FlashImage::new(file, &filename);
-	let mut position: AlignedLocation = 0.try_into()
-		.map_err(flash_to_io_error)?;
+	let mut position: AlignedLocation =
+		0.try_into().map_err(flash_to_io_error)?;
 	while Location::from(position) < IMAGE_SIZE {
 		FlashWrite::<ERASABLE_BLOCK_SIZE>::erase_block(
 			&mut storage,
 			position,
 		)
-			.map_err(flash_to_io_error)?;
-		position = position.advance(ERASABLE_BLOCK_SIZE)
+		.map_err(flash_to_io_error)?;
+		position = position
+			.advance(ERASABLE_BLOCK_SIZE)
 			.map_err(flash_to_io_error)?;
 	}
 	assert!(Location::from(position) == IMAGE_SIZE);
 	let path = Path::new(&opts.efs_configuration_filename);
 	let data = std::fs::read_to_string(path)?;
-	let config: SerdeConfig = json5::from_str(&data)
-		.map_err(json5_to_io_error)?;
+	let config: SerdeConfig =
+		json5::from_str(&data).map_err(json5_to_io_error)?;
 
 	let SerdeConfig {
 		processor_generation,
@@ -597,7 +624,9 @@ fn main() -> std::io::Result<()> {
 									.attrs,
 								x, // TODO: Nicer type.
 							)
-							.map_err(efs_to_io_error)?;
+							.map_err(
+								efs_to_io_error,
+							)?;
 					}
 					SerdePspEntrySource::BlobFile(
 						blob_filename,
@@ -660,8 +689,7 @@ fn main() -> std::io::Result<()> {
 					None => (None, None, None),
 				};
 				let x: Option<Location> = flash_location
-					.map(|x| x.try_into()
-						.unwrap()); // infallible
+					.map(|x| x.try_into().unwrap()); // infallible
 				match entry.source {
 					SerdeBhdSource::BlobFile(
 						blob_filename,
@@ -682,7 +710,9 @@ fn main() -> std::io::Result<()> {
 					SerdeBhdSource::ApcbJson(apcb) => {
 						let buf = apcb
 							.save_no_inc()
-							.map_err(apcb_to_io_error)?;
+							.map_err(
+							apcb_to_io_error,
+						)?;
 						let mut bufref = buf.as_ref();
 						bhd_directory.add_from_reader_with_custom_size(
 							x.and_then(|y| y.try_into().ok()),
@@ -712,7 +742,7 @@ fn main() -> std::io::Result<()> {
 		&mut bhd_directory,
 		&opts.reset_image_filename,
 	)
-		.map_err(amd_host_image_builder_config_error_to_io_error)?;
+	.map_err(amd_host_image_builder_config_error_to_io_error)?;
 
 	Ok(())
 }
