@@ -28,6 +28,8 @@ Or, if, instead of using the Makefile, you want to manually specify the command 
 
 Here, the configuration file used is `etc/milan-gimlet-b.efs.json5`, and the reset image is `nanobl-rs/obj/nanobl-rs.elf`. Only specially-prepared ELF images can be used here. `amd-host-image-builder` extracts the sections that need to be persistent from the ELF file and stores them into the appropriate entries of the flash. Those entries will automatically be created and should NOT be specified in the JSON configuration file.
 
+You can also specify which directories are searched for blobs by passing `-B <directory>` (possibly multiple times) to `amd-host-image-builder`. For each blob name mentioned in the configuration, if that name is an absolute path then that will be used. Otherwise, the directories will be searched in the order they were specified.
+
 The resulting image will be in `milan-gimlet-b.img` and can be flashed using [humility qspi](https://github.com/oxidecomputer/humility) or using a hardware flasher (CH341A etc).
 
 The PSP will print debug messages to the serial port that can be configured in the settings below, see [PSP configuration](#psp-configuration).
