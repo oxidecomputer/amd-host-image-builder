@@ -1,6 +1,6 @@
 use amd_efs::{
 	AddressMode, BhdDirectory, BhdDirectoryEntryAttrs,
-	BhdDirectoryEntryType, Efs, ProcessorGeneration, PspDirectory,
+	BhdDirectoryEntryType, Efs, PspDirectory,
 	PspDirectoryEntryAttrs,
 };
 use amd_host_image_builder_config::{
@@ -489,6 +489,9 @@ struct Opts {
 
 	#[structopt(short = "c", long = "config", parse(from_os_str))]
 	efs_configuration_filename: PathBuf,
+
+	#[structopt(short = "B", long = "blobdir", parse(from_os_str))]
+	blobdirs: Vec<PathBuf>,
 }
 
 fn main() -> std::io::Result<()> {
@@ -586,15 +589,29 @@ fn main() -> std::io::Result<()> {
 	efs.set_spi_mode_bulldozer(spi_mode_bulldozer);
 	efs.set_spi_mode_zen_naples(spi_mode_zen_naples);
 	efs.set_spi_mode_zen_rome(spi_mode_zen_rome);
-	let firmware_blob_directory_name = match host_processor_generation {
-		ProcessorGeneration::Milan => {
-			Path::new("amd-firmware").join("milan")
-		}
-		ProcessorGeneration::Rome => {
-			Path::new("amd-firmware").join("rome")
-		}
-		ProcessorGeneration::Naples => {
-			Path::new("amd-firmware").join("naples")
+	let blobdirs = &opts.blobdirs;
+	let resolve_blob = |blob_filename: PathBuf| -> std::io::Result<PathBuf> {
+		if blob_filename.has_root() {
+			if blob_filename.exists() {
+				Ok(blob_filename.to_path_buf())
+			} else {
+				Err(std::io::Error::new(
+		                        std::io::ErrorKind::Other,
+		                        format!("Blob read error: Could not find file {:?}", blob_filename),
+		                ))
+			}
+		} else {
+			for blobdir in blobdirs {
+				let fullname = blobdir.join(&blob_filename);
+				if fullname.exists() {
+					return Ok(fullname)
+				}
+			}
+			Err(std::io::Error::new(
+	                        std::io::ErrorKind::Other,
+	                        format!("Blob read error: Could not find file {:?} \
+(neither directly nor in any of the directories {:?})", blob_filename, blobdirs),
+	                ))
 		}
 	};
 
@@ -649,7 +666,7 @@ fn main() -> std::io::Result<()> {
 								None => None
 							},
 							&entry.target.attrs,
-							firmware_blob_directory_name.join(blob_filename),
+							resolve_blob(blob_filename)?,
 							size.map(|x| x as usize),
 						)
 							.map_err(efs_to_io_error)?;
@@ -702,7 +719,7 @@ fn main() -> std::io::Result<()> {
 								None => None
 							},
 							&entry.target.attrs,
-							firmware_blob_directory_name.join(blob_filename),
+							resolve_blob(blob_filename)?,
 							ram_destination_address,
 							size.map(|x| x as usize),
 						).map_err(efs_to_io_error)?;

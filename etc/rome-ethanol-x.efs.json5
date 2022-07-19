@@ -5,7 +5,7 @@
 			entries: [
 				{
 					source: {
-						BlobFile: "AmdPubKey.tkn"
+						BlobFile: "AmdPubKey_ssp.bin"
 					},
 					target: {
 						type: "AmdPublicKey"
@@ -13,7 +13,7 @@
 				},
 				{
 					source: {
-						BlobFile: "PspBootLoader.sbin"
+						BlobFile: "PspBootLoader_ssp.sbin"
 					},
 					target: {
 						type: "PspBootloader"
@@ -21,7 +21,7 @@
 				},
 				{
 					source: {
-						BlobFile: "PspRecoveryBootLoader.sbin"
+						BlobFile: "PspRecoveryBootLoader_ssp.sbin"
 					},
 					target: {
 						type: "PspRecoveryBootloader"
@@ -29,7 +29,7 @@
 				},
 				{
 					source: {
-						BlobFile: "SmuFirmware.csbin"
+						BlobFile: "SmuFirmwareSsp.csbin"
 					},
 					target: {
 						type: "SmuOffChipFirmware8"
@@ -37,7 +37,7 @@
 				},
 				{
 					source: {
-						BlobFile: "AblPubKey.bin"
+						BlobFile: "AblPubKey_ssp.bin"
 					},
 					target: {
 						type: "AblPublicKey"
@@ -54,7 +54,7 @@
 				},
 				{
 					source: {
-						BlobFile: "SmuFirmware2.csbin"
+						BlobFile: "SmuFirmware2Ssp.csbin"
 					},
 					target: {
 						type: "SmuOffChipFirmware12"
@@ -62,7 +62,7 @@
 				},
 				{
 					source: {
-						BlobFile: "SecureDebugUnlock.sbin"
+						BlobFile: "SecureDebugUnlock_ssp.sbin"
 					},
 					target: {
 						type: "PspEarlySecureUnlockDebugImage"
@@ -70,7 +70,7 @@
 				},
 				{
 					source: {
-						BlobFile: "PspIkek.bin"
+						BlobFile: "PspIkek_ssp.bin"
 					},
 					target: {
 						type: "WrappedIkek"
@@ -86,7 +86,7 @@
 				},
 				{
 					source: {
-						BlobFile: "RsmuSecPolicy.sbin"
+						BlobFile: "RsmuSecPolicy_ssp.sbin"
 					},
 					target: {
 						type: "SecurityPolicyBinary"
@@ -94,7 +94,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Mp5.csbin"
+						BlobFile: "Mp5Ssp.csbin"
 					},
 					target: {
 						type: "Mp5Firmware"
@@ -102,7 +102,7 @@
 				},
 				{
 					source: {
-						BlobFile: "AgesaBootloader_U_prod.csbin"
+						BlobFile: "AgesaBootloader_U_prod_Mcm_SSP.bin"
 					},
 					target: {
 						type: "Abl0"
@@ -110,7 +110,7 @@
 				},
 				{
 					source: {
-						BlobFile: "PhyFw.sbin"
+						BlobFile: "SspPhyFw.sbin"
 					},
 					target: {
 						type: "DxioPhySramFirmware"
@@ -118,7 +118,7 @@
 				},
 				{
 					source: {
-						BlobFile: "PhyFwSb4kr.stkn"
+						BlobFile: "SspPhyFwSb4kr.stkn"
 					},
 					target: {
 						type: "DxioPhySramPublicKey"
@@ -4789,7 +4789,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Appb_1D_Ddr4_Udimm_Imem.csbin"
+						BlobFile: "Appb_SSP_1D_ddr4_Udimm_Imem.cbin"
 					},
 					target: {
 						type: "PmuFirmwareInstructions",
@@ -4799,7 +4799,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Appb_1D_Ddr4_Udimm_Dmem.csbin"
+						BlobFile: "Appb_SSP_1D_ddr4_Udimm_Dmem.cbin"
 					},
 					target: {
 						type: "PmuFirmwareData",
@@ -4809,7 +4809,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Appb_1D_Ddr4_Rdimm_Imem.csbin"
+						BlobFile: "Appb_SSP_1D_Ddr4_Rdimm_Imem.cbin"
 					},
 					target: {
 						type: "PmuFirmwareInstructions",
@@ -4819,7 +4819,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Appb_1D_Ddr4_Rdimm_Dmem.csbin"
+						BlobFile: "Appb_SSP_1D_Ddr4_Rdimm_Dmem.cbin"
 					},
 					target: {
 						type: "PmuFirmwareData",
@@ -4829,7 +4829,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Appb_2D_Ddr4_Udimm_Imem.csbin"
+						BlobFile: "Appb_SSP_2D_Ddr4_Udimm_Imem.cbin"
 					},
 					target: {
 						type: "PmuFirmwareInstructions",
@@ -4839,7 +4839,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Appb_2D_Ddr4_Udimm_Dmem.csbin"
+						BlobFile: "Appb_SSP_2D_Ddr4_Udimm_Dmem.cbin"
 					},
 					target: {
 						type: "PmuFirmwareData",
@@ -4849,7 +4849,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Appb_2D_Ddr4_Rdimm_Imem.csbin"
+						BlobFile: "Appb_SSP_2D_Ddr4_Rdimm_Imem.cbin"
 					},
 					target: {
 						type: "PmuFirmwareInstructions",
@@ -4859,7 +4859,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Appb_2D_Ddr4_Rdimm_Dmem.csbin"
+						BlobFile: "Appb_SSP_2D_Ddr4_Rdimm_Dmem.cbin"
 					},
 					target: {
 						type: "PmuFirmwareData",
