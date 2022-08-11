@@ -1,11 +1,15 @@
 use amd_efs::{
-	AddressMode, BhdDirectory, BhdDirectoryEntryAttrs,
+	AddressMode, BhdDirectory,
 	BhdDirectoryEntryType, Efs, PspDirectory,
-	PspDirectoryEntryAttrs,
+	BhdDirectoryEntry,
+	PspDirectoryEntry,
+	DirectoryEntry,
+	ValueOrLocation,
 };
 use amd_host_image_builder_config::{
 	Error, Result, SerdeBhdDirectoryVariant, SerdeBhdSource,
 	SerdePspDirectoryVariant, SerdePspEntrySource,
+	TryFromSerdeDirectoryEntryWithContext,
 };
 use core::cell::RefCell;
 use core::convert::TryFrom;
@@ -24,7 +28,6 @@ use structopt::StructOpt;
 
 mod static_config;
 
-use amd_efs::DirectoryFrontend;
 use amd_flash::{ErasableLocation, FlashRead, FlashWrite, Location};
 use amd_host_image_builder_config::SerdeConfig;
 
@@ -172,8 +175,8 @@ type AlignedLocation = ErasableLocation<ERASABLE_BLOCK_SIZE>;
 /// Otherwise, return the size to use for the entry payload.
 fn size_file(
 	source_filename: &Path,
-	target_size: Option<usize>,
-) -> amd_efs::Result<(File, usize)> {
+	target_size: Option<u32>,
+) -> amd_efs::Result<(File, u32)> {
 	let file = match File::open(source_filename) {
 		Ok(f) => f,
 		Err(e) => {
@@ -191,51 +194,50 @@ fn size_file(
 		.map_err(|_| amd_efs::Error::Io(amd_flash::Error::Io))?;
 	match target_size {
 		Some(x) => {
-			if filesize > x {
+			if filesize > x as usize {
 				panic!("Configuration specifies slot size {} but contents {:?} have size {}. The contents do not fit.", x, source_filename, filesize);
 			} else {
 				Ok((file, x))
 			}
 		}
-		None => Ok((file, filesize)),
+		None => Ok((file, filesize.try_into().unwrap())),
 	}
 }
 
-/// Add entry from file SOURCE_FILENAME.  Size the payload of entry to TARGET_SIZE.
-/// Errors out if file SOURCE_FILENAME is bigger than TARGET_SIZE.
+/// Add entry from file SOURCE_FILENAME.
+/// Errors out if file SOURCE_FILENAME is bigger than ENTRY.size.
+/// If successful, updates ENTRY.size to the actual size.
 fn psp_entry_add_from_file_with_custom_size(
 	directory: &mut PspDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
 	payload_position: Option<ErasableLocation<ERASABLE_BLOCK_SIZE>>,
-	attrs: &PspDirectoryEntryAttrs,
-	target_size: Option<usize>,
+	entry: &mut PspDirectoryEntry,
+	target_size: Option<u32>,
 	source_filename: &Path,
 ) -> amd_efs::Result<()> {
 	//eprintln!("FILE {:?}", source_filename);
 	let (file, size) = size_file(source_filename, target_size)?;
+	entry.set_size(Some(size));
 	let mut source = BufReader::new(file);
 
 	directory.add_from_reader_with_custom_size(
 		payload_position,
-		attrs,
-		size,
+		entry,
 		&mut source,
-		None,
 	)
 }
 
 fn psp_entry_add_from_file(
 	directory: &mut PspDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
 	payload_position: Option<ErasableLocation<ERASABLE_BLOCK_SIZE>>,
-	attrs: &PspDirectoryEntryAttrs,
+	entry: &mut PspDirectoryEntry,
 	source_filename: PathBuf,
-	target_size: Option<usize>,
 ) -> amd_efs::Result<()> {
 	let source_filename = source_filename.as_path();
 	psp_entry_add_from_file_with_custom_size(
 		directory,
 		payload_position,
-		attrs,
-		target_size,
+		entry,
+		None,
 		&source_filename,
 	)
 }
@@ -245,39 +247,34 @@ fn psp_entry_add_from_file(
 fn bhd_entry_add_from_file_with_custom_size(
 	directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
 	payload_position: Option<ErasableLocation<ERASABLE_BLOCK_SIZE>>,
-	attrs: &BhdDirectoryEntryAttrs,
-	target_size: Option<usize>,
+	entry: &mut BhdDirectoryEntry,
+	target_size: Option<u32>,
 	source_filename: &Path,
-	ram_destination_address: Option<u64>,
 ) -> amd_efs::Result<()> {
-	let (file, size) = size_file(source_filename, target_size)?;
+	let (file, size) = size_file(source_filename, target_size.into())?;
+	entry.set_size(Some(size));
 	let mut reader = BufReader::new(file);
 
 	directory.add_from_reader_with_custom_size(
 		payload_position,
-		attrs,
-		size,
+		entry,
 		&mut reader,
-		ram_destination_address,
 	)
 }
 
 fn bhd_entry_add_from_file(
 	directory: &mut BhdDirectory<FlashImage, ERASABLE_BLOCK_SIZE>,
 	payload_position: Option<ErasableLocation<ERASABLE_BLOCK_SIZE>>,
-	attrs: &BhdDirectoryEntryAttrs,
+	entry: &mut BhdDirectoryEntry,
 	source_filename: PathBuf,
-	ram_destination_address: Option<u64>,
-	target_size: Option<usize>,
 ) -> amd_efs::Result<()> {
 	let source_filename = source_filename.as_path();
 	bhd_entry_add_from_file_with_custom_size(
 		directory,
 		payload_position,
-		attrs,
-		target_size,
+		entry,
+		None,
 		&source_filename,
-		ram_destination_address,
 	)
 }
 
@@ -460,16 +457,20 @@ fn bhd_directory_add_reset_image(
 	if Location::from(end) > static_config::RESET_IMAGE_END {
 		return Err(Error::ImageTooBig);
 	}
+	let mut entry = BhdDirectoryEntry::new_payload(
+		bhd_directory.directory_address_mode(),
+		BhdDirectoryEntryType::Bios,
+		Some(sz.try_into().unwrap()),
+		Some(ValueOrLocation::EfsRelativeOffset(beginning.into())),
+		destination_origin
+	).unwrap()
+		.with_reset_image(true)
+		.with_copy_image(true)
+		.build();
 	bhd_directory.add_from_reader_with_custom_size(
 		Some(beginning),
-		&BhdDirectoryEntryAttrs::builder()
-			.with_type_(BhdDirectoryEntryType::Bios)
-			.with_reset_image(true)
-			.with_copy_image(true)
-			.build(),
-		sz,
+		&mut entry,
 		&mut iov,
-		destination_origin,
 	)?;
 	Ok(())
 }
@@ -626,6 +627,7 @@ fn main() -> std::io::Result<()> {
 	match psp {
 		SerdePspDirectoryVariant::PspDirectory(serde_psp_directory) => {
 			for entry in serde_psp_directory.entries {
+				let mut raw_entry = PspDirectoryEntry::try_from_with_context(psp_directory.directory_address_mode(), &entry.target).unwrap();
 				//eprintln!("{:?}", entry.target.attrs);
 				let blob_slot_settings = entry.target.blob;
 				// blob_slot_settings is optional.
@@ -634,11 +636,11 @@ fn main() -> std::io::Result<()> {
 				match entry.source {
 					SerdePspEntrySource::Value(x) => {
 						// FIXME: assert!(blob_slot_settings.is_none()); fails for some reason
+						// DirectoryRelativeOffset is the one that can always be overridden
+						raw_entry.set_source(AddressMode::DirectoryRelativeOffset, ValueOrLocation::Value(x)).unwrap();
 						psp_directory
 							.add_value_entry(
-								&entry.target
-									.attrs,
-								x, // TODO: Nicer type.
+								&mut raw_entry,
 							)
 							.map_err(
 								efs_to_io_error,
@@ -647,9 +649,9 @@ fn main() -> std::io::Result<()> {
 					SerdePspEntrySource::BlobFile(
 						blob_filename,
 					) => {
-						let (flash_location, size) = match blob_slot_settings {
-							Some(x) => (x.flash_location, x.size),
-							None => (None, None)
+						let flash_location = match blob_slot_settings {
+							Some(x) => x.flash_location,
+							None => None
 						};
 						let x: Option<Location> =
 							flash_location.map(
@@ -657,6 +659,7 @@ fn main() -> std::io::Result<()> {
 									x.try_into().unwrap() // infallible
 								},
 							);
+						// already done by try_from: raw_entry.set_size(size);
 						psp_entry_add_from_file(
 							&mut psp_directory,
 							match x {
@@ -664,9 +667,8 @@ fn main() -> std::io::Result<()> {
 									.map_err(flash_to_io_error)?),
 								None => None
 							},
-							&entry.target.attrs,
+							&mut raw_entry,
 							resolve_blob(blob_filename)?,
-							size.map(|x| x as usize),
 						)
 							.map_err(efs_to_io_error)?;
 					}
@@ -691,21 +693,18 @@ fn main() -> std::io::Result<()> {
 	match bhd {
 		SerdeBhdDirectoryVariant::BhdDirectory(serde_bhd_directory) => {
 			for entry in serde_bhd_directory.entries {
+				let mut raw_entry = BhdDirectoryEntry::try_from_with_context(bhd_directory.directory_address_mode(), &entry.target).unwrap();
 				let blob_slot_settings = entry.target.blob;
-				let (
-					flash_location,
-					size,
-					ram_destination_address,
-				) = match blob_slot_settings {
-					Some(x) => (
-						x.flash_location,
-						x.size,
-						x.ram_destination_address,
-					),
-					None => (None, None, None),
+				let flash_location = match blob_slot_settings {
+					Some(x) => x.flash_location,
+					None => None,
 				};
 				let x: Option<Location> = flash_location
 					.map(|x| x.try_into().unwrap()); // infallible
+
+				// done by try_from: raw_entry.set_destination_location(ram_destination_address);
+				// done by try_from: raw_entry.set_size(size);
+
 				match entry.source {
 					SerdeBhdSource::BlobFile(
 						blob_filename,
@@ -717,10 +716,8 @@ fn main() -> std::io::Result<()> {
 									.map_err(flash_to_io_error)?),
 								None => None
 							},
-							&entry.target.attrs,
+							&mut raw_entry,
 							resolve_blob(blob_filename)?,
-							ram_destination_address,
-							size.map(|x| x as usize),
 						).map_err(efs_to_io_error)?;
 					}
 					SerdeBhdSource::ApcbJson(apcb) => {
@@ -730,15 +727,13 @@ fn main() -> std::io::Result<()> {
 							apcb_to_io_error,
 						)?;
 						let mut bufref = buf.as_ref();
+						if raw_entry.size().is_none() {
+							raw_entry.set_size(Some(bufref.len().try_into().unwrap()));
+						};
 						bhd_directory.add_from_reader_with_custom_size(
 							x.and_then(|y| y.try_into().ok()),
-							&entry.target.attrs,
-							size.unwrap_or(bufref.len().try_into()
-								.map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, format!("EFS sizing error: {:?}", e)))?)
-								.try_into()
-								.map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, format!("EFS sizing error: {:?}", e)))?,
+							&mut raw_entry,
 							&mut bufref,
-							None,
 						)
 							.map_err(efs_to_io_error)?;
 					}
@@ -751,7 +746,7 @@ fn main() -> std::io::Result<()> {
 	}
 
 	bhd_directory
-		.add_apob_entry(None, BhdDirectoryEntryType::Apob, 0x400_0000)
+		.add_apob_entry(BhdDirectoryEntryType::Apob, 0x400_0000)
 		.map_err(efs_to_io_error)?;
 
 	bhd_directory_add_reset_image(

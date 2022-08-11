@@ -4,13 +4,9 @@ use std::collections::BTreeMap;
 use amd_apcb::Apcb;
 use serde::Deserialize;
 
-use amd_efs::BhdDirectoryEntryAttrs;
-use amd_efs::EfhBulldozerSpiMode;
-use amd_efs::EfhNaplesSpiMode;
-use amd_efs::EfhRomeSpiMode;
-use amd_efs::ProcessorGeneration;
-use amd_efs::PspDirectoryEntryAttrs;
-use amd_efs::ComboDirectoryEntryFilter;
+use amd_efs::{AddressMode, EfhBulldozerSpiMode, EfhNaplesSpiMode, EfhRomeSpiMode, ProcessorGeneration, ComboDirectoryEntryFilter};
+use amd_efs::{BhdDirectoryRomId, BhdDirectoryEntryRegionType, BhdDirectoryEntryType, BhdDirectoryEntry};
+use amd_efs::{PspDirectoryRomId, PspDirectoryEntryType, PspDirectoryEntry, ValueOrLocation};
 use amd_flash::Location;
 
 #[derive(Debug)]
@@ -48,13 +44,47 @@ impl Default for SerdePspDirectoryEntryBlob {
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+pub struct SerdePspDirectoryEntryAttrs {
+	#[serde(rename = "type")]
+	pub type_: PspDirectoryEntryType,
+	/// Function of AMD Family and Model; only useful for types 8, 0x24, 0x25
+	#[serde(default)]
+	pub sub_program: u8,
+	#[serde(default)]
+	pub rom_id: PspDirectoryRomId,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "PspDirectoryEntry")]
 pub struct SerdePspDirectoryEntry {
 	#[serde(flatten)]
-	pub attrs: PspDirectoryEntryAttrs,
+	pub attrs: SerdePspDirectoryEntryAttrs,
+
 	#[serde(flatten)]
 	//#[serde(default)]
 	pub blob: Option<SerdePspDirectoryEntryBlob>,
+}
+
+pub trait TryFromSerdeDirectoryEntryWithContext<S>: Sized {
+	fn try_from_with_context(directory_address_mode: AddressMode, source: &S) -> Result<Self>;
+}
+
+// TODO: Generate.
+impl TryFromSerdeDirectoryEntryWithContext<SerdePspDirectoryEntry> for PspDirectoryEntry {
+	fn try_from_with_context(directory_address_mode: AddressMode, source: &SerdePspDirectoryEntry) -> Result<Self> {
+		Ok(Self::new_payload(
+			directory_address_mode,
+			source.attrs.type_,
+			source.blob.as_ref().and_then(|y| y.size),
+			if let Some(x) = &source.blob {
+				x.flash_location.map(|y| ValueOrLocation::EfsRelativeOffset(y))
+			} else {
+				None
+			},
+		)?
+			.with_sub_program(source.attrs.sub_program)
+			.with_rom_id(source.attrs.rom_id))
+	}
 }
 
 
@@ -85,13 +115,62 @@ pub struct SerdeBhdDirectoryEntryBlob {
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+pub struct SerdeBhdDirectoryEntryAttrs {
+	#[serde(rename = "type")]
+	pub type_: BhdDirectoryEntryType,
+	#[serde(default)]
+	pub region_type: BhdDirectoryEntryRegionType,
+	#[serde(default)]
+	pub reset_image: bool,
+	#[serde(default)]
+	pub copy_image: bool,
+	#[serde(default)] // for x86: the only choice
+	pub read_only: bool,
+	#[serde(default)]
+	pub compressed: bool,
+	#[serde(default)]
+	pub instance: u8,
+	/// Function of AMD Family and Model; only useful for types PMU firmware and APCB binaries
+	#[serde(default)]
+	pub sub_program: u8,
+	#[serde(default)]
+	pub rom_id: BhdDirectoryRomId,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "BhdDirectoryEntry")]
 pub struct SerdeBhdDirectoryEntry {
 	#[serde(flatten)]
-	pub attrs: BhdDirectoryEntryAttrs,
+	pub attrs: SerdeBhdDirectoryEntryAttrs,
+
 	#[serde(flatten)]
 	#[serde(default)]
 	pub blob: Option<SerdeBhdDirectoryEntryBlob>,
+}
+
+// TODO: Generate.
+impl TryFromSerdeDirectoryEntryWithContext<SerdeBhdDirectoryEntry> for BhdDirectoryEntry {
+	fn try_from_with_context(directory_address_mode: AddressMode, source: &SerdeBhdDirectoryEntry) -> Result<Self> {
+		Ok(Self::new_payload(
+			directory_address_mode,
+			source.attrs.type_,
+			source.blob.as_ref().and_then(|y| y.size),
+			if let Some(x) = &source.blob {
+				x.flash_location.map(|y| ValueOrLocation::EfsRelativeOffset(y))
+			} else {
+				None
+			},
+			source.blob.as_ref().and_then(|y| y.ram_destination_address),
+		)?
+			.with_region_type(source.attrs.region_type)
+			.with_reset_image(source.attrs.reset_image)
+			.with_copy_image(source.attrs.copy_image)
+			.with_read_only(source.attrs.read_only)
+			.with_compressed(source.attrs.compressed)
+			.with_instance(source.attrs.instance)
+			.with_sub_program(source.attrs.sub_program)
+			.with_rom_id(source.attrs.rom_id))
+	}
 }
 
 impl Default for SerdeBhdDirectoryEntryBlob {
@@ -102,73 +181,6 @@ impl Default for SerdeBhdDirectoryEntryBlob {
 			ram_destination_address: None,
 		}
 	}
-}
-
-impl SerdePspDirectoryEntry {
-/*
-	pub fn load(config: &Self) -> Result<PspDirectoryEntry> {
-		match config.body {
-			SerdePspDirectoryEntryBody::Value(x) => {
-				Ok(PspDirectoryEntry::new_value(&config.attrs, x))
-			},
-			SerdePspDirectoryEntryBody::Blob { flash_location, size } => {
-				let size = size.unwrap();
-				Ok(PspDirectoryEntry::new_payload(&config.attrs, size, flash_location.unwrap()).unwrap()) // FIXME .map_err(|_| serde::ser::Error::custom("value unknown"))?
-			},
-		}
-	}
-	pub fn save(blob: &PspDirectoryEntry) -> Result<Self> {
-		let source = blob.source(AddressMode::DirectoryRelativeOffset); // DirectoryRelativeOffset is the one that can always be overridden
-		Ok(SerdePspDirectoryEntry {
-			attrs: PspDirectoryEntryAttrs::from(blob.attrs.get()), // .map_err(|_| serde::ser::Error::custom("value unknown"))?.into(),
-			body: match source {
-				ValueOrLocation::Value(x) => {
-					SerdePspDirectoryEntryBody::Value(x)
-				},
-				ValueOrLocation::Location(x) => {
-					let x: u32 = x.try_into().unwrap();
-					SerdePspDirectoryEntryBody::Blob {
-						flash_location: Some(x.into()), // FIXME
-						size: blob.size(),
-					}
-				},
-			},
-		})
-	}
-*/
-}
-
-impl SerdeBhdDirectoryEntry {
-/*
-	pub fn load(config: &Self) -> Result<BhdDirectoryEntry> {
-		match config.body {
-			SerdeBhdDirectoryEntryBody::Blob { flash_location, size, ram_destination_address } => {
-				let flash_location = flash_location.unwrap();
-				let size = size.unwrap();
-				Ok(BhdDirectoryEntry::new_payload(&config.attrs, size, flash_location, ram_destination_address).unwrap()) // FIXME .map_err(|_| serde::ser::Error::custom("value unknown"))?
-			},
-		}
-	}
-	pub fn save(blob: &BhdDirectoryEntry) -> Result<Self> {
-		let source = blob.source()?; // FIXME
-		Ok(SerdeBhdDirectoryEntry {
-			attrs: BhdDirectoryEntryAttrs::from(blob.attrs.get()), // .map_err(|_| serde::ser::Error::custom("value unknown"))?.into(),
-			body: match source {
-				ValueOrLocation::Value(x) => {
-					todo!();
-				},
-				ValueOrLocation::Location(x) => {
-					let x: u32 = x.try_into().unwrap();
-					SerdeBhdDirectoryEntryBody::Blob {
-						flash_location: Some(x), // FIXME
-						size: blob.size(),
-						ram_destination_address: blob.destination_location(),
-					}
-				},
-			},
-		})
-	}
-*/
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]

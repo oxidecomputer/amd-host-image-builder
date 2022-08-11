@@ -7,7 +7,7 @@ edition = "2018"
 
 [dependencies]
 amd-apcb = { git = "ssh://git@github.com/oxidecomputer/amd-apcb.git", rev = "c56383b29a557c0611a00b2bd61387c9fb23f3eb", features = ["serde", "schemars"] }
-amd-efs = { git = "ssh://git@github.com/oxidecomputer/amd-efs.git", rev = "3fb60906b0803d6ea6df148b5a19a73622ec285b", features = ["std", "serde", "schemars"] }
+amd-efs = { git = "ssh://git@github.com/oxidecomputer/amd-efs.git", rev = "6eda4d6fa0e477f6ff061f85dcd3c29d3f4522fe", features = ["std", "serde", "schemars"] }
 amd-flash = { git = "ssh://git@github.com/oxidecomputer/amd-flash.git", branch = "main" }
 schemars = "0.8.8"
 serde = { version = "1.0", default-features = false, features = ["derive"] }
