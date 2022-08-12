@@ -1,10 +1,6 @@
 use amd_efs::{
-	AddressMode, BhdDirectory,
-	BhdDirectoryEntryType, Efs, PspDirectory,
-	BhdDirectoryEntry,
-	PspDirectoryEntry,
-	DirectoryEntry,
-	ValueOrLocation,
+	AddressMode, BhdDirectory, BhdDirectoryEntry, BhdDirectoryEntryType,
+	DirectoryEntry, Efs, PspDirectory, PspDirectoryEntry, ValueOrLocation,
 };
 use amd_host_image_builder_config::{
 	Error, Result, SerdeBhdDirectoryVariant, SerdeBhdSource,
@@ -462,11 +458,12 @@ fn bhd_directory_add_reset_image(
 		BhdDirectoryEntryType::Bios,
 		Some(sz.try_into().unwrap()),
 		Some(ValueOrLocation::EfsRelativeOffset(beginning.into())),
-		destination_origin
-	).unwrap()
-		.with_reset_image(true)
-		.with_copy_image(true)
-		.build();
+		destination_origin,
+	)
+	.unwrap()
+	.with_reset_image(true)
+	.with_copy_image(true)
+	.build();
 	bhd_directory.add_from_reader_with_custom_size(
 		Some(beginning),
 		&mut entry,
@@ -590,30 +587,32 @@ fn main() -> std::io::Result<()> {
 	efs.set_spi_mode_zen_naples(spi_mode_zen_naples);
 	efs.set_spi_mode_zen_rome(spi_mode_zen_rome);
 	let blobdirs = &opts.blobdirs;
-	let resolve_blob = |blob_filename: PathBuf| -> std::io::Result<PathBuf> {
-		if blob_filename.has_root() {
-			if blob_filename.exists() {
-				Ok(blob_filename.to_path_buf())
-			} else {
-				Err(std::io::Error::new(
+	let resolve_blob =
+		|blob_filename: PathBuf| -> std::io::Result<PathBuf> {
+			if blob_filename.has_root() {
+				if blob_filename.exists() {
+					Ok(blob_filename.to_path_buf())
+				} else {
+					Err(std::io::Error::new(
 		                        std::io::ErrorKind::Other,
 		                        format!("Blob read error: Could not find file {:?}", blob_filename),
 		                ))
-			}
-		} else {
-			for blobdir in blobdirs {
-				let fullname = blobdir.join(&blob_filename);
-				if fullname.exists() {
-					return Ok(fullname)
 				}
-			}
-			Err(std::io::Error::new(
+			} else {
+				for blobdir in blobdirs {
+					let fullname =
+						blobdir.join(&blob_filename);
+					if fullname.exists() {
+						return Ok(fullname);
+					}
+				}
+				Err(std::io::Error::new(
 	                        std::io::ErrorKind::Other,
 	                        format!("Blob read error: Could not find file {:?} \
 (neither directly nor in any of the directories {:?})", blob_filename, blobdirs),
 	                ))
-		}
-	};
+			}
+		};
 
 	let mut psp_directory = efs
 		.create_psp_directory(
@@ -649,10 +648,13 @@ fn main() -> std::io::Result<()> {
 					SerdePspEntrySource::BlobFile(
 						blob_filename,
 					) => {
-						let flash_location = match blob_slot_settings {
-							Some(x) => x.flash_location,
-							None => None
-						};
+						let flash_location =
+							match blob_slot_settings
+							{
+								Some(x) => x
+									.flash_location,
+								None => None,
+							};
 						let x: Option<Location> =
 							flash_location.map(
 								|x| {
@@ -728,14 +730,28 @@ fn main() -> std::io::Result<()> {
 						)?;
 						let mut bufref = buf.as_ref();
 						if raw_entry.size().is_none() {
-							raw_entry.set_size(Some(bufref.len().try_into().unwrap()));
+							raw_entry.set_size(
+								Some(bufref
+									.len()
+									.try_into(
+									)
+									.unwrap(
+									)),
+							);
 						};
-						bhd_directory.add_from_reader_with_custom_size(
-							x.and_then(|y| y.try_into().ok()),
-							&mut raw_entry,
-							&mut bufref,
-						)
-							.map_err(efs_to_io_error)?;
+						bhd_directory
+							.add_from_reader_with_custom_size(
+								x.and_then(
+									|y| {
+										y.try_into().ok()
+									},
+								),
+								&mut raw_entry,
+								&mut bufref,
+							)
+							.map_err(
+								efs_to_io_error,
+							)?;
 					}
 				}
 			}
