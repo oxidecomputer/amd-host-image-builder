@@ -649,12 +649,7 @@ fn main() -> std::io::Result<()> {
 						blob_filename,
 					) => {
 						let flash_location =
-							match blob_slot_settings
-							{
-								Some(x) => x
-									.flash_location,
-								None => None,
-							};
+							blob_slot_settings.and_then(|x| x.flash_location);
 						let x: Option<Location> =
 							flash_location.map(
 								|x| {
@@ -697,10 +692,7 @@ fn main() -> std::io::Result<()> {
 			for entry in serde_bhd_directory.entries {
 				let mut raw_entry = BhdDirectoryEntry::try_from_with_context(bhd_directory.directory_address_mode(), &entry.target).unwrap();
 				let blob_slot_settings = entry.target.blob;
-				let flash_location = match blob_slot_settings {
-					Some(x) => x.flash_location,
-					None => None,
-				};
+				let flash_location = blob_slot_settings.and_then(|x| x.flash_location);
 				let x: Option<Location> = flash_location
 					.map(|x| x.try_into().unwrap()); // infallible
 
