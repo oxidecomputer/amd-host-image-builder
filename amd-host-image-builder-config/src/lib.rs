@@ -89,17 +89,16 @@ impl TryFromSerdeDirectoryEntryWithContext<SerdePspDirectoryEntry>
 		directory_address_mode: AddressMode,
 		source: &SerdePspDirectoryEntry,
 	) -> Result<Self> {
+		let blob = source.blob.as_ref();
 		Ok(Self::new_payload(
 			directory_address_mode,
 			source.attrs.type_,
-			source.blob.as_ref().and_then(|y| y.size),
-			if let Some(x) = &source.blob {
+			blob.and_then(|y| y.size),
+			blob.and_then(|x| {
 				x.flash_location.map(|y| {
 					ValueOrLocation::EfsRelativeOffset(y)
 				})
-			} else {
-				None
-			},
+			}),
 		)?
 		.with_sub_program(source.attrs.sub_program)
 		.with_rom_id(source.attrs.rom_id))
@@ -174,20 +173,16 @@ impl TryFromSerdeDirectoryEntryWithContext<SerdeBhdDirectoryEntry>
 		directory_address_mode: AddressMode,
 		source: &SerdeBhdDirectoryEntry,
 	) -> Result<Self> {
+		let blob = source.blob.as_ref();
 		Ok(Self::new_payload(
 			directory_address_mode,
 			source.attrs.type_,
-			source.blob.as_ref().and_then(|y| y.size),
-			if let Some(x) = &source.blob {
+			blob.and_then(|y| y.size),
+			blob.and_then(|x| {
 				x.flash_location.map(|y| {
 					ValueOrLocation::EfsRelativeOffset(y)
-				})
-			} else {
-				None
-			},
-			source.blob
-				.as_ref()
-				.and_then(|y| y.ram_destination_address),
+				})}),
+			blob.and_then(|y| y.ram_destination_address),
 		)?
 		.with_region_type(source.attrs.region_type)
 		.with_reset_image(source.attrs.reset_image)
