@@ -2,7 +2,6 @@
 name = "amd-host-image-builder"
 version = "0.1.0"
 edition = "2018"
-build = "build/main.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
