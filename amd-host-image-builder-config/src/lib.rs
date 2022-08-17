@@ -87,12 +87,12 @@ impl TryFromSerdeDirectoryEntryWithContext<SerdePspDirectoryEntry>
 {
 	fn try_from_with_context(
 		directory_address_mode: AddressMode,
-		source: &SerdePspDirectoryEntry,
+		target: &SerdePspDirectoryEntry,
 	) -> Result<Self> {
-		let blob = source.blob.as_ref();
+		let blob = target.blob.as_ref();
 		Ok(Self::new_payload(
 			directory_address_mode,
-			source.attrs.type_,
+			target.attrs.type_,
 			blob.and_then(|y| y.size),
 			blob.and_then(|x| {
 				x.flash_location.map(|y| {
@@ -100,8 +100,8 @@ impl TryFromSerdeDirectoryEntryWithContext<SerdePspDirectoryEntry>
 				})
 			}),
 		)?
-		.with_sub_program(source.attrs.sub_program)
-		.with_rom_id(source.attrs.rom_id))
+		.with_sub_program(target.attrs.sub_program)
+		.with_rom_id(target.attrs.rom_id))
 	}
 }
 
@@ -171,12 +171,12 @@ impl TryFromSerdeDirectoryEntryWithContext<SerdeBhdDirectoryEntry>
 {
 	fn try_from_with_context(
 		directory_address_mode: AddressMode,
-		source: &SerdeBhdDirectoryEntry,
+		target: &SerdeBhdDirectoryEntry,
 	) -> Result<Self> {
-		let blob = source.blob.as_ref();
+		let blob = target.blob.as_ref();
 		Ok(Self::new_payload(
 			directory_address_mode,
-			source.attrs.type_,
+			target.attrs.type_,
 			blob.and_then(|y| y.size),
 			blob.and_then(|x| {
 				x.flash_location.map(|y| {
@@ -184,14 +184,14 @@ impl TryFromSerdeDirectoryEntryWithContext<SerdeBhdDirectoryEntry>
 				})}),
 			blob.and_then(|y| y.ram_destination_address),
 		)?
-		.with_region_type(source.attrs.region_type)
-		.with_reset_image(source.attrs.reset_image)
-		.with_copy_image(source.attrs.copy_image)
-		.with_read_only(source.attrs.read_only)
-		.with_compressed(source.attrs.compressed)
-		.with_instance(source.attrs.instance)
-		.with_sub_program(source.attrs.sub_program)
-		.with_rom_id(source.attrs.rom_id))
+		.with_region_type(target.attrs.region_type)
+		.with_reset_image(target.attrs.reset_image)
+		.with_copy_image(target.attrs.copy_image)
+		.with_read_only(target.attrs.read_only)
+		.with_compressed(target.attrs.compressed)
+		.with_instance(target.attrs.instance)
+		.with_sub_program(target.attrs.sub_program)
+		.with_rom_id(target.attrs.rom_id))
 	}
 }
 
