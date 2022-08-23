@@ -1,16 +1,21 @@
-use std::path::PathBuf;
 use std::collections::BTreeMap;
+use std::path::PathBuf;
 
 use amd_apcb::Apcb;
 use serde::Deserialize;
 
-use amd_efs::BhdDirectoryEntryAttrs;
-use amd_efs::EfhBulldozerSpiMode;
-use amd_efs::EfhNaplesSpiMode;
-use amd_efs::EfhRomeSpiMode;
-use amd_efs::ProcessorGeneration;
-use amd_efs::PspDirectoryEntryAttrs;
-use amd_efs::ComboDirectoryEntryFilter;
+use amd_efs::{
+	AddressMode, ComboDirectoryEntryFilter, EfhBulldozerSpiMode,
+	EfhNaplesSpiMode, EfhRomeSpiMode, ProcessorGeneration,
+};
+use amd_efs::{
+	BhdDirectoryEntry, BhdDirectoryEntryRegionType, BhdDirectoryEntryType,
+	BhdDirectoryRomId,
+};
+use amd_efs::{
+	PspDirectoryEntry, PspDirectoryEntryType, PspDirectoryRomId,
+	ValueOrLocation,
+};
 use amd_flash::Location;
 
 #[derive(Debug)]
@@ -48,21 +53,63 @@ impl Default for SerdePspDirectoryEntryBlob {
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+pub struct SerdePspDirectoryEntryAttrs {
+	#[serde(rename = "type")]
+	pub type_: PspDirectoryEntryType,
+	/// Function of AMD Family and Model; only useful for types 8, 0x24, 0x25
+	#[serde(default)]
+	pub sub_program: u8,
+	#[serde(default)]
+	pub rom_id: PspDirectoryRomId,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "PspDirectoryEntry")]
 pub struct SerdePspDirectoryEntry {
 	#[serde(flatten)]
-	pub attrs: PspDirectoryEntryAttrs,
+	pub attrs: SerdePspDirectoryEntryAttrs,
+
 	#[serde(flatten)]
 	//#[serde(default)]
 	pub blob: Option<SerdePspDirectoryEntryBlob>,
 }
 
+pub trait TryFromSerdeDirectoryEntryWithContext<S>: Sized {
+	fn try_from_with_context(
+		directory_address_mode: AddressMode,
+		source: &S,
+	) -> Result<Self>;
+}
+
+// TODO: Generate.
+impl TryFromSerdeDirectoryEntryWithContext<SerdePspDirectoryEntry>
+	for PspDirectoryEntry
+{
+	fn try_from_with_context(
+		directory_address_mode: AddressMode,
+		target: &SerdePspDirectoryEntry,
+	) -> Result<Self> {
+		let blob = target.blob.as_ref();
+		Ok(Self::new_payload(
+			directory_address_mode,
+			target.attrs.type_,
+			blob.and_then(|y| y.size),
+			blob.and_then(|x| {
+				x.flash_location.map(|y| {
+					ValueOrLocation::EfsRelativeOffset(y)
+				})
+			}),
+		)?
+		.with_sub_program(target.attrs.sub_program)
+		.with_rom_id(target.attrs.rom_id))
+	}
+}
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "PspEntrySource")]
 pub enum SerdePspEntrySource {
 	Value(u64),
-        BlobFile(PathBuf),
+	BlobFile(PathBuf),
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
@@ -85,13 +132,67 @@ pub struct SerdeBhdDirectoryEntryBlob {
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+pub struct SerdeBhdDirectoryEntryAttrs {
+	#[serde(rename = "type")]
+	pub type_: BhdDirectoryEntryType,
+	#[serde(default)]
+	pub region_type: BhdDirectoryEntryRegionType,
+	#[serde(default)]
+	pub reset_image: bool,
+	#[serde(default)]
+	pub copy_image: bool,
+	#[serde(default)] // for x86: the only choice
+	pub read_only: bool,
+	#[serde(default)]
+	pub compressed: bool,
+	#[serde(default)]
+	pub instance: u8,
+	/// Function of AMD Family and Model; only useful for types PMU firmware and APCB binaries
+	#[serde(default)]
+	pub sub_program: u8,
+	#[serde(default)]
+	pub rom_id: BhdDirectoryRomId,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "BhdDirectoryEntry")]
 pub struct SerdeBhdDirectoryEntry {
 	#[serde(flatten)]
-	pub attrs: BhdDirectoryEntryAttrs,
+	pub attrs: SerdeBhdDirectoryEntryAttrs,
+
 	#[serde(flatten)]
 	#[serde(default)]
 	pub blob: Option<SerdeBhdDirectoryEntryBlob>,
+}
+
+// TODO: Generate.
+impl TryFromSerdeDirectoryEntryWithContext<SerdeBhdDirectoryEntry>
+	for BhdDirectoryEntry
+{
+	fn try_from_with_context(
+		directory_address_mode: AddressMode,
+		target: &SerdeBhdDirectoryEntry,
+	) -> Result<Self> {
+		let blob = target.blob.as_ref();
+		Ok(Self::new_payload(
+			directory_address_mode,
+			target.attrs.type_,
+			blob.and_then(|y| y.size),
+			blob.and_then(|x| {
+				x.flash_location.map(|y| {
+					ValueOrLocation::EfsRelativeOffset(y)
+				})}),
+			blob.and_then(|y| y.ram_destination_address),
+		)?
+		.with_region_type(target.attrs.region_type)
+		.with_reset_image(target.attrs.reset_image)
+		.with_copy_image(target.attrs.copy_image)
+		.with_read_only(target.attrs.read_only)
+		.with_compressed(target.attrs.compressed)
+		.with_instance(target.attrs.instance)
+		.with_sub_program(target.attrs.sub_program)
+		.with_rom_id(target.attrs.rom_id))
+	}
 }
 
 impl Default for SerdeBhdDirectoryEntryBlob {
@@ -104,78 +205,11 @@ impl Default for SerdeBhdDirectoryEntryBlob {
 	}
 }
 
-impl SerdePspDirectoryEntry {
-/*
-	pub fn load(config: &Self) -> Result<PspDirectoryEntry> {
-		match config.body {
-			SerdePspDirectoryEntryBody::Value(x) => {
-				Ok(PspDirectoryEntry::new_value(&config.attrs, x))
-			},
-			SerdePspDirectoryEntryBody::Blob { flash_location, size } => {
-				let size = size.unwrap();
-				Ok(PspDirectoryEntry::new_payload(&config.attrs, size, flash_location.unwrap()).unwrap()) // FIXME .map_err(|_| serde::ser::Error::custom("value unknown"))?
-			},
-		}
-	}
-	pub fn save(blob: &PspDirectoryEntry) -> Result<Self> {
-		let source = blob.source(AddressMode::DirectoryRelativeOffset); // DirectoryRelativeOffset is the one that can always be overridden
-		Ok(SerdePspDirectoryEntry {
-			attrs: PspDirectoryEntryAttrs::from(blob.attrs.get()), // .map_err(|_| serde::ser::Error::custom("value unknown"))?.into(),
-			body: match source {
-				ValueOrLocation::Value(x) => {
-					SerdePspDirectoryEntryBody::Value(x)
-				},
-				ValueOrLocation::Location(x) => {
-					let x: u32 = x.try_into().unwrap();
-					SerdePspDirectoryEntryBody::Blob {
-						flash_location: Some(x.into()), // FIXME
-						size: blob.size(),
-					}
-				},
-			},
-		})
-	}
-*/
-}
-
-impl SerdeBhdDirectoryEntry {
-/*
-	pub fn load(config: &Self) -> Result<BhdDirectoryEntry> {
-		match config.body {
-			SerdeBhdDirectoryEntryBody::Blob { flash_location, size, ram_destination_address } => {
-				let flash_location = flash_location.unwrap();
-				let size = size.unwrap();
-				Ok(BhdDirectoryEntry::new_payload(&config.attrs, size, flash_location, ram_destination_address).unwrap()) // FIXME .map_err(|_| serde::ser::Error::custom("value unknown"))?
-			},
-		}
-	}
-	pub fn save(blob: &BhdDirectoryEntry) -> Result<Self> {
-		let source = blob.source()?; // FIXME
-		Ok(SerdeBhdDirectoryEntry {
-			attrs: BhdDirectoryEntryAttrs::from(blob.attrs.get()), // .map_err(|_| serde::ser::Error::custom("value unknown"))?.into(),
-			body: match source {
-				ValueOrLocation::Value(x) => {
-					todo!();
-				},
-				ValueOrLocation::Location(x) => {
-					let x: u32 = x.try_into().unwrap();
-					SerdeBhdDirectoryEntryBody::Blob {
-						flash_location: Some(x), // FIXME
-						size: blob.size(),
-						ram_destination_address: blob.destination_location(),
-					}
-				},
-			},
-		})
-	}
-*/
-}
-
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "BhdSource")]
 pub enum SerdeBhdSource<'a> {
 	BlobFile(PathBuf),
-        #[serde(bound(deserialize = "Apcb<'a>: Deserialize<'de>"))]
+	#[serde(bound(deserialize = "Apcb<'a>: Deserialize<'de>"))]
 	ApcbJson(amd_apcb::Apcb<'a>),
 }
 
@@ -208,23 +242,32 @@ pub enum SerdePspDirectoryVariant {
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "BhdDirectory")]
 pub struct SerdeBhdDirectory<'a> {
-	#[serde(bound(deserialize = "Vec<SerdeBhdEntry<'a>>: Deserialize<'de>"))]
+	#[serde(bound(
+		deserialize = "Vec<SerdeBhdEntry<'a>>: Deserialize<'de>"
+	))]
 	pub entries: Vec<SerdeBhdEntry<'a>>,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "BhdComboDirectory")]
 pub struct SerdeBhdComboDirectory<'a> {
-	#[serde(bound(deserialize = "BTreeMap<ComboDirectoryEntryFilter, SerdeBhdDirectory<'a>>: Deserialize<'de>"))]
-	pub directories: BTreeMap<ComboDirectoryEntryFilter, SerdeBhdDirectory<'a>>,
+	#[serde(bound(
+		deserialize = "BTreeMap<ComboDirectoryEntryFilter, SerdeBhdDirectory<'a>>: Deserialize<'de>"
+	))]
+	pub directories:
+		BTreeMap<ComboDirectoryEntryFilter, SerdeBhdDirectory<'a>>,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "BhdDirectoryVariant")]
 pub enum SerdeBhdDirectoryVariant<'a> {
-	#[serde(bound(deserialize = "SerdeBhdDirectory<'a>: Deserialize<'de>"))]
+	#[serde(bound(
+		deserialize = "SerdeBhdDirectory<'a>: Deserialize<'de>"
+	))]
 	BhdDirectory(SerdeBhdDirectory<'a>),
-	#[serde(bound(deserialize = "SerdeBhdComboDirectory<'a>: Deserialize<'de>"))]
+	#[serde(bound(
+		deserialize = "SerdeBhdComboDirectory<'a>: Deserialize<'de>"
+	))]
 	BhdComboDirectory(SerdeBhdComboDirectory<'a>),
 }
 
@@ -239,14 +282,16 @@ pub struct SerdeConfig<'a> {
 	#[serde(default)]
 	pub spi_mode_zen_rome: EfhRomeSpiMode,
 	pub psp: SerdePspDirectoryVariant,
-	#[serde(bound(deserialize = "SerdeBhdDirectoryVariant<'a>: Deserialize<'de>"))]
+	#[serde(bound(
+		deserialize = "SerdeBhdDirectoryVariant<'a>: Deserialize<'de>"
+	))]
 	pub bhd: SerdeBhdDirectoryVariant<'a>,
 }
 
 #[cfg(test)]
 mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
+	#[test]
+	fn it_works() {
+		assert_eq!(2 + 2, 4);
+	}
 }
