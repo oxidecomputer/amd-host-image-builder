@@ -4316,6 +4316,15 @@
 										},
 										{
 											Byte: {
+												MemPmuBistTestSelect: {
+													algorithm_1: true,
+													algorithm_2: true,
+													algorithm_3: true,
+												}
+											}
+										},
+										{
+											Byte: {
 												MemCpuVrefRange: 0x00
 											}
 										},
