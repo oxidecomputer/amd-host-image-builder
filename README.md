@@ -6,10 +6,9 @@ This tool builds a flash image for an AMD Zen system.
 
 First, please set up the environment such that you have the required AMD firmware and also the bootloader you want to use.
 
-This is done by executing the following commands:
+This is done by executing the following command:
 
-    git submodule init
-    git submodule update
+    git submodule update --init
 
 # Usage
 
