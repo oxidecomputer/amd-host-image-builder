@@ -1,6 +1,7 @@
 use amd_efs::{
 	AddressMode, BhdDirectory, BhdDirectoryEntry, BhdDirectoryEntryType,
 	DirectoryEntry, Efs, PspDirectory, PspDirectoryEntry, ValueOrLocation,
+	PspDirectoryEntryType,
 };
 use amd_host_image_builder_config::{
 	Error, Result, SerdeBhdDirectoryVariant, SerdeBhdSource,
@@ -197,6 +198,31 @@ fn size_file(
 			}
 		}
 		None => Ok((file, filesize.try_into().unwrap())),
+	}
+}
+
+/// Reads the file named SOURCE_FILENAME, finds the version field in there (if any) and returns
+/// its value.
+/// In case of error (file can't be read, version field not found, ...),
+/// returns None.
+fn psp_file_version(source_filename: &Path) -> Option<u32> {
+	// Note: This does not work on Rome and neither do we know a useful
+	// ABL version there anyway. But the magic also doesn't match, so
+	// this will be fine.
+	let (file, _size) = size_file(source_filename, None).ok()?;
+	let mut source = BufReader::new(file);
+	let mut header: [u8; 0x100] = [0; 0x100];
+	if let Ok(_) = source.read_exact(&mut header) {
+		let magic = &header[0x10..0x14];
+		if magic == *b"$PS1" {
+			let version_raw = <[u8; 4]>::try_from(&header[0x60..0x64]).ok()?;
+			let version = u32::from_le_bytes(version_raw);
+			Some(version)
+		} else {
+			None
+		}
+	} else {
+		None
 	}
 }
 
@@ -489,6 +515,9 @@ struct Opts {
 
 	#[structopt(short = "B", long = "blobdir", parse(from_os_str))]
 	blobdirs: Vec<PathBuf>,
+
+	#[structopt(short = "v", long = "verbose")]
+	verbose: bool,
 }
 
 fn main() -> std::io::Result<()> {
@@ -603,6 +632,9 @@ fn main() -> std::io::Result<()> {
 					let fullname =
 						blobdir.join(&blob_filename);
 					if fullname.exists() {
+						if opts.verbose {
+							eprintln!("Info: Using blob {:?}", fullname);
+						}
 						return Ok(fullname);
 					}
 				}
@@ -623,6 +655,8 @@ fn main() -> std::io::Result<()> {
 			AddressMode::EfsRelativeOffset,
 		)
 		.map_err(efs_to_io_error)?;
+	let mut abl0_version: Option<u32> = None;
+	let mut abl0_version_found = false;
 	match psp {
 		SerdePspDirectoryVariant::PspDirectory(serde_psp_directory) => {
 			for entry in serde_psp_directory.entries {
@@ -656,6 +690,22 @@ fn main() -> std::io::Result<()> {
 									x.try_into().unwrap() // infallible
 								},
 							);
+						let blob_filename = resolve_blob(blob_filename)?;
+						if raw_entry.type_() == PspDirectoryEntryType::Abl0 {
+							let new_abl0_version = psp_file_version(&blob_filename);
+							if !abl0_version_found {
+								abl0_version = new_abl0_version;
+								abl0_version_found = true
+							}
+							// For now, we do not support different ABL0 versions in the same image.
+							if new_abl0_version != abl0_version {
+								return Err(
+									std::io::Error::new(
+							                        std::io::ErrorKind::Other,
+										"different ABL0 versions in the same flash are unsupported"
+								))
+							}
+						}
 						// already done by try_from: raw_entry.set_size(size);
 						psp_entry_add_from_file(
 							&mut psp_directory,
@@ -665,7 +715,7 @@ fn main() -> std::io::Result<()> {
 								None => None
 							},
 							&mut raw_entry,
-							resolve_blob(blob_filename)?,
+							blob_filename,
 						)
 							.map_err(efs_to_io_error)?;
 					}
@@ -674,6 +724,13 @@ fn main() -> std::io::Result<()> {
 		}
 		_ => {
 			todo!();
+		}
+	}
+
+	if let Some(abl0_version) = abl0_version {
+		if opts.verbose {
+			// See AgesaBLReleaseNotes.txt, section "ABL Version String"
+			println!("Info: Abl0 version: 0x{:x}", abl0_version)
 		}
 	}
 
@@ -715,6 +772,9 @@ fn main() -> std::io::Result<()> {
 						).map_err(efs_to_io_error)?;
 					}
 					SerdeBhdSource::ApcbJson(apcb) => {
+						// we need to do this manually because validation needs ABL0_VERSION.
+						apcb.validate(abl0_version)
+							.map_err(apcb_to_io_error)?;
 						let buf = apcb
 							.save_no_inc()
 							.map_err(
