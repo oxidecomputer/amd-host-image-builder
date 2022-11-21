@@ -491,7 +491,7 @@ struct Opts {
 	blobdirs: Vec<PathBuf>,
 }
 
-fn main() -> std::io::Result<()> {
+fn run() -> std::io::Result<()> {
 	//let args: Vec<String> = env::args().collect();
 	let opts = Opts::from_args();
 
@@ -517,14 +517,23 @@ fn main() -> std::io::Result<()> {
 			),
 		)
 	};
-	let json5_to_io_error = |e| {
-		std::io::Error::new(
-			std::io::ErrorKind::Other,
-			format!(
-				"JSON5 error: {:?} in file {:?}",
-				e, opts.efs_configuration_filename
-			),
-		)
+	let json5_to_io_error = |e: json5::Error| {
+		match e {
+			json5::Error::Message { ref msg, ref location } => {
+				std::io::Error::new(
+					std::io::ErrorKind::Other,
+					format!(
+						"JSON5 error: {} in file {:?} at {}",
+						msg,
+						opts.efs_configuration_filename,
+						match location {
+							None => "unknown location".to_owned(),
+							Some(x) => format!("{:?}", x),
+						}
+					)
+			        )
+			},
+		}
 	};
 	let amd_host_image_builder_config_error_to_io_error =
 		|e: amd_host_image_builder_config::Error| {
@@ -764,4 +773,11 @@ fn main() -> std::io::Result<()> {
 	.map_err(amd_host_image_builder_config_error_to_io_error)?;
 
 	Ok(())
+}
+
+fn main() -> std::io::Result<()> {
+	run().map_err(|e| {
+		eprintln!("Error: {}", e);
+		std::process::exit(1);
+	})
 }
