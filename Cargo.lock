@@ -36,7 +36,7 @@ dependencies = [
 [[package]]
 name = "amd-efs"
 version = "0.1.0"
-source = "git+ssh://git@github.com/oxidecomputer/amd-efs.git?rev=243d64f15fbf07a93e68ebf33bd2327af6d56724#243d64f15fbf07a93e68ebf33bd2327af6d56724"
+source = "git+ssh://git@github.com/oxidecomputer/amd-efs.git?rev=c6fefb9797d992fb9c6f757c2f44c720bf6cad95#c6fefb9797d992fb9c6f757c2f44c720bf6cad95"
 dependencies = [
  "amd-flash",
  "byteorder",
