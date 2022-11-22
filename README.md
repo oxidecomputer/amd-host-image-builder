@@ -15,7 +15,7 @@ This is done by executing the following command:
 Then edit `etc/milan-gimlet-b.efs.json5` (or similar configuration file) to your liking.
 Then, build an image for Milan by the following commands:
 
-    make milan-gimlet-b
+    make milan-gimlet-b.img
 
 It's possible to specify `NANOBL_FLAGS_FOR_CARGO=...` at the end of that line in order to pass flags for the bootloader nanobl. An example would be to enable feature flags via `NANOBL_FLAGS_FOR_CARGO="-F <feature> ..."`.
 
@@ -83,7 +83,7 @@ As a special bringup help, right now, it's also possible to specify a non-ELF fi
 
 # Other models
 
-`amd-host-image-builder` also supports Rome. If you want to use that, please edit `etc/rome-ethanol-x.efs.json5` to your liking and then invoke `make rome-ethanol-x` to get `rome-ethanol-x.img` which you can flash.
+`amd-host-image-builder` also supports Rome. If you want to use that, please edit `etc/rome-ethanol-x.efs.json5` to your liking and then invoke `make rome-ethanol-x.img` to get `rome-ethanol-x.img` which you can flash.
 
 # Using older configuration files
 

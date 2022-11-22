@@ -13,7 +13,7 @@
 				},
 				{
 					source: {
-						BlobFile: "PspBootLoader_gn.sbin"
+						BlobFile: "PspBootLoader_gn.esbin"
 					},
 					target: {
 						type: "PspBootloader"
@@ -21,7 +21,7 @@
 				},
 				{
 					source: {
-						BlobFile: "PspRecoveryBootLoader_gn.sbin"
+						BlobFile: "PspRecoveryBootLoader_gn.esbin"
 					},
 					target: {
 						type: "PspRecoveryBootloader"
@@ -29,7 +29,7 @@
 				},
 				{
 					source: {
-						BlobFile: "SmuFirmwareGn.csbin"
+						BlobFile: "SmuFirmwareGn.esbin"
 					},
 					target: {
 						type: "SmuOffChipFirmware8"
@@ -61,7 +61,7 @@
 				},
 				{
 					source: {
-						BlobFile: "SmuFirmware2Gn.csbin"
+						BlobFile: "SmuFirmware2Gn.esbin"
 					},
 					target: {
 						type: "SmuOffChipFirmware12"
@@ -69,7 +69,7 @@
 				},
 				{
 					source: {
-						BlobFile: "SecureDebugUnlock_gn.sbin"
+						BlobFile: "SecureDebugUnlock_gn.esbin"
 					},
 					target: {
 						type: "PspEarlySecureUnlockDebugImage"
@@ -93,7 +93,7 @@
 				},
 				{
 					source: {
-						BlobFile: "RsmuSecPolicy_gn.sbin"
+						BlobFile: "RsmuSecPolicy_gn.esbin"
 					},
 					target: {
 						type: "SecurityPolicyBinary"
@@ -101,7 +101,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Mp5Gn.csbin"
+						BlobFile: "Mp5Gn.esbin"
 					},
 					target: {
 						type: "Mp5Firmware"
@@ -109,7 +109,7 @@
 				},
 				{
 					source: {
-						BlobFile: "AgesaBootloader_U_prod_GN.csbin"
+						BlobFile: "AgesaBootloader_U_prod_GN.cesbin"
 					},
 					target: {
 						type: "Abl0"
@@ -117,7 +117,7 @@
 				},
 				{
 					source: {
-						BlobFile: "GnPhyFw.sbin"
+						BlobFile: "GnPhyFw.cesbin"
 					},
 					target: {
 						type: "DxioPhySramFirmware"
@@ -125,7 +125,7 @@
 				},
 				{
 					source: {
-						BlobFile: "PSP-Key-DB_gn.sbin"
+						BlobFile: "GnKeyDb.stkn"
 					},
 					target: {
 						type: "PspBootloaderPublicKeysTable"
@@ -722,7 +722,7 @@
 												},
 												channels: "Any",
 												dimms: "Any",
-												value: 0x02
+												value: 0x01
 											}
 										},
 										{
@@ -4063,6 +4063,11 @@
 										},
 										{
 											Bool: {
+												GnbAdditionalFeatureDsmDetector: true
+											}
+										},
+										{
+											Bool: {
 												PcieResetControl: true
 											}
 										},
@@ -4103,11 +4108,6 @@
 										{
 											Byte: {
 												MemMbistAggressorOn: false
-											}
-										},
-										{
-											Byte: {
-												GnbAdditionalFeatureDsmDetector2: "Enabled"
 											}
 										},
 										{
@@ -4795,7 +4795,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Appb_GN_1D_Ddr4_Udimm_Imem.csbin"
+						BlobFile: "Appb_GN_1D_Ddr4_Udimm_Imem.ecsbin"
 					},
 					target: {
 						type: "PmuFirmwareInstructions",
@@ -4805,7 +4805,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Appb_GN_1D_Ddr4_Udimm_Dmem.csbin"
+						BlobFile: "Appb_GN_1D_Ddr4_Udimm_Dmem.ecsbin"
 					},
 					target: {
 						type: "PmuFirmwareData",
@@ -4815,7 +4815,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Appb_GN_1D_Ddr4_Rdimm_Imem.csbin"
+						BlobFile: "Appb_GN_1D_Ddr4_Rdimm_Imem.ecsbin"
 					},
 					target: {
 						type: "PmuFirmwareInstructions",
@@ -4825,7 +4825,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Appb_GN_1D_Ddr4_Rdimm_Dmem.csbin"
+						BlobFile: "Appb_GN_1D_Ddr4_Rdimm_Dmem.ecsbin"
 					},
 					target: {
 						type: "PmuFirmwareData",
@@ -4835,7 +4835,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Appb_GN_2D_Ddr4_Udimm_Imem.csbin"
+						BlobFile: "Appb_GN_2D_Ddr4_Udimm_Imem.ecsbin"
 					},
 					target: {
 						type: "PmuFirmwareInstructions",
@@ -4845,7 +4845,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Appb_GN_2D_Ddr4_Udimm_Dmem.csbin"
+						BlobFile: "Appb_GN_2D_Ddr4_Udimm_Dmem.ecsbin"
 					},
 					target: {
 						type: "PmuFirmwareData",
@@ -4855,7 +4855,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Appb_GN_2D_Ddr4_Rdimm_Imem.csbin"
+						BlobFile: "Appb_GN_2D_Ddr4_Rdimm_Imem.ecsbin"
 					},
 					target: {
 						type: "PmuFirmwareInstructions",
@@ -4865,71 +4865,11 @@
 				},
 				{
 					source: {
-						BlobFile: "Appb_GN_2D_Ddr4_Rdimm_Dmem.csbin"
+						BlobFile: "Appb_GN_2D_Ddr4_Rdimm_Dmem.ecsbin"
 					},
 					target: {
 						type: "PmuFirmwareData",
 						instance: 5,
-						sub_program: 1
-					}
-				},
-				{
-					source: {
-						BlobFile: "Appb_GN_BIST_Ddr4_Udimm_Imem.csbin"
-					},
-					target: {
-						type: "PmuFirmwareInstructions",
-						instance: 8,
-						sub_program: 1
-					}
-				},
-				{
-					source: {
-						BlobFile: "Appb_GN_BIST_Ddr4_Udimm_Dmem.csbin"
-					},
-					target: {
-						type: "PmuFirmwareData",
-						instance: 8,
-						sub_program: 1
-					}
-				},
-				{
-					source: {
-						BlobFile: "Appb_GN_BIST_Ddr4_Rdimm_Imem.csbin"
-					},
-					target: {
-						type: "PmuFirmwareData",
-						instance: 9,
-						sub_program: 1
-					}
-				},
-				{
-					source: {
-						BlobFile: "Appb_GN_BIST_Ddr4_Rdimm_Dmem.csbin"
-					},
-					target: {
-						type: "PmuFirmwareData",
-						instance: 9,
-						sub_program: 1
-					}
-				},
-				{
-					source: {
-						BlobFile: "Appb_GN_BIST_Ddr4_Lrdimm_Imem.csbin"
-					},
-					target: {
-						type: "PmuFirmwareInstructions",
-						instance: 10,
-						sub_program: 1
-					}
-				},
-				{
-					source: {
-						BlobFile: "Appb_GN_BIST_Ddr4_Lrdimm_Dmem.csbin"
-					},
-					target: {
-						type: "PmuFirmwareData",
-						instance: 10,
 						sub_program: 1
 					}
 				}

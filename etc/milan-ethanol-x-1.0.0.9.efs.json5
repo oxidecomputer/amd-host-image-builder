@@ -722,7 +722,7 @@
 												},
 												channels: "Any",
 												dimms: "Any",
-												value: 0x02
+												value: 0x01
 											}
 										},
 										{
@@ -4102,12 +4102,7 @@
 									tokens: [
 										{
 											Byte: {
-												MemMbistAggressorOn: false
-											}
-										},
-										{
-											Byte: {
-												GnbAdditionalFeatureDsmDetector2: "Enabled"
+												MemMbistAggressorOn: true
 											}
 										},
 										{
@@ -4229,7 +4224,7 @@
 										},
 										{
 											Byte: {
-												MemMbistDataEyeType: "1D Timing"
+												MemMbistDataEyeType: "2D Full Data Eye"
 											}
 										},
 										{
@@ -4249,7 +4244,7 @@
 										},
 										{
 											Byte: {
-												MemMbistTestMode: "PhysicalInterface"
+												MemMbistTestMode: "DataEye"
 											}
 										},
 										{
@@ -4405,7 +4400,7 @@
 										},
 										{
 											Byte: {
-												AblSerialBaudRate: "115200 Baud"
+												AblSerialBaudRate: "3000000 Baud"
 											}
 										},
 										{
@@ -4515,12 +4510,12 @@
 										},
 										{
 											Byte: {
-												FchConsoleOutMode: 0x00
+												FchConsoleOutMode: 0x01
 											}
 										},
 										{
 											Byte: {
-												MemMbistTest: "Disabled"
+												MemMbistTest: "Enabled"
 											}
 										},
 										{
@@ -4540,7 +4535,7 @@
 										},
 										{
 											Byte: {
-												MemMbistPatternSelect: "Prbs"
+												MemMbistPatternSelect: "Both"
 											}
 										},
 										{
@@ -4551,6 +4546,11 @@
 										{
 											Byte: {
 												FchConsoleOutSerialPort: "Uart0Mmio"
+											}
+										},
+										{
+											Byte: {
+												GnbAdditionalFeatureDsmDetector2: "Enabled"
 											}
 										}
 									]
