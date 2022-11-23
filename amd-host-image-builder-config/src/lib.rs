@@ -53,6 +53,7 @@ impl Default for SerdePspDirectoryEntryBlob {
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
 pub struct SerdePspDirectoryEntryAttrs {
 	#[serde(rename = "type")]
 	pub type_: PspDirectoryEntryType,
@@ -65,6 +66,7 @@ pub struct SerdePspDirectoryEntryAttrs {
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "PspDirectoryEntry")]
+#[serde(deny_unknown_fields)]
 pub struct SerdePspDirectoryEntry {
 	#[serde(flatten)]
 	pub attrs: SerdePspDirectoryEntryAttrs,
@@ -107,6 +109,7 @@ impl TryFromSerdeDirectoryEntryWithContext<SerdePspDirectoryEntry>
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "PspEntrySource")]
+#[serde(deny_unknown_fields)]
 pub enum SerdePspEntrySource {
 	Value(u64),
 	BlobFile(PathBuf),
@@ -114,6 +117,7 @@ pub enum SerdePspEntrySource {
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "PspEntry")]
+#[serde(deny_unknown_fields)]
 pub struct SerdePspEntry {
 	pub source: SerdePspEntrySource,
 	pub target: SerdePspDirectoryEntry,
@@ -132,6 +136,7 @@ pub struct SerdeBhdDirectoryEntryBlob {
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
 pub struct SerdeBhdDirectoryEntryAttrs {
 	#[serde(rename = "type")]
 	pub type_: BhdDirectoryEntryType,
@@ -156,6 +161,7 @@ pub struct SerdeBhdDirectoryEntryAttrs {
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "BhdDirectoryEntry")]
+#[serde(deny_unknown_fields)]
 pub struct SerdeBhdDirectoryEntry {
 	#[serde(flatten)]
 	pub attrs: SerdeBhdDirectoryEntryAttrs,
@@ -207,6 +213,7 @@ impl Default for SerdeBhdDirectoryEntryBlob {
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "BhdSource")]
+#[serde(deny_unknown_fields)]
 pub enum SerdeBhdSource<'a> {
 	BlobFile(PathBuf),
 	#[serde(bound(deserialize = "Apcb<'a>: Deserialize<'de>"))]
@@ -215,6 +222,7 @@ pub enum SerdeBhdSource<'a> {
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "BhdEntry")]
+#[serde(deny_unknown_fields)]
 pub struct SerdeBhdEntry<'a> {
 	#[serde(bound(deserialize = "SerdeBhdSource<'a>: Deserialize<'de>"))]
 	pub source: SerdeBhdSource<'a>, // PathBuf,
@@ -223,17 +231,20 @@ pub struct SerdeBhdEntry<'a> {
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "PspDirectory")]
+#[serde(deny_unknown_fields)]
 pub struct SerdePspDirectory {
 	pub entries: Vec<SerdePspEntry>,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "PspComboDirectory")]
+#[serde(deny_unknown_fields)]
 pub struct SerdePspComboDirectory {
 	pub directories: BTreeMap<ComboDirectoryEntryFilter, SerdePspDirectory>,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
 pub enum SerdePspDirectoryVariant {
 	PspDirectory(SerdePspDirectory),
 	PspComboDirectory(SerdePspComboDirectory),
@@ -241,6 +252,7 @@ pub enum SerdePspDirectoryVariant {
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "BhdDirectory")]
+#[serde(deny_unknown_fields)]
 pub struct SerdeBhdDirectory<'a> {
 	#[serde(bound(
 		deserialize = "Vec<SerdeBhdEntry<'a>>: Deserialize<'de>"
@@ -250,6 +262,7 @@ pub struct SerdeBhdDirectory<'a> {
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "BhdComboDirectory")]
+#[serde(deny_unknown_fields)]
 pub struct SerdeBhdComboDirectory<'a> {
 	#[serde(bound(
 		deserialize = "BTreeMap<ComboDirectoryEntryFilter, SerdeBhdDirectory<'a>>: Deserialize<'de>"
@@ -260,6 +273,7 @@ pub struct SerdeBhdComboDirectory<'a> {
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "BhdDirectoryVariant")]
+#[serde(deny_unknown_fields)]
 pub enum SerdeBhdDirectoryVariant<'a> {
 	#[serde(bound(
 		deserialize = "SerdeBhdDirectory<'a>: Deserialize<'de>"
@@ -273,6 +287,7 @@ pub enum SerdeBhdDirectoryVariant<'a> {
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "Config")]
+#[serde(deny_unknown_fields)]
 pub struct SerdeConfig<'a> {
 	pub processor_generation: ProcessorGeneration,
 	#[serde(default)]
