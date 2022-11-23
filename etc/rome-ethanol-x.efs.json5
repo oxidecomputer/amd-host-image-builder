@@ -48,8 +48,7 @@
 						Value: 1
 					},
 					target: {
-						type: "PspSoftFuseChain",
-						Value: null
+						type: "PspSoftFuseChain"
 					}
 				},
 				{
@@ -4782,9 +4781,7 @@
 					target: {
 						type: "ApcbBackup",
 						sub_program: 0,
-						Blob: {
-							size: 9216
-						}
+						size: 9216
 					}
 				},
 				{

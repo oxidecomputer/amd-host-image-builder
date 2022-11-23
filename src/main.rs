@@ -781,7 +781,13 @@ fn run() -> std::io::Result<()> {
 						).map_err(efs_to_io_error)?;
 					}
 					SerdeBhdSource::ApcbJson(apcb) => {
-						// we need to do this manually because validation needs ABL0_VERSION.
+						// XXX: blob_slot_settings.size
+						// is ignored since the Apcb has
+						// already been deserialized.
+
+						// Note: We need to do this
+						// manually because validation
+						// needs ABL0_VERSION.
 						apcb.validate(abl0_version)
 							.map_err(apcb_to_io_error)?;
 						let buf = apcb
