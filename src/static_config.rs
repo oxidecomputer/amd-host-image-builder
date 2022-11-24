@@ -14,6 +14,59 @@ pub(crate) const BHD_END: Location = 0x24_0000 + 0xA_0000;
 pub(crate) const RESET_IMAGE_BEGINNING: Location = 0x100_0000;
 pub(crate) const RESET_IMAGE_END: Location = 0x200_0000;
 
+/*
+
+At boot, the flash is read by the PSP.
+The data structure that it reads first is Preferred EFH.
+From it, the PSP directory and BHD directory is read.
+These point to PSP payloads and BHD payloads, respectively.
+
+0x200_0000 +-----------------------------------------+ RESET_IMAGE_END
+           |                                         |
+           |                                         |
+           |                                         |
+           |           Reset image (16 MiB)          |
+           |                                         |
+           |                                         |
+           |                                         |
+0x100_0000 +-----------------------------------------+ RESET_IMAGE_BEGINNING
+           |          Unused (about 384 kiB)         |
+           +-----------------------------------------+
+           |    Preferred EFH for Rome and Milan     |
+ 0xFA_0000 +-----------------------------------------+
+           |                                         |
+           |                                         |
+           |             Unused (12 MiB)             |
+           |                                         |
+           |                                         |
+ 0x2E_0000 +-----------------------------------------+ BHD_END
+           |                                         |
+           |                                         |
+           |       BHD directory & BHD payloads      |
+           |                                         |
+           |                                         |
+ 0x24_0000 +-----------------------------------------+ PSP_END = BHD_BEGINNING
+           |                                         |
+           |                                         |
+           |       PSP directory & PSP payloads      |
+           |                                         |
+           |                                         |
+ 0x12_0000 +-----------------------------------------+ PSP_BEGINNING
+           |                                         |
+           |                                         |
+           |           Unused (about 1 MiB)          |
+           |                                         |
+           |                                         |
+           +-----------------------------------------+
+           |         Preferred EFH for Naples        |
+  0x2_0000 +-----------------------------------------+
+           |                                         |
+           |             Unused (128 kiB)            |
+           |                                         |
+       0x0 +-----------------------------------------+
+
+*/
+
 // Note: This must not be changed.
 // It's hardcoded in the PSP bootloader and in amd-efs's "create" function.
 /// Note: It's intentionally duplicated so you can get an overview of the
