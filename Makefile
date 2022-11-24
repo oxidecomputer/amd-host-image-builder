@@ -3,6 +3,8 @@ all: milan-ethanol-x rome-ethanol-x milan-gimlet-b
 .PHONY: all clean tests
 .PHONY: FRC
 
+SOURCES = amd-host-image-builder-config/src/lib.rs src/hole.rs src/main.rs src/static_config.rs
+
 CARGO = cargo
 
 FRC:
@@ -39,7 +41,8 @@ milan-ethanol-x.img: etc/milan-ethanol-x.efs.json5 nanobl-rs/obj/nanobl-rs.elf \
   amd-firmware/GN/1.0.0.9/Appb_GN_BIST_Ddr4_Rdimm_Imem.csbin \
   amd-firmware/GN/1.0.0.9/Appb_GN_BIST_Ddr4_Rdimm_Dmem.csbin \
   amd-firmware/GN/1.0.0.9/Appb_GN_BIST_Ddr4_Lrdimm_Imem.csbin \
-  amd-firmware/GN/1.0.0.9/Appb_GN_BIST_Ddr4_Lrdimm_Dmem.csbin
+  amd-firmware/GN/1.0.0.9/Appb_GN_BIST_Ddr4_Lrdimm_Dmem.csbin \
+  $(SOURCES)
 	$(CARGO) run -- $(BLOB_DIRS:%=-B %) -v -B amd-firmware/GN/1.0.0.9-fastspew -B amd-firmware/GN/1.0.0.9 -c $< -r nanobl-rs/obj/nanobl-rs.elf -o $@
 
 milan-ethanol-x-1.0.0.1.img: etc/milan-ethanol-x-1.0.0.1.efs.json5 nanobl-rs/obj/nanobl-rs.elf \
@@ -65,7 +68,8 @@ milan-ethanol-x-1.0.0.1.img: etc/milan-ethanol-x-1.0.0.1.efs.json5 nanobl-rs/obj
   amd-firmware/GN/1.0.0.1/Appb_GN_2D_Ddr4_Udimm_Imem.ecsbin \
   amd-firmware/GN/1.0.0.1/Appb_GN_2D_Ddr4_Udimm_Dmem.ecsbin \
   amd-firmware/GN/1.0.0.1/Appb_GN_2D_Ddr4_Rdimm_Imem.ecsbin \
-  amd-firmware/GN/1.0.0.1/Appb_GN_2D_Ddr4_Rdimm_Dmem.ecsbin
+  amd-firmware/GN/1.0.0.1/Appb_GN_2D_Ddr4_Rdimm_Dmem.ecsbin \
+  $(SOURCES)
 	$(CARGO) run -- $(BLOB_DIRS:%=-B %) -v -B amd-firmware/GN/1.0.0.1 -c $< -r nanobl-rs/obj/nanobl-rs.elf -o $@
 
 milan-ethanol-x-1.0.0.2.img: etc/milan-ethanol-x-1.0.0.2.efs.json5 nanobl-rs/obj/nanobl-rs.elf \
@@ -91,7 +95,8 @@ milan-ethanol-x-1.0.0.2.img: etc/milan-ethanol-x-1.0.0.2.efs.json5 nanobl-rs/obj
   amd-firmware/GN/1.0.0.2/Appb_GN_2D_Ddr4_Udimm_Imem.ecsbin \
   amd-firmware/GN/1.0.0.2/Appb_GN_2D_Ddr4_Udimm_Dmem.ecsbin \
   amd-firmware/GN/1.0.0.2/Appb_GN_2D_Ddr4_Rdimm_Imem.ecsbin \
-  amd-firmware/GN/1.0.0.2/Appb_GN_2D_Ddr4_Rdimm_Dmem.ecsbin
+  amd-firmware/GN/1.0.0.2/Appb_GN_2D_Ddr4_Rdimm_Dmem.ecsbin \
+  $(SOURCES)
 	$(CARGO) run -- $(BLOB_DIRS:%=-B %) -v -B amd-firmware/GN/1.0.0.2 -c $< -r nanobl-rs/obj/nanobl-rs.elf -o $@
 
 milan-ethanol-x-1.0.0.4.img: etc/milan-ethanol-x-1.0.0.4.efs.json5 nanobl-rs/obj/nanobl-rs.elf \
@@ -117,7 +122,8 @@ milan-ethanol-x-1.0.0.4.img: etc/milan-ethanol-x-1.0.0.4.efs.json5 nanobl-rs/obj
   amd-firmware/GN/1.0.0.4/Appb_GN_2D_Ddr4_Udimm_Imem.csbin \
   amd-firmware/GN/1.0.0.4/Appb_GN_2D_Ddr4_Udimm_Dmem.csbin \
   amd-firmware/GN/1.0.0.4/Appb_GN_2D_Ddr4_Rdimm_Imem.csbin \
-  amd-firmware/GN/1.0.0.4/Appb_GN_2D_Ddr4_Rdimm_Dmem.csbin
+  amd-firmware/GN/1.0.0.4/Appb_GN_2D_Ddr4_Rdimm_Dmem.csbin \
+  $(SOURCES)
 	$(CARGO) run -- $(BLOB_DIRS:%=-B %) -v -B amd-firmware/GN/1.0.0.4 -c $< -r nanobl-rs/obj/nanobl-rs.elf -o $@
 
 milan-ethanol-x-1.0.0.5.img: etc/milan-ethanol-x-1.0.0.5.efs.json5 nanobl-rs/obj/nanobl-rs.elf \
@@ -143,7 +149,8 @@ milan-ethanol-x-1.0.0.5.img: etc/milan-ethanol-x-1.0.0.5.efs.json5 nanobl-rs/obj
   amd-firmware/GN/1.0.0.5/Appb_GN_2D_Ddr4_Udimm_Imem.csbin \
   amd-firmware/GN/1.0.0.5/Appb_GN_2D_Ddr4_Udimm_Dmem.csbin \
   amd-firmware/GN/1.0.0.5/Appb_GN_2D_Ddr4_Rdimm_Imem.csbin \
-  amd-firmware/GN/1.0.0.5/Appb_GN_2D_Ddr4_Rdimm_Dmem.csbin
+  amd-firmware/GN/1.0.0.5/Appb_GN_2D_Ddr4_Rdimm_Dmem.csbin \
+  $(SOURCES)
 	$(CARGO) run -- $(BLOB_DIRS:%=-B %) -v -B amd-firmware/GN/1.0.0.5 -c $< -r nanobl-rs/obj/nanobl-rs.elf -o $@
 
 milan-ethanol-x-1.0.0.9.img: etc/milan-ethanol-x-1.0.0.9.efs.json5 nanobl-rs/obj/nanobl-rs.elf \
@@ -175,7 +182,8 @@ milan-ethanol-x-1.0.0.9.img: etc/milan-ethanol-x-1.0.0.9.efs.json5 nanobl-rs/obj
   amd-firmware/GN/1.0.0.9/Appb_GN_BIST_Ddr4_Rdimm_Imem.csbin \
   amd-firmware/GN/1.0.0.9/Appb_GN_BIST_Ddr4_Rdimm_Dmem.csbin \
   amd-firmware/GN/1.0.0.9/Appb_GN_BIST_Ddr4_Lrdimm_Imem.csbin \
-  amd-firmware/GN/1.0.0.9/Appb_GN_BIST_Ddr4_Lrdimm_Dmem.csbin
+  amd-firmware/GN/1.0.0.9/Appb_GN_BIST_Ddr4_Lrdimm_Dmem.csbin \
+  $(SOURCES)
 	$(CARGO) run -- $(BLOB_DIRS:%=-B %) -v -B amd-firmware/GN/1.0.0.9-fastspew -B amd-firmware/GN/1.0.0.9 -c $< -r nanobl-rs/obj/nanobl-rs.elf -o $@
 
 milan-ethanol-x-1.0.0.a.img: etc/milan-ethanol-x-1.0.0.a.efs.json5 nanobl-rs/obj/nanobl-rs.elf \
@@ -207,7 +215,8 @@ milan-ethanol-x-1.0.0.a.img: etc/milan-ethanol-x-1.0.0.a.efs.json5 nanobl-rs/obj
   amd-firmware/GN/1.0.0.a/Appb_GN_BIST_Ddr4_Rdimm_Imem.csbin \
   amd-firmware/GN/1.0.0.a/Appb_GN_BIST_Ddr4_Rdimm_Dmem.csbin \
   amd-firmware/GN/1.0.0.a/Appb_GN_BIST_Ddr4_Lrdimm_Imem.csbin \
-  amd-firmware/GN/1.0.0.a/Appb_GN_BIST_Ddr4_Lrdimm_Dmem.csbin
+  amd-firmware/GN/1.0.0.a/Appb_GN_BIST_Ddr4_Lrdimm_Dmem.csbin \
+  $(SOURCES)
 	$(CARGO) run -- $(BLOB_DIRS:%=-B %) -v -B amd-firmware/GN/1.0.0.a -c $< -r nanobl-rs/obj/nanobl-rs.elf -o $@
 
 rome-ethanol-x.img: etc/rome-ethanol-x.efs.json5 nanobl-rs/obj/nanobl-rs.elf \
@@ -233,7 +242,8 @@ rome-ethanol-x.img: etc/rome-ethanol-x.efs.json5 nanobl-rs/obj/nanobl-rs.elf \
   amd-firmware/SSP/1.0.0.a/Appb_SSP_2D_Ddr4_Udimm_Imem.cbin \
   amd-firmware/SSP/1.0.0.a/Appb_SSP_2D_Ddr4_Udimm_Dmem.cbin \
   amd-firmware/SSP/1.0.0.a/Appb_SSP_2D_Ddr4_Rdimm_Imem.cbin \
-  amd-firmware/SSP/1.0.0.a/Appb_SSP_2D_Ddr4_Rdimm_Dmem.cbin
+  amd-firmware/SSP/1.0.0.a/Appb_SSP_2D_Ddr4_Rdimm_Dmem.cbin \
+  $(SOURCES)
 	$(CARGO) run -- $(BLOB_DIRS:%=-B %) -v -B amd-firmware/SSP/1.0.0.a -c $< -r nanobl-rs/obj/nanobl-rs.elf -o $@
 
 milan-gimlet-b.img: etc/milan-gimlet-b.efs.json5 nanobl-rs/obj/nanobl-rs.elf \
@@ -265,7 +275,8 @@ milan-gimlet-b.img: etc/milan-gimlet-b.efs.json5 nanobl-rs/obj/nanobl-rs.elf \
   amd-firmware/GN/1.0.0.9/Appb_GN_BIST_Ddr4_Rdimm_Imem.csbin \
   amd-firmware/GN/1.0.0.9/Appb_GN_BIST_Ddr4_Rdimm_Dmem.csbin \
   amd-firmware/GN/1.0.0.9/Appb_GN_BIST_Ddr4_Lrdimm_Imem.csbin \
-  amd-firmware/GN/1.0.0.9/Appb_GN_BIST_Ddr4_Lrdimm_Dmem.csbin
+  amd-firmware/GN/1.0.0.9/Appb_GN_BIST_Ddr4_Lrdimm_Dmem.csbin \
+  $(SOURCES)
 	$(CARGO) run -- $(BLOB_DIRS:%=-B %) -v -B amd-firmware/GN/1.0.0.9-fastspew -B amd-firmware/GN/1.0.0.9 -c $< -r nanobl-rs/obj/nanobl-rs.elf -o $@
 
 # For compatibility with previous versions of this tool
