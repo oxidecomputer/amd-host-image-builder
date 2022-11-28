@@ -36,6 +36,7 @@ pub type Result<T> = core::result::Result<T, Error>;
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
+#[derive(Debug)]
 pub struct SerdePspDirectoryEntryBlob {
 	#[serde(default)]
 	pub flash_location: Option<Location>,
@@ -72,7 +73,6 @@ pub struct SerdePspDirectoryEntry {
 	pub attrs: SerdePspDirectoryEntryAttrs,
 
 	#[serde(flatten)]
-	//#[serde(default)]
 	pub blob: Option<SerdePspDirectoryEntryBlob>,
 }
 
@@ -103,7 +103,8 @@ impl TryFromSerdeDirectoryEntryWithContext<SerdePspDirectoryEntry>
 			}),
 		)?
 		.with_sub_program(target.attrs.sub_program)
-		.with_rom_id(target.attrs.rom_id))
+		.with_rom_id(target.attrs.rom_id)
+		.build())
 	}
 }
 
@@ -167,7 +168,6 @@ pub struct SerdeBhdDirectoryEntry {
 	pub attrs: SerdeBhdDirectoryEntryAttrs,
 
 	#[serde(flatten)]
-	#[serde(default)]
 	pub blob: Option<SerdeBhdDirectoryEntryBlob>,
 }
 
@@ -197,7 +197,8 @@ impl TryFromSerdeDirectoryEntryWithContext<SerdeBhdDirectoryEntry>
 		.with_compressed(target.attrs.compressed)
 		.with_instance(target.attrs.instance)
 		.with_sub_program(target.attrs.sub_program)
-		.with_rom_id(target.attrs.rom_id))
+		.with_rom_id(target.attrs.rom_id)
+		.build())
 	}
 }
 

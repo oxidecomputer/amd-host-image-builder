@@ -8,14 +8,15 @@ edition = "2018"
 
 [dependencies]
 amd-apcb = { git = "ssh://git@github.com/oxidecomputer/amd-apcb.git", rev = "70170e08f6d39af5a67de139832718940e628dfe", features = ["serde", "schemars"] }
-amd-efs = { git = "ssh://git@github.com/oxidecomputer/amd-efs.git", rev = "c6fefb9797d992fb9c6f757c2f44c720bf6cad95", features = ["std", "serde", "schemars"] }
-amd-flash = { git = "ssh://git@github.com/oxidecomputer/amd-flash.git", branch = "main" }
+amd-efs = { git = "ssh://git@github.com/oxidecomputer/amd-efs.git", rev = "e2a599e2f5b580ce1753c02b06ab019375ca3596", features = ["std", "serde", "schemars"] }
+amd-flash = { git = "ssh://git@github.com/oxidecomputer/amd-flash.git", rev = "90207243874f18cfc8b9fc1fd8f030dca4509458" }
 goblin = { version = "0.4", features = ["elf64", "endian_fd"] }
 #serde = { version = "1.0", default-features = false, features = ["derive"] }
 serde_json = "1.0.78"
 structopt = "0.3"
 amd-host-image-builder-config = { path = "amd-host-image-builder-config" }
 json5 = "0.4.1"
+static_assertions = "1.1.0"
 
 [dev-dependencies]
 valico = "2"
@@ -23,7 +24,7 @@ pathsep="0.1.1"
 
 [build-dependencies]
 amd-apcb = { git = "ssh://git@github.com/oxidecomputer/amd-apcb.git", rev = "70170e08f6d39af5a67de139832718940e628dfe", features = ["serde", "schemars"] }
-amd-efs = { git = "ssh://git@github.com/oxidecomputer/amd-efs.git", rev = "c6fefb9797d992fb9c6f757c2f44c720bf6cad95", features = ["std", "serde", "schemars"] }
+amd-efs = { git = "ssh://git@github.com/oxidecomputer/amd-efs.git", rev = "e2a599e2f5b580ce1753c02b06ab019375ca3596", features = ["std", "serde", "schemars"] }
 amd-host-image-builder-config = { path = "amd-host-image-builder-config" }
 schemars = "0.8.8"
 serde_json = "1.0.78"
