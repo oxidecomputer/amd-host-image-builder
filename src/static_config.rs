@@ -5,11 +5,8 @@ pub(crate) const IMAGE_SIZE: u32 = 32 * 1024 * 1024;
 
 /* Coarse-grained flash locations (in Byte) */
 
-pub(crate) const PSP_BEGINNING: Location = 0x12_0000;
-pub(crate) const PSP_END: Location = 0x12_0000 + 0x12_0000;
-
-pub(crate) const BHD_BEGINNING: Location = 0x24_0000;
-pub(crate) const BHD_END: Location = 0x24_0000 + 0xA_0000;
+pub(crate) const PAYLOAD_BEGINNING: Location = 0x1_0000;
+pub(crate) const PAYLOAD_END: Location = RESET_IMAGE_BEGINNING;
 
 pub(crate) const RESET_IMAGE_BEGINNING: Location = 0x100_0000;
 pub(crate) const RESET_IMAGE_END: Location = 0x200_0000;
