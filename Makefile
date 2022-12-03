@@ -246,7 +246,34 @@ rome-ethanol-x.img: etc/rome-ethanol-x.efs.json5 nanobl-rs/obj/nanobl-rs.elf \
   $(SOURCES)
 	$(CARGO) run -- $(BLOB_DIRS:%=-B %) -v -B amd-firmware/SSP/1.0.0.a -c $< -r nanobl-rs/obj/nanobl-rs.elf -o $@
 
-milan-gimlet-b.img: etc/milan-gimlet-b.efs.json5 nanobl-rs/obj/nanobl-rs.elf \
+milan-gimlet-b.img: etc/milan-gimlet-b-1.0.0.1.efs.json5 nanobl-rs/obj/nanobl-rs.elf \
+  amd-firmware/GN/1.0.0.1/AmdPubKey_gn.tkn \
+  amd-firmware/GN/1.0.0.1/PspBootLoader_gn.esbin \
+  amd-firmware/GN/1.0.0.1/PspRecoveryBootLoader_gn.esbin \
+  amd-firmware/GN/1.0.0.1/SmuFirmwareGn.esbin \
+  amd-firmware/GN/1.0.0.1/SecureDebugToken_gn.stkn \
+  amd-firmware/GN/1.0.0.1/PspABLFw_gn.stkn \
+  amd-firmware/GN/1.0.0.1/SmuFirmware2Gn.esbin \
+  amd-firmware/GN/1.0.0.1/SecureDebugUnlock_gn.esbin \
+  amd-firmware/GN/1.0.0.1/PspIkek_gn.bin \
+  amd-firmware/GN/1.0.0.1/SecureEmptyToken.bin \
+  amd-firmware/GN/1.0.0.1/RsmuSecPolicy_gn.esbin \
+  amd-firmware/GN/1.0.0.1/Mp5Gn.esbin \
+  amd-firmware/GN/1.0.0.1/AgesaBootloader_U_prod_GN.cesbin \
+  amd-firmware/GN/1.0.0.1/GnPhyFw.cesbin \
+  amd-firmware/GN/1.0.0.1/GnKeyDb.stkn \
+  amd-firmware/GN/1.0.0.1/Appb_GN_1D_Ddr4_Udimm_Imem.ecsbin \
+  amd-firmware/GN/1.0.0.1/Appb_GN_1D_Ddr4_Udimm_Dmem.ecsbin \
+  amd-firmware/GN/1.0.0.1/Appb_GN_1D_Ddr4_Rdimm_Imem.ecsbin \
+  amd-firmware/GN/1.0.0.1/Appb_GN_1D_Ddr4_Rdimm_Dmem.ecsbin \
+  amd-firmware/GN/1.0.0.1/Appb_GN_2D_Ddr4_Udimm_Imem.ecsbin \
+  amd-firmware/GN/1.0.0.1/Appb_GN_2D_Ddr4_Udimm_Dmem.ecsbin \
+  amd-firmware/GN/1.0.0.1/Appb_GN_2D_Ddr4_Rdimm_Imem.ecsbin \
+  amd-firmware/GN/1.0.0.1/Appb_GN_2D_Ddr4_Rdimm_Dmem.ecsbin \
+  $(SOURCES)
+	$(CARGO) run -- $(BLOB_DIRS:%=-B %) -v -B amd-firmware/GN/1.0.0.1 -c $< -r nanobl-rs/obj/nanobl-rs.elf -o $@
+
+milan-gimlet-b-1.0.0.9.img: etc/milan-gimlet-b.efs.json5 nanobl-rs/obj/nanobl-rs.elf \
   amd-firmware/GN/1.0.0.9/AmdPubKey_gn.tkn \
   amd-firmware/GN/1.0.0.9/PspBootLoader_gn.sbin \
   amd-firmware/GN/1.0.0.9/PspRecoveryBootLoader_gn.sbin \
