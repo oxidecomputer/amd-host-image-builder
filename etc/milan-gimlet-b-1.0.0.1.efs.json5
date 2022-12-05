@@ -4872,6 +4872,66 @@
 						instance: 5,
 						sub_program: 1
 					}
+				},
+				{
+					source: {
+						BlobFile: "Appb_GN_BIST_Ddr4_Udimm_Imem.csbin"
+					},
+					target: {
+						type: "PmuFirmwareInstructions",
+						instance: 8,
+						sub_program: 1
+					}
+				},
+				{
+					source: {
+						BlobFile: "Appb_GN_BIST_Ddr4_Udimm_Dmem.csbin"
+					},
+					target: {
+						type: "PmuFirmwareData",
+						instance: 8,
+						sub_program: 1
+					}
+				},
+				{
+					source: {
+						BlobFile: "Appb_GN_BIST_Ddr4_Rdimm_Imem.csbin"
+					},
+					target: {
+						type: "PmuFirmwareData",
+						instance: 9,
+						sub_program: 1
+					}
+				},
+				{
+					source: {
+						BlobFile: "Appb_GN_BIST_Ddr4_Rdimm_Dmem.csbin"
+					},
+					target: {
+						type: "PmuFirmwareData",
+						instance: 9,
+						sub_program: 1
+					}
+				},
+				{
+					source: {
+						BlobFile: "Appb_GN_BIST_Ddr4_Lrdimm_Imem.csbin"
+					},
+					target: {
+						type: "PmuFirmwareInstructions",
+						instance: 10,
+						sub_program: 1
+					}
+				},
+				{
+					source: {
+						BlobFile: "Appb_GN_BIST_Ddr4_Lrdimm_Dmem.csbin"
+					},
+					target: {
+						type: "PmuFirmwareData",
+						instance: 10,
+						sub_program: 1
+					}
 				}
 		]
 		}

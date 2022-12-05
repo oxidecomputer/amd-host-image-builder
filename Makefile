@@ -270,8 +270,14 @@ milan-gimlet-b.img: etc/milan-gimlet-b-1.0.0.1.efs.json5 nanobl-rs/obj/nanobl-rs
   amd-firmware/GN/1.0.0.1/Appb_GN_2D_Ddr4_Udimm_Dmem.ecsbin \
   amd-firmware/GN/1.0.0.1/Appb_GN_2D_Ddr4_Rdimm_Imem.ecsbin \
   amd-firmware/GN/1.0.0.1/Appb_GN_2D_Ddr4_Rdimm_Dmem.ecsbin \
+  amd-firmware/GN/1.0.0.6/Appb_GN_BIST_Ddr4_Udimm_Imem.csbin \
+  amd-firmware/GN/1.0.0.6/Appb_GN_BIST_Ddr4_Udimm_Dmem.csbin \
+  amd-firmware/GN/1.0.0.6/Appb_GN_BIST_Ddr4_Rdimm_Imem.csbin \
+  amd-firmware/GN/1.0.0.6/Appb_GN_BIST_Ddr4_Rdimm_Dmem.csbin \
+  amd-firmware/GN/1.0.0.6/Appb_GN_BIST_Ddr4_Lrdimm_Imem.csbin \
+  amd-firmware/GN/1.0.0.6/Appb_GN_BIST_Ddr4_Lrdimm_Dmem.csbin \
   $(SOURCES)
-	$(CARGO) run -- $(BLOB_DIRS:%=-B %) -v -B amd-firmware/GN/1.0.0.1 -c $< -r nanobl-rs/obj/nanobl-rs.elf -o $@
+	$(CARGO) run -- $(BLOB_DIRS:%=-B %) -v -B amd-firmware/GN/1.0.0.1 -B amd-firmware/GN/1.0.0.6 -c $< -r nanobl-rs/obj/nanobl-rs.elf -o $@
 
 milan-gimlet-b-1.0.0.9.img: etc/milan-gimlet-b.efs.json5 nanobl-rs/obj/nanobl-rs.elf \
   amd-firmware/GN/1.0.0.9/AmdPubKey_gn.tkn \
