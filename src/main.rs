@@ -405,12 +405,12 @@ fn bhd_directory_add_reset_image(
 			}
 			// SYMBOL "_BL_SPACE" Sym { st_name: 5342, st_info: 0x0 LOCAL NOTYPE, st_other: 0 DEFAULT, st_shndx: 65521, st_value: 0x29000, st_size: 0 }
 			// The part of the program we copy into the flash image should be
-			// of the same size as the space allocated at loader build time.
+			// at most as much as the space allocated at loader build time.
 			let symsz = elf_symbol(&binary, "_BL_SPACE")
 				.ok_or(Error::IncompatibleExecutable)?
 				.st_value;
 			//eprintln!("_BL_SPACE: {:x?}", symsz);
-			if totalsz != symsz as usize {
+			if totalsz > symsz as usize {
 				return Err(Error::IncompatibleExecutable);
 			}
 			sz = totalsz;
