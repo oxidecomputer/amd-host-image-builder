@@ -71,12 +71,10 @@ These point to PSP payloads and BHD payloads, respectively.
 /// generation, you have to adapt this file--and that's on purpose.
 #[allow(non_snake_case)]
 pub(crate) const fn EFH_BEGINNING(
-	processor_generation: ProcessorGeneration,
+    processor_generation: ProcessorGeneration,
 ) -> Location {
-	match processor_generation {
-		ProcessorGeneration::Naples => 0x2_0000,
-		ProcessorGeneration::Rome | ProcessorGeneration::Milan => {
-			0xFA_0000
-		}
-	}
+    match processor_generation {
+        ProcessorGeneration::Naples => 0x2_0000,
+        ProcessorGeneration::Rome | ProcessorGeneration::Milan => 0xFA_0000,
+    }
 }
