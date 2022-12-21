@@ -36,7 +36,7 @@ dependencies = [
 [[package]]
 name = "amd-efs"
 version = "0.1.0"
-source = "git+ssh://git@github.com/oxidecomputer/amd-efs.git?rev=e2a599e2f5b580ce1753c02b06ab019375ca3596#e2a599e2f5b580ce1753c02b06ab019375ca3596"
+source = "git+ssh://git@github.com/oxidecomputer/amd-efs.git?rev=4f05c6996218eac24e626622091b87bb9f0492c0#4f05c6996218eac24e626622091b87bb9f0492c0"
 dependencies = [
  "amd-flash",
  "byteorder",
@@ -55,7 +55,7 @@ dependencies = [
 [[package]]
 name = "amd-flash"
 version = "0.1.0"
-source = "git+ssh://git@github.com/oxidecomputer/amd-flash.git?rev=90207243874f18cfc8b9fc1fd8f030dca4509458#90207243874f18cfc8b9fc1fd8f030dca4509458"
+source = "git+ssh://git@github.com/oxidecomputer/amd-flash.git?rev=6e42058e19906ad851c5bd76ab5d5634d09536b8#6e42058e19906ad851c5bd76ab5d5634d09536b8"
 
 [[package]]
 name = "amd-host-image-builder"
