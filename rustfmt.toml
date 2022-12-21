@@ -1,8 +1,4 @@
+edition = "2021"
 max_width = 80
-hard_tabs = true
-tab_spaces = 8
-spaces_around_ranges = true
-binop_separator = "Back"
+use_small_heuristics = "Max"
 newline_style = "Unix"
-#error_on_line_overflow = true
-error_on_unformatted = true
