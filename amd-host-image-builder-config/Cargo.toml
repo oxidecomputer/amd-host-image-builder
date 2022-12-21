@@ -6,7 +6,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-amd-apcb = { git = "ssh://git@github.com/oxidecomputer/amd-apcb.git", rev = "70170e08f6d39af5a67de139832718940e628dfe", features = ["serde", "schemars"] }
+amd-apcb = { git = "ssh://git@github.com/oxidecomputer/amd-apcb.git", rev = "4266d57e6a443acd3c0c66a6cf5ad37ae4702f2d", features = ["serde", "schemars"] }
 amd-efs = { git = "ssh://git@github.com/oxidecomputer/amd-efs.git", rev = "4f05c6996218eac24e626622091b87bb9f0492c0", features = ["std", "serde", "schemars"] }
 amd-flash = { git = "ssh://git@github.com/oxidecomputer/amd-flash.git", rev = "6e42058e19906ad851c5bd76ab5d5634d09536b8" }
 schemars = "0.8.8"
