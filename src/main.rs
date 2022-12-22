@@ -732,53 +732,53 @@ fn run() -> std::io::Result<()> {
     let mut psp_raw_entries = match psp {
         SerdePspDirectoryVariant::PspDirectory(ref serde_psp_directory) => {
             serde_psp_directory.entries.iter().map(|entry| {
-				let mut raw_entry = PspDirectoryEntry::try_from_with_context(
-					psp_directory_address_mode,
-					&entry.target
-				).unwrap();
-				//eprintln!("{:?}", entry.target.attrs);
-				let blob_slot_settings = &entry.target.blob;
-				// blob_slot_settings is optional.
-				// Value means no blob slot settings allowed
+                let mut raw_entry = PspDirectoryEntry::try_from_with_context(
+                    psp_directory_address_mode,
+                    &entry.target
+                ).unwrap();
+                //eprintln!("{:?}", entry.target.attrs);
+                let blob_slot_settings = &entry.target.blob;
+                // blob_slot_settings is optional.
+                // Value means no blob slot settings allowed
 
-				match &entry.source {
-					SerdePspEntrySource::Value(x) => {
-						// FIXME: assert!(blob_slot_settings.is_none()); fails for some reason
-						// DirectoryRelativeOffset is the one that can always be overridden
-						raw_entry.set_source(AddressMode::DirectoryRelativeOffset, ValueOrLocation::Value(*x)).unwrap();
-						(raw_entry, None, None)
-					}
-					SerdePspEntrySource::BlobFile(
-						blob_filename,
-					) => {
-						let flash_location =
-							blob_slot_settings.as_ref().and_then(|x| x.flash_location);
-						let x: Option<Location> =
-							flash_location.map(
-								|x| {
-									x.try_into().unwrap()
-								},
-							);
-						let blob_filename = resolve_blob(blob_filename.to_path_buf()).unwrap();
-						let body = std::fs::read(&blob_filename).unwrap();
-						raw_entry.set_size(Some(body.len().try_into().unwrap()));
+                match &entry.source {
+                    SerdePspEntrySource::Value(x) => {
+                        // FIXME: assert!(blob_slot_settings.is_none()); fails for some reason
+                        // DirectoryRelativeOffset is the one that can always be overridden
+                        raw_entry.set_source(AddressMode::DirectoryRelativeOffset, ValueOrLocation::Value(*x)).unwrap();
+                        (raw_entry, None, None)
+                    }
+                    SerdePspEntrySource::BlobFile(
+                        blob_filename,
+                    ) => {
+                        let flash_location =
+                            blob_slot_settings.as_ref().and_then(|x| x.flash_location);
+                        let x: Option<Location> =
+                            flash_location.map(
+                                |x| {
+                                    x.try_into().unwrap()
+                                },
+                            );
+                        let blob_filename = resolve_blob(blob_filename.to_path_buf()).unwrap();
+                        let body = std::fs::read(&blob_filename).unwrap();
+                        raw_entry.set_size(Some(body.len().try_into().unwrap()));
 
-						if raw_entry.type_() == PspDirectoryEntryType::Abl0 {
-							let new_abl0_version = psp_file_version(&blob_filename);
-							if !abl0_version_found {
-								abl0_version = new_abl0_version;
-								abl0_version_found = true
-							}
-							// For now, we do not support different ABL0 versions in the same image.
-							if new_abl0_version != abl0_version {
-								panic!("different ABL0 versions in the same flash are unsupported")
-							}
-						}
-						(raw_entry, x, Some(body))
-					}
-				}
-			})
-			.collect::<Vec<(PspDirectoryEntry, Option<Location>, Option<Vec<u8>>)>>()
+                        if raw_entry.type_() == PspDirectoryEntryType::Abl0 {
+                            let new_abl0_version = psp_file_version(&blob_filename);
+                            if !abl0_version_found {
+                                abl0_version = new_abl0_version;
+                                abl0_version_found = true
+                            }
+                            // For now, we do not support different ABL0 versions in the same image.
+                            if new_abl0_version != abl0_version {
+                                panic!("different ABL0 versions in the same flash are unsupported")
+                            }
+                        }
+                        (raw_entry, x, Some(body))
+                    }
+                }
+            })
+            .collect::<Vec<(PspDirectoryEntry, Option<Location>, Option<Vec<u8>>)>>()
         }
         _ => {
             todo!();
