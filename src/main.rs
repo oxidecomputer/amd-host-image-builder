@@ -35,9 +35,9 @@ use amd_host_image_builder_config::SerdeConfig;
 #[test]
 fn test_bitfield_serde() {
     let config = r#"{
-	"max_size": 2,
-	"base_address": 3,
-	"address_mode": "PhysicalAddress"
+        "max_size": 2,
+        "base_address": 3,
+        "address_mode": "PhysicalAddress"
 }"#;
     use amd_efs::DirectoryAdditionalInfo;
     let result: DirectoryAdditionalInfo = json5::from_str(config).unwrap();
