@@ -113,7 +113,9 @@ pub struct SerdePspEntry {
     pub target: SerdePspDirectoryEntry,
 }
 
-#[derive(Default, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[derive(
+    Default, serde::Serialize, serde::Deserialize, schemars::JsonSchema,
+)]
 #[serde(rename = "BhdDirectoryEntryBlob")]
 #[serde(deny_unknown_fields)]
 pub struct SerdeBhdDirectoryEntryBlob {

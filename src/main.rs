@@ -62,17 +62,13 @@ impl FlashRead for FlashImage {
     ) -> amd_flash::Result<()> {
         let mut file = self.file.borrow_mut();
         file.seek(SeekFrom::Start(location.into())).map_err(|e| {
-            eprintln!(
-                "Error seeking in flash image {:?}: {:?}",
-                self.filename, e
-            );
+            let filename = &self.filename;
+            eprintln!("Error seeking in flash image {filename:?}: {e:?}",);
             amd_flash::Error::Io
         })?;
         file.read_exact(buffer).map_err(|e| {
-            eprintln!(
-                "Error reading from flash image {:?}: {:?}",
-                self.filename, e
-            );
+            let filename = &self.filename;
+            eprintln!("Error reading from flash image {filename:?}: {e:?}",);
             amd_flash::Error::Io
         })
     }
@@ -92,10 +88,8 @@ impl FlashWrite for FlashImage {
         match file.seek(SeekFrom::Start(location.into())) {
             Ok(_) => {}
             Err(e) => {
-                eprintln!(
-                    "Error seeking in flash image {:?}: {:?}",
-                    self.filename, e
-                );
+                let filename = &self.filename;
+                eprintln!("Error seeking in flash image {filename:?}: {e:?}",);
                 return Err(amd_flash::Error::Io);
             }
         }
@@ -111,7 +105,7 @@ impl FlashWrite for FlashImage {
                     "Error writing to flash image {:?}: {:?}",
                     self.filename, e
                 );
-                return Err(amd_flash::Error::Io);
+                Err(amd_flash::Error::Io)
             }
         }
     }
@@ -146,7 +140,7 @@ impl FlashWrite for FlashImage {
                     "Error writing to flash image {:?}: {:?}",
                     self.filename, e
                 );
-                return Err(amd_flash::Error::Io);
+                Err(amd_flash::Error::Io)
             }
         }
     }
@@ -216,7 +210,7 @@ fn psp_file_version(source_filename: &Path) -> Option<u32> {
     let (file, _size) = size_file(source_filename, None).ok()?;
     let mut source = BufReader::new(file);
     let mut header: [u8; 0x100] = [0; 0x100];
-    if let Ok(_) = source.read_exact(&mut header) {
+    if source.read_exact(&mut header).is_ok() {
         let magic = &header[0x10..0x14];
         if magic == *b"$PS1" {
             let version_raw = <[u8; 4]>::try_from(&header[0x60..0x64]).ok()?;
@@ -236,10 +230,8 @@ fn elf_symbol(
 ) -> Option<goblin::elf::Sym> {
     for sym in &binary.syms {
         let ix = sym.st_name;
-        if ix != 0 {
-            if &binary.strtab[sym.st_name] == key {
-                return Some(sym);
-            }
+        if ix != 0 && &binary.strtab[sym.st_name] == key {
+            return Some(sym);
         }
     }
     None
@@ -248,7 +240,7 @@ fn elf_symbol(
 fn bhd_directory_add_reset_image(
     reset_image_filename: &Path,
 ) -> Result<(BhdDirectoryEntry, Vec<u8>)> {
-    let buffer = fs::read(reset_image_filename).map_err(|x| Error::Io(x))?;
+    let buffer = fs::read(reset_image_filename).map_err(Error::Io)?;
     let mut destination_origin: Option<u64> = None;
     let mut iov = Box::new(std::io::empty()) as Box<dyn Read>;
     let sz;
@@ -273,7 +265,7 @@ fn bhd_directory_add_reset_image(
                     if header.p_memsz == 0 {
                         continue;
                     }
-                    if destination_origin == None {
+                    if destination_origin.is_none() {
                         // Note: File is sorted by p_vaddr.
                         destination_origin = Some(header.p_vaddr);
                         last_vaddr = header.p_vaddr;
@@ -365,12 +357,12 @@ fn bhd_directory_add_reset_image(
                     .checked_sub(buffer.len() as u64)
                     .ok_or(Error::ImageTooBig)?,
             );
-            iov = Box::new(&buffer.as_slice()[..]) as Box<dyn Read>;
+            iov = Box::new(buffer.as_slice()) as Box<dyn Read>;
             sz = buffer.len();
         }
     }
 
-    if destination_origin == None {
+    if destination_origin.is_none() {
         eprintln!("Warning: No destination in RAM specified for Reset image.");
     }
 
@@ -415,6 +407,7 @@ struct Opts {
     verbose: bool,
 }
 
+#[allow(clippy::type_complexity)]
 fn save_psp_directory<T: FlashRead + FlashWrite>(
     psp_raw_entries: &mut Vec<(
         PspDirectoryEntry,
@@ -431,7 +424,7 @@ fn save_psp_directory<T: FlashRead + FlashWrite>(
     let efs_to_io_error = |e| {
         std::io::Error::new(
             std::io::ErrorKind::Other,
-            format!("EFS error: {:?} in file {:?}", e, filename),
+            format!("EFS error: {e:?} in file {filename:?}"),
         )
     };
 
@@ -452,7 +445,7 @@ fn save_psp_directory<T: FlashRead + FlashWrite>(
     for (entry, source_override, blob_body) in psp_raw_entries.iter_mut() {
         if let Some(blob_body) = blob_body {
             let source = if let Some(source_override) = source_override {
-                assert!(false); // other case is untested
+                todo!(); // other case is untested
                 *source_override
             } else {
                 let (destination, rest) =
@@ -472,7 +465,7 @@ fn save_psp_directory<T: FlashRead + FlashWrite>(
 
     let psp_entries = psp_raw_entries
         .iter()
-        .map(|(raw_entry, _, _)| raw_entry.clone())
+        .map(|(raw_entry, _, _)| *raw_entry)
         .collect::<Vec<PspDirectoryEntry>>();
     let (psp_directory_range, payload_range) =
         payload_range.split_at_least(psp_directory_size as usize);
@@ -493,6 +486,7 @@ fn save_psp_directory<T: FlashRead + FlashWrite>(
     Ok(payload_range)
 }
 
+#[allow(clippy::type_complexity)]
 fn save_bhd_directory<T: FlashRead + FlashWrite>(
     bhd_raw_entries: &mut Vec<(
         BhdDirectoryEntry,
@@ -509,7 +503,7 @@ fn save_bhd_directory<T: FlashRead + FlashWrite>(
     let efs_to_io_error = |e| {
         std::io::Error::new(
             std::io::ErrorKind::Other,
-            format!("EFS error: {:?} in file {:?}", e, filename),
+            format!("EFS error: {e:?} in file {filename:?}"),
         )
     };
 
@@ -556,7 +550,7 @@ fn save_bhd_directory<T: FlashRead + FlashWrite>(
 
     let bhd_entries = bhd_raw_entries
         .iter()
-        .map(|(raw_entry, _, _)| raw_entry.clone())
+        .map(|(raw_entry, _, _)| *raw_entry)
         .collect::<Vec<BhdDirectoryEntry>>();
     let (bhd_directory_range, payload_range) =
         payload_range.split_at_least(bhd_directory_size as usize);
@@ -584,21 +578,21 @@ fn run() -> std::io::Result<()> {
     let efs_to_io_error = |e: amd_efs::Error| {
         std::io::Error::new(
             std::io::ErrorKind::Other,
-            format!("EFS error: {:?} in file {:?}", e, filename),
+            format!("EFS error: {e:?} in file {filename:?}"),
         )
     };
     let flash_to_io_error = |e: amd_flash::Error| {
         std::io::Error::new(
             std::io::ErrorKind::Other,
-            format!("Flash error: {:?} in file {:?}", e, filename),
+            format!("Flash error: {e:?} in file {filename:?}"),
         )
     };
     let apcb_to_io_error = |e| {
         std::io::Error::new(
             std::io::ErrorKind::Other,
             format!(
-                "APCB error: {:?} in file {:?}",
-                e, opts.efs_configuration_filename
+                "APCB error: {e:?} in file {:?}",
+                opts.efs_configuration_filename
             ),
         )
     };
@@ -606,12 +600,11 @@ fn run() -> std::io::Result<()> {
         json5::Error::Message { ref msg, ref location } => std::io::Error::new(
             std::io::ErrorKind::Other,
             format!(
-                "JSON5 error: {} in file {:?} at {}",
-                msg,
+                "JSON5 error: {msg} in file {:?} at {}",
                 opts.efs_configuration_filename,
                 match location {
                     None => "unknown location".to_owned(),
-                    Some(x) => format!("{:?}", x),
+                    Some(x) => format!("{x:?}"),
                 }
             ),
         ),
@@ -621,8 +614,8 @@ fn run() -> std::io::Result<()> {
             std::io::Error::new(
                 std::io::ErrorKind::Other,
                 format!(
-                    "Config error: {:?} in file {:?}",
-                    e, opts.reset_image_filename
+                    "Config error: {e:?} in file {:?}",
+                    opts.reset_image_filename
                 ),
             )
         };
@@ -635,7 +628,7 @@ fn run() -> std::io::Result<()> {
     file.set_len(static_config::IMAGE_SIZE.into())?;
     const ERASABLE_BLOCK_SIZE: usize = 0x1000;
     const_assert!(ERASABLE_BLOCK_SIZE.is_power_of_two());
-    let mut storage = FlashImage::new(file, &filename, ERASABLE_BLOCK_SIZE);
+    let storage = FlashImage::new(file, filename, ERASABLE_BLOCK_SIZE);
     let payload_range = ErasableRange::new(
         storage
             .erasable_location(static_config::PAYLOAD_BEGINNING)
@@ -652,7 +645,7 @@ fn run() -> std::io::Result<()> {
         .ok_or(amd_flash::Error::Alignment)
         .map_err(flash_to_io_error)?;
     while Location::from(position) < static_config::IMAGE_SIZE {
-        FlashWrite::erase_block(&mut storage, position)
+        FlashWrite::erase_block(&storage, position)
             .map_err(flash_to_io_error)?;
         position =
             position.advance(erasable_block_size).map_err(flash_to_io_error)?;
@@ -680,7 +673,7 @@ fn run() -> std::io::Result<()> {
     ) {
         Ok(efs) => efs,
         Err(e) => {
-            eprintln!("Error on creation: {:?}", e);
+            eprintln!("Error on creation: {e:?}");
             std::process::exit(1);
         }
     };
@@ -691,13 +684,12 @@ fn run() -> std::io::Result<()> {
     let resolve_blob = |blob_filename: PathBuf| -> std::io::Result<PathBuf> {
         if blob_filename.has_root() {
             if blob_filename.exists() {
-                Ok(blob_filename.to_path_buf())
+                Ok(blob_filename)
             } else {
                 Err(std::io::Error::new(
                     std::io::ErrorKind::Other,
                     format!(
-                        "Blob read error: Could not find file {:?}",
-                        blob_filename
+                        "Blob read error: Could not find file {blob_filename:?}",
                     ),
                 ))
             }
@@ -706,7 +698,7 @@ fn run() -> std::io::Result<()> {
                 let fullname = blobdir.join(&blob_filename);
                 if fullname.exists() {
                     if opts.verbose {
-                        eprintln!("Info: Using blob {:?}", fullname);
+                        eprintln!("Info: Using blob {fullname:?}");
                     }
                     return Ok(fullname);
                 }
@@ -714,9 +706,8 @@ fn run() -> std::io::Result<()> {
             Err(std::io::Error::new(
                 std::io::ErrorKind::Other,
                 format!(
-                    "Blob read error: Could not find file {:?} \
-(neither directly nor in any of the directories {:?})",
-                    blob_filename, blobdirs
+                    "Blob read error: Could not find file {blob_filename:?} \
+(neither directly nor in any of the directories {blobdirs:?})",
                 ),
             ))
         }
@@ -751,12 +742,7 @@ fn run() -> std::io::Result<()> {
                     ) => {
                         let flash_location =
                             blob_slot_settings.as_ref().and_then(|x| x.flash_location);
-                        let x: Option<Location> =
-                            flash_location.map(
-                                |x| {
-                                    x.try_into().unwrap()
-                                },
-                            );
+                        let x: Option<Location> = flash_location;
                         let blob_filename = resolve_blob(blob_filename.to_path_buf()).unwrap();
                         let body = std::fs::read(&blob_filename).unwrap();
                         raw_entry.set_size(Some(body.len().try_into().unwrap()));
@@ -785,7 +771,7 @@ fn run() -> std::io::Result<()> {
     if let Some(abl0_version) = abl0_version {
         if opts.verbose {
             // See AgesaBLReleaseNotes.txt, section "ABL Version String"
-            println!("Info: Abl0 version: 0x{:x}", abl0_version)
+            println!("Info: Abl0 version: 0x{abl0_version:x}")
         }
     }
 
@@ -812,14 +798,16 @@ fn run() -> std::io::Result<()> {
                 let blob_slot_settings = entry.target.blob;
                 let flash_location =
                     blob_slot_settings.as_ref().and_then(|x| x.flash_location);
-                let x: Option<Location> =
-                    flash_location.map(|x| x.try_into().unwrap());
+                let x: Option<Location> = flash_location;
 
                 // done by try_from: raw_entry.set_destination_location(ram_destination_address);
                 // done by try_from: raw_entry.set_size(size);
                 match entry.source {
                     SerdeBhdSource::Implied => {
-                        assert!(entry.target.attrs.type_ == BhdDirectoryEntryType::Apob);
+                        assert!(
+                            entry.target.attrs.type_
+                                == BhdDirectoryEntryType::Apob
+                        );
                         assert!(x.is_none());
                         custom_apob = true;
                         (raw_entry, None, None)
@@ -882,14 +870,13 @@ fn run() -> std::io::Result<()> {
         Some(reset_image_body),
     ));
 
-    let payload_range = save_bhd_directory(
+    save_bhd_directory(
         &mut bhd_raw_entries,
         bhd_directory_address_mode,
         &storage,
         payload_range,
         &mut efs,
     )?;
-    drop(payload_range);
 
     // ============================== Payloads =========================
 
@@ -920,7 +907,7 @@ fn run() -> std::io::Result<()> {
                         storage.erasable_location(x).unwrap()
                     }
                     x => {
-                        eprintln!("{:?}", x);
+                        eprintln!("{x:?}");
                         todo!()
                     }
                 };
@@ -935,7 +922,7 @@ fn run() -> std::io::Result<()> {
 
 fn main() -> std::io::Result<()> {
     run().map_err(|e| {
-        eprintln!("Error: {}", e);
+        eprintln!("Error: {e}");
         std::process::exit(1);
     })
 }
