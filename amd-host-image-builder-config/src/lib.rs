@@ -206,6 +206,7 @@ impl Default for SerdeBhdDirectoryEntryBlob {
 #[serde(rename = "BhdSource")]
 #[serde(deny_unknown_fields)]
 pub enum SerdeBhdSource<'a> {
+    Implied,
     BlobFile(PathBuf),
     #[serde(bound(deserialize = "Apcb<'a>: Deserialize<'de>"))]
     ApcbJson(amd_apcb::Apcb<'a>),

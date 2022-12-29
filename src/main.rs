@@ -802,6 +802,7 @@ fn run() -> std::io::Result<()> {
     // ================================ BHD =============================
 
     let bhd_directory_address_mode = AddressMode::EfsRelativeOffset;
+    let mut custom_apob = false;
     let mut bhd_raw_entries = match bhd {
         SerdeBhdDirectoryVariant::BhdDirectory(serde_bhd_directory) => {
             serde_bhd_directory.entries.into_iter().map(|entry| {
@@ -819,6 +820,12 @@ fn run() -> std::io::Result<()> {
                 // done by try_from: raw_entry.set_destination_location(ram_destination_address);
                 // done by try_from: raw_entry.set_size(size);
                 match entry.source {
+                    SerdeBhdSource::Implied => {
+                        assert!(entry.target.attrs.type_ == BhdDirectoryEntryType::Apob);
+                        assert!(x.is_none());
+                        custom_apob = true;
+                        (raw_entry, None, None)
+                    }
                     SerdeBhdSource::BlobFile(blob_filename) => {
                         let blob_filename =
                             resolve_blob(blob_filename).unwrap();
@@ -856,15 +863,17 @@ fn run() -> std::io::Result<()> {
     }
     .collect::<Vec<(BhdDirectoryEntry, Option<Location>, Option<Vec<u8>>)>>();
 
-    let apob_entry = BhdDirectoryEntry::new_payload(
-        AddressMode::PhysicalAddress,
-        BhdDirectoryEntryType::Apob,
-        Some(0),
-        Some(ValueOrLocation::PhysicalAddress(0)),
-        Some(0x400_0000),
-    )
-    .unwrap();
-    bhd_raw_entries.push((apob_entry, None, None));
+    if !custom_apob {
+        let apob_entry = BhdDirectoryEntry::new_payload(
+            AddressMode::PhysicalAddress,
+            BhdDirectoryEntryType::Apob,
+            Some(0),
+            Some(ValueOrLocation::PhysicalAddress(0)),
+            Some(0x400_0000),
+        )
+        .unwrap();
+        bhd_raw_entries.push((apob_entry, None, None));
+    }
 
     let (reset_image_entry, reset_image_body) =
         bhd_directory_add_reset_image(&opts.reset_image_filename)
