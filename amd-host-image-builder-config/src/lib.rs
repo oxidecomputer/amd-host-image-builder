@@ -36,18 +36,12 @@ pub type Result<T> = core::result::Result<T, Error>;
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
-#[derive(Debug)]
+#[derive(Default, Debug)]
 pub struct SerdePspDirectoryEntryBlob {
     #[serde(default)]
     pub flash_location: Option<Location>,
     #[serde(default)]
     pub size: Option<u32>, // FIXME u64
-}
-
-impl Default for SerdePspDirectoryEntryBlob {
-    fn default() -> Self {
-        Self { flash_location: None, size: None }
-    }
 }
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
@@ -94,7 +88,7 @@ impl TryFromSerdeDirectoryEntryWithContext<SerdePspDirectoryEntry>
             target.attrs.type_,
             blob.and_then(|y| y.size),
             blob.and_then(|x| {
-                x.flash_location.map(|y| ValueOrLocation::EfsRelativeOffset(y))
+                x.flash_location.map(ValueOrLocation::EfsRelativeOffset)
             }),
         )?
         .with_sub_program(target.attrs.sub_program)
@@ -119,7 +113,7 @@ pub struct SerdePspEntry {
     pub target: SerdePspDirectoryEntry,
 }
 
-#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[derive(Default, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "BhdDirectoryEntryBlob")]
 #[serde(deny_unknown_fields)]
 pub struct SerdeBhdDirectoryEntryBlob {
@@ -180,7 +174,7 @@ impl TryFromSerdeDirectoryEntryWithContext<SerdeBhdDirectoryEntry>
             target.attrs.type_,
             blob.and_then(|y| y.size),
             blob.and_then(|x| {
-                x.flash_location.map(|y| ValueOrLocation::EfsRelativeOffset(y))
+                x.flash_location.map(ValueOrLocation::EfsRelativeOffset)
             }),
             blob.and_then(|y| y.ram_destination_address),
         )?
@@ -193,12 +187,6 @@ impl TryFromSerdeDirectoryEntryWithContext<SerdeBhdDirectoryEntry>
         .with_sub_program(target.attrs.sub_program)
         .with_rom_id(target.attrs.rom_id)
         .build())
-    }
-}
-
-impl Default for SerdeBhdDirectoryEntryBlob {
-    fn default() -> Self {
-        Self { flash_location: None, size: None, ram_destination_address: None }
     }
 }
 
