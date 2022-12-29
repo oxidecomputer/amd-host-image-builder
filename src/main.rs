@@ -890,7 +890,7 @@ fn run() -> std::io::Result<()> {
         //eprintln!("PSP entry {:?}", raw_entry);
         if let Some(blob_body) = blob_body {
             let source =
-                match raw_entry.source(bhd_directory_address_mode).unwrap() {
+                match raw_entry.source(psp_directory_address_mode).unwrap() {
                     ValueOrLocation::EfsRelativeOffset(x) => {
                         storage.erasable_location(x).unwrap()
                     }
