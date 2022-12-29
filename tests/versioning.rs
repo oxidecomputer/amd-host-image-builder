@@ -17,6 +17,7 @@ fn test_token_versioning() {
             let mut found_match = false;
             for entry in directory.entries {
                 match entry.source {
+                    SerdeBhdSource::Implied => {}
                     SerdeBhdSource::BlobFile(_) => {}
                     SerdeBhdSource::ApcbJson(apcb) => {
                         found_match = true;
@@ -44,6 +45,7 @@ fn test_token_versioning_failure() {
             let mut found_match = false;
             for entry in directory.entries {
                 match entry.source {
+                    SerdeBhdSource::Implied => {}
                     SerdeBhdSource::BlobFile(_) => {}
                     SerdeBhdSource::ApcbJson(apcb) => {
                         found_match = true;
@@ -82,6 +84,7 @@ fn test_token_versioning_both_new() {
             let mut found_match = false;
             for entry in directory.entries {
                 match entry.source {
+                    SerdeBhdSource::Implied => {}
                     SerdeBhdSource::BlobFile(_) => {}
                     SerdeBhdSource::ApcbJson(apcb) => {
                         found_match = true;
