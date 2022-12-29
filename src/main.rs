@@ -483,7 +483,6 @@ fn save_psp_directory<T: FlashRead + FlashWrite>(
             psp_directory_beginning,
             psp_directory_end,
             psp_directory_address_mode,
-            Some(first_payload_range_beginning),
             &psp_entries,
         )
         .map_err(efs_to_io_error)?;
@@ -568,7 +567,6 @@ fn save_bhd_directory<T: FlashRead + FlashWrite>(
             bhd_directory_beginning,
             bhd_directory_end,
             bhd_directory_address_mode,
-            Some(first_payload_range_beginning),
             &bhd_entries,
         )
         .map_err(efs_to_io_error)?;
