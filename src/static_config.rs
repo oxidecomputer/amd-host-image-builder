@@ -5,12 +5,6 @@ pub(crate) const IMAGE_SIZE: u32 = 32 * 1024 * 1024;
 
 /* Coarse-grained flash locations (in Byte) */
 
-pub(crate) const PAYLOAD_BEGINNING: Location = 0x3_0000;
-pub(crate) const PAYLOAD_END: Location = RESET_IMAGE_BEGINNING;
-
-pub(crate) const RESET_IMAGE_BEGINNING: Location = 0x100_0000;
-pub(crate) const RESET_IMAGE_END: Location = 0x200_0000;
-
 /*
 
 At boot, the flash is read by the PSP.
@@ -63,6 +57,8 @@ These point to PSP payloads and BHD payloads, respectively.
        0x0 +-----------------------------------------+
 
 */
+
+pub const EFH_SIZE: u32 = 0x200;
 
 // Note: This must not be changed.
 // It's hardcoded in the PSP bootloader and in amd-efs's "create" function.

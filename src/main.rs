@@ -1,6 +1,6 @@
 use amd_efs::{
     AddressMode, BhdDirectory, BhdDirectoryEntry, BhdDirectoryEntryType,
-    DirectoryEntry, Efs, PspDirectory, PspDirectoryEntry,
+    DirectoryEntry, Efs, ProcessorGeneration, PspDirectory, PspDirectoryEntry,
     PspDirectoryEntryType, ValueOrLocation,
 };
 use amd_host_image_builder_config::{
@@ -407,6 +407,118 @@ struct Opts {
     verbose: bool,
 }
 
+struct Allocator {
+    free_ranges: [ErasableRange; 2],
+}
+
+impl Allocator {
+    pub fn take_at_least(&mut self, size: usize) -> Option<ErasableRange> {
+        self.free_ranges[0]
+            .take_at_least(size)
+            .or_else(|| self.free_ranges[1].take_at_least(size))
+    }
+    pub fn new(
+        processor_generation: ProcessorGeneration,
+        arena: ErasableRange,
+    ) -> Result<Self> {
+        let mut arena = arena;
+        // Avoid EFH_BEGINNING..(EFH_BEGINNING + EFH_SIZE)
+        let a = arena
+            .take_at_least(
+                static_config::EFH_BEGINNING(processor_generation) as usize
+            )
+            .ok_or(Error::ImageTooBig)?;
+        let _b = arena
+            .take_at_least(static_config::EFH_SIZE as usize)
+            .ok_or(Error::ImageTooBig)?;
+        Ok(Self { free_ranges: [a, arena] })
+    }
+}
+
+#[cfg(test)]
+mod allocator_tests {
+    use super::*;
+    fn intersect(
+        a: &ErasableRange,
+        b: &ErasableRange,
+    ) -> Option<(Location, Location)> {
+        let new_beginning =
+            Location::from(a.beginning).max(Location::from(b.beginning));
+        let new_end = Location::from(a.end).min(Location::from(b.end));
+        if new_beginning < new_end {
+            Some((new_beginning, new_end))
+        } else {
+            None
+        }
+    }
+    struct Buffer {}
+    impl FlashAlign for Buffer {
+        fn erasable_block_size(&self) -> usize {
+            4
+        }
+    }
+    impl Buffer {
+        fn allocator(&self) -> Allocator {
+            let beginning = self.erasable_location(0).unwrap();
+            let end = beginning.advance_at_least(0x4_0000).unwrap();
+            // Note: Hole is at 0x2_0000.
+            Allocator::new(
+                ProcessorGeneration::Naples,
+                ErasableRange::new(beginning, end),
+            )
+            .unwrap()
+        }
+        fn efh_range(&self) -> ErasableRange {
+            ErasableRange::new(
+                self.erasable_location(0x2_0000).unwrap(),
+                self.erasable_location(0x2_0000)
+                    .unwrap()
+                    .advance_at_least(static_config::EFH_SIZE as usize)
+                    .unwrap(),
+            )
+        }
+    }
+    #[test]
+    fn test_allocator_1() {
+        let buf = Buffer {};
+        let mut allocator = buf.allocator();
+        let efh_range = buf.efh_range();
+        let a = allocator.take_at_least(42).unwrap();
+        let b = allocator.take_at_least(100).unwrap();
+        assert!(intersect(&a, &b).is_none());
+        assert!(intersect(&a, &efh_range).is_none());
+        assert!(intersect(&b, &efh_range).is_none());
+        assert!(Location::from(b.end) < 0x2_0000);
+    }
+
+    #[test]
+    fn test_allocator_2() {
+        let buf = Buffer {};
+        let mut allocator = buf.allocator();
+        let efh_range = buf.efh_range();
+        let a = allocator.take_at_least(0x2_0000).unwrap();
+        let b = allocator.take_at_least(100).unwrap();
+        assert!(intersect(&a, &b).is_none());
+        assert!(intersect(&a, &efh_range).is_none());
+        assert!(intersect(&b, &efh_range).is_none());
+        assert!(Location::from(b.end) < 0x4_0000);
+    }
+
+    #[test]
+    fn test_allocator_3() {
+        let buf = Buffer {};
+        let mut allocator = buf.allocator();
+        let efh_range = buf.efh_range();
+        let a = allocator.take_at_least(0x1_fff8).unwrap();
+        let b = allocator.take_at_least(100).unwrap();
+        assert!(intersect(&a, &b).is_none());
+        assert!(intersect(&a, &efh_range).is_none());
+        assert!(intersect(&b, &efh_range).is_none());
+        assert!(Location::from(b.end) < 0x4_0000);
+        assert!(Location::from(b.beginning) > 0x2_0000);
+    }
+}
+
 #[allow(clippy::type_complexity)]
 fn save_psp_directory<T: FlashRead + FlashWrite>(
     psp_raw_entries: &mut Vec<(
@@ -416,9 +528,9 @@ fn save_psp_directory<T: FlashRead + FlashWrite>(
     )>,
     psp_directory_address_mode: AddressMode,
     storage: &FlashImage,
-    mut payload_range: ErasableRange,
+    allocator: &mut Allocator,
     efs: &mut Efs<T>,
-) -> std::io::Result<ErasableRange> {
+) -> std::io::Result<()> {
     let opts = Opts::from_args();
     let filename = &opts.output_filename;
     let efs_to_io_error = |e| {
@@ -428,7 +540,7 @@ fn save_psp_directory<T: FlashRead + FlashWrite>(
         )
     };
 
-    let first_payload_range_beginning = payload_range.beginning;
+    let mut first_payload_range_beginning: Option<ErasableLocation> = None;
 
     // Here we know how big the directory is gonna be.
 
@@ -440,17 +552,17 @@ fn save_psp_directory<T: FlashRead + FlashWrite>(
     .map_err(efs_to_io_error)?;
 
     // Traverse psp_raw_entries and update SOURCE accordingly
-    // using payload_range for guidance
 
     for (entry, source_override, blob_body) in psp_raw_entries.iter_mut() {
         if let Some(blob_body) = blob_body {
             let source = if let Some(source_override) = source_override {
-                todo!(); // other case is untested
                 *source_override
             } else {
-                let (destination, rest) =
-                    payload_range.split_at_least(blob_body.len());
-                payload_range = rest;
+                let destination =
+                    allocator.take_at_least(blob_body.len()).unwrap();
+                if first_payload_range_beginning.is_none() {
+                    first_payload_range_beginning = Some(destination.beginning)
+                }
                 Location::from(destination.beginning)
             };
             // TODO set_size maybe
@@ -467,8 +579,8 @@ fn save_psp_directory<T: FlashRead + FlashWrite>(
         .iter()
         .map(|(raw_entry, _, _)| *raw_entry)
         .collect::<Vec<PspDirectoryEntry>>();
-    let (psp_directory_range, payload_range) =
-        payload_range.split_at_least(psp_directory_size as usize);
+    let psp_directory_range =
+        allocator.take_at_least(psp_directory_size as usize).unwrap();
     let psp_directory_beginning = psp_directory_range.beginning;
     let psp_directory_end = psp_directory_range.end;
     let mut psp_directory = efs
@@ -481,9 +593,13 @@ fn save_psp_directory<T: FlashRead + FlashWrite>(
         .map_err(efs_to_io_error)?;
 
     psp_directory
-        .save(storage, psp_directory_range, first_payload_range_beginning)
+        .save(
+            storage,
+            psp_directory_range,
+            first_payload_range_beginning.unwrap(),
+        )
         .map_err(efs_to_io_error)?;
-    Ok(payload_range)
+    Ok(())
 }
 
 #[allow(clippy::type_complexity)]
@@ -495,9 +611,9 @@ fn save_bhd_directory<T: FlashRead + FlashWrite>(
     )>,
     bhd_directory_address_mode: AddressMode,
     storage: &FlashImage,
-    mut payload_range: ErasableRange,
+    allocator: &mut Allocator,
     efs: &mut Efs<T>,
-) -> std::io::Result<ErasableRange> {
+) -> std::io::Result<()> {
     let opts = Opts::from_args();
     let filename = &opts.output_filename;
     let efs_to_io_error = |e| {
@@ -507,7 +623,7 @@ fn save_bhd_directory<T: FlashRead + FlashWrite>(
         )
     };
 
-    let first_payload_range_beginning = payload_range.beginning;
+    let mut first_payload_range_beginning: Option<ErasableLocation> = None;
 
     // Here we know how big the directory is gonna be.
 
@@ -519,16 +635,17 @@ fn save_bhd_directory<T: FlashRead + FlashWrite>(
     .map_err(efs_to_io_error)?;
 
     // Traverse bhd_raw_entries and update SOURCE accordingly
-    // using payload_range for guidance
 
     for (entry, source_override, blob_body) in bhd_raw_entries.iter_mut() {
         if let Some(blob_body) = blob_body {
             let source = if let Some(source_override) = source_override {
                 *source_override
             } else {
-                let (destination, rest) =
-                    payload_range.split_at_least(blob_body.len());
-                payload_range = rest;
+                let destination =
+                    allocator.take_at_least(blob_body.len()).unwrap();
+                if first_payload_range_beginning.is_none() {
+                    first_payload_range_beginning = Some(destination.beginning)
+                }
                 Location::from(destination.beginning)
             };
             // Required because of BhdDirectoryEntry::new_payload() for reset image.
@@ -552,8 +669,8 @@ fn save_bhd_directory<T: FlashRead + FlashWrite>(
         .iter()
         .map(|(raw_entry, _, _)| *raw_entry)
         .collect::<Vec<BhdDirectoryEntry>>();
-    let (bhd_directory_range, payload_range) =
-        payload_range.split_at_least(bhd_directory_size as usize);
+    let bhd_directory_range =
+        allocator.take_at_least(bhd_directory_size as usize).unwrap();
     let bhd_directory_beginning = bhd_directory_range.beginning;
     let bhd_directory_end = bhd_directory_range.end;
     let mut bhd_directory = efs
@@ -566,21 +683,19 @@ fn save_bhd_directory<T: FlashRead + FlashWrite>(
         .map_err(efs_to_io_error)?;
 
     bhd_directory
-        .save(storage, bhd_directory_range, first_payload_range_beginning)
+        .save(
+            storage,
+            bhd_directory_range,
+            first_payload_range_beginning.unwrap(),
+        )
         .map_err(efs_to_io_error)?;
-    Ok(payload_range)
+    Ok(())
 }
 
 fn run() -> std::io::Result<()> {
     //let args: Vec<String> = env::args().collect();
     let opts = Opts::from_args();
     let filename = &opts.output_filename;
-    let efs_to_io_error = |e: amd_efs::Error| {
-        std::io::Error::new(
-            std::io::ErrorKind::Other,
-            format!("EFS error: {e:?} in file {filename:?}"),
-        )
-    };
     let flash_to_io_error = |e: amd_flash::Error| {
         std::io::Error::new(
             std::io::ErrorKind::Other,
@@ -629,16 +744,6 @@ fn run() -> std::io::Result<()> {
     const ERASABLE_BLOCK_SIZE: usize = 0x1000;
     const_assert!(ERASABLE_BLOCK_SIZE.is_power_of_two());
     let storage = FlashImage::new(file, filename, ERASABLE_BLOCK_SIZE);
-    let payload_range = ErasableRange::new(
-        storage
-            .erasable_location(static_config::PAYLOAD_BEGINNING)
-            .ok_or(amd_efs::Error::Misaligned)
-            .map_err(efs_to_io_error)?,
-        storage
-            .erasable_location(static_config::PAYLOAD_END)
-            .ok_or(amd_efs::Error::Misaligned)
-            .map_err(efs_to_io_error)?,
-    );
     let erasable_block_size = storage.erasable_block_size();
     let mut position: AlignedLocation = storage
         .erasable_location(0)
@@ -665,7 +770,19 @@ fn run() -> std::io::Result<()> {
         bhd,
     } = config;
     let host_processor_generation = processor_generation;
-    let mut efs = match Efs::<_>::create(
+    let mut allocator = Allocator::new(
+        host_processor_generation,
+        ErasableRange::new(
+            storage.erasable_location(0).unwrap(),
+            storage.erasable_location(static_config::IMAGE_SIZE).unwrap(),
+        ),
+    )
+    .map_err(amd_host_image_builder_config_error_to_io_error)?;
+    // Avoid area around 0 because AMD likes to use Efh locations == 0 to
+    // mean "invalid".
+    let _invalid = allocator.take_at_least(1);
+
+    let mut efs = match Efs::create(
         &storage,
         host_processor_generation,
         static_config::EFH_BEGINNING(host_processor_generation),
@@ -775,11 +892,11 @@ fn run() -> std::io::Result<()> {
         }
     }
 
-    let payload_range = save_psp_directory(
+    save_psp_directory(
         &mut psp_raw_entries,
         psp_directory_address_mode,
         &storage,
-        payload_range,
+        &mut allocator,
         &mut efs,
     )?;
 
@@ -866,7 +983,7 @@ fn run() -> std::io::Result<()> {
             .map_err(amd_host_image_builder_config_error_to_io_error)?;
     bhd_raw_entries.push((
         reset_image_entry,
-        Some(static_config::RESET_IMAGE_BEGINNING),
+        None, // Some(static_config::RESET_IMAGE_BEGINNING),
         Some(reset_image_body),
     ));
 
@@ -874,7 +991,7 @@ fn run() -> std::io::Result<()> {
         &mut bhd_raw_entries,
         bhd_directory_address_mode,
         &storage,
-        payload_range,
+        &mut allocator,
         &mut efs,
     )?;
 
