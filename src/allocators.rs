@@ -3,7 +3,7 @@ use amd_flash::{ErasableRange, Location};
 use amd_host_image_builder_config::{Error, Result};
 
 pub struct Allocator {
-    efh_range: ErasableRange,
+    _efh_range: ErasableRange,
     free_ranges: [ErasableRange; 2],
 }
 
@@ -23,10 +23,10 @@ impl Allocator {
             crate::static_config::EFH_BEGINNING(processor_generation) as usize;
         let a = arena.take_at_least(a_size).ok_or(Error::ImageTooBig)?;
         assert!(Location::from(a.end) as usize == a_size);
-        let efh_range = arena
+        let _efh_range = arena
             .take_at_least(crate::static_config::EFH_SIZE)
             .ok_or(Error::ImageTooBig)?;
-        Ok(Self { efh_range, free_ranges: [a, arena] })
+        Ok(Self { _efh_range, free_ranges: [a, arena] })
     }
     /// From the free ranges, take a range of at least SIZE Bytes,
     /// if possible. Otherwise return None.
