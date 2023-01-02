@@ -57,6 +57,9 @@ ptime -m cargo test --verbose
 banner build
 ptime -m cargo build --release --verbose
 
+banner lint
+ptime -m cargo clippy
+
 banner package
 mkdir -p /work/bins
 for bin in amd-host-image-builder; do
