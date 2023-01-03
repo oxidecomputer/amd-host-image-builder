@@ -58,7 +58,7 @@ These point to PSP payloads and BHD payloads, respectively.
 
 */
 
-pub const EFH_SIZE: u32 = 0x200;
+pub const EFH_SIZE: usize = 0x200;
 
 // Note: This must not be changed.
 // It's hardcoded in the PSP bootloader and in amd-efs's "create" function.
