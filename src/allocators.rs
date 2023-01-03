@@ -19,20 +19,14 @@ impl Allocator {
         let mut arena = arena;
         assert!(Location::from(arena.beginning) == 0);
         // Avoid EFH_BEGINNING..(EFH_BEGINNING + EFH_SIZE)
-        let a_size = crate::static_config::EFH_BEGINNING(
-                processor_generation,
-            ) as usize;
-        let a = arena
-            .take_at_least(a_size)
-            .ok_or(Error::ImageTooBig)?;
+        let a_size =
+            crate::static_config::EFH_BEGINNING(processor_generation) as usize;
+        let a = arena.take_at_least(a_size).ok_or(Error::ImageTooBig)?;
         assert!(Location::from(a.end) as usize == a_size);
         let efh_range = arena
             .take_at_least(crate::static_config::EFH_SIZE)
             .ok_or(Error::ImageTooBig)?;
-        Ok(Self {
-            efh_range,
-            free_ranges: [a, arena],
-        })
+        Ok(Self { efh_range, free_ranges: [a, arena] })
     }
     /// From the free ranges, take a range of at least SIZE Bytes,
     /// if possible. Otherwise return None.
