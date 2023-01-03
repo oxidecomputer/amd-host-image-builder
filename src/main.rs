@@ -1,6 +1,6 @@
 use amd_efs::{
     AddressMode, BhdDirectory, BhdDirectoryEntry, BhdDirectoryEntryType,
-    DirectoryEntry, Efs, ProcessorGeneration, PspDirectory, PspDirectoryEntry,
+    DirectoryEntry, Efs, PspDirectory, PspDirectoryEntry,
     PspDirectoryEntryType, ValueOrLocation,
 };
 use amd_host_image_builder_config::{
@@ -24,7 +24,9 @@ use std::path::Path;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
+mod allocators;
 mod static_config;
+use allocators::Allocator;
 
 use amd_flash::{
     ErasableLocation, ErasableRange, FlashAlign, FlashRead, FlashWrite,
@@ -405,118 +407,6 @@ struct Opts {
 
     #[structopt(short = "v", long = "verbose")]
     verbose: bool,
-}
-
-struct Allocator {
-    free_ranges: [ErasableRange; 2],
-}
-
-impl Allocator {
-    pub fn take_at_least(&mut self, size: usize) -> Option<ErasableRange> {
-        self.free_ranges[0]
-            .take_at_least(size)
-            .or_else(|| self.free_ranges[1].take_at_least(size))
-    }
-    pub fn new(
-        processor_generation: ProcessorGeneration,
-        arena: ErasableRange,
-    ) -> Result<Self> {
-        let mut arena = arena;
-        // Avoid EFH_BEGINNING..(EFH_BEGINNING + EFH_SIZE)
-        let a = arena
-            .take_at_least(
-                static_config::EFH_BEGINNING(processor_generation) as usize
-            )
-            .ok_or(Error::ImageTooBig)?;
-        let _b = arena
-            .take_at_least(static_config::EFH_SIZE as usize)
-            .ok_or(Error::ImageTooBig)?;
-        Ok(Self { free_ranges: [a, arena] })
-    }
-}
-
-#[cfg(test)]
-mod allocator_tests {
-    use super::*;
-    fn intersect(
-        a: &ErasableRange,
-        b: &ErasableRange,
-    ) -> Option<(Location, Location)> {
-        let new_beginning =
-            Location::from(a.beginning).max(Location::from(b.beginning));
-        let new_end = Location::from(a.end).min(Location::from(b.end));
-        if new_beginning < new_end {
-            Some((new_beginning, new_end))
-        } else {
-            None
-        }
-    }
-    struct Buffer {}
-    impl FlashAlign for Buffer {
-        fn erasable_block_size(&self) -> usize {
-            4
-        }
-    }
-    impl Buffer {
-        fn allocator(&self) -> Allocator {
-            let beginning = self.erasable_location(0).unwrap();
-            let end = beginning.advance_at_least(0x4_0000).unwrap();
-            // Note: Hole is at 0x2_0000.
-            Allocator::new(
-                ProcessorGeneration::Naples,
-                ErasableRange::new(beginning, end),
-            )
-            .unwrap()
-        }
-        fn efh_range(&self) -> ErasableRange {
-            ErasableRange::new(
-                self.erasable_location(0x2_0000).unwrap(),
-                self.erasable_location(0x2_0000)
-                    .unwrap()
-                    .advance_at_least(static_config::EFH_SIZE as usize)
-                    .unwrap(),
-            )
-        }
-    }
-    #[test]
-    fn test_allocator_1() {
-        let buf = Buffer {};
-        let mut allocator = buf.allocator();
-        let efh_range = buf.efh_range();
-        let a = allocator.take_at_least(42).unwrap();
-        let b = allocator.take_at_least(100).unwrap();
-        assert!(intersect(&a, &b).is_none());
-        assert!(intersect(&a, &efh_range).is_none());
-        assert!(intersect(&b, &efh_range).is_none());
-        assert!(Location::from(b.end) < 0x2_0000);
-    }
-
-    #[test]
-    fn test_allocator_2() {
-        let buf = Buffer {};
-        let mut allocator = buf.allocator();
-        let efh_range = buf.efh_range();
-        let a = allocator.take_at_least(0x2_0000).unwrap();
-        let b = allocator.take_at_least(100).unwrap();
-        assert!(intersect(&a, &b).is_none());
-        assert!(intersect(&a, &efh_range).is_none());
-        assert!(intersect(&b, &efh_range).is_none());
-        assert!(Location::from(b.end) < 0x4_0000);
-    }
-
-    #[test]
-    fn test_allocator_3() {
-        let buf = Buffer {};
-        let mut allocator = buf.allocator();
-        let efh_range = buf.efh_range();
-        let a = allocator.take_at_least(0x1_fff8).unwrap();
-        let b = allocator.take_at_least(100).unwrap();
-        assert!(intersect(&a, &b).is_none());
-        assert!(intersect(&a, &efh_range).is_none());
-        assert!(intersect(&b, &efh_range).is_none());
-        assert!(Location::from(b.end) < 0x4_0000);
-        assert!(Location::from(b.beginning) > 0x2_0000);
-    }
 }
 
 #[allow(clippy::type_complexity)]
