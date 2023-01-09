@@ -4,7 +4,7 @@ all: efs.schema.json milan-ethanol-x rome-ethanol-x milan-gimlet-b
 .PHONY: FRC
 
 SOURCES = amd-host-image-builder-config/src/lib.rs \
-    src/hole.rs src/main.rs src/static_config.rs src/images.rs src/allocators.rs \
+    src/hole.rs src/main.rs src/static_config.rs src/images.rs \
     Cargo.toml amd-host-image-builder-config/Cargo.toml Cargo.lock
 
 CARGO = cargo
