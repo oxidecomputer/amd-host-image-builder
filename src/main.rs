@@ -19,9 +19,8 @@ use std::path::Path;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
-mod allocators;
 mod static_config;
-use allocators::Allocator;
+use amd_flash::allocators::{ArenaFlashAllocator, FlashAllocate};
 
 use amd_flash::{
     ErasableLocation, ErasableRange, FlashAlign, FlashRead, FlashWrite,
@@ -301,7 +300,7 @@ fn save_psp_directory<T: FlashRead + FlashWrite>(
     )>,
     psp_directory_address_mode: AddressMode,
     storage: &FlashImage,
-    allocator: &mut Allocator,
+    allocator: &mut impl FlashAllocate,
     efs: &mut Efs<T>,
 ) -> std::io::Result<()> {
     let opts = Opts::from_args();
@@ -381,7 +380,7 @@ fn save_bhd_directory<T: FlashRead + FlashWrite>(
     )>,
     bhd_directory_address_mode: AddressMode,
     storage: &FlashImage,
-    allocator: &mut Allocator,
+    allocator: &mut impl FlashAllocate,
     efs: &mut Efs<T>,
 ) -> std::io::Result<()> {
     let opts = Opts::from_args();
@@ -519,14 +518,15 @@ fn run() -> std::io::Result<()> {
         bhd,
     } = config;
     let host_processor_generation = processor_generation;
-    let mut allocator = Allocator::new(
-        host_processor_generation,
+    let mut allocator = ArenaFlashAllocator::new(
+        crate::static_config::EFH_BEGINNING(host_processor_generation),
+        crate::static_config::EFH_SIZE,
         ErasableRange::new(
             storage.erasable_location(0).unwrap(),
             storage.erasable_location(static_config::IMAGE_SIZE).unwrap(),
         ),
     )
-    .map_err(amd_host_image_builder_config_error_to_io_error)?;
+    .map_err(flash_to_io_error)?;
     // Avoid area around 0 because AMD likes to use Efh locations == 0 to
     // mean "invalid".  We reserve the lowest sector (64 KiB) for Hubris's use,
     // particularly to store which host BSU is active.
