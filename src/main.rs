@@ -619,7 +619,7 @@ fn run() -> std::io::Result<()> {
                         let body = std::fs::read(&blob_filename).unwrap();
                         raw_entry.set_size(Some(body.len().try_into().unwrap()));
 
-                        if raw_entry.type_() == PspDirectoryEntryType::Abl0 {
+                        if let Ok(PspDirectoryEntryType::Abl0) = raw_entry.typ_or_err() {
                             let new_abl0_version = psp_file_version(&blob_filename);
                             if !abl0_version_found {
                                 abl0_version = new_abl0_version;
