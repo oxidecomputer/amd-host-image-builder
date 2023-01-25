@@ -317,12 +317,9 @@ fn save_psp_directory<T: FlashRead + FlashWrite>(
 
     // Here we know how big the directory is gonna be.
 
-    let psp_directory_size = PspDirectory::minimal_directory_size(
-        u32::try_from(psp_raw_entries.len())
-            .map_err(|_| amd_efs::Error::DirectoryRangeCheck)
-            .map_err(efs_to_io_error)?,
-    )
-    .map_err(efs_to_io_error)?;
+    let psp_directory_size =
+        PspDirectory::minimal_directory_size(psp_raw_entries.len())
+            .map_err(efs_to_io_error)?;
 
     // Traverse psp_raw_entries and update SOURCE accordingly
 
@@ -400,12 +397,9 @@ fn save_bhd_directory<T: FlashRead + FlashWrite>(
 
     // Here we know how big the directory is gonna be.
 
-    let bhd_directory_size = BhdDirectory::minimal_directory_size(
-        u32::try_from(bhd_raw_entries.len())
-            .map_err(|_| amd_efs::Error::Misaligned)
-            .map_err(efs_to_io_error)?,
-    )
-    .map_err(efs_to_io_error)?;
+    let bhd_directory_size =
+        BhdDirectory::minimal_directory_size(bhd_raw_entries.len())
+            .map_err(efs_to_io_error)?;
 
     // Traverse bhd_raw_entries and update SOURCE accordingly
 
