@@ -143,84 +143,18 @@
 							version: "0.1.0",
 							header: {
 								signature: "APCB",
-								header_size: 0x0080,
 								version: 48,
-								apcb_size: 0x00001278,
 								unique_apcb_instance: 0x00000002,
-								checksum_byte: 0xa1,
-								_reserved_1: [
-									0x00,
-									0x00,
-									0x00
-								],
-								_reserved_2: [
-									0x00000000,
-									0x00000000,
-									0x00000000
-								]
 							},
 							v3_header_ext: {
 								signature: "ECB2",
-								_reserved_1: 0x0000,
 								_reserved_2: 0x0010,
 								struct_version: 18,
 								data_version: 256,
 								ext_header_size: 0x00000060,
-								_reserved_3: 0x0000,
 								_reserved_4: 0xffff,
 								_reserved_5: 0x0040,
-								_reserved_6: 0x0000,
-								_reserved_7: [
-									0x00000000,
-									0x00000000
-								],
 								data_offset: 0x0058,
-								header_checksum: 0x00,
-								_reserved_8: 0x00,
-								_reserved_9: [
-									0x00000000,
-									0x00000000,
-									0x00000000
-								],
-								integrity_sign: [
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00,
-									0x00
-								],
-								_reserved_10: [
-									0x00000000,
-									0x00000000,
-									0x00000000
-								],
 								signature_ending: "BCBA"
 							},
 							groups: [
@@ -230,8 +164,6 @@
 										group_id: 0x1704,
 										header_size: 0x0010,
 										version: 0x0001,
-										_reserved_: 0x0000,
-										group_size: 0x00000bc0
 									}
 								},
 								{
@@ -240,8 +172,6 @@
 										group_id: 0x3000,
 										header_size: 0x0010,
 										version: 0x0001,
-										_reserved_: 0x0000,
-										group_size: 0x00000638
 									}
 								}
 							],
@@ -250,7 +180,6 @@
 									header: {
 										group_id: 0x1704,
 										entry_id: 0x0031,
-										entry_size: 0x0110,
 										instance_id: 0x0000,
 										context_type: "Struct",
 										context_format: "Raw",
@@ -589,7 +518,6 @@
 									header: {
 										group_id: 0x1704,
 										entry_id: 0x0040,
-										entry_size: 0x0048,
 										instance_id: 0x0000,
 										context_type: "Struct",
 										context_format: "Raw",
@@ -604,7 +532,6 @@
 									platform_specific_overrides: [
 										{
 											MemclkMap: {
-												type_: 0x07,
 												payload_size: 0x0b,
 												sockets: {
 													socket_0: true,
@@ -632,7 +559,6 @@
 										},
 										{
 											CkeTristateMap: {
-												type_: 0x01,
 												payload_size: 0x07,
 												sockets: {
 													socket_0: true,
@@ -656,7 +582,6 @@
 										},
 										{
 											OdtTristateMap: {
-												type_: 0x02,
 												payload_size: 0x07,
 												sockets: {
 													socket_0: true,
@@ -680,7 +605,6 @@
 										},
 										{
 											CsTristateMap: {
-												type_: 0x03,
 												payload_size: 0x0b,
 												sockets: {
 													socket_0: true,
@@ -708,7 +632,6 @@
 										},
 										{
 											MaxDimmsPerChannel: {
-												type_: 0x04,
 												payload_size: 0x04,
 												sockets: {
 													socket_0: true,
@@ -727,7 +650,6 @@
 										},
 										{
 											MaxChannelsPerSocket: {
-												type_: 0x08,
 												payload_size: 0x04,
 												sockets: {
 													socket_0: true,
@@ -750,7 +672,6 @@
 									header: {
 										group_id: 0x1704,
 										entry_id: 0x0046,
-										entry_size: 0x00b0,
 										instance_id: 0x0000,
 										context_type: "Struct",
 										context_format: "Raw",
@@ -1073,7 +994,6 @@
 									header: {
 										group_id: 0x1704,
 										entry_id: 0x0047,
-										entry_size: 0x0448,
 										instance_id: 0x0000,
 										context_type: "Struct",
 										context_format: "Raw",
@@ -1119,9 +1039,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x00393939,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -1161,9 +1079,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x00373737,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -1203,9 +1119,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x00353535,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -1245,9 +1159,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x00333333,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -1287,9 +1199,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x00313131,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -1329,9 +1239,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x002f2f2f,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -1371,9 +1279,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x002d2d2d,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -1413,9 +1319,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x00393939,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -1455,9 +1359,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x00393939,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -1497,9 +1399,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x00353939,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -1539,9 +1439,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x00373737,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -1581,9 +1479,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x00373737,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -1623,9 +1519,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x00333939,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -1665,9 +1559,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x00333737,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -1707,9 +1599,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x00333737,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -1749,9 +1639,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x00353535,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -1791,9 +1679,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x00353535,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -1833,9 +1719,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x00313535,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -1875,9 +1759,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x00333333,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -1917,9 +1799,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x00333333,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -1959,9 +1839,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x002f3333,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -2001,9 +1879,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x00313131,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -2043,9 +1919,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x00313131,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -2085,9 +1959,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x002d3131,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -2127,9 +1999,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x002f2f2f,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -2169,9 +2039,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x002f2f2f,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -2211,9 +2079,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x002c2f2f,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -2253,9 +2119,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x002d2d2d,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -2295,9 +2159,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x002d2d2d,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -2337,9 +2199,7 @@
 												quad_rank: false
 											},
 											gear_down_mode: false,
-											_reserved_: 0x0000,
 											slow_mode: false,
-											_reserved_2: 0x0000,
 											address_command_control: 0x002a2d2d,
 											cke_drive_strength: "30 Ω",
 											cs_odt_drive_strength: "30 Ω",
@@ -2352,7 +2212,6 @@
 									header: {
 										group_id: 0x1704,
 										entry_id: 0x0048,
-										entry_size: 0x0218,
 										instance_id: 0x0000,
 										context_type: "Struct",
 										context_format: "Raw",
@@ -2556,7 +2415,6 @@
 											},
 											vdd_io: {
 												"1.2 V": true,
-												_reserved_1: 0
 											},
 											dimm0_ranks: {
 												unpopulated: false,
@@ -2802,7 +2660,6 @@
 									header: {
 										group_id: 0x1704,
 										entry_id: 0x0049,
-										entry_size: 0x0080,
 										instance_id: 0x0000,
 										context_type: "Struct",
 										context_format: "Raw",
@@ -2824,7 +2681,6 @@
 													four_dimms: false
 												}
 											},
-											_reserved_: 0x00,
 											conditions: [
 												0x0001,
 												0x0001,
@@ -2846,7 +2702,6 @@
 													four_dimms: false
 												}
 											},
-											_reserved_: 0x00,
 											conditions: [
 												0x0001,
 												0x0000,
@@ -2868,7 +2723,6 @@
 													four_dimms: false
 												}
 											},
-											_reserved_: 0x00,
 											conditions: [
 												0x0001,
 												0x0001,
@@ -2890,7 +2744,6 @@
 													four_dimms: false
 												}
 											},
-											_reserved_: 0x00,
 											conditions: [
 												0x0001,
 												0x0000,
@@ -2912,7 +2765,6 @@
 													four_dimms: false
 												}
 											},
-											_reserved_: 0x00,
 											conditions: [
 												0x0002,
 												0x0002,
@@ -2934,7 +2786,6 @@
 													four_dimms: false
 												}
 											},
-											_reserved_: 0x00,
 											conditions: [
 												0x0002,
 												0x0001,
@@ -2956,7 +2807,6 @@
 													four_dimms: false
 												}
 											},
-											_reserved_: 0x00,
 											conditions: [
 												0x0002,
 												0x0000,
@@ -2975,7 +2825,6 @@
 									header: {
 										group_id: 0x1704,
 										entry_id: 0x004a,
-										entry_size: 0x0080,
 										instance_id: 0x0000,
 										context_type: "Struct",
 										context_format: "Raw",
@@ -2997,7 +2846,6 @@
 													four_dimms: false
 												}
 											},
-											_reserved_: 0x00,
 											conditions: [
 												0x0001,
 												0x0001,
@@ -3019,7 +2867,6 @@
 													four_dimms: false
 												}
 											},
-											_reserved_: 0x00,
 											conditions: [
 												0x0001,
 												0x0000,
@@ -3041,7 +2888,6 @@
 													four_dimms: false
 												}
 											},
-											_reserved_: 0x00,
 											conditions: [
 												0x0001,
 												0x0001,
@@ -3063,7 +2909,6 @@
 													four_dimms: false
 												}
 											},
-											_reserved_: 0x00,
 											conditions: [
 												0x0001,
 												0x0000,
@@ -3085,7 +2930,6 @@
 													four_dimms: false
 												}
 											},
-											_reserved_: 0x00,
 											conditions: [
 												0x0002,
 												0x0002,
@@ -3107,7 +2951,6 @@
 													four_dimms: false
 												}
 											},
-											_reserved_: 0x00,
 											conditions: [
 												0x0002,
 												0x0001,
@@ -3129,7 +2972,6 @@
 													four_dimms: false
 												}
 											},
-											_reserved_: 0x00,
 											conditions: [
 												0x0002,
 												0x0000,
@@ -3148,7 +2990,6 @@
 									header: {
 										group_id: 0x1704,
 										entry_id: 0x004b,
-										entry_size: 0x0040,
 										instance_id: 0x0000,
 										context_type: "Struct",
 										context_format: "Raw",
@@ -3170,7 +3011,6 @@
 													four_dimms: false
 												}
 											},
-											_reserved_: 0x00,
 											conditions: [
 												0x0001,
 												0x0000,
@@ -3192,7 +3032,6 @@
 													four_dimms: false
 												}
 											},
-											_reserved_: 0x00,
 											conditions: [
 												0x0001,
 												0x0000,
@@ -3214,7 +3053,6 @@
 													four_dimms: false
 												}
 											},
-											_reserved_: 0x00,
 											conditions: [
 												0x0002,
 												0x0000,
@@ -3233,7 +3071,6 @@
 									header: {
 										group_id: 0x1704,
 										entry_id: 0x004c,
-										entry_size: 0x0040,
 										instance_id: 0x0000,
 										context_type: "Struct",
 										context_format: "Raw",
@@ -3255,7 +3092,6 @@
 													four_dimms: false
 												}
 											},
-											_reserved_: 0x00,
 											conditions: [
 												0x0001,
 												0x0000,
@@ -3277,7 +3113,6 @@
 													four_dimms: false
 												}
 											},
-											_reserved_: 0x00,
 											conditions: [
 												0x0001,
 												0x0000,
@@ -3299,7 +3134,6 @@
 													four_dimms: false
 												}
 											},
-											_reserved_: 0x00,
 											conditions: [
 												0x0002,
 												0x0000,
@@ -3318,7 +3152,6 @@
 									header: {
 										group_id: 0x1704,
 										entry_id: 0x004d,
-										entry_size: 0x00e0,
 										instance_id: 0x0000,
 										context_type: "Struct",
 										context_format: "Raw",
@@ -3509,7 +3342,6 @@
 									header: {
 										group_id: 0x1704,
 										entry_id: 0x0050,
-										entry_size: 0x0024,
 										instance_id: 0x0000,
 										context_type: "Struct",
 										context_format: "Raw",
@@ -3533,21 +3365,18 @@
 											enable_mem_pmu_sram_write_logging: false,
 											enable_mem_test_verbose_logging: false,
 											enable_mem_basic_output_logging: true,
-											_reserved_: 0x0000,
 											abl_console_port: 0x00000080
 										},
 										abl_breakpoint_control: {
 											enable_breakpoint: false,
 											break_on_all_dies: false
 										},
-										_reserved_: 0x0000
 									}
 								},
 								{
 									header: {
 										group_id: 0x1704,
 										entry_id: 0x0052,
-										entry_size: 0x0080,
 										instance_id: 0x0000,
 										context_type: "Struct",
 										context_format: "Raw",
@@ -3568,23 +3397,16 @@
 										output_delay: 0x00003a98,
 										output_port: 0x00000080,
 										stop_on_first_fatal_error: false,
-										_reserved_: [
-											0x00,
-											0x00,
-											0x00
-										],
 										input_port_size: "32 Bit",
 										output_port_size: "32 Bit",
 										input_port_type: "FchHtIo",
 										output_port_type: "FchHtIo",
 										clear_acknowledgement: false,
-										_reserved_before_gpio: [],
 										error_reporting_gpio: {
 											pin: 0x55,
 											iomux_control: 0x01,
 											bank_control: 0xc0
 										},
-										_reserved_after_gpio: [],
 										beep_code_table: [
 											{
 												custom_error_type: "General",
@@ -3666,18 +3488,12 @@
 											iomux_control: 0x00,
 											bank_control: 0x00
 										},
-										_reserved_end: [
-											0x00,
-											0x00,
-											0x00
-										]
 									}
 								},
 								{
 									header: {
 										group_id: 0x1704,
 										entry_id: 0x0053,
-										entry_size: 0x0030,
 										instance_id: 0x0000,
 										context_type: "Struct",
 										context_format: "Raw",
@@ -3691,11 +3507,6 @@
 									},
 									ExtVoltageControl: {
 										enabled: true,
-										_reserved_: [
-											0x00,
-											0x00,
-											0x00
-										],
 										input_port: 0x00000084,
 										output_port: 0x00000080,
 										input_port_size: "32 Bit",
@@ -3703,18 +3514,12 @@
 										input_port_type: "FchHtIo",
 										output_port_type: "FchHtIo",
 										clear_acknowledgement: false,
-										_reserved_2: [
-											0x00,
-											0x00,
-											0x00
-										]
 									}
 								},
 								{
 									header: {
 										group_id: 0x1704,
 										entry_id: 0x0075,
-										entry_size: 0x0014,
 										instance_id: 0x0000,
 										context_type: "Struct",
 										context_format: "Raw",
@@ -3729,7 +3534,6 @@
 									platform_tuning: [
 										{
 											Terminator: {
-												type_: 0xfeef
 											}
 										},
 										{
@@ -3748,7 +3552,6 @@
 									header: {
 										group_id: 0x3000,
 										entry_id: 0x0000,
-										entry_size: 0x0200,
 										instance_id: 0x0000,
 										context_type: "Tokens",
 										context_format: "SortAscending",
@@ -4077,7 +3880,6 @@
 									header: {
 										group_id: 0x3000,
 										entry_id: 0x0001,
-										entry_size: 0x02e0,
 										instance_id: 0x0000,
 										context_type: "Tokens",
 										context_format: "SortAscending",
@@ -4550,7 +4352,6 @@
 									header: {
 										group_id: 0x3000,
 										entry_id: 0x0002,
-										entry_size: 0x0088,
 										instance_id: 0x0000,
 										context_type: "Tokens",
 										context_format: "SortAscending",
@@ -4646,7 +4447,6 @@
 									header: {
 										group_id: 0x3000,
 										entry_id: 0x0004,
-										entry_size: 0x00c0,
 										instance_id: 0x0000,
 										context_type: "Tokens",
 										context_format: "SortAscending",
