@@ -528,8 +528,9 @@ fn run() -> std::io::Result<()> {
     )
     .map_err(amd_host_image_builder_config_error_to_io_error)?;
     // Avoid area around 0 because AMD likes to use Efh locations == 0 to
-    // mean "invalid".
-    let _invalid = allocator.take_at_least(1);
+    // mean "invalid".  We reserve the lowest sector (64 KiB) for Hubris's use,
+    // particularly to store which host BSU is active.
+    let _invalid = allocator.take_at_least(0x10000);
 
     let mut efs = match Efs::create(
         &storage,
