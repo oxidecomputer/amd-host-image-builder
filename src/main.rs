@@ -530,7 +530,7 @@ fn run() -> std::io::Result<()> {
     // Avoid area around 0 because AMD likes to use Efh locations == 0 to
     // mean "invalid".  We reserve the lowest sector (64 KiB) for Hubris's use,
     // particularly to store which host BSU is active.
-    let _invalid = allocator.take_at_least(0x10000);
+    let _invalid = allocator.take_at_least(0x1_0000);
 
     let mut efs = match Efs::create(
         &storage,
