@@ -35,7 +35,7 @@ The PSP will print debug messages to the serial port that can be configured in t
 
 # Configuration
 
-The configuration file is JSON. `make` also builds a schema and stores it into file `efs.schema.json`. It is recommended to use an editor that can use JSON schemas to make editing the configuration easier.
+The configuration file is JSON. `make` also builds a schema and stores it into file `efs.schema.json` in the project root directory. It is recommended to use an editor that can use JSON schemas to make editing the configuration easier (for example IntelliJ IDEA can be used--create a mapping between the file suffix `.efs.json5` and the file `efs.schema.json` in `JSON Schema Mappings` in its global settings).
 
 The configuration contains: processor generation, psp directory and bhd directory.
 
