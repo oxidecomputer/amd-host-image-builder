@@ -1,17 +1,25 @@
+use amd_host_image_builder_config::SerdeConfig;
+use schemars::gen::SchemaSettings;
+use schemars::schema::RootSchema;
 use std::path::Path;
 use valico::json_schema;
 
-#[macro_use]
-extern crate pathsep;
-const SCHEMA_STR: &str =
-    include_str!(join_path!(env!("OUT_DIR"), "efs.schema.json"));
+pub fn generate_config_json_schema() -> RootSchema {
+    let settings = SchemaSettings::default().with(|s| {
+        // Work around schemars issue #62.
+        // Downside: This makes the schema bigger by an order
+        // of magnitude.
+        s.inline_subschemas = true
+    });
+    let gen = settings.into_generator();
+    gen.into_root_schema_for::<SerdeConfig>()
+}
 
-#[test]
-fn test_schema() {
+fn test_schema(schema_str: &str) {
     // Make sure our test efs config validates using the schema we just
     // generated.
     let schema_json: serde_json::Value =
-        serde_json::from_str(SCHEMA_STR).expect("Schema");
+        serde_json::from_str(schema_str).expect("Schema");
     let configuration_filename =
         Path::new("test-inputs").join("Milan.efs.json5");
     let configuration_str =
@@ -36,4 +44,11 @@ fn test_schema() {
         }
         panic!("validation error");
     }
+}
+
+fn main() {
+    let schema = generate_config_json_schema();
+    let schema_string = serde_json::to_string_pretty(&schema).unwrap();
+    test_schema(&schema_string);
+    println!("{}", schema_string);
 }

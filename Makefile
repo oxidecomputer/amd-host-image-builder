@@ -1,4 +1,4 @@
-all: milan-ethanol-x rome-ethanol-x milan-gimlet-b
+all: efs.schema.json milan-ethanol-x rome-ethanol-x milan-gimlet-b
 .PHONY: milan-ethanol-x milan-ethanol-x-1.0.0.9 rome-ethanol-x milan-gimlet-b
 .PHONY: all clean tests
 .PHONY: FRC
@@ -13,6 +13,9 @@ FRC:
 
 nanobl-rs/obj/nanobl-rs.elf: FRC
 	$(MAKE) -C nanobl-rs FLAGS_FOR_CARGO="$(NANOBL_FLAGS_FOR_CARGO)"
+
+efs.schema.json: amd-host-image-builder-config/src/lib.rs amd-host-image-builder-config/Cargo.toml amd-host-image-builder-config/examples/amd-host-image-builder-schema.rs
+	$(CARGO) run --manifest-path amd-host-image-builder-config/Cargo.toml --example amd-host-image-builder-schema > $@.new && mv $@.new $@
 
 milan-ethanol-x.img: etc/milan-ethanol-x.efs.json5 nanobl-rs/obj/nanobl-rs.elf \
   amd-firmware/GN/1.0.0.9/AmdPubKey_gn.tkn \

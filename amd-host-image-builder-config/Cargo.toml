@@ -11,3 +11,8 @@ amd-efs = { git = "ssh://git@github.com/oxidecomputer/amd-efs.git", tag = "v0.2.
 amd-flash = { git = "ssh://git@github.com/oxidecomputer/amd-flash.git", tag = "v0.1.1" }
 schemars = "0.8.8"
 serde = { version = "1.0", default-features = false, features = ["derive"] }
+
+[dev-dependencies]
+serde_json = "1.0.78"
+json5 = "0.4.1"
+valico = "2"
