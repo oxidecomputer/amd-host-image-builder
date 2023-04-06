@@ -252,7 +252,7 @@ rome-ethanol-x.img: etc/rome-ethanol-x.efs.json5 nanobl-rs/obj/nanobl-rs.elf \
   $(SOURCES)
 	$(CARGO) run -- $(BLOB_DIRS:%=-B %) -v -B amd-firmware/SSP/1.0.0.a -c $< -r nanobl-rs/obj/nanobl-rs.elf -o $@
 
-milan-gimlet-b.img: etc/milan-gimlet-b-1.0.0.1.efs.json5 nanobl-rs/obj/nanobl-rs.elf \
+milan-gimlet-b-1.0.0.1.img: etc/milan-gimlet-b-1.0.0.1.efs.json5 nanobl-rs/obj/nanobl-rs.elf \
   amd-firmware/GN/1.0.0.1/AmdPubKey_gn.tkn \
   amd-firmware/GN/1.0.0.1/PspBootLoader_gn.esbin \
   amd-firmware/GN/1.0.0.1/PspRecoveryBootLoader_gn.esbin \
@@ -318,6 +318,40 @@ milan-gimlet-b-1.0.0.9.img: etc/milan-gimlet-b.efs.json5 nanobl-rs/obj/nanobl-rs
   $(SOURCES)
 	$(CARGO) run -- $(BLOB_DIRS:%=-B %) -v -B amd-firmware/GN/1.0.0.9-fastspew -B amd-firmware/GN/1.0.0.9 -c $< -r nanobl-rs/obj/nanobl-rs.elf -o $@
 
+milan-gimlet-b-1.0.0.a.img: etc/milan-gimlet-b.efs.json5 nanobl-rs/obj/nanobl-rs.elf \
+  amd-firmware/GN/1.0.0.a/AmdPubKey_gn.tkn \
+  amd-firmware/GN/1.0.0.a/PspBootLoader_gn.sbin \
+  amd-firmware/GN/1.0.0.a/PspRecoveryBootLoader_gn.sbin \
+  amd-firmware/GN/1.0.0.a/SmuFirmwareGn.csbin \
+  amd-firmware/GN/1.0.0.a/SecureDebugToken_gn.stkn \
+  amd-firmware/GN/1.0.0.a/PspABLFw_gn.stkn \
+  amd-firmware/GN/1.0.0.a/SmuFirmware2Gn.csbin \
+  amd-firmware/GN/1.0.0.a/SecureDebugUnlock_gn.sbin \
+  amd-firmware/GN/1.0.0.a/PspIkek_gn.bin \
+  amd-firmware/GN/1.0.0.a/SecureEmptyToken.bin \
+  amd-firmware/GN/1.0.0.a/RsmuSecPolicy_gn.sbin \
+  amd-firmware/GN/1.0.0.a/Mp5Gn.csbin \
+  amd-firmware/GN/1.0.0.a/AgesaBootloader_U_prod_GN.csbin \
+  amd-firmware/GN/1.0.0.a/GnPhyFw.sbin \
+  amd-firmware/GN/1.0.0.a/PSP-Key-DB_gn.sbin \
+  amd-firmware/GN/1.0.0.a/Appb_GN_1D_Ddr4_Udimm_Imem.csbin \
+  amd-firmware/GN/1.0.0.a/Appb_GN_1D_Ddr4_Udimm_Dmem.csbin \
+  amd-firmware/GN/1.0.0.a/Appb_GN_1D_Ddr4_Rdimm_Imem.csbin \
+  amd-firmware/GN/1.0.0.a/Appb_GN_1D_Ddr4_Rdimm_Dmem.csbin \
+  amd-firmware/GN/1.0.0.a/Appb_GN_2D_Ddr4_Udimm_Imem.csbin \
+  amd-firmware/GN/1.0.0.a/Appb_GN_2D_Ddr4_Udimm_Dmem.csbin \
+  amd-firmware/GN/1.0.0.a/Appb_GN_2D_Ddr4_Rdimm_Imem.csbin \
+  amd-firmware/GN/1.0.0.a/Appb_GN_2D_Ddr4_Rdimm_Dmem.csbin \
+  amd-firmware/GN/1.0.0.a/Appb_GN_BIST_Ddr4_Udimm_Imem.csbin \
+  amd-firmware/GN/1.0.0.a/Appb_GN_BIST_Ddr4_Udimm_Dmem.csbin \
+  amd-firmware/GN/1.0.0.a/Appb_GN_BIST_Ddr4_Rdimm_Imem.csbin \
+  amd-firmware/GN/1.0.0.a/Appb_GN_BIST_Ddr4_Rdimm_Dmem.csbin \
+  amd-firmware/GN/1.0.0.a/Appb_GN_BIST_Ddr4_Lrdimm_Imem.csbin \
+  amd-firmware/GN/1.0.0.a/Appb_GN_BIST_Ddr4_Lrdimm_Dmem.csbin \
+  $(SOURCES)
+	$(CARGO) run -- $(BLOB_DIRS:%=-B %) -v -B amd-firmware/GN/1.0.0.a -c $< -r nanobl-rs/obj/nanobl-rs.elf -o $@
+
+
 # For compatibility with previous versions of this tool
 milan-ethanol-x: milan-ethanol-x.img
 
@@ -325,7 +359,8 @@ milan-ethanol-x: milan-ethanol-x.img
 rome-ethanol-x: rome-ethanol-x.img
 
 # For compatibility with previous versions of this tool
-milan-gimlet-b: milan-gimlet-b.img
+milan-gimlet-b: milan-gimlet-b-1.0.0.a.img
+	@cp milan-gimlet-b-1.0.0.a.img milan-gimlet-b.img
 
 # For compatibility with previous versions of this tool
 milan-ethanol-x-1.0.0.9: milan-ethanol-x-1.0.0.9.img

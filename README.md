@@ -15,7 +15,7 @@ This is done by executing the following command:
 Then edit `etc/milan-gimlet-b.efs.json5` (or similar configuration file) to your liking.
 Then, build an image for Milan by the following commands:
 
-    make milan-gimlet-b.img
+    make milan-gimlet-b
 
 It's possible to specify `NANOBL_FLAGS_FOR_CARGO=...` at the end of that line in order to pass flags for the bootloader nanobl. An example would be to enable feature flags via `NANOBL_FLAGS_FOR_CARGO="-F <feature> ..."`.
 
