@@ -15,6 +15,8 @@ use std::fs;
 use std::fs::File;
 use std::io::BufReader;
 use std::io::Read;
+use std::io::Seek;
+use std::io::SeekFrom;
 use std::path::Path;
 use std::path::PathBuf;
 use structopt::StructOpt;
@@ -87,25 +89,40 @@ fn size_file(
 /// its value.
 /// In case of error (file can't be read, version field not found, ...),
 /// returns None.
-fn psp_file_version(source_filename: &Path) -> Option<u32> {
-    // Note: This does not work on Rome and neither do we know a useful
-    // ABL version there anyway. But the magic also doesn't match, so
-    // this will be fine.
+fn abl_file_version(source_filename: &Path) -> Option<u32> {
+    // Note: This does work on Rome starting with Rome 1.0.0.a.
+    let (file, _size) = size_file(source_filename, None).ok()?;
+    let mut source = BufReader::new(file);
+    let mut header: [u8; 0x110] = [0; 0x110];
+    source.read_exact(&mut header).ok()?;
+    let ver_raw = <[u8; 4]>::try_from(&header[0x60..0x64]).ok()?;
+    let ver = u32::from_le_bytes(ver_raw);
+    if ver != 0 {
+        return Some(ver);
+    }
+
+    let ver_header_loc_raw = <[u8; 4]>::try_from(&header[0x104..0x108]).ok()?;
+    let ver_header_loc = u32::from_le_bytes(ver_header_loc_raw).into();
+    source.seek(SeekFrom::Start(ver_header_loc)).ok()?;
+    let mut header: [u8; 0x64] = [0; 0x64]; // or more, I guess
+    source.read_exact(&mut header).ok()?;
+    let ver_raw = <[u8; 4]>::try_from(&header[0x60..0x64]).ok()?;
+    let ver = u32::from_le_bytes(ver_raw);
+    (ver != 0).then_some(ver)
+}
+
+/// Reads the file named SOURCE_FILENAME, finds the version field in there (if any) and returns
+/// its value.
+/// In case of error (file can't be read, version field not found, ...),
+/// returns None.
+fn smu_file_version(source_filename: &Path) -> Option<(u8, u8, u8, u8)> {
     let (file, _size) = size_file(source_filename, None).ok()?;
     let mut source = BufReader::new(file);
     let mut header: [u8; 0x100] = [0; 0x100];
-    if source.read_exact(&mut header).is_ok() {
-        let magic = &header[0x10..0x14];
-        if magic == *b"$PS1" {
-            let version_raw = <[u8; 4]>::try_from(&header[0x60..0x64]).ok()?;
-            let version = u32::from_le_bytes(version_raw);
-            Some(version)
-        } else {
-            None
-        }
-    } else {
-        None
-    }
+    source.read_exact(&mut header).ok()?;
+    let ver_raw = <[u8; 4]>::try_from(&header[0x60..0x64]).ok()?;
+    (ver_raw[2] != 0)
+        .then_some((ver_raw[3], ver_raw[2], ver_raw[1], ver_raw[0]))
 }
 
 fn elf_symbol(
@@ -582,8 +599,10 @@ fn run() -> std::io::Result<()> {
 
     // ================================ PSP =============================
 
-    let mut abl0_version: Option<u32> = None;
-    let mut abl0_version_found = false;
+    let mut abl_version: Option<u32> = None;
+    let mut abl_version_found = false;
+    let mut smu_version: Option<(u8, u8, u8, u8)> = None;
+    let mut smu_version_found = false;
     let psp_directory_address_mode = AddressMode::EfsRelativeOffset;
     let mut psp_raw_entries = match psp {
         SerdePspDirectoryVariant::PspDirectory(ref serde_psp_directory) => {
@@ -614,15 +633,37 @@ fn run() -> std::io::Result<()> {
                         let body = std::fs::read(&blob_filename).unwrap();
                         raw_entry.set_size(Some(body.len().try_into().unwrap()));
 
-                        if let Ok(PspDirectoryEntryType::Abl0) = raw_entry.typ_or_err() {
-                            let new_abl0_version = psp_file_version(&blob_filename);
-                            if !abl0_version_found {
-                                abl0_version = new_abl0_version;
-                                abl0_version_found = true
+                        match raw_entry.typ_or_err() {
+                            Ok(PspDirectoryEntryType::Abl0) |
+                            Ok(PspDirectoryEntryType::Abl1) |
+                            Ok(PspDirectoryEntryType::Abl2) |
+                            Ok(PspDirectoryEntryType::Abl3) |
+                            Ok(PspDirectoryEntryType::Abl4) |
+                            Ok(PspDirectoryEntryType::Abl5) |
+                            Ok(PspDirectoryEntryType::Abl6) |
+                            Ok(PspDirectoryEntryType::Abl7) => {
+                                let new_abl_version = abl_file_version(&blob_filename);
+                                if !abl_version_found {
+                                    abl_version = new_abl_version;
+                                    abl_version_found = true
+                                }
+                                // For now, we do not support different ABL versions in the same image.
+                                if new_abl_version != abl_version {
+                                    panic!("different ABL versions in the same flash are unsupported")
+                                }
                             }
-                            // For now, we do not support different ABL0 versions in the same image.
-                            if new_abl0_version != abl0_version {
-                                panic!("different ABL0 versions in the same flash are unsupported")
+                            Ok(PspDirectoryEntryType::SmuOffChipFirmware8) | Ok(PspDirectoryEntryType::SmuOffChipFirmware12) => {
+                                let new_smu_version = smu_file_version(&blob_filename);
+                                if !smu_version_found {
+                                    smu_version = new_smu_version;
+                                    smu_version_found = true
+                                }
+                                // For now, we do not support different SMU firmware versions in the same image.
+                                if new_smu_version != smu_version {
+                                    panic!("different SMU versions in the same flash are unsupported")
+                                }
+                            }
+                            _ => {
                             }
                         }
                         (raw_entry, x, Some(body))
@@ -635,10 +676,21 @@ fn run() -> std::io::Result<()> {
             todo!();
         }
     };
-    if let Some(abl0_version) = abl0_version {
-        if opts.verbose {
-            // See AgesaBLReleaseNotes.txt, section "ABL Version String"
-            println!("Info: Abl0 version: 0x{abl0_version:x}")
+    if opts.verbose {
+        // See AgesaBLReleaseNotes.txt, section "ABL Version String"
+        match abl_version {
+            Some(v) => println!("Info: ABL version: 0x{v:x}"),
+            None => println!("Info: ABL version unknown"),
+        }
+        // See SmuReleaseNotesGn.txt, text "Version"
+        match smu_version {
+            Some((0, s1, s2, s3)) => {
+                println!("Info: SMU firmware version: {s1}.{s2}.{s3}")
+            }
+            Some((s0, s1, s2, s3)) => {
+                println!("Info: SMU firmware version: {s0}.{s1}.{s2}.{s3}")
+            }
+            None => println!("Info: SMU firmware version unknown"),
         }
     }
 
@@ -690,8 +742,8 @@ fn run() -> std::io::Result<()> {
                     SerdeBhdSource::ApcbJson(apcb) => {
                         // Note: We need to do this
                         // manually because validation
-                        // needs ABL0_VERSION.
-                        apcb.validate(abl0_version)
+                        // needs ABL_VERSION.
+                        apcb.validate(abl_version)
                             .map_err(apcb_to_io_error)
                             .unwrap();
                         let buf = apcb
