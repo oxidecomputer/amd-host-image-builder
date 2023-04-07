@@ -2,6 +2,7 @@ all: efs.schema.json milan-ethanol-x rome-ethanol-x milan-gimlet-b
 .PHONY: milan-ethanol-x milan-ethanol-x-1.0.0.9 rome-ethanol-x milan-gimlet-b
 .PHONY: all clean tests
 .PHONY: FRC
+.DELETE_ON_ERROR:
 
 SOURCES = amd-host-image-builder-config/src/lib.rs \
     src/hole.rs src/main.rs src/static_config.rs src/images.rs \
