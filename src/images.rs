@@ -140,4 +140,25 @@ impl FlashImage {
         assert!(Location::from(position) == crate::static_config::IMAGE_SIZE);
         Ok(())
     }
+    pub fn load(filename: &Path) -> std::io::Result<Self> {
+        const B: usize = 1;
+        let erasable_block_size = 8192 * B;
+        let file = OpenOptions::new()
+            .read(true)
+            .write(false)
+            .create(false)
+            .open(filename)?;
+        let result = Self {
+            file: RefCell::new(file),
+            filename: filename.to_path_buf(),
+            erasable_block_size,
+            buffer: RefCell::new(
+                std::iter::repeat(0xff).take(erasable_block_size).collect(),
+            ),
+        };
+        Ok(result)
+    }
+    pub fn file_size(&self) -> std::io::Result<u64> {
+        Ok(self.file.borrow().metadata()?.len())
+    }
 }

@@ -1,16 +1,22 @@
+use amd_apcb::{Apcb, ApcbIoOptions};
 use amd_efs::{
     AddressMode, BhdDirectory, BhdDirectoryEntry, BhdDirectoryEntryType,
-    DirectoryEntry, Efs, PspDirectory, PspDirectoryEntry,
+    DirectoryEntry, Efs, ProcessorGeneration, PspDirectory, PspDirectoryEntry,
     PspDirectoryEntryType, ValueOrLocation,
 };
 use amd_host_image_builder_config::{
-    Error, Result, SerdeBhdDirectoryVariant, SerdeBhdSource,
-    SerdePspDirectoryVariant, SerdePspEntrySource,
-    TryFromSerdeDirectoryEntryWithContext,
+    Error, Result, SerdeBhdDirectory, SerdeBhdDirectoryEntry,
+    SerdeBhdDirectoryEntryAttrs, SerdeBhdDirectoryEntryBlob,
+    SerdeBhdDirectoryVariant, SerdeBhdEntry, SerdeBhdSource, SerdePspDirectory,
+    SerdePspDirectoryEntry, SerdePspDirectoryEntryAttrs,
+    SerdePspDirectoryEntryBlob, SerdePspDirectoryVariant, SerdePspEntry,
+    SerdePspEntrySource, TryFromSerdeDirectoryEntryWithContext,
 };
 use core::convert::TryFrom;
 use core::convert::TryInto;
 use static_assertions::const_assert;
+use std::cmp::min;
+use std::collections::HashSet;
 use std::fs;
 use std::fs::File;
 use std::io::BufReader;
@@ -291,21 +297,34 @@ fn bhd_directory_add_reset_image(
     name = "amd-host-image-builder",
     about = "Build host flash image for AMD Zen CPUs."
 )]
-struct Opts {
-    #[structopt(short = "o", long = "output-file", parse(from_os_str))]
-    output_filename: PathBuf,
+enum Opts {
+    Generate {
+        #[structopt(short = "o", long = "output-file", parse(from_os_str))]
+        output_filename: PathBuf,
 
-    #[structopt(short = "r", long = "reset-image", parse(from_os_str))]
-    reset_image_filename: PathBuf,
+        #[structopt(short = "r", long = "reset-image", parse(from_os_str))]
+        reset_image_filename: PathBuf,
 
-    #[structopt(short = "c", long = "config", parse(from_os_str))]
-    efs_configuration_filename: PathBuf,
+        #[structopt(short = "c", long = "config", parse(from_os_str))]
+        efs_configuration_filename: PathBuf,
 
-    #[structopt(short = "B", long = "blobdir", parse(from_os_str))]
-    blobdirs: Vec<PathBuf>,
+        #[structopt(short = "B", long = "blobdir", parse(from_os_str))]
+        blobdirs: Vec<PathBuf>,
 
-    #[structopt(short = "v", long = "verbose")]
-    verbose: bool,
+        #[structopt(short = "v", long = "verbose")]
+        verbose: bool,
+    },
+    Dump {
+        #[structopt(short = "i", long = "existing-file", parse(from_os_str))]
+        input_filename: PathBuf,
+
+        #[structopt(
+            short = "b",
+            long = "blob-dump-directory",
+            parse(from_os_str)
+        )]
+        blob_dump_dirname: Option<PathBuf>,
+    },
 }
 
 #[allow(clippy::type_complexity)]
@@ -319,9 +338,9 @@ fn save_psp_directory<T: FlashRead + FlashWrite>(
     storage: &FlashImage,
     allocator: &mut impl FlashAllocate,
     efs: &mut Efs<T>,
+    output_filename: &Path,
 ) -> std::io::Result<()> {
-    let opts = Opts::from_args();
-    let filename = &opts.output_filename;
+    let filename = output_filename;
     let efs_to_io_error = |e| {
         std::io::Error::new(
             std::io::ErrorKind::Other,
@@ -399,9 +418,9 @@ fn save_bhd_directory<T: FlashRead + FlashWrite>(
     storage: &FlashImage,
     allocator: &mut impl FlashAllocate,
     efs: &mut Efs<T>,
+    output_filename: &Path,
 ) -> std::io::Result<()> {
-    let opts = Opts::from_args();
-    let filename = &opts.output_filename;
+    let filename = output_filename;
     let efs_to_io_error = |e| {
         std::io::Error::new(
             std::io::ErrorKind::Other,
@@ -475,10 +494,291 @@ fn save_bhd_directory<T: FlashRead + FlashWrite>(
     Ok(())
 }
 
-fn run() -> std::io::Result<()> {
-    //let args: Vec<String> = env::args().collect();
-    let opts = Opts::from_args();
-    let filename = &opts.output_filename;
+fn transfer_from_flash_to_io<T: FlashRead + FlashWrite>(
+    storage: &T,
+    beginning: Location,
+    mut size: usize,
+    destination: &mut impl std::io::Write,
+) {
+    let mut buffer = [0u8; 8192];
+    while size > 0 {
+        let chunk_size = min(buffer.len(), size);
+        storage.read_exact(beginning, &mut buffer[..chunk_size]).unwrap();
+        destination.write_all(&buffer[..chunk_size]).unwrap();
+        size = size - chunk_size;
+    }
+}
+
+fn create_dumpfile(
+    existing_filenames: &mut HashSet<PathBuf>,
+    blob_dump_dirname: &PathBuf,
+    section: &str,
+    typ_string: String,
+    instance: u8,
+) -> (File, PathBuf) {
+    let mut path = PathBuf::new();
+    path.push(blob_dump_dirname);
+    path.push(section);
+    let basename = Path::new(&typ_string);
+    path.push(format!("{}-{:02x}.bin", basename.display(), instance));
+    if existing_filenames.contains(&path) {
+        panic!(
+            "Refusing to create two files with the same name: {}",
+            path.display()
+        );
+    }
+    existing_filenames.insert(path.clone());
+    (File::create(&path).expect("creation failed"), path)
+}
+
+fn dump_psp_directory<T: FlashRead + FlashWrite>(
+    storage: &T,
+    psp_directory: &PspDirectory,
+    blob_dump_dirname: &Option<PathBuf>,
+) -> SerdePspDirectoryVariant {
+    if let Some(blob_dump_dirname) = &blob_dump_dirname {
+        let mut path = PathBuf::new();
+        path.push(blob_dump_dirname);
+        path.push("psp-default");
+        fs::create_dir_all(path).unwrap();
+    }
+    // TODO: Handle the other variant (PspComboDirectory)
+    let mut blob_dump_filenames = HashSet::<PathBuf>::new();
+    SerdePspDirectoryVariant::PspDirectory(SerdePspDirectory {
+        entries: psp_directory.entries().map_while(|e| {
+        if let Ok(typ) = e.typ_or_err() {
+
+            let blob_export = match psp_directory.payload_beginning(&e) {
+               Ok(beginning) => {
+                   if let Some(blob_dump_dirname) = blob_dump_dirname {
+                       let typ_string = typ.to_string();
+                       let (data_file, path) = create_dumpfile(&mut blob_dump_filenames, blob_dump_dirname, "psp-default", typ_string, 0);
+                       let size = e.size().unwrap() as usize;
+                       Some((data_file, path, beginning, size))
+                   } else {
+                       None
+                   }
+               }
+               Err(amd_efs::Error::DirectoryTypeMismatch) => {
+                   None
+               }
+               Err(e) => {
+                   panic!("not handled yet (implementation limitation) {:?}", e);
+               }
+            };
+
+            Some(SerdePspEntry {
+                source: match blob_export {
+                    Some((_, ref path, _beginning, _size)) => {
+                        SerdePspEntrySource::BlobFile(path.into()) // FIXME: Value
+                    }
+                    None => {
+                        SerdePspEntrySource::BlobFile("????".into()) // FIXME
+                    }
+                },
+                target: SerdePspDirectoryEntry {
+                    attrs: SerdePspDirectoryEntryAttrs {
+                        type_: typ,
+                        sub_program: e.sub_program_or_err().unwrap(),
+                        rom_id: e.rom_id_or_err().unwrap()
+                    },
+                    blob: match blob_export {
+                    None => {
+                       None
+                    }
+                        Some((mut data_file, ref _path, beginning, size)) => {
+                                transfer_from_flash_to_io(
+                                    storage,
+                                    beginning,
+                                    size,
+                                    &mut data_file,
+                                );
+                            Some(SerdePspDirectoryEntryBlob {
+                        flash_location: Some(psp_directory.payload_beginning(&e).unwrap()),
+                        size: Some(e.size().unwrap()), // FIXME what if it doesn't apply?
+                    })
+                    }
+                }
+                },
+            })
+        } else {
+            eprintln!("WARNING: PSP entry with unknown type was skipped");
+            None
+        }
+        }).collect()
+    })
+}
+
+fn serde_from_bhd_entry(
+    directory: &BhdDirectory,
+    entry: &BhdDirectoryEntry,
+) -> SerdeBhdDirectoryEntry {
+    SerdeBhdDirectoryEntry {
+        attrs: SerdeBhdDirectoryEntryAttrs {
+            type_: entry.typ_or_err().unwrap(),
+            region_type: entry.region_type_or_err().unwrap(),
+            reset_image: entry.reset_image_or_err().unwrap(),
+            copy_image: entry.copy_image_or_err().unwrap(),
+            read_only: entry.read_only_or_err().unwrap(),
+            compressed: entry.compressed_or_err().unwrap(),
+            instance: entry.instance_or_err().unwrap(),
+            sub_program: entry.sub_program_or_err().unwrap(),
+            rom_id: entry.rom_id_or_err().unwrap(),
+        },
+        blob: Some(SerdeBhdDirectoryEntryBlob {
+            flash_location: Some(directory.payload_beginning(&entry).unwrap()),
+            size: entry.size(),
+            ram_destination_address: entry.destination_location(), // FIXME: rename amd-efs destination location to ram_destination_address
+        }),
+    }
+}
+
+fn dump_bhd_directory<'a, T: FlashRead + FlashWrite>(
+    storage: &T,
+    bhd_directory: &BhdDirectory,
+    apcb_buffer_option: &mut Option<&'a mut [u8]>,
+    blob_dump_dirname: &Option<PathBuf>,
+) -> SerdeBhdDirectoryVariant<'a> {
+    if let Some(blob_dump_dirname) = &blob_dump_dirname {
+        let mut path = PathBuf::new();
+        path.push(blob_dump_dirname);
+        path.push("bhd-default");
+        fs::create_dir_all(path).unwrap();
+    }
+    let mut blob_dump_filenames = HashSet::<PathBuf>::new();
+    SerdeBhdDirectoryVariant::BhdDirectory(SerdeBhdDirectory {
+        entries: bhd_directory
+            .entries()
+            .map_while(|entry| {
+                let entry = entry.clone();
+                if let Ok(typ) = entry.typ_or_err() {
+                    let payload_beginning =
+                        bhd_directory.payload_beginning(&entry).unwrap();
+                    let size = entry.size().unwrap() as usize;
+                    match typ {
+                        BhdDirectoryEntryType::ApcbBackup
+                        | BhdDirectoryEntryType::Apcb => {
+                            let apcb_buffer = apcb_buffer_option
+                                .take()
+                                .expect("only one APCB");
+                            storage
+                                .read_exact(
+                                    payload_beginning,
+                                    &mut apcb_buffer[0..size],
+                                )
+                                .unwrap();
+
+                            let apcb = Apcb::load(
+                                std::borrow::Cow::Borrowed(
+                                    &mut apcb_buffer[..],
+                                ),
+                                &ApcbIoOptions::default(),
+                            )
+                            .unwrap();
+                            apcb.validate(None).unwrap(); // TODO: abl0 version ?
+                            Some(SerdeBhdEntry {
+                                source: SerdeBhdSource::ApcbJson(apcb),
+                                target: serde_from_bhd_entry(
+                                    &bhd_directory,
+                                    &entry,
+                                ),
+                            })
+                        }
+                        typ => Some(SerdeBhdEntry {
+                            source: if let Some(blob_dump_dirname) =
+                                &blob_dump_dirname
+                            {
+                                let typ_string = typ.to_string();
+                                let (mut data_file, path) = create_dumpfile(
+                                    &mut blob_dump_filenames,
+                                    blob_dump_dirname,
+                                    "bhd-default",
+                                    typ_string,
+                                    entry.instance(),
+                                );
+                                transfer_from_flash_to_io(
+                                    storage,
+                                    payload_beginning,
+                                    size,
+                                    &mut data_file,
+                                );
+                                SerdeBhdSource::BlobFile(path.into())
+                            } else {
+                                SerdeBhdSource::Implied
+                            },
+                            target: serde_from_bhd_entry(
+                                &bhd_directory,
+                                &entry,
+                            ),
+                        }),
+                    }
+                } else {
+                    eprintln!(
+                        "WARNING: BHD entry with unknown type was skipped"
+                    );
+                    None
+                }
+            })
+            .collect(),
+    })
+}
+
+fn dump(
+    image_filename: &Path,
+    blob_dump_dirname: Option<PathBuf>,
+) -> std::io::Result<()> {
+    let filename = image_filename;
+    let storage = FlashImage::load(filename)?;
+    let filesize = storage.file_size()?;
+    let amd_physical_mode_mmio_size =
+        if filesize <= 0x100_0000 { Some(filesize as u32) } else { None };
+    let efs = Efs::load(&storage, None, amd_physical_mode_mmio_size).unwrap();
+    if !efs.compatible_with_processor_generation(ProcessorGeneration::Milan) {
+        panic!("only Milan is supported for dumping right now");
+    }
+    println!("{:?}", efs.efh);
+    let mut apcb_buffer = [0xFFu8; Apcb::MAX_SIZE];
+    let mut apcb_buffer_option = Some(&mut apcb_buffer[..]);
+    let config = SerdeConfig {
+        processor_generation: ProcessorGeneration::Milan, // FIXME could be ambiguous
+        spi_mode_bulldozer: efs.spi_mode_bulldozer().unwrap(),
+        spi_mode_zen_naples: efs.spi_mode_zen_naples().unwrap(),
+        spi_mode_zen_rome: efs.spi_mode_zen_rome().unwrap(),
+        // TODO: psp_directory or psp_combo_directory
+        psp: dump_psp_directory(
+            &storage,
+            &efs.psp_directory().unwrap(),
+            &blob_dump_dirname,
+        ),
+        // TODO: bhd_directory or bhd_combo_directory
+        bhd: dump_bhd_directory(
+            &storage,
+            &efs.bhd_directory(None).unwrap(),
+            &mut apcb_buffer_option,
+            &blob_dump_dirname,
+        ),
+    };
+    if let Some(blob_dump_dirname) = &blob_dump_dirname {
+        let mut path = PathBuf::new();
+        path.push(blob_dump_dirname);
+        path.push("config.efs.json5");
+        use std::io::Write;
+        let mut file = File::create(&path).expect("creation failed");
+        writeln!(file, "{}", json5::to_string(&config).unwrap())?;
+    } else {
+        println!("{}", serde_json::to_string_pretty(&config)?);
+    }
+    Ok(())
+}
+
+fn generate(
+    output_filename: &Path,
+    efs_configuration_filename: &Path,
+    reset_image_filename: &Path,
+    blobdirs: Vec<PathBuf>,
+    verbose: bool,
+) -> std::io::Result<()> {
+    let filename = &output_filename;
     let flash_to_io_error = |e: amd_flash::Error| {
         std::io::Error::new(
             std::io::ErrorKind::Other,
@@ -490,7 +790,7 @@ fn run() -> std::io::Result<()> {
             std::io::ErrorKind::Other,
             format!(
                 "APCB error: {e:?} in file {:?}",
-                opts.efs_configuration_filename
+                efs_configuration_filename
             ),
         )
     };
@@ -499,7 +799,7 @@ fn run() -> std::io::Result<()> {
             std::io::ErrorKind::Other,
             format!(
                 "JSON5 error: {msg} in file {:?} at {}",
-                opts.efs_configuration_filename,
+                efs_configuration_filename,
                 match location {
                     None => "unknown location".to_owned(),
                     Some(x) => format!("{x:?}"),
@@ -513,7 +813,7 @@ fn run() -> std::io::Result<()> {
                 std::io::ErrorKind::Other,
                 format!(
                     "Config error: {e:?} in file {:?}",
-                    opts.reset_image_filename
+                    reset_image_filename
                 ),
             )
         };
@@ -521,7 +821,7 @@ fn run() -> std::io::Result<()> {
     const ERASABLE_BLOCK_SIZE: usize = 0x1000;
     const_assert!(ERASABLE_BLOCK_SIZE.is_power_of_two());
     let storage = FlashImage::create(filename, ERASABLE_BLOCK_SIZE)?;
-    let path = Path::new(&opts.efs_configuration_filename);
+    let path = Path::new(&efs_configuration_filename);
     let data = std::fs::read_to_string(path)?;
     let config: SerdeConfig =
         json5::from_str(&data).map_err(json5_to_io_error)?;
@@ -564,7 +864,7 @@ fn run() -> std::io::Result<()> {
     efs.set_spi_mode_bulldozer(spi_mode_bulldozer);
     efs.set_spi_mode_zen_naples(spi_mode_zen_naples);
     efs.set_spi_mode_zen_rome(spi_mode_zen_rome);
-    let blobdirs = &opts.blobdirs;
+    let blobdirs = &blobdirs;
     let resolve_blob = |blob_filename: PathBuf| -> std::io::Result<PathBuf> {
         if blob_filename.has_root() {
             if blob_filename.exists() {
@@ -581,7 +881,7 @@ fn run() -> std::io::Result<()> {
             for blobdir in blobdirs {
                 let fullname = blobdir.join(&blob_filename);
                 if fullname.exists() {
-                    if opts.verbose {
+                    if verbose {
                         eprintln!("Info: Using blob {fullname:?}");
                     }
                     return Ok(fullname);
@@ -676,7 +976,7 @@ fn run() -> std::io::Result<()> {
             todo!();
         }
     };
-    if opts.verbose {
+    if verbose {
         // See AgesaBLReleaseNotes.txt, section "ABL Version String"
         match abl_version {
             Some(v) => println!("Info: ABL version: 0x{v:x}"),
@@ -700,6 +1000,7 @@ fn run() -> std::io::Result<()> {
         &storage,
         &mut allocator,
         &mut efs,
+        &output_filename,
     )?;
 
     // ================================ BHD =============================
@@ -781,7 +1082,7 @@ fn run() -> std::io::Result<()> {
     }
 
     let (reset_image_entry, reset_image_body) =
-        bhd_directory_add_reset_image(&opts.reset_image_filename)
+        bhd_directory_add_reset_image(&reset_image_filename)
             .map_err(amd_host_image_builder_config_error_to_io_error)?;
     bhd_raw_entries.push((
         reset_image_entry,
@@ -795,6 +1096,7 @@ fn run() -> std::io::Result<()> {
         &storage,
         &mut allocator,
         &mut efs,
+        &output_filename,
     )?;
 
     // ============================== Payloads =========================
@@ -837,6 +1139,38 @@ fn run() -> std::io::Result<()> {
     }
 
     Ok(())
+}
+
+fn run() -> std::io::Result<()> {
+    let compat_args = std::env::args().collect::<Vec<String>>();
+    // Older versions of amd-host-image-builder didn't have subcommands since
+    // it would only have one functionality: To generate images.
+    // Support the old command line syntax as well.
+    let opts = if compat_args.len() > 1 && compat_args[1].starts_with("-") {
+        let mut compat_args = compat_args.clone();
+        compat_args.insert(1, "generate".to_string());
+        Opts::from_iter(&compat_args)
+    } else {
+        Opts::from_args()
+    };
+    match opts {
+        Opts::Dump { input_filename, blob_dump_dirname } => {
+            dump(&input_filename, blob_dump_dirname)
+        }
+        Opts::Generate {
+            output_filename,
+            efs_configuration_filename,
+            reset_image_filename,
+            blobdirs,
+            verbose,
+        } => generate(
+            &output_filename,
+            &efs_configuration_filename,
+            &reset_image_filename,
+            blobdirs,
+            verbose,
+        ),
+    }
 }
 
 fn main() -> std::io::Result<()> {
