@@ -150,6 +150,24 @@ pub struct SerdeBhdDirectoryEntryAttrs {
     #[serde(default)]
     pub rom_id: BhdDirectoryRomId,
 }
+impl SerdeBhdDirectoryEntryAttrs {
+    pub fn builder() -> Self {
+        Self {
+            type_: BhdDirectoryEntryType::OemPublicKey,
+            region_type: BhdDirectoryEntryRegionType::Normal,
+            reset_image: false,
+            copy_image: false,
+            read_only: false,
+            compressed: false,
+            instance: 0,
+            sub_program: u8::default(),
+            rom_id: BhdDirectoryRomId::default(),
+        }
+    }
+    pub fn build(&mut self) -> &mut Self {
+        self
+    }
+}
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "BhdDirectoryEntry")]
