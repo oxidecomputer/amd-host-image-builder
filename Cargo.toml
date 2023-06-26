@@ -8,7 +8,7 @@ edition = "2018"
 
 [dependencies]
 amd-apcb = { git = "https://github.com/oxidecomputer/amd-apcb.git", tag = "v0.1.4", features = ["serde", "schemars"] }
-amd-efs = { git = "ssh://git@github.com/oxidecomputer/amd-efs.git", tag = "v0.2.3", features = ["std", "serde", "schemars"] }
+amd-efs = { git = "ssh://git@github.com/oxidecomputer/amd-efs.git", tag = "v0.2.4", features = ["std", "serde", "schemars"] }
 amd-flash = { git = "ssh://git@github.com/oxidecomputer/amd-flash.git", tag = "v0.2.0" }
 goblin = { version = "0.4", features = ["elf64", "endian_fd"] }
 #serde = { version = "1.0", default-features = false, features = ["derive"] }
