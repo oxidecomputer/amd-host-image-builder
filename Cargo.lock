@@ -4,8 +4,8 @@ version = 3
 
 [[package]]
 name = "amd-apcb"
-version = "0.1.4"
-source = "git+https://github.com/oxidecomputer/amd-apcb.git?tag=v0.1.4#f32d06058a1f0d24007b6bbe7818b812e9dedfe0"
+version = "0.1.5"
+source = "git+https://github.com/oxidecomputer/amd-apcb.git?tag=v0.1.5#20988a6951102b44c84b1895f11004bd705788db"
 dependencies = [
  "byteorder",
  "four-cc",
@@ -19,13 +19,14 @@ dependencies = [
  "schemars",
  "serde",
  "static_assertions",
+ "thiserror",
  "zerocopy",
 ]
 
 [[package]]
 name = "amd-efs"
-version = "0.2.2"
-source = "git+ssh://git@github.com/oxidecomputer/amd-efs.git?tag=v0.2.4#8f846c32cd313e85abe7d5c813243b26aa92278d"
+version = "0.2.5"
+source = "git+ssh://git@github.com/oxidecomputer/amd-efs.git?tag=v0.2.5#6a0f830b57f0cc326a06273a70449040e16809aa"
 dependencies = [
  "amd-flash",
  "byteorder",
@@ -38,13 +39,17 @@ dependencies = [
  "serde",
  "strum",
  "strum_macros",
+ "thiserror",
  "zerocopy",
 ]
 
 [[package]]
 name = "amd-flash"
-version = "0.2.0"
-source = "git+ssh://git@github.com/oxidecomputer/amd-flash.git?tag=v0.2.0#aff788300328f5651022c7291e4a34a351f3af39"
+version = "0.2.1"
+source = "git+ssh://git@github.com/oxidecomputer/amd-flash.git?tag=v0.2.1#da41bd1c9a1c8ddc7e4da9ef014b2d9303046566"
+dependencies = [
+ "thiserror",
+]
 
 [[package]]
 name = "amd-host-image-builder"
