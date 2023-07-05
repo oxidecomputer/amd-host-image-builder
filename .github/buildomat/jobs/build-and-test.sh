@@ -52,13 +52,13 @@ git submodule sync
 git submodule update --init
 
 banner test
-ptime -m cargo test --verbose
+ptime -m cargo test --verbose --locked
 
 banner build
-ptime -m cargo build --release --verbose
+ptime -m cargo build --release --verbose --locked
 
 banner lint
-ptime -m cargo clippy
+ptime -m cargo clippy --locked
 
 banner package
 mkdir -p /work/bins
