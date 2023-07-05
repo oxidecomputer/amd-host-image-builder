@@ -53,7 +53,7 @@ dependencies = [
 
 [[package]]
 name = "amd-host-image-builder"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "amd-apcb",
  "amd-efs",
