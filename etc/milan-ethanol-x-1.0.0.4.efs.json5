@@ -3858,11 +3858,6 @@
 										},
 										{
 											Bool: {
-												GnbAdditionalFeatureDsmDetector: true
-											}
-										},
-										{
-											Bool: {
 												PcieResetControl: true
 											}
 										},
@@ -3899,6 +3894,11 @@
 										board_instance_mask: 0xffff
 									},
 									tokens: [
+										{
+											Byte: {
+												GnbAdditionalFeatureDsmDetector2: "Enabled"
+											}
+										},
 										{
 											Byte: {
 												MemMbistAggressorOn: false

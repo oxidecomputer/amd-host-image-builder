@@ -4194,7 +4194,7 @@
 										},
 										{
 											Byte: {
-												AblSerialBaudRate: "3000000 Baud"
+												AblSerialBaudRate: "115200 Baud"
 											}
 										},
 										{
