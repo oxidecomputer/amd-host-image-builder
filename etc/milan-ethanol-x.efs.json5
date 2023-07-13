@@ -4690,7 +4690,7 @@
 						BlobFile: "Appb_GN_BIST_Ddr4_Rdimm_Imem.csbin"
 					},
 					target: {
-						type: "PmuFirmwareData",
+						type: "PmuFirmwareInstructions",
 						instance: 9,
 						sub_program: 1
 					}
