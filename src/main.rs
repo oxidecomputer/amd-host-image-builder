@@ -736,7 +736,6 @@ fn dump(
     if !efs.compatible_with_processor_generation(ProcessorGeneration::Milan) {
         panic!("only Milan is supported for dumping right now");
     }
-    println!("{:?}", efs.efh);
     let mut apcb_buffer = [0xFFu8; Apcb::MAX_SIZE];
     let mut apcb_buffer_option = Some(&mut apcb_buffer[..]);
     let config = SerdeConfig {
