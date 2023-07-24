@@ -53,6 +53,7 @@ git submodule update --init
 
 banner test
 ptime -m cargo test --verbose --locked
+(cd amd-host-image-builder-config && ptime -m cargo test --verbose --locked)
 
 banner build
 ptime -m cargo build --release --verbose --locked

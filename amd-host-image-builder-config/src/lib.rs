@@ -18,11 +18,16 @@ use amd_efs::{
 };
 use amd_flash::Location;
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
+#[non_exhaustive]
 pub enum Error {
+    #[error("Efs {0}")]
     Efs(amd_efs::Error),
+    #[error("incompatible executable")]
     IncompatibleExecutable,
+    #[error("Io {0}")]
     Io(std::io::Error),
+    #[error("image too big")]
     ImageTooBig,
 }
 
@@ -34,7 +39,7 @@ impl From<amd_efs::Error> for Error {
 
 pub type Result<T> = core::result::Result<T, Error>;
 
-#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 #[derive(Default, Debug)]
 pub struct SerdePspDirectoryEntryBlob {
@@ -44,7 +49,7 @@ pub struct SerdePspDirectoryEntryBlob {
     pub size: Option<u32>, // FIXME u64
 }
 
-#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct SerdePspDirectoryEntryAttrs {
     #[serde(rename = "type")]
@@ -56,7 +61,7 @@ pub struct SerdePspDirectoryEntryAttrs {
     pub rom_id: PspDirectoryRomId,
 }
 
-#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "PspDirectoryEntry")]
 #[serde(deny_unknown_fields)]
 pub struct SerdePspDirectoryEntry {
@@ -97,7 +102,7 @@ impl TryFromSerdeDirectoryEntryWithContext<SerdePspDirectoryEntry>
     }
 }
 
-#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "PspEntrySource")]
 #[serde(deny_unknown_fields)]
 pub enum SerdePspEntrySource {
@@ -105,7 +110,7 @@ pub enum SerdePspEntrySource {
     BlobFile(PathBuf),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "PspEntry")]
 #[serde(deny_unknown_fields)]
 pub struct SerdePspEntry {
@@ -114,7 +119,7 @@ pub struct SerdePspEntry {
 }
 
 #[derive(
-    Default, serde::Serialize, serde::Deserialize, schemars::JsonSchema,
+    Clone, Default, serde::Serialize, serde::Deserialize, schemars::JsonSchema,
 )]
 #[serde(rename = "BhdDirectoryEntryBlob")]
 #[serde(deny_unknown_fields)]
@@ -127,7 +132,7 @@ pub struct SerdeBhdDirectoryEntryBlob {
     pub ram_destination_address: Option<u64>,
 }
 
-#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct SerdeBhdDirectoryEntryAttrs {
     #[serde(rename = "type")]
@@ -169,7 +174,7 @@ impl SerdeBhdDirectoryEntryAttrs {
     }
 }
 
-#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "BhdDirectoryEntry")]
 #[serde(deny_unknown_fields)]
 pub struct SerdeBhdDirectoryEntry {
@@ -210,7 +215,7 @@ impl TryFromSerdeDirectoryEntryWithContext<SerdeBhdDirectoryEntry>
     }
 }
 
-#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "BhdSource")]
 #[serde(deny_unknown_fields)]
 pub enum SerdeBhdSource<'a> {
@@ -220,7 +225,7 @@ pub enum SerdeBhdSource<'a> {
     ApcbJson(amd_apcb::Apcb<'a>),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "BhdEntry")]
 #[serde(deny_unknown_fields)]
 pub struct SerdeBhdEntry<'a> {
@@ -229,28 +234,28 @@ pub struct SerdeBhdEntry<'a> {
     pub target: SerdeBhdDirectoryEntry,
 }
 
-#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "PspDirectory")]
 #[serde(deny_unknown_fields)]
 pub struct SerdePspDirectory {
     pub entries: Vec<SerdePspEntry>,
 }
 
-#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "PspComboDirectory")]
 #[serde(deny_unknown_fields)]
 pub struct SerdePspComboDirectory {
     pub directories: BTreeMap<ComboDirectoryEntryFilter, SerdePspDirectory>,
 }
 
-#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema, Clone)]
 #[serde(deny_unknown_fields)]
 pub enum SerdePspDirectoryVariant {
     PspDirectory(SerdePspDirectory),
     PspComboDirectory(SerdePspComboDirectory),
 }
 
-#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "BhdDirectory")]
 #[serde(deny_unknown_fields)]
 pub struct SerdeBhdDirectory<'a> {
@@ -258,7 +263,7 @@ pub struct SerdeBhdDirectory<'a> {
     pub entries: Vec<SerdeBhdEntry<'a>>,
 }
 
-#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "BhdComboDirectory")]
 #[serde(deny_unknown_fields)]
 pub struct SerdeBhdComboDirectory<'a> {
@@ -268,7 +273,7 @@ pub struct SerdeBhdComboDirectory<'a> {
     pub directories: BTreeMap<ComboDirectoryEntryFilter, SerdeBhdDirectory<'a>>,
 }
 
-#[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "BhdDirectoryVariant")]
 #[serde(deny_unknown_fields)]
 pub enum SerdeBhdDirectoryVariant<'a> {
@@ -283,14 +288,14 @@ pub enum SerdeBhdDirectoryVariant<'a> {
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "Config")]
 #[serde(deny_unknown_fields)]
-pub struct SerdeConfig<'a> {
+struct RawSerdeConfig<'a> {
     pub processor_generation: ProcessorGeneration,
     #[serde(default)]
-    pub spi_mode_bulldozer: EfhBulldozerSpiMode,
+    pub spi_mode_bulldozer: Option<EfhBulldozerSpiMode>,
     #[serde(default)]
-    pub spi_mode_zen_naples: EfhNaplesSpiMode,
+    pub spi_mode_zen_naples: Option<EfhNaplesSpiMode>,
     #[serde(default)]
-    pub spi_mode_zen_rome: EfhRomeSpiMode,
+    pub spi_mode_zen_rome: Option<EfhRomeSpiMode>,
     pub psp: SerdePspDirectoryVariant,
     #[serde(bound(
         deserialize = "SerdeBhdDirectoryVariant<'a>: Deserialize<'de>"
@@ -298,10 +303,205 @@ pub struct SerdeConfig<'a> {
     pub bhd: SerdeBhdDirectoryVariant<'a>,
 }
 
+// The distinction SerdeConfig vs RawSerdeConfig is so we can validate
+// combinations.
+#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[serde(try_from = "RawSerdeConfig")]
+#[serde(into = "RawSerdeConfig")]
+pub struct SerdeConfig<'a> {
+    // Note: same fields as above!
+    pub processor_generation: ProcessorGeneration,
+    pub spi_mode_bulldozer: Option<EfhBulldozerSpiMode>,
+    pub spi_mode_zen_naples: Option<EfhNaplesSpiMode>,
+    pub spi_mode_zen_rome: Option<EfhRomeSpiMode>,
+    pub psp: SerdePspDirectoryVariant,
+    pub bhd: SerdeBhdDirectoryVariant<'a>,
+}
+
+impl<'a> schemars::JsonSchema for SerdeConfig<'a> {
+    fn schema_name() -> std::string::String {
+        RawSerdeConfig::schema_name()
+    }
+    fn json_schema(
+        gen: &mut schemars::gen::SchemaGenerator,
+    ) -> schemars::schema::Schema {
+        RawSerdeConfig::json_schema(gen)
+    }
+    fn is_referenceable() -> bool {
+        RawSerdeConfig::is_referenceable()
+    }
+}
+
+impl<'a> From<SerdeConfig<'a>> for RawSerdeConfig<'a> {
+    fn from(config: SerdeConfig<'a>) -> Self {
+        Self {
+            processor_generation: config.processor_generation,
+            spi_mode_bulldozer: config.spi_mode_bulldozer,
+            spi_mode_zen_naples: config.spi_mode_zen_naples,
+            spi_mode_zen_rome: config.spi_mode_zen_rome,
+            psp: config.psp,
+            bhd: config.bhd,
+        }
+    }
+}
+
+/// This validates whether the spi mode is compatible with the
+/// processor generation (used to validate after deserialization
+/// of a json5 config)
+impl<'a> core::convert::TryFrom<RawSerdeConfig<'a>> for SerdeConfig<'a> {
+    type Error = Error;
+    fn try_from(
+        raw: RawSerdeConfig<'a>,
+    ) -> core::result::Result<Self, Self::Error> {
+        match raw.processor_generation {
+            ProcessorGeneration::Naples => {
+                if raw.spi_mode_bulldozer.is_none()
+                    && raw.spi_mode_zen_naples.is_some()
+                    && raw.spi_mode_zen_rome.is_none()
+                {
+                    return Ok(SerdeConfig {
+                        processor_generation: raw.processor_generation,
+                        spi_mode_bulldozer: raw.spi_mode_bulldozer,
+                        spi_mode_zen_naples: raw.spi_mode_zen_naples,
+                        spi_mode_zen_rome: raw.spi_mode_zen_rome,
+                        psp: raw.psp,
+                        bhd: raw.bhd,
+                    });
+                }
+            }
+            ProcessorGeneration::Rome | ProcessorGeneration::Milan => {
+                if raw.spi_mode_bulldozer.is_none()
+                    && raw.spi_mode_zen_naples.is_none()
+                    && raw.spi_mode_zen_rome.is_some()
+                {
+                    return Ok(SerdeConfig {
+                        processor_generation: raw.processor_generation,
+                        spi_mode_bulldozer: raw.spi_mode_bulldozer,
+                        spi_mode_zen_naples: raw.spi_mode_zen_naples,
+                        spi_mode_zen_rome: raw.spi_mode_zen_rome,
+                        psp: raw.psp,
+                        bhd: raw.bhd,
+                    });
+                }
+            }
+        }
+        Err(Error::Efs(amd_efs::Error::SpiModeMismatch))
+    }
+}
+
 #[cfg(test)]
 mod tests {
+    use super::{
+        ProcessorGeneration, RawSerdeConfig, SerdeBhdDirectory,
+        SerdeBhdDirectoryVariant, SerdeConfig, SerdePspDirectory,
+        SerdePspDirectoryVariant,
+    };
+    use amd_efs::{
+        EfhNaplesSpiMode, EfhRomeSpiMode, SpiFastSpeedNew, SpiNaplesMicronMode,
+        SpiReadMode, SpiRomeMicronMode,
+    };
+    use std::convert::TryFrom;
+
     #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
+    #[should_panic(expected = "SpiModeMismatch")]
+    fn spi_mode_missing() {
+        SerdeConfig::try_from(RawSerdeConfig {
+            processor_generation: ProcessorGeneration::Milan,
+            psp: SerdePspDirectoryVariant::PspDirectory(SerdePspDirectory {
+                entries: vec![],
+            }),
+            bhd: SerdeBhdDirectoryVariant::BhdDirectory(SerdeBhdDirectory {
+                entries: vec![],
+            }),
+            spi_mode_bulldozer: None,
+            spi_mode_zen_naples: None,
+            spi_mode_zen_rome: None,
+        })
+        .unwrap();
+    }
+
+    #[test]
+    fn spi_mode_milan_ok() {
+        SerdeConfig::try_from(RawSerdeConfig {
+            processor_generation: ProcessorGeneration::Milan,
+            psp: SerdePspDirectoryVariant::PspDirectory(SerdePspDirectory {
+                entries: [].to_vec(),
+            }),
+            bhd: SerdeBhdDirectoryVariant::BhdDirectory(SerdeBhdDirectory {
+                entries: [].to_vec(),
+            }),
+            spi_mode_bulldozer: None,
+            spi_mode_zen_naples: None,
+            spi_mode_zen_rome: Some(EfhRomeSpiMode {
+                read_mode: SpiReadMode::Normal33_33MHz,
+                fast_speed_new: SpiFastSpeedNew::_33_33MHz,
+                micron_mode: SpiRomeMicronMode::SupportMicron,
+            }),
+        })
+        .unwrap();
+    }
+
+    #[test]
+    fn spi_mode_rome_ok() {
+        SerdeConfig::try_from(RawSerdeConfig {
+            processor_generation: ProcessorGeneration::Rome,
+            psp: SerdePspDirectoryVariant::PspDirectory(SerdePspDirectory {
+                entries: [].to_vec(),
+            }),
+            bhd: SerdeBhdDirectoryVariant::BhdDirectory(SerdeBhdDirectory {
+                entries: [].to_vec(),
+            }),
+            spi_mode_bulldozer: None,
+            spi_mode_zen_naples: None,
+            spi_mode_zen_rome: Some(EfhRomeSpiMode {
+                read_mode: SpiReadMode::Normal33_33MHz,
+                fast_speed_new: SpiFastSpeedNew::_33_33MHz,
+                micron_mode: SpiRomeMicronMode::SupportMicron,
+            }),
+        })
+        .unwrap();
+    }
+
+    #[test]
+    #[should_panic(expected = "SpiModeMismatch")]
+    fn spi_mode_naples_not_ok() {
+        SerdeConfig::try_from(RawSerdeConfig {
+            processor_generation: ProcessorGeneration::Naples,
+            psp: SerdePspDirectoryVariant::PspDirectory(SerdePspDirectory {
+                entries: [].to_vec(),
+            }),
+            bhd: SerdeBhdDirectoryVariant::BhdDirectory(SerdeBhdDirectory {
+                entries: [].to_vec(),
+            }),
+            spi_mode_bulldozer: None,
+            spi_mode_zen_naples: None,
+            spi_mode_zen_rome: Some(EfhRomeSpiMode {
+                read_mode: SpiReadMode::Normal33_33MHz,
+                fast_speed_new: SpiFastSpeedNew::_33_33MHz,
+                micron_mode: SpiRomeMicronMode::SupportMicron,
+            }),
+        })
+        .unwrap();
+    }
+
+    #[test]
+    fn spi_mode_naples_ok() {
+        SerdeConfig::try_from(RawSerdeConfig {
+            processor_generation: ProcessorGeneration::Naples,
+            psp: SerdePspDirectoryVariant::PspDirectory(SerdePspDirectory {
+                entries: [].to_vec(),
+            }),
+            bhd: SerdeBhdDirectoryVariant::BhdDirectory(SerdeBhdDirectory {
+                entries: [].to_vec(),
+            }),
+            spi_mode_bulldozer: None,
+            spi_mode_zen_naples: Some(EfhNaplesSpiMode {
+                read_mode: SpiReadMode::Normal33_33MHz,
+                fast_speed_new: SpiFastSpeedNew::_33_33MHz,
+                micron_mode: SpiNaplesMicronMode::DummyCycle,
+            }),
+            spi_mode_zen_rome: None,
+        })
+        .unwrap();
     }
 }

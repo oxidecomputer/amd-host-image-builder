@@ -39,6 +39,7 @@ use amd_host_image_builder_config::SerdeConfig;
 #[test]
 fn test_bitfield_serde() {
     let config = r#"{
+        "spi_block_size": 5,
         "max_size": 2,
         "base_address": 3,
         "address_mode": "PhysicalAddress"
