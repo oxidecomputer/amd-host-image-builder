@@ -1,7 +1,8 @@
 use amd_apcb::{Apcb, ApcbIoOptions};
 use amd_efs::{
     AddressMode, BhdDirectory, BhdDirectoryEntry, BhdDirectoryEntryType,
-    DirectoryEntry, Efs, ProcessorGeneration, PspDirectory, PspDirectoryEntry,
+    DirectoryEntry, EfhBulldozerSpiMode, EfhNaplesSpiMode, EfhRomeSpiMode, Efs,
+    ProcessorGeneration, PspDirectory, PspDirectoryEntry,
     PspDirectoryEntryType, ValueOrLocation,
 };
 use amd_host_image_builder_config::{
@@ -19,6 +20,7 @@ use std::cmp::min;
 use std::collections::HashSet;
 use std::fs;
 use std::fs::File;
+use std::io::stdout;
 use std::io::BufReader;
 use std::io::Read;
 use std::io::Seek;
@@ -634,6 +636,29 @@ fn serde_from_bhd_entry(
     }
 }
 
+/// Try to return RESULT?.
+/// If that doesn't work, print RESULT_TEXT and then return FALLBACK instead.
+/// This is useful because some images don't have SPI mode set.  As far as
+/// we can tell, the SPI mode is mandatory.  In order not to fail the entire
+/// dump just because of the SPI mode, we just make one up here.
+fn spi_mode_fallback_on_error<T, E: std::fmt::Display>(
+    result: std::result::Result<T, E>,
+    fallback: T,
+    result_text: &str,
+) -> T {
+    match result {
+        Ok(x) => x,
+        Err(e) => {
+            eprintln!(
+                "{} was invalid: {}. Falling back to default.",
+                result_text, e
+            );
+            // TODO: Maybe set program error status somehow
+            fallback
+        }
+    }
+}
+
 fn dump_bhd_directory<'a, T: FlashRead + FlashWrite>(
     storage: &T,
     bhd_directory: &BhdDirectory,
@@ -653,6 +678,11 @@ fn dump_bhd_directory<'a, T: FlashRead + FlashWrite>(
             .map_while(|entry| {
                 let entry = entry.clone();
                 if let Ok(typ) = entry.typ_or_err() {
+                    if typ == BhdDirectoryEntryType::Apob {
+                        // Since this is a runtime value we cannot read it
+                        // from the image.
+                        return None;
+                    }
                     let payload_beginning =
                         bhd_directory.payload_beginning(&entry).unwrap();
                     let size = entry.size().unwrap() as usize;
@@ -727,6 +757,7 @@ fn dump_bhd_directory<'a, T: FlashRead + FlashWrite>(
 fn dump(
     image_filename: &Path,
     blob_dump_dirname: Option<PathBuf>,
+    output_config_file: &mut impl std::io::Write,
 ) -> std::io::Result<()> {
     let filename = image_filename;
     let storage = FlashImage::load(filename)?;
@@ -735,25 +766,48 @@ fn dump(
         if filesize <= 0x100_0000 { Some(filesize as u32) } else { None };
     let efs = Efs::load(&storage, None, amd_physical_mode_mmio_size).unwrap();
     if !efs.compatible_with_processor_generation(ProcessorGeneration::Milan) {
-        panic!("only Milan is supported for dumping right now");
+        if !efs.compatible_with_processor_generation(ProcessorGeneration::Rome)
+        {
+            panic!("only Milan or Rome is supported for dumping right now");
+        }
     }
     let mut apcb_buffer = [0xFFu8; Apcb::MAX_SIZE];
     let mut apcb_buffer_option = Some(&mut apcb_buffer[..]);
+    let processor_generation = if efs
+        .compatible_with_processor_generation(ProcessorGeneration::Milan)
+    {
+        ProcessorGeneration::Milan
+    } else {
+        ProcessorGeneration::Rome
+    };
     let config = SerdeConfig {
-        processor_generation: ProcessorGeneration::Milan, // FIXME could be ambiguous
-        spi_mode_bulldozer: efs.spi_mode_bulldozer().unwrap(),
-        spi_mode_zen_naples: efs.spi_mode_zen_naples().unwrap(),
-        spi_mode_zen_rome: efs.spi_mode_zen_rome().unwrap(),
+        processor_generation,
+        spi_mode_bulldozer: spi_mode_fallback_on_error(
+            efs.spi_mode_bulldozer(),
+            EfhBulldozerSpiMode::default(),
+            "Bulldozer SPI Mode",
+        ),
+        spi_mode_zen_naples: spi_mode_fallback_on_error(
+            efs.spi_mode_zen_naples(),
+            EfhNaplesSpiMode::default(),
+            "Naples SPI Mode",
+        ),
+        spi_mode_zen_rome: spi_mode_fallback_on_error(
+            efs.spi_mode_zen_rome(),
+            EfhRomeSpiMode::default(),
+            "Rome SPI Mode",
+        ),
         // TODO: psp_directory or psp_combo_directory
         psp: dump_psp_directory(
             &storage,
-            &efs.psp_directory().unwrap(),
+            &efs.psp_directory().expect("PSP directory"),
             &blob_dump_dirname,
         ),
         // TODO: bhd_directory or bhd_combo_directory
         bhd: dump_bhd_directory(
             &storage,
-            &efs.bhd_directory(None).unwrap(),
+            &efs.bhd_directory(Some(processor_generation))
+                .expect("BHD directory"),
             &mut apcb_buffer_option,
             &blob_dump_dirname,
         ),
@@ -766,7 +820,11 @@ fn dump(
         let mut file = File::create(&path).expect("creation failed");
         writeln!(file, "{}", json5::to_string(&config).unwrap())?;
     } else {
-        println!("{}", serde_json::to_string_pretty(&config)?);
+        writeln!(
+            output_config_file,
+            "{}",
+            serde_json::to_string_pretty(&config)?
+        )?;
     }
     Ok(())
 }
@@ -1155,7 +1213,7 @@ fn run() -> std::io::Result<()> {
     };
     match opts {
         Opts::Dump { input_filename, blob_dump_dirname } => {
-            dump(&input_filename, blob_dump_dirname)
+            dump(&input_filename, blob_dump_dirname, &mut stdout().lock())
         }
         Opts::Generate {
             output_filename,
@@ -1163,13 +1221,34 @@ fn run() -> std::io::Result<()> {
             reset_image_filename,
             blobdirs,
             verbose,
-        } => generate(
-            &output_filename,
-            &efs_configuration_filename,
-            &reset_image_filename,
-            blobdirs,
-            verbose,
-        ),
+        } => {
+            let x = generate(
+                &output_filename,
+                &efs_configuration_filename,
+                &reset_image_filename,
+                blobdirs,
+                verbose,
+            );
+
+            // In order to make sure that we can dump it back out, try it.
+            struct DummyOutput {}
+            impl std::io::Write for DummyOutput {
+                fn write(
+                    &mut self,
+                    buf: &[u8],
+                ) -> std::result::Result<usize, std::io::Error>
+                {
+                    Ok(buf.len())
+                }
+                fn flush(&mut self) -> std::result::Result<(), std::io::Error> {
+                    Ok(())
+                }
+            }
+            let mut dummy_output = DummyOutput {};
+            dump(&output_filename, None, &mut dummy_output)
+                .expect("read it back out from the image");
+            x
+        }
     }
 }
 
