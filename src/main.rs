@@ -117,18 +117,56 @@ fn abl_file_version(source_filename: &Path) -> Option<u32> {
     (ver != 0).then_some(ver)
 }
 
+#[derive(Clone, Copy, Eq, PartialEq)]
+struct SmuVersion(u8, u8, u8, u8);
+impl std::fmt::Debug for SmuVersion {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let &SmuVersion(a, b, c, d) = self;
+        if !f.alternate() {
+            f.debug_tuple("SmuVersion")
+                .field(&a)
+                .field(&b)
+                .field(&c)
+                .field(&d)
+                .finish()
+        } else {
+            // See SmuReleaseNotesGn.txt, text "Version"
+            if a != 0 {
+                write!(f, "{a}.{b}.{c}.{d}")
+            } else {
+                write!(f, "{b}.{c}.{d}")
+            }
+        }
+    }
+}
+
 /// Reads the file named SOURCE_FILENAME, finds the version field in there (if any) and returns
 /// its value.
 /// In case of error (file can't be read, version field not found, ...),
 /// returns None.
-fn smu_file_version(source_filename: &Path) -> Option<(u8, u8, u8, u8)> {
+fn smu_file_version(source_filename: &Path) -> Option<SmuVersion> {
     let (file, _size) = size_file(source_filename, None).ok()?;
     let mut source = BufReader::new(file);
-    let mut header: [u8; 0x100] = [0; 0x100];
+
+    const SMU_HDR_SZ: usize = 0x100;
+    let mut header: [u8; SMU_HDR_SZ] = [0; SMU_HDR_SZ];
     source.read_exact(&mut header).ok()?;
-    let ver_raw = <[u8; 4]>::try_from(&header[0x60..0x64]).ok()?;
-    (ver_raw[2] != 0)
-        .then_some((ver_raw[3], ver_raw[2], ver_raw[1], ver_raw[0]))
+
+    const SMU_VER_SZ: usize = 4;
+    let get_version =
+        |off| <[u8; 4]>::try_from(&header[off..off + SMU_VER_SZ]).ok();
+
+    // First try to read the version from the newer offset
+    const SMU_HDR_VER_OFF: usize = 0x60;
+    let mut ver_raw = get_version(SMU_HDR_VER_OFF)?;
+
+    // Old version fallback
+    if ver_raw[2] == 0 {
+        const SMU_HDR_VER_OFF_OLD: usize = 0;
+        ver_raw = get_version(SMU_HDR_VER_OFF_OLD)?;
+    }
+
+    Some(SmuVersion(ver_raw[3], ver_raw[2], ver_raw[1], ver_raw[0]))
 }
 
 fn elf_symbol(
@@ -900,7 +938,7 @@ fn generate(
 
     let mut abl_version: Option<u32> = None;
     let mut abl_version_found = false;
-    let mut smu_version: Option<(u8, u8, u8, u8)> = None;
+    let mut smu_version: Option<SmuVersion> = None;
     let mut smu_version_found = false;
     let psp_directory_address_mode = AddressMode::EfsRelativeOffset;
     let mut psp_raw_entries = match psp {
@@ -951,7 +989,7 @@ fn generate(
                                     panic!("different ABL versions in the same flash are unsupported")
                                 }
                             }
-                            Ok(PspDirectoryEntryType::SmuOffChipFirmware8) | Ok(PspDirectoryEntryType::SmuOffChipFirmware12) => {
+                            Ok(typ @ PspDirectoryEntryType::SmuOffChipFirmware8) | Ok(typ @ PspDirectoryEntryType::SmuOffChipFirmware12) => {
                                 let new_smu_version = smu_file_version(&blob_filename);
                                 if !smu_version_found {
                                     smu_version = new_smu_version;
@@ -959,7 +997,28 @@ fn generate(
                                 }
                                 // For now, we do not support different SMU firmware versions in the same image.
                                 if new_smu_version != smu_version {
-                                    panic!("different SMU versions in the same flash are unsupported")
+                                    let old_typ = if typ == PspDirectoryEntryType::SmuOffChipFirmware8 {
+                                        PspDirectoryEntryType::SmuOffChipFirmware12
+                                    } else {
+                                        PspDirectoryEntryType::SmuOffChipFirmware8
+                                    };
+                                    if new_smu_version.map(|v| (v.0, v.1)) != smu_version.map(|v| (v.0, v.1)) {
+                                        panic!(
+                                            "different SMU versions in the same flash are unsupported: {:?} ({:?}) != {:?} ({:?})",
+                                            new_smu_version,
+                                            typ,
+                                            smu_version,
+                                            old_typ,
+                                        );
+                                    } else {
+                                        eprintln!(
+                                            "WARNING - different SMU versions in the same flash are unsupported: {:?} ({:?}) != {:?} ({:?})",
+                                            new_smu_version,
+                                            typ,
+                                            smu_version,
+                                            old_typ,
+                                        );
+                                    }
                                 }
                             }
                             _ => {
@@ -983,12 +1042,7 @@ fn generate(
         }
         // See SmuReleaseNotesGn.txt, text "Version"
         match smu_version {
-            Some((0, s1, s2, s3)) => {
-                println!("Info: SMU firmware version: {s1}.{s2}.{s3}")
-            }
-            Some((s0, s1, s2, s3)) => {
-                println!("Info: SMU firmware version: {s0}.{s1}.{s2}.{s3}")
-            }
+            Some(ver) => println!("Info: SMU firmware version: {ver:#?}"),
             None => println!("Info: SMU firmware version unknown"),
         }
     }
