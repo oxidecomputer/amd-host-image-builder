@@ -496,16 +496,17 @@ fn save_bhd_directory<T: FlashRead + FlashWrite>(
 
 fn transfer_from_flash_to_io<T: FlashRead + FlashWrite>(
     storage: &T,
-    beginning: Location,
+    mut off: Location,
     mut size: usize,
     destination: &mut impl std::io::Write,
 ) {
     let mut buffer = [0u8; 8192];
     while size > 0 {
         let chunk_size = min(buffer.len(), size);
-        storage.read_exact(beginning, &mut buffer[..chunk_size]).unwrap();
+        storage.read_exact(off, &mut buffer[..chunk_size]).unwrap();
         destination.write_all(&buffer[..chunk_size]).unwrap();
-        size = size - chunk_size;
+        size -= chunk_size;
+        off += chunk_size as u32;
     }
 }
 
