@@ -32,6 +32,9 @@ use structopt::StructOpt;
 mod static_config;
 use amd_flash::allocators::{ArenaFlashAllocator, FlashAllocate};
 
+mod serializers;
+use serializers::DummySerializer;
+
 use amd_flash::{
     ErasableLocation, ErasableRange, FlashAlign, FlashRead, FlashWrite,
     Location,
@@ -699,11 +702,14 @@ fn dump_bhd_directory<'a, T: FlashRead + FlashWrite>(
                                 )
                                 .unwrap();
 
+                            let apcb_options = ApcbIoOptions::builder()
+                                .with_check_checksum(false)
+                                .build();
                             let apcb = Apcb::load(
                                 std::borrow::Cow::Borrowed(
                                     &mut apcb_buffer[..],
                                 ),
-                                &ApcbIoOptions::default(),
+                                &apcb_options,
                             )
                             .unwrap();
                             apcb.validate(None).unwrap(); // TODO: abl0 version ?
