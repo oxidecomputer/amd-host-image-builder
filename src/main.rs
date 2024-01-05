@@ -25,7 +25,7 @@ use std::io::Seek;
 use std::io::SeekFrom;
 use std::path::Path;
 use std::path::PathBuf;
-use structopt::StructOpt;
+use clap::StructOpt;
 
 mod static_config;
 use amd_flash::allocators::{ArenaFlashAllocator, FlashAllocate};
@@ -293,34 +293,34 @@ fn bhd_directory_add_reset_image(
     Ok((entry, result))
 }
 
-#[derive(Debug, StructOpt)]
+#[derive(Debug, clap::StructOpt)]
 #[structopt(
     name = "amd-host-image-builder",
     about = "Build host flash image for AMD Zen CPUs."
 )]
 enum Opts {
     Generate {
-        #[structopt(short = "o", long = "output-file", parse(from_os_str))]
+        #[structopt(short = 'o', long = "output-file", parse(from_os_str))]
         output_filename: PathBuf,
 
-        #[structopt(short = "r", long = "reset-image", parse(from_os_str))]
+        #[structopt(short = 'r', long = "reset-image", parse(from_os_str))]
         reset_image_filename: PathBuf,
 
-        #[structopt(short = "c", long = "config", parse(from_os_str))]
+        #[structopt(short = 'c', long = "config", parse(from_os_str))]
         efs_configuration_filename: PathBuf,
 
-        #[structopt(short = "B", long = "blobdir", parse(from_os_str))]
+        #[structopt(short = 'B', long = "blobdir", parse(from_os_str))]
         blobdirs: Vec<PathBuf>,
 
-        #[structopt(short = "v", long = "verbose")]
+        #[structopt(short = 'v', long = "verbose")]
         verbose: bool,
     },
     Dump {
-        #[structopt(short = "i", long = "existing-file", parse(from_os_str))]
+        #[structopt(short = 'i', long = "existing-file", parse(from_os_str))]
         input_filename: PathBuf,
 
         #[structopt(
-            short = "b",
+            short = 'b',
             long = "blob-dump-directory",
             parse(from_os_str)
         )]
@@ -1147,7 +1147,7 @@ fn run() -> std::io::Result<()> {
     // Older versions of amd-host-image-builder didn't have subcommands since
     // it would only have one functionality: To generate images.
     // Support the old command line syntax as well.
-    let opts = if compat_args.len() > 1 && compat_args[1].starts_with("-") {
+    let opts = if compat_args.len() > 1 && compat_args[1].starts_with("-") && compat_args[1] != "-h" && compat_args[1] != "--help" {
         let mut compat_args = compat_args.clone();
         compat_args.insert(1, "generate".to_string());
         Opts::from_iter(&compat_args)
@@ -1179,4 +1179,10 @@ fn main() -> std::io::Result<()> {
         eprintln!("Error: {e}");
         std::process::exit(1);
     })
+}
+
+#[test]
+fn verify_app() {
+    use clap::IntoApp;
+    Opts::into_app().debug_assert()
 }
