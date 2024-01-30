@@ -4309,7 +4309,7 @@
 										},
 										{
 											Byte: {
-												FchConsoleOutMode: 0x01
+												FchConsoleOutMode: "Disabled"
 											}
 										},
 										{

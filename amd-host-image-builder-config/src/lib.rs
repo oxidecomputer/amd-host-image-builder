@@ -7,6 +7,7 @@ use serde::Deserialize;
 use amd_efs::{
     AddressMode, ComboDirectoryEntryFilter, EfhBulldozerSpiMode,
     EfhNaplesSpiMode, EfhRomeSpiMode, ProcessorGeneration,
+    EfhEspiConfiguration,
 };
 use amd_efs::{
     BhdDirectoryEntry, BhdDirectoryEntryRegionType, BhdDirectoryEntryType,
@@ -59,6 +60,8 @@ pub struct SerdePspDirectoryEntryAttrs {
     pub sub_program: u8,
     #[serde(default)]
     pub rom_id: PspDirectoryRomId,
+    #[serde(default)]
+    pub instance: u8, // actually u4
 }
 
 #[derive(Clone, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
@@ -96,6 +99,7 @@ impl TryFromSerdeDirectoryEntryWithContext<SerdePspDirectoryEntry>
                 x.flash_location.map(ValueOrLocation::EfsRelativeOffset)
             }),
         )?
+        .with_instance(target.attrs.instance)
         .with_sub_program(target.attrs.sub_program)
         .with_rom_id(target.attrs.rom_id)
         .build())
@@ -108,6 +112,7 @@ impl TryFromSerdeDirectoryEntryWithContext<SerdePspDirectoryEntry>
 pub enum SerdePspEntrySource {
     Value(u64),
     BlobFile(PathBuf),
+    SecondLevelDirectory(SerdePspDirectory),
 }
 
 #[derive(Clone, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
@@ -223,6 +228,7 @@ pub enum SerdeBhdSource<'a> {
     BlobFile(PathBuf),
     #[serde(bound(deserialize = "Apcb<'a>: Deserialize<'de>"))]
     ApcbJson(amd_apcb::Apcb<'a>),
+    SecondLevelDirectory(SerdeBhdDirectory<'a>),
 }
 
 #[derive(Clone, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
@@ -296,6 +302,12 @@ struct RawSerdeConfig<'a> {
     pub spi_mode_zen_naples: Option<EfhNaplesSpiMode>,
     #[serde(default)]
     pub spi_mode_zen_rome: Option<EfhRomeSpiMode>,
+    pub espi0_configuration: Option<EfhEspiConfiguration>,
+    pub espi1_configuration: Option<EfhEspiConfiguration>,
+    #[serde(alias = "psp_main_directory_location")]
+    pub psp_main_directory_flash_location: Option<Location>,
+    #[serde(alias = "bhd_main_directory_location")]
+    pub bhd_main_directory_flash_location: Option<Location>,
     pub psp: SerdePspDirectoryVariant,
     #[serde(bound(
         deserialize = "SerdeBhdDirectoryVariant<'a>: Deserialize<'de>"
@@ -314,6 +326,12 @@ pub struct SerdeConfig<'a> {
     pub spi_mode_bulldozer: Option<EfhBulldozerSpiMode>,
     pub spi_mode_zen_naples: Option<EfhNaplesSpiMode>,
     pub spi_mode_zen_rome: Option<EfhRomeSpiMode>,
+    pub espi0_configuration: Option<EfhEspiConfiguration>,
+    pub espi1_configuration: Option<EfhEspiConfiguration>,
+    #[serde(alias = "psp_main_directory_location")]
+    pub psp_main_directory_flash_location: Option<Location>,
+    #[serde(alias = "bhd_main_directory_location")]
+    pub bhd_main_directory_flash_location: Option<Location>,
     pub psp: SerdePspDirectoryVariant,
     pub bhd: SerdeBhdDirectoryVariant<'a>,
 }
@@ -339,6 +357,10 @@ impl<'a> From<SerdeConfig<'a>> for RawSerdeConfig<'a> {
             spi_mode_bulldozer: config.spi_mode_bulldozer,
             spi_mode_zen_naples: config.spi_mode_zen_naples,
             spi_mode_zen_rome: config.spi_mode_zen_rome,
+            espi0_configuration: config.espi0_configuration,
+            espi1_configuration: config.espi1_configuration,
+            psp_main_directory_flash_location: config.psp_main_directory_flash_location,
+            bhd_main_directory_flash_location: config.bhd_main_directory_flash_location,
             psp: config.psp,
             bhd: config.bhd,
         }
@@ -364,6 +386,10 @@ impl<'a> core::convert::TryFrom<RawSerdeConfig<'a>> for SerdeConfig<'a> {
                         spi_mode_bulldozer: raw.spi_mode_bulldozer,
                         spi_mode_zen_naples: raw.spi_mode_zen_naples,
                         spi_mode_zen_rome: raw.spi_mode_zen_rome,
+                        espi0_configuration: None,
+                        espi1_configuration: None,
+                        psp_main_directory_flash_location: raw.psp_main_directory_flash_location,
+                        bhd_main_directory_flash_location: raw.bhd_main_directory_flash_location,
                         psp: raw.psp,
                         bhd: raw.bhd,
                     });
@@ -379,6 +405,29 @@ impl<'a> core::convert::TryFrom<RawSerdeConfig<'a>> for SerdeConfig<'a> {
                         spi_mode_bulldozer: raw.spi_mode_bulldozer,
                         spi_mode_zen_naples: raw.spi_mode_zen_naples,
                         spi_mode_zen_rome: raw.spi_mode_zen_rome,
+                        espi0_configuration: None,
+                        espi1_configuration: None,
+                        psp_main_directory_flash_location: raw.psp_main_directory_flash_location,
+                        bhd_main_directory_flash_location: raw.bhd_main_directory_flash_location,
+                        psp: raw.psp,
+                        bhd: raw.bhd,
+                    });
+                }
+            }
+            ProcessorGeneration::Genoa | ProcessorGeneration::Turin => {
+                if /*raw.spi_mode_bulldozer.is_some() you've GOT to be kidding me 
+                    && */raw.spi_mode_zen_naples.is_none()
+                    && raw.spi_mode_zen_rome.is_none()
+                {
+                    return Ok(SerdeConfig {
+                        processor_generation: raw.processor_generation,
+                        spi_mode_bulldozer: raw.spi_mode_bulldozer,
+                        spi_mode_zen_naples: raw.spi_mode_zen_naples,
+                        spi_mode_zen_rome: raw.spi_mode_zen_rome,
+                        espi0_configuration: raw.espi0_configuration,
+                        espi1_configuration: raw.espi1_configuration,
+                        psp_main_directory_flash_location: raw.psp_main_directory_flash_location,
+                        bhd_main_directory_flash_location: raw.bhd_main_directory_flash_location,
                         psp: raw.psp,
                         bhd: raw.bhd,
                     });

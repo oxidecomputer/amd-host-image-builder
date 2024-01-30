@@ -116,10 +116,9 @@ impl FlashImage {
                 std::iter::repeat(0xff).take(erasable_block_size).collect(),
             ),
         };
-        result.erase()?;
         Ok(result)
     }
-    fn erase(&self) -> std::io::Result<()> {
+    pub(crate) fn erase(&self) -> std::io::Result<()> {
         let filename = &self.filename;
         let file_size = u32::try_from(self.file_size()?).unwrap();
         let flash_to_io_error = |e: amd_flash::Error| {
