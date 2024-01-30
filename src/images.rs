@@ -1,4 +1,4 @@
-use amd_flash::{
+use amd_efs::flash::{
     ErasableLocation, FlashAlign, FlashRead, FlashWrite, Location,
 };
 use std::cell::RefCell;
@@ -24,16 +24,22 @@ impl FlashRead for FlashImage {
         &self,
         location: Location,
         buffer: &mut [u8],
-    ) -> amd_flash::Result<()> {
+    ) -> amd_efs::flash::Result<()> {
         let filename = &self.filename;
         let mut file = self.file.borrow_mut();
         file.seek(SeekFrom::Start(location.into())).map_err(|e| {
             eprintln!("Error seeking in flash image {filename:?}: {e:?}");
-            amd_flash::Error::Io
+            amd_efs::flash::Error::Io(amd_efs::flash::IoError::Read {
+                start: location,
+                size: buffer.len(),
+            })
         })?;
         file.read_exact(buffer).map_err(|e| {
             eprintln!("Error reading from flash image {filename:?}: {e:?}");
-            amd_flash::Error::Io
+            amd_efs::flash::Error::Io(amd_efs::flash::IoError::Read {
+                start: location,
+                size: buffer.len(),
+            })
         })
     }
 }
@@ -45,14 +51,20 @@ impl FlashAlign for FlashImage {
 }
 
 impl FlashWrite for FlashImage {
-    fn erase_block(&self, location: ErasableLocation) -> amd_flash::Result<()> {
+    fn erase_block(
+        &self,
+        location: ErasableLocation,
+    ) -> amd_efs::flash::Result<()> {
         let filename = &self.filename;
         let erasable_block_size = self.erasable_block_size();
         let location = self.location(location)?;
         let mut file = self.file.borrow_mut();
         file.seek(SeekFrom::Start(location.into())).map_err(|e| {
             eprintln!("Error seeking in flash image {filename:?}: {e:?}");
-            amd_flash::Error::Io
+            amd_efs::flash::Error::Io(amd_efs::flash::IoError::Erase {
+                start: location,
+                size: erasable_block_size,
+            })
         })?;
         let mut buffer = self.buffer.borrow_mut();
         buffer.fill(0xff);
@@ -63,7 +75,10 @@ impl FlashWrite for FlashImage {
             }
             Err(e) => {
                 eprintln!("Error writing to flash image {filename:?}: {e:?}");
-                Err(amd_flash::Error::Io)
+                Err(amd_efs::flash::Error::Io(amd_efs::flash::IoError::Write {
+                    start: location,
+                    size: buffer.len(),
+                }))
             }
         }
     }
@@ -71,24 +86,30 @@ impl FlashWrite for FlashImage {
         &self,
         location: ErasableLocation,
         buffer: &[u8],
-    ) -> amd_flash::Result<()> {
+    ) -> amd_efs::flash::Result<()> {
         let filename = &self.filename;
         let erasable_block_size = self.erasable_block_size;
         if buffer.len() > erasable_block_size {
-            return Err(amd_flash::Error::Programmer);
+            panic!("passed buffer length is bigger than erase block size");
         }
         let location = self.location(location)?;
         let mut file = self.file.borrow_mut();
         file.seek(SeekFrom::Start(location.into())).map_err(|e| {
             eprintln!("Error seeking in flash image {filename:?}: {e:?}");
-            amd_flash::Error::Io
+            amd_efs::flash::Error::Io(amd_efs::flash::IoError::Write {
+                start: location,
+                size: buffer.len(),
+            })
         })?;
         let mut xbuffer = self.buffer.borrow_mut();
         xbuffer.fill(0xff);
         xbuffer[..buffer.len()].copy_from_slice(buffer);
         let size = file.write(&xbuffer).map_err(|e| {
             eprintln!("Error writing to flash image {filename:?}: {e:?}");
-            amd_flash::Error::Io
+            amd_efs::flash::Error::Io(amd_efs::flash::IoError::Write {
+                start: location,
+                size: buffer.len(),
+            })
         })?;
         assert!(size == erasable_block_size);
         Ok(())
@@ -116,23 +137,20 @@ impl FlashImage {
                 std::iter::repeat(0xff).take(erasable_block_size).collect(),
             ),
         };
-        result.erase()?;
         Ok(result)
     }
-    fn erase(&self) -> std::io::Result<()> {
+    pub(crate) fn erase(&self) -> std::io::Result<()> {
         let filename = &self.filename;
         let file_size = u32::try_from(self.file_size()?).unwrap();
-        let flash_to_io_error = |e: amd_flash::Error| {
+        let flash_to_io_error = |e: amd_efs::flash::Error| {
             std::io::Error::new(
                 std::io::ErrorKind::Other,
                 format!("Flash error: {e:?} in file {filename:?}"),
             )
         };
         let erasable_block_size = self.erasable_block_size;
-        let mut position = self
-            .erasable_location(0)
-            .ok_or(amd_flash::Error::Alignment)
-            .map_err(flash_to_io_error)?;
+        let mut position =
+            self.erasable_location(0).map_err(flash_to_io_error)?;
         while Location::from(position) < file_size {
             FlashWrite::erase_block(self, position)
                 .map_err(flash_to_io_error)?;

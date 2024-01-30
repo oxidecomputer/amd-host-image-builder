@@ -93,6 +93,74 @@ milan-ethanol-x-1.0.0.a.img: etc/milan-ethanol-x-1.0.0.a.efs.json5 \
   $(SOURCES)
 	$(CARGO) run -- generate $(BLOB_DIRS:%=-B %) -v -B amd-firmware/GN/1.0.0.a -c $< -r $(PAYLOAD) -o $@
 
+genoa-ruby-1.0.0.0.img: etc/genoa-ruby-1.0.0.0.efs.json5 \
+  $(PAYLOAD) \
+    amd-firmware/RS/1.0.0.0/AmdPubKey_rs.tkn \
+    amd-firmware/RS/1.0.0.0/TypeId0x01_PspBl_RS.sbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x03_PspRecBl_RS.sbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x08_SmuFirmwareRS.csbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x08_SmuFirmware_RSB0.csbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x08_SmuFirmware_Bergamo.csbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x09_PspDebugUnlockToken_RS.stkn \
+    amd-firmware/RS/1.0.0.0/TypeId0x0A_PspAblPubKey_RS.stkn \
+    amd-firmware/RS/1.0.0.0/TypeId0x12_SmuFirmware2_RS.csbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x12_SmuFirmware2_RSB0.sbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x12_SmuFirmware2_Bergamo.sbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x13_SduFw_RS.sbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x21_PspAmdIkek_RS.bin \
+    amd-firmware/RS/1.0.0.0/SecureEmptyToken.bin \
+    amd-firmware/RS/1.0.0.0/TypeId0x24_RegisterAccessPolicy_RS.csbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x24_RegisterAccessPolicy_RSB0.csbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x24_RegisterAccessPolicy_Bergamo.csbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x2a_Mp5RS.csbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x2a_Mp5_RSB0.csbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x2a_Mp5_Bergamo.csbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x30_AgesaBootLoaderU_RS.csbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x42_PhyFw_RS.csbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x50_PspKeyDataBase_RS.sbin \
+    amd-firmware/RS/1.0.0.0/Appb_RS_Ddr5_0x64_3_Rdimm_Imem1.csbin \
+    amd-firmware/RS/1.0.0.0/Appb_RS_Ddr5_0x65_3_Rdimm_Dmem1.csbin \
+    amd-firmware/RS/1.0.0.0/Appb_RS_Ddr5_0x64_4_Rdimm_Imem2.csbin \
+    amd-firmware/RS/1.0.0.0/Appb_RS_Ddr5_0x65_4_Rdimm_Dmem2.csbin \
+    amd-firmware/RS/1.0.0.0/Appb_RS_Ddr5_0x64_9_Rdimm_Imem1.csbin \
+    amd-firmware/RS/1.0.0.0/Appb_RS_Ddr5_0x65_9_Rdimm_Dmem1.csbin \
+    amd-firmware/RS/1.0.0.0/Appb_RS_Ddr5_0x64_A_Rdimm_Imem2.csbin \
+    amd-firmware/RS/1.0.0.0/Appb_RS_Ddr5_0x65_A_Rdimm_Dmem2.csbin \
+  $(SOURCES)
+	$(CARGO) run -- generate -s '16 MiB' $(BLOB_DIRS:%=-B %) -v -B amd-firmware/RS/1.0.0.0 -c $< -r $(PAYLOAD) -o $@
+
+genoa-ruby-1.0.0.b.img: etc/genoa-ruby-1.0.0.b.efs.json5 \
+  $(PAYLOAD) \
+    amd-firmware/RS/1.0.0.b/AmdPubKey_rs.tkn \
+    amd-firmware/RS/1.0.0.b/TypeId0x01_PspBl_RS.sbin \
+    amd-firmware/RS/1.0.0.b/TypeId0x03_PspRecBl_RS.sbin \
+    amd-firmware/RS/1.0.0.b/TypeId0x08_SmuFirmware_RSB0.csbin \
+    amd-firmware/RS/1.0.0.b/TypeId0x08_SmuFirmware_Bergamo.csbin \
+    amd-firmware/RS/1.0.0.b/TypeId0x09_PspDebugUnlockToken_RS.stkn \
+    amd-firmware/RS/1.0.0.b/TypeId0x0A_PspAblPubKey_RS.stkn \
+    amd-firmware/RS/1.0.0.b/TypeId0x12_SmuFirmware2_RSB0.sbin \
+    amd-firmware/RS/1.0.0.b/TypeId0x12_SmuFirmware2_Bergamo.sbin \
+    amd-firmware/RS/1.0.0.b/TypeId0x13_SduFw_RS.sbin \
+    amd-firmware/RS/1.0.0.b/TypeId0x21_PspAmdIkek_RS.bin \
+    amd-firmware/RS/1.0.0.b/SecureEmptyToken.bin \
+    amd-firmware/RS/1.0.0.b/TypeId0x24_RegisterAccessPolicy_RSB0.csbin \
+    amd-firmware/RS/1.0.0.b/TypeId0x24_RegisterAccessPolicy_Bergamo.csbin \
+    amd-firmware/RS/1.0.0.b/TypeId0x2a_Mp5_RSB0.csbin \
+    amd-firmware/RS/1.0.0.b/TypeId0x2a_Mp5_Bergamo.csbin \
+    amd-firmware/RS/1.0.0.b/TypeId0x30_AgesaBootLoaderU_RS.csbin \
+    amd-firmware/RS/1.0.0.b/TypeId0x42_PhyFw_RS.csbin \
+    amd-firmware/RS/1.0.0.b/TypeId0x50_PspKeyDataBase_RS.sbin \
+    amd-firmware/RS/1.0.0.b/Appb_RS_Ddr5_0x64_3_Rdimm_Imem1.csbin \
+    amd-firmware/RS/1.0.0.b/Appb_RS_Ddr5_0x65_3_Rdimm_Dmem1.csbin \
+    amd-firmware/RS/1.0.0.b/Appb_RS_Ddr5_0x64_4_Rdimm_Imem2.csbin \
+    amd-firmware/RS/1.0.0.b/Appb_RS_Ddr5_0x65_4_Rdimm_Dmem2.csbin \
+    amd-firmware/RS/1.0.0.b/Appb_RS_Ddr5_0x64_9_Rdimm_Imem1.csbin \
+    amd-firmware/RS/1.0.0.b/Appb_RS_Ddr5_0x65_9_Rdimm_Dmem1.csbin \
+    amd-firmware/RS/1.0.0.b/Appb_RS_Ddr5_0x64_A_Rdimm_Imem2.csbin \
+    amd-firmware/RS/1.0.0.b/Appb_RS_Ddr5_0x65_A_Rdimm_Dmem2.csbin \
+  $(SOURCES)
+	$(CARGO) run -- generate -s '16 MiB' $(BLOB_DIRS:%=-B %) -v -B amd-firmware/RS/1.0.0.b -c $< -r $(PAYLOAD) -o $@
+
 milan-gimlet-b-1.0.0.a.img: etc/milan-gimlet-b-1.0.0.a.efs.json5 \
   $(PAYLOAD) \
   amd-firmware/GN/1.0.0.a/AmdPubKey_gn.tkn \

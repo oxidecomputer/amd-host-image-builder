@@ -19,6 +19,7 @@ fn test_token_versioning() {
                 match entry.source {
                     SerdeBhdSource::Implied => {}
                     SerdeBhdSource::BlobFile(_) => {}
+                    SerdeBhdSource::SecondLevelDirectory(_) => {}
                     SerdeBhdSource::ApcbJson(apcb) => {
                         found_match = true;
                         apcb.validate(None).unwrap();
@@ -47,6 +48,7 @@ fn test_token_versioning_failure() {
                 match entry.source {
                     SerdeBhdSource::Implied => {}
                     SerdeBhdSource::BlobFile(_) => {}
+                    SerdeBhdSource::SecondLevelDirectory(_) => {}
                     SerdeBhdSource::ApcbJson(apcb) => {
                         found_match = true;
                         apcb.validate(None).unwrap();
@@ -86,6 +88,7 @@ fn test_token_versioning_both_new() {
                 match entry.source {
                     SerdeBhdSource::Implied => {}
                     SerdeBhdSource::BlobFile(_) => {}
+                    SerdeBhdSource::SecondLevelDirectory(_) => {}
                     SerdeBhdSource::ApcbJson(apcb) => {
                         found_match = true;
                         apcb.validate(None).unwrap();

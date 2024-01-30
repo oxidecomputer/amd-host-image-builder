@@ -1,5 +1,5 @@
+use amd_efs::flash::Location;
 use amd_efs::ProcessorGeneration;
-use amd_flash::Location;
 
 /* Coarse-grained flash locations (in Byte) */
 
@@ -10,44 +10,38 @@ The data structure that it reads first is Preferred EFH.
 From it, the PSP directory and BHD directory is read.
 These point to PSP payloads and BHD payloads, respectively.
 
-0x200_0000 +-----------------------------------------+ RESET_IMAGE_END
+           +-----------------------------------------+
            |                                         |
+           |              BHD payloads               |
            |                                         |
-           |                                         |
-           |           Reset image (16 MiB)          |
-           |                                         |
-           |                                         |
-           |                                         |
-0x100_0000 +-----------------------------------------+ RESET_IMAGE_BEGINNING
-           |          Unused (about 384 kiB)         |
            +-----------------------------------------+
            |    Preferred EFH for Rome and Milan     |
  0xFA_0000 +-----------------------------------------+
            |                                         |
            |                                         |
-           |             Unused (12 MiB)             |
+           |              BHD payloads               |
            |                                         |
            |                                         |
- 0x2E_0000 +-----------------------------------------+ BHD_END
+           +-----------------------------------------+
            |                                         |
            |                                         |
            |       BHD directory & BHD payloads      |
            |                                         |
            |                                         |
- 0x24_0000 +-----------------------------------------+ PSP_END = BHD_BEGINNING
+           +-----------------------------------------+
            |                                         |
            |                                         |
            |       PSP directory & PSP payloads      |
            |                                         |
            |                                         |
- 0x12_0000 +-----------------------------------------+ PSP_BEGINNING
+           +-----------------------------------------+
            |                                         |
            |                                         |
            |           Unused (about 1 MiB)          |
            |                                         |
            |                                         |
            +-----------------------------------------+
-           |         Preferred EFH for Naples        |
+           |    Preferred EFH for Naples and Genoa   |
   0x2_0000 +-----------------------------------------+
            |                                         |
            |             Unused (128 kiB)            |
@@ -56,7 +50,13 @@ These point to PSP payloads and BHD payloads, respectively.
 
 */
 
-pub const EFH_SIZE: usize = 0x200;
+const B: usize = 1;
+pub const EFH_SIZE: usize = 0x200 * B;
+pub const MAX_PSP_SECOND_LEVEL_DIRECTORY_SIZE: usize = 16384 * B;
+pub const MAX_BHD_SECOND_LEVEL_DIRECTORY_SIZE: usize = 16384 * B;
+// Needs to be at least 0x1000.
+// See also DirectoryAdditionalInfo::with_max_size_checked.
+pub const ERASABLE_BLOCK_SIZE: usize = 0x1000;
 
 // Note: This must not be changed.
 // It's hardcoded in the PSP bootloader and in amd-efs's "create" function.
@@ -70,5 +70,6 @@ pub(crate) const fn EFH_BEGINNING(
     match processor_generation {
         ProcessorGeneration::Naples => 0x2_0000,
         ProcessorGeneration::Rome | ProcessorGeneration::Milan => 0xFA_0000,
+        ProcessorGeneration::Genoa | ProcessorGeneration::Turin => 0x2_0000,
     }
 }
