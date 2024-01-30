@@ -59,6 +59,8 @@ pub struct SerdePspDirectoryEntryAttrs {
     pub sub_program: u8,
     #[serde(default)]
     pub rom_id: PspDirectoryRomId,
+    #[serde(default)]
+    pub instance: u8, // actually u4
 }
 
 #[derive(Clone, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
@@ -96,6 +98,7 @@ impl TryFromSerdeDirectoryEntryWithContext<SerdePspDirectoryEntry>
                 x.flash_location.map(ValueOrLocation::EfsRelativeOffset)
             }),
         )?
+        .with_instance(target.attrs.instance)
         .with_sub_program(target.attrs.sub_program)
         .with_rom_id(target.attrs.rom_id)
         .build())
@@ -384,6 +387,7 @@ impl<'a> core::convert::TryFrom<RawSerdeConfig<'a>> for SerdeConfig<'a> {
                     });
                 }
             }
+            ProcessorGeneration::Turin => todo!(),
         }
         Err(Error::Efs(amd_efs::Error::SpiModeMismatch))
     }

@@ -517,12 +517,18 @@ fn create_dumpfile(
     section: &str,
     typ_string: String,
     instance: u8,
+    sub_program: u8,
 ) -> (File, PathBuf) {
     let mut path = PathBuf::new();
     path.push(blob_dump_dirname);
     path.push(section);
     let basename = Path::new(&typ_string);
-    path.push(format!("{}-{:02x}.bin", basename.display(), instance));
+    path.push(format!(
+        "{}-i{:02x}-s{:02x}.bin",
+        basename.display(),
+        instance,
+        sub_program,
+    ));
     if existing_filenames.contains(&path) {
         panic!(
             "Refusing to create two files with the same name: {}",
@@ -554,7 +560,8 @@ fn dump_psp_directory<T: FlashRead + FlashWrite>(
                Ok(beginning) => {
                    if let Some(blob_dump_dirname) = blob_dump_dirname {
                        let typ_string = typ.to_string();
-                       let (data_file, path) = create_dumpfile(&mut blob_dump_filenames, blob_dump_dirname, "psp-default", typ_string, 0);
+                       eprintln!("{:?}", e);
+                       let (data_file, path) = create_dumpfile(&mut blob_dump_filenames, blob_dump_dirname, "psp-default", typ_string, e.instance(), e.sub_program());
                        let size = e.size().unwrap() as usize;
                        Some((data_file, path, beginning, size))
                    } else {
@@ -582,7 +589,8 @@ fn dump_psp_directory<T: FlashRead + FlashWrite>(
                     attrs: SerdePspDirectoryEntryAttrs {
                         type_: typ,
                         sub_program: e.sub_program_or_err().unwrap(),
-                        rom_id: e.rom_id_or_err().unwrap()
+                        rom_id: e.rom_id_or_err().unwrap(),
+                        instance: e.instance(),
                     },
                     blob: match blob_export {
                     None => {
@@ -604,7 +612,7 @@ fn dump_psp_directory<T: FlashRead + FlashWrite>(
                 },
             })
         } else {
-            eprintln!("WARNING: PSP entry with unknown type was skipped");
+            eprintln!("WARNING: PSP entry with unknown type was skipped {:?}", e);
             None
         }
         }).collect()
@@ -659,7 +667,9 @@ fn dump_bhd_directory<'a, T: FlashRead + FlashWrite>(
                     let size = entry.size().unwrap() as usize;
                     match typ {
                         BhdDirectoryEntryType::ApcbBackup
-                        | BhdDirectoryEntryType::Apcb => {
+                        | BhdDirectoryEntryType::Apcb
+                            if apcb_buffer_option.is_some() && false =>
+                        {
                             let apcb_buffer = apcb_buffer_option
                                 .take()
                                 .expect("only one APCB");
@@ -697,6 +707,7 @@ fn dump_bhd_directory<'a, T: FlashRead + FlashWrite>(
                                     "bhd-default",
                                     typ_string,
                                     entry.instance(),
+                                    entry.sub_program(),
                                 );
                                 transfer_from_flash_to_io(
                                     storage,
@@ -716,7 +727,8 @@ fn dump_bhd_directory<'a, T: FlashRead + FlashWrite>(
                     }
                 } else {
                     eprintln!(
-                        "WARNING: BHD entry with unknown type was skipped"
+                        "WARNING: BHD entry with unknown type was skipped {:?}",
+                        entry
                     );
                     None
                 }
@@ -735,8 +747,11 @@ fn dump(
     let amd_physical_mode_mmio_size =
         if filesize <= 0x100_0000 { Some(filesize as u32) } else { None };
     let efs = Efs::load(&storage, None, amd_physical_mode_mmio_size).unwrap();
-    if !efs.compatible_with_processor_generation(ProcessorGeneration::Milan) {
-        panic!("only Milan is supported for dumping right now");
+    if !efs.compatible_with_processor_generation(ProcessorGeneration::Turin)
+        && !efs.compatible_with_processor_generation(ProcessorGeneration::Milan)
+        && !efs.compatible_with_processor_generation(ProcessorGeneration::Rome)
+    {
+        panic!("only Milan, Genoa and Turin is supported for dumping right now");
     }
     let mut apcb_buffer = [0xFFu8; Apcb::MAX_SIZE];
     let mut apcb_buffer_option = Some(&mut apcb_buffer[..]);

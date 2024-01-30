@@ -12,44 +12,38 @@ The data structure that it reads first is Preferred EFH.
 From it, the PSP directory and BHD directory is read.
 These point to PSP payloads and BHD payloads, respectively.
 
-0x200_0000 +-----------------------------------------+ RESET_IMAGE_END
+           +-----------------------------------------+
            |                                         |
+           |              BHD payloads               |
            |                                         |
-           |                                         |
-           |           Reset image (16 MiB)          |
-           |                                         |
-           |                                         |
-           |                                         |
-0x100_0000 +-----------------------------------------+ RESET_IMAGE_BEGINNING
-           |          Unused (about 384 kiB)         |
            +-----------------------------------------+
            |    Preferred EFH for Rome and Milan     |
  0xFA_0000 +-----------------------------------------+
            |                                         |
            |                                         |
-           |             Unused (12 MiB)             |
+           |              BHD payloads               |
            |                                         |
            |                                         |
- 0x2E_0000 +-----------------------------------------+ BHD_END
+           +-----------------------------------------+
            |                                         |
            |                                         |
            |       BHD directory & BHD payloads      |
            |                                         |
            |                                         |
- 0x24_0000 +-----------------------------------------+ PSP_END = BHD_BEGINNING
+           +-----------------------------------------+
            |                                         |
            |                                         |
            |       PSP directory & PSP payloads      |
            |                                         |
            |                                         |
- 0x12_0000 +-----------------------------------------+ PSP_BEGINNING
+           +-----------------------------------------+
            |                                         |
            |                                         |
            |           Unused (about 1 MiB)          |
            |                                         |
            |                                         |
            +-----------------------------------------+
-           |         Preferred EFH for Naples        |
+           |    Preferred EFH for Naples and Genoa   |
   0x2_0000 +-----------------------------------------+
            |                                         |
            |             Unused (128 kiB)            |
@@ -70,6 +64,7 @@ pub(crate) const fn EFH_BEGINNING(
     processor_generation: ProcessorGeneration,
 ) -> Location {
     match processor_generation {
+        ProcessorGeneration::Turin => 0x2_0000, // FIXME
         ProcessorGeneration::Naples => 0x2_0000,
         ProcessorGeneration::Rome | ProcessorGeneration::Milan => 0xFA_0000,
     }
