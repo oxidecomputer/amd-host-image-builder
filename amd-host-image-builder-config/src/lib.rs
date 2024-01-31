@@ -387,7 +387,7 @@ impl<'a> core::convert::TryFrom<RawSerdeConfig<'a>> for SerdeConfig<'a> {
                     });
                 }
             }
-            ProcessorGeneration::Turin => todo!(),
+            ProcessorGeneration::Genoa | ProcessorGeneration::Turin => todo!(),
         }
         Err(Error::Efs(amd_efs::Error::SpiModeMismatch))
     }

@@ -14,7 +14,7 @@ dependencies = [
 [[package]]
 name = "amd-apcb"
 version = "0.3.0"
-source = "git+https://github.com/oxidecomputer/amd-apcb.git?branch=issue-110#f2bca74d9d44db91abc3082d2223944c0e3f6876"
+source = "git+https://github.com/oxidecomputer/amd-apcb.git?branch=luqmana/issue-110#e6ffe692047b4a1f5c2d38d64a59a12e249a452d"
 dependencies = [
  "byteorder",
  "four-cc",
@@ -34,8 +34,8 @@ dependencies = [
 
 [[package]]
 name = "amd-efs"
-version = "0.3.0"
-source = "git+ssh://git@github.com/oxidecomputer/amd-efs.git?branch=issue-98#0358290215a47db39a65370d65c05aacaf5e4e73"
+version = "0.3.1"
+source = "git+ssh://git@github.com/oxidecomputer/amd-efs.git?branch=luqmana/issue-98#2feb211cac1eda1c58be7e80894d31de213a504e"
 dependencies = [
  "amd-flash",
  "byteorder",

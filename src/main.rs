@@ -668,7 +668,7 @@ fn dump_bhd_directory<'a, T: FlashRead + FlashWrite>(
                     match typ {
                         BhdDirectoryEntryType::ApcbBackup
                         | BhdDirectoryEntryType::Apcb
-                            if apcb_buffer_option.is_some() && false =>
+                            if apcb_buffer_option.is_some() =>
                         {
                             let apcb_buffer = apcb_buffer_option
                                 .take()
@@ -747,16 +747,18 @@ fn dump(
     let amd_physical_mode_mmio_size =
         if filesize <= 0x100_0000 { Some(filesize as u32) } else { None };
     let efs = Efs::load(&storage, None, amd_physical_mode_mmio_size).unwrap();
-    if !efs.compatible_with_processor_generation(ProcessorGeneration::Turin)
-        && !efs.compatible_with_processor_generation(ProcessorGeneration::Milan)
-        && !efs.compatible_with_processor_generation(ProcessorGeneration::Rome)
-    {
-        panic!("only Milan, Genoa and Turin is supported for dumping right now");
-    }
+    let gen = [
+        ProcessorGeneration::Turin,
+        ProcessorGeneration::Genoa,
+        ProcessorGeneration::Milan,
+    ]
+    .iter()
+    .find(|&gen| efs.compatible_with_processor_generation(*gen))
+    .expect("only Milan, Genoa and Turin are supported for dumping right now");
     let mut apcb_buffer = [0xFFu8; Apcb::MAX_SIZE];
     let mut apcb_buffer_option = Some(&mut apcb_buffer[..]);
     let config = SerdeConfig {
-        processor_generation: ProcessorGeneration::Milan, // FIXME could be ambiguous
+        processor_generation: *gen,
         spi_mode_bulldozer: efs.spi_mode_bulldozer().unwrap(),
         spi_mode_zen_naples: efs.spi_mode_zen_naples().unwrap(),
         spi_mode_zen_rome: efs.spi_mode_zen_rome().unwrap(),

@@ -64,8 +64,8 @@ pub(crate) const fn EFH_BEGINNING(
     processor_generation: ProcessorGeneration,
 ) -> Location {
     match processor_generation {
-        ProcessorGeneration::Turin => 0x2_0000, // FIXME
         ProcessorGeneration::Naples => 0x2_0000,
         ProcessorGeneration::Rome | ProcessorGeneration::Milan => 0xFA_0000,
+        ProcessorGeneration::Genoa | ProcessorGeneration::Turin => 0x2_0000,
     }
 }
