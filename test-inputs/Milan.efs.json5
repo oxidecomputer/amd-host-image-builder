@@ -4416,7 +4416,7 @@
 										},
 										{
 											Byte: {
-												MemTrainingHdtControl: "StageCompletionMessages1"
+												MemTrainingHdtControl: "AssertionMessages"
 											}
 										},
 										{
