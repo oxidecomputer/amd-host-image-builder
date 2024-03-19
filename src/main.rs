@@ -552,13 +552,13 @@ fn dump_psp_directory<T: FlashRead + FlashWrite>(
 
             let blob_export = match psp_directory.payload_beginning(&e) {
                Ok(beginning) => {
+                   let typ_string = typ.to_string();
+                   let size = e.size().unwrap() as usize;
                    if let Some(blob_dump_dirname) = blob_dump_dirname {
-                       let typ_string = typ.to_string();
                        let (data_file, path) = create_dumpfile(&mut blob_dump_filenames, blob_dump_dirname, "psp-default", typ_string, 0);
-                       let size = e.size().unwrap() as usize;
-                       Some((data_file, path, beginning, size))
+                       Some((Some(data_file), path, beginning, size))
                    } else {
-                       None
+                       Some((None, Path::new("????").to_path_buf(), beginning, size))
                    }
                }
                Err(amd_efs::Error::DirectoryTypeMismatch) => {
@@ -585,16 +585,22 @@ fn dump_psp_directory<T: FlashRead + FlashWrite>(
                         rom_id: e.rom_id_or_err().unwrap()
                     },
                     blob: match blob_export {
-                    None => {
-                       None
-                    }
-                        Some((mut data_file, ref _path, beginning, size)) => {
+                        None => {
+                           None
+                        }
+                        Some((Some(mut data_file), ref _path, beginning, size)) => {
                                 transfer_from_flash_to_io(
                                     storage,
                                     beginning,
                                     size,
                                     &mut data_file,
                                 );
+                            Some(SerdePspDirectoryEntryBlob {
+                        flash_location: Some(psp_directory.payload_beginning(&e).unwrap()),
+                        size: Some(size.try_into().unwrap()),
+                    })
+                    }
+                    Some((None, _, _, _)) => {
                             Some(SerdePspDirectoryEntryBlob {
                         flash_location: Some(psp_directory.payload_beginning(&e).unwrap()),
                         size: Some(e.size().unwrap()), // FIXME what if it doesn't apply?
