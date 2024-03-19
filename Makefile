@@ -342,5 +342,7 @@ clean:
 	rm -rf target
 	$(MAKE) -C nanobl-rs clean
 
-tests:
+tests: nanobl-rs/obj/nanobl-rs.elf
 	$(CARGO) test
+	$(CARGO) run -- generate -B etc -c etc/test.json5 -o test.img -r nanobl-rs/obj/nanobl-rs.elf
+	$(CARGO) run -- dump --existing-file=test.img | jq -r -e '.psp.PspDirectory.entries[].target.size' >/dev/null
