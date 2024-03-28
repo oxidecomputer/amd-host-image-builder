@@ -1,5 +1,5 @@
 {
-	processor_generation: "Rome",
+	processor_generation: "Milan",
 	spi_mode_zen_rome: {
 		fast_speed_new: "16.66 MHz",
 		read_mode: "Normal up to 33.33 MHz",
@@ -10,7 +10,7 @@
 			entries: [
 				{
 					source: {
-						BlobFile: "AmdPubKey_ssp.bin"
+						BlobFile: "AmdPubKey_gn.tkn"
 					},
 					target: {
 						type: "AmdPublicKey"
@@ -18,7 +18,7 @@
 				},
 				{
 					source: {
-						BlobFile: "PspBootLoader_ssp.sbin"
+						BlobFile: "PspBootLoader_gn.sbin"
 					},
 					target: {
 						type: "PspBootloader"
@@ -26,7 +26,7 @@
 				},
 				{
 					source: {
-						BlobFile: "PspRecoveryBootLoader_ssp.sbin"
+						BlobFile: "PspRecoveryBootLoader_gn.sbin"
 					},
 					target: {
 						type: "PspRecoveryBootloader"
@@ -34,7 +34,7 @@
 				},
 				{
 					source: {
-						BlobFile: "SmuFirmwareSsp.csbin"
+						BlobFile: "SmuFirmwareGn.csbin"
 					},
 					target: {
 						type: "SmuOffChipFirmware8"
@@ -42,7 +42,15 @@
 				},
 				{
 					source: {
-						BlobFile: "AblPubKey_ssp.bin"
+						BlobFile: "SecureDebugToken_gn.stkn"
+					},
+					target: {
+						type: "AmdSecureDebugKey"
+					}
+				},
+				{
+					source: {
+						BlobFile: "PspABLFw_gn.stkn"
 					},
 					target: {
 						type: "AblPublicKey"
@@ -58,7 +66,7 @@
 				},
 				{
 					source: {
-						BlobFile: "SmuFirmware2Ssp.csbin"
+						BlobFile: "SmuFirmware2Gn.csbin"
 					},
 					target: {
 						type: "SmuOffChipFirmware12"
@@ -66,7 +74,7 @@
 				},
 				{
 					source: {
-						BlobFile: "SecureDebugUnlock_ssp.sbin"
+						BlobFile: "SecureDebugUnlock_gn.sbin"
 					},
 					target: {
 						type: "PspEarlySecureUnlockDebugImage"
@@ -74,7 +82,7 @@
 				},
 				{
 					source: {
-						BlobFile: "PspIkek_ssp.bin"
+						BlobFile: "PspIkek_gn.bin"
 					},
 					target: {
 						type: "WrappedIkek"
@@ -90,7 +98,7 @@
 				},
 				{
 					source: {
-						BlobFile: "RsmuSecPolicy_ssp.sbin"
+						BlobFile: "RsmuSecPolicy_gn.sbin"
 					},
 					target: {
 						type: "SecurityPolicyBinary"
@@ -98,7 +106,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Mp5Ssp.csbin"
+						BlobFile: "Mp5Gn.csbin"
 					},
 					target: {
 						type: "Mp5Firmware"
@@ -106,7 +114,7 @@
 				},
 				{
 					source: {
-						BlobFile: "AgesaBootloader_U_prod_Mcm_SSP.bin"
+						BlobFile: "AgesaBootloader_U_prod_GN.csbin"
 					},
 					target: {
 						type: "Abl0"
@@ -114,7 +122,7 @@
 				},
 				{
 					source: {
-						BlobFile: "SspPhyFw.sbin"
+						BlobFile: "GnPhyFw.sbin"
 					},
 					target: {
 						type: "DxioPhySramFirmware"
@@ -122,18 +130,10 @@
 				},
 				{
 					source: {
-						BlobFile: "SspPhyFwSb4kr.stkn"
+						BlobFile: "PSP-Key-DB_gn.sbin"
 					},
 					target: {
-						type: "DxioPhySramPublicKey"
-					}
-				},
-				{
-					source: {
-						BlobFile: "Starship-PMU-FW.stkn"
-					},
-					target: {
-						type: "PmuPublicKey"
+						type: "PspBootloaderPublicKeysTable"
 					}
 				}
 			]
@@ -153,12 +153,9 @@
 							},
 							v3_header_ext: {
 								signature: "ECB2",
-								_reserved_2: 0x0010,
 								struct_version: 18,
 								data_version: 256,
 								ext_header_size: 0x00000060,
-								_reserved_4: 0xffff,
-								_reserved_5: 0x0040,
 								data_offset: 0x0058,
 								signature_ending: "BCBA"
 							},
@@ -758,7 +755,7 @@
 											},
 											cs2_odt_patterns: {
 												reading_pattern: 0x00,
-												writing_pattern: 0x02
+												writing_pattern: 0x04
 											},
 											cs3_odt_patterns: {
 												reading_pattern: 0x00,
@@ -830,123 +827,123 @@
 											},
 											cs1_odt_patterns: {
 												reading_pattern: 0x00,
+												writing_pattern: 0x02
+											},
+											cs2_odt_patterns: {
+												reading_pattern: 0x00,
+												writing_pattern: 0x00
+											},
+											cs3_odt_patterns: {
+												reading_pattern: 0x00,
+												writing_pattern: 0x00
+											}
+										},
+										{
+											dimm_rank_bitmaps: {
+												dimm0: {
+													unpopulated: false,
+													single_rank: true,
+													dual_rank: false,
+													quad_rank: false
+												},
+												dimm1: {
+													unpopulated: false,
+													single_rank: true,
+													dual_rank: false,
+													quad_rank: false
+												},
+												dimm2: {
+													unpopulated: false,
+													single_rank: false,
+													dual_rank: false,
+													quad_rank: false
+												}
+											},
+											cs0_odt_patterns: {
+												reading_pattern: 0x00,
+												writing_pattern: 0x00
+											},
+											cs1_odt_patterns: {
+												reading_pattern: 0x00,
+												writing_pattern: 0x00
+											},
+											cs2_odt_patterns: {
+												reading_pattern: 0x00,
+												writing_pattern: 0x00
+											},
+											cs3_odt_patterns: {
+												reading_pattern: 0x00,
+												writing_pattern: 0x00
+											}
+										},
+										{
+											dimm_rank_bitmaps: {
+												dimm0: {
+													unpopulated: false,
+													single_rank: true,
+													dual_rank: false,
+													quad_rank: false
+												},
+												dimm1: {
+													unpopulated: false,
+													single_rank: false,
+													dual_rank: true,
+													quad_rank: false
+												},
+												dimm2: {
+													unpopulated: false,
+													single_rank: false,
+													dual_rank: false,
+													quad_rank: false
+												}
+											},
+											cs0_odt_patterns: {
+												reading_pattern: 0x04,
+												writing_pattern: 0x04
+											},
+											cs1_odt_patterns: {
+												reading_pattern: 0x00,
+												writing_pattern: 0x00
+											},
+											cs2_odt_patterns: {
+												reading_pattern: 0x01,
+												writing_pattern: 0x01
+											},
+											cs3_odt_patterns: {
+												reading_pattern: 0x01,
+												writing_pattern: 0x01
+											}
+										},
+										{
+											dimm_rank_bitmaps: {
+												dimm0: {
+													unpopulated: false,
+													single_rank: false,
+													dual_rank: true,
+													quad_rank: false
+												},
+												dimm1: {
+													unpopulated: false,
+													single_rank: true,
+													dual_rank: false,
+													quad_rank: false
+												},
+												dimm2: {
+													unpopulated: false,
+													single_rank: false,
+													dual_rank: false,
+													quad_rank: false
+												}
+											},
+											cs0_odt_patterns: {
+												reading_pattern: 0x04,
+												writing_pattern: 0x04
+											},
+											cs1_odt_patterns: {
+												reading_pattern: 0x04,
 												writing_pattern: 0x04
 											},
 											cs2_odt_patterns: {
-												reading_pattern: 0x00,
-												writing_pattern: 0x00
-											},
-											cs3_odt_patterns: {
-												reading_pattern: 0x00,
-												writing_pattern: 0x00
-											}
-										},
-										{
-											dimm_rank_bitmaps: {
-												dimm0: {
-													unpopulated: false,
-													single_rank: true,
-													dual_rank: false,
-													quad_rank: false
-												},
-												dimm1: {
-													unpopulated: false,
-													single_rank: true,
-													dual_rank: false,
-													quad_rank: false
-												},
-												dimm2: {
-													unpopulated: false,
-													single_rank: false,
-													dual_rank: false,
-													quad_rank: false
-												}
-											},
-											cs0_odt_patterns: {
-												reading_pattern: 0x00,
-												writing_pattern: 0x00
-											},
-											cs1_odt_patterns: {
-												reading_pattern: 0x00,
-												writing_pattern: 0x00
-											},
-											cs2_odt_patterns: {
-												reading_pattern: 0x00,
-												writing_pattern: 0x00
-											},
-											cs3_odt_patterns: {
-												reading_pattern: 0x00,
-												writing_pattern: 0x00
-											}
-										},
-										{
-											dimm_rank_bitmaps: {
-												dimm0: {
-													unpopulated: false,
-													single_rank: true,
-													dual_rank: false,
-													quad_rank: false
-												},
-												dimm1: {
-													unpopulated: false,
-													single_rank: false,
-													dual_rank: true,
-													quad_rank: false
-												},
-												dimm2: {
-													unpopulated: false,
-													single_rank: false,
-													dual_rank: false,
-													quad_rank: false
-												}
-											},
-											cs0_odt_patterns: {
-												reading_pattern: 0x02,
-												writing_pattern: 0x02
-											},
-											cs1_odt_patterns: {
-												reading_pattern: 0x00,
-												writing_pattern: 0x00
-											},
-											cs2_odt_patterns: {
-												reading_pattern: 0x01,
-												writing_pattern: 0x01
-											},
-											cs3_odt_patterns: {
-												reading_pattern: 0x01,
-												writing_pattern: 0x01
-											}
-										},
-										{
-											dimm_rank_bitmaps: {
-												dimm0: {
-													unpopulated: false,
-													single_rank: false,
-													dual_rank: true,
-													quad_rank: false
-												},
-												dimm1: {
-													unpopulated: false,
-													single_rank: true,
-													dual_rank: false,
-													quad_rank: false
-												},
-												dimm2: {
-													unpopulated: false,
-													single_rank: false,
-													dual_rank: false,
-													quad_rank: false
-												}
-											},
-											cs0_odt_patterns: {
-												reading_pattern: 0x02,
-												writing_pattern: 0x02
-											},
-											cs1_odt_patterns: {
-												reading_pattern: 0x02,
-												writing_pattern: 0x02
-											},
-											cs2_odt_patterns: {
 												reading_pattern: 0x01,
 												writing_pattern: 0x01
 											},
@@ -977,20 +974,20 @@
 												}
 											},
 											cs0_odt_patterns: {
-												reading_pattern: 0x0a,
-												writing_pattern: 0x0a
+												reading_pattern: 0x0c,
+												writing_pattern: 0x0c
 											},
 											cs1_odt_patterns: {
-												reading_pattern: 0x0a,
-												writing_pattern: 0x0a
+												reading_pattern: 0x0c,
+												writing_pattern: 0x0c
 											},
 											cs2_odt_patterns: {
-												reading_pattern: 0x05,
-												writing_pattern: 0x05
+												reading_pattern: 0x03,
+												writing_pattern: 0x03
 											},
 											cs3_odt_patterns: {
-												reading_pattern: 0x05,
-												writing_pattern: 0x05
+												reading_pattern: 0x03,
+												writing_pattern: 0x03
 											}
 										}
 									]
@@ -2419,7 +2416,7 @@
 												ddr3200: true
 											},
 											vdd_io: {
-												"1.2 V": true,
+												"1.2 V": true
 											},
 											dimm0_ranks: {
 												unpopulated: false,
@@ -2694,8 +2691,8 @@
 											],
 											speeds: [
 												0x0640,
-												0x0899,
-												0x0899
+												0x1131,
+												0x1131
 											]
 										},
 										{
@@ -2715,8 +2712,8 @@
 											],
 											speeds: [
 												0x0640,
-												0x0899,
-												0x0899
+												0x1131,
+												0x1131
 											]
 										},
 										{
@@ -2736,8 +2733,8 @@
 											],
 											speeds: [
 												0x0640,
-												0x0899,
-												0x0899
+												0x1131,
+												0x1131
 											]
 										},
 										{
@@ -2757,8 +2754,8 @@
 											],
 											speeds: [
 												0x0640,
-												0x0899,
-												0x0899
+												0x1131,
+												0x1131
 											]
 										},
 										{
@@ -2778,8 +2775,8 @@
 											],
 											speeds: [
 												0x05bb,
-												0x0899,
-												0x0899
+												0x1131,
+												0x1131
 											]
 										},
 										{
@@ -2799,8 +2796,8 @@
 											],
 											speeds: [
 												0x05bb,
-												0x0899,
-												0x0899
+												0x1131,
+												0x1131
 											]
 										},
 										{
@@ -2820,8 +2817,8 @@
 											],
 											speeds: [
 												0x05bb,
-												0x0899,
-												0x0899
+												0x1131,
+												0x1131
 											]
 										}
 									]
@@ -2859,8 +2856,8 @@
 											],
 											speeds: [
 												0x0640,
-												0x0899,
-												0x0899
+												0x1131,
+												0x1131
 											]
 										},
 										{
@@ -2880,8 +2877,8 @@
 											],
 											speeds: [
 												0x0640,
-												0x0899,
-												0x0899
+												0x1131,
+												0x1131
 											]
 										},
 										{
@@ -2901,8 +2898,8 @@
 											],
 											speeds: [
 												0x0640,
-												0x0899,
-												0x0899
+												0x1131,
+												0x1131
 											]
 										},
 										{
@@ -2922,8 +2919,8 @@
 											],
 											speeds: [
 												0x0640,
-												0x0899,
-												0x0899
+												0x1131,
+												0x1131
 											]
 										},
 										{
@@ -2943,8 +2940,8 @@
 											],
 											speeds: [
 												0x0640,
-												0x0899,
-												0x0899
+												0x1131,
+												0x1131
 											]
 										},
 										{
@@ -2964,8 +2961,8 @@
 											],
 											speeds: [
 												0x0640,
-												0x0899,
-												0x0899
+												0x1131,
+												0x1131
 											]
 										},
 										{
@@ -2985,8 +2982,8 @@
 											],
 											speeds: [
 												0x0640,
-												0x0899,
-												0x0899
+												0x1131,
+												0x1131
 											]
 										}
 									]
@@ -3024,8 +3021,8 @@
 											],
 											speeds: [
 												0x0640,
-												0x0899,
-												0x0899
+												0x1131,
+												0x1131
 											]
 										},
 										{
@@ -3045,8 +3042,8 @@
 											],
 											speeds: [
 												0x05bb,
-												0x0899,
-												0x0899
+												0x1131,
+												0x1131
 											]
 										},
 										{
@@ -3066,8 +3063,8 @@
 											],
 											speeds: [
 												0x0535,
-												0x0899,
-												0x0899
+												0x1131,
+												0x1131
 											]
 										}
 									]
@@ -3105,8 +3102,8 @@
 											],
 											speeds: [
 												0x0640,
-												0x0899,
-												0x0899
+												0x1131,
+												0x1131
 											]
 										},
 										{
@@ -3126,8 +3123,8 @@
 											],
 											speeds: [
 												0x0640,
-												0x0899,
-												0x0899
+												0x1131,
+												0x1131
 											]
 										},
 										{
@@ -3147,8 +3144,8 @@
 											],
 											speeds: [
 												0x0640,
-												0x0899,
-												0x0899
+												0x1131,
+												0x1131
 											]
 										}
 									]
@@ -3393,7 +3390,7 @@
 										key_pos: 0x00,
 										board_instance_mask: 0xffff
 									},
-									ErrorOutControl112: {
+									ErrorOutControl116: {
 										enable_error_reporting: false,
 										enable_error_reporting_gpio: false,
 										enable_error_reporting_beep_codes: false,
@@ -3586,11 +3583,6 @@
 										},
 										{
 											Bool: {
-												MotherBoardType0: false
-											}
-										},
-										{
-											Bool: {
 												MemDimmTypeDdr3Capable: false
 											}
 										},
@@ -3601,12 +3593,22 @@
 										},
 										{
 											Bool: {
+												GnbAdditionalFeatures: true
+											}
+										},
+										{
+											Bool: {
 												MemForcePowerDownThrottleEnable: false
 											}
 										},
 										{
 											Bool: {
 												PspPsbAutoFuse: true
+											}
+										},
+										{
+											Bool: {
+												GnbAdditionalFeatureDsm: true
 											}
 										},
 										{
@@ -3626,11 +3628,6 @@
 										},
 										{
 											Bool: {
-												BmcVgaIoEnable: false
-											}
-										},
-										{
-											Bool: {
 												MemEnableBankGroupSwap: true
 											}
 										},
@@ -3642,6 +3639,11 @@
 										{
 											Bool: {
 												MemPstate: true
+											}
+										},
+										{
+											Bool: {
+												MemAmp: true
 											}
 										},
 										{
@@ -3706,11 +3708,6 @@
 										},
 										{
 											Bool: {
-												MctpRerouteEnable: false
-											}
-										},
-										{
-											Bool: {
 												MemSodimmCapable: true
 											}
 										},
@@ -3747,6 +3744,11 @@
 										{
 											Bool: {
 												DisplayPmuTrainingResults: false
+											}
+										},
+										{
+											Bool: {
+												GnbAdditionalFeatureL3PerformanceBias: true
 											}
 										},
 										{
@@ -3806,6 +3808,11 @@
 										},
 										{
 											Bool: {
+												MemTsmeModeMilan: false
+											}
+										},
+										{
+											Bool: {
 												MemDdr4ForceDataMaskDisable: false
 											}
 										},
@@ -3837,11 +3844,6 @@
 										{
 											Bool: {
 												PspStopOnError: false
-											}
-										},
-										{
-											Bool: {
-												IohcMixedRwWorkaround: false
 											}
 										},
 										{
@@ -3899,7 +3901,7 @@
 									tokens: [
 										{
 											Byte: {
-												MemMbistAggressorOn: false
+												MemMbistAggressorOn: true
 											}
 										},
 										{
@@ -3971,11 +3973,6 @@
 										},
 										{
 											Byte: {
-												BmcVgaIoBarToReplace: 0x00
-											}
-										},
-										{
-											Byte: {
 												DfDramNumaPerSocket: "Auto"
 											}
 										},
@@ -4026,7 +4023,7 @@
 										},
 										{
 											Byte: {
-												MemMbistDataEyeType: "1D Timing"
+												MemMbistDataEyeType: "2D Full Data Eye"
 											}
 										},
 										{
@@ -4046,7 +4043,7 @@
 										},
 										{
 											Byte: {
-												MemMbistTestMode: "PhysicalInterface"
+												MemMbistTestMode: "DataEye"
 											}
 										},
 										{
@@ -4113,6 +4110,15 @@
 										},
 										{
 											Byte: {
+												MemPmuBistTestSelect: {
+													algorithm_1: true,
+													algorithm_2: true,
+													algorithm_3: true,
+												}
+											}
+										},
+										{
+											Byte: {
 												MemCpuVrefRange: 0x00
 											}
 										},
@@ -4153,7 +4159,7 @@
 										},
 										{
 											Byte: {
-												DfBottomIo: 0xb0
+												DfBottomIo: 0x80
 											}
 										},
 										{
@@ -4193,7 +4199,7 @@
 										},
 										{
 											Byte: {
-												AblSerialBaudRate: "115200 Baud"
+												AblSerialBaudRate: "3000000 Baud"
 											}
 										},
 										{
@@ -4283,11 +4289,6 @@
 										},
 										{
 											Byte: {
-												MemTsmeModeRome: "Disabled"
-											}
-										},
-										{
-											Byte: {
 												BmcDevice: 0x05
 											}
 										},
@@ -4308,12 +4309,12 @@
 										},
 										{
 											Byte: {
-												FchConsoleOutMode: 0x00
+												FchConsoleOutMode: 0x01
 											}
 										},
 										{
 											Byte: {
-												MemMbistTest: "Disabled"
+												MemMbistTest: "Enabled"
 											}
 										},
 										{
@@ -4328,12 +4329,12 @@
 										},
 										{
 											Byte: {
-												BmcGen2TxDeemphasis: "Disabled"
+												GnbSmuDfPstateFclkLimit: "Auto"
 											}
 										},
 										{
 											Byte: {
-												MemMbistPatternSelect: "Prbs"
+												MemMbistPatternSelect: "Both"
 											}
 										},
 										{
@@ -4343,12 +4344,12 @@
 										},
 										{
 											Byte: {
-												BmcVgaIoPortSize: 0x00
+												FchConsoleOutSerialPort: "Uart0Mmio"
 											}
 										},
 										{
 											Byte: {
-												FchConsoleOutSerialPort: "Uart0Mmio"
+												GnbAdditionalFeatureDsmDetector2: "Enabled"
 											}
 										}
 									]
@@ -4369,11 +4370,6 @@
 										board_instance_mask: 0xffff
 									},
 									tokens: [
-										{
-											Word: {
-												BmcVgaIoPort: 0x0000
-											}
-										},
 										{
 											Word: {
 												Dimm3DsSensorCritical: 0x0050
@@ -4523,6 +4519,11 @@
 										},
 										{
 											Dword: {
+												GnbOffRampStall: 0x000000c8
+											}
+										},
+										{
+											Dword: {
 												DfCakeCrcThresholdBounds: {
 													Value: 100
 												}
@@ -4585,13 +4586,13 @@
 					},
 					target: {
 						type: "ApcbBackup",
-						sub_program: 0,
+						sub_program: 1,
 						size: 9216
 					}
 				},
 				{
 					source: {
-						BlobFile: "Appb_SSP_1D_ddr4_Udimm_Imem.cbin"
+						BlobFile: "Appb_GN_1D_Ddr4_Udimm_Imem.csbin"
 					},
 					target: {
 						type: "PmuFirmwareInstructions",
@@ -4601,7 +4602,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Appb_SSP_1D_ddr4_Udimm_Dmem.cbin"
+						BlobFile: "Appb_GN_1D_Ddr4_Udimm_Dmem.csbin"
 					},
 					target: {
 						type: "PmuFirmwareData",
@@ -4611,7 +4612,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Appb_SSP_1D_Ddr4_Rdimm_Imem.cbin"
+						BlobFile: "Appb_GN_1D_Ddr4_Rdimm_Imem.csbin"
 					},
 					target: {
 						type: "PmuFirmwareInstructions",
@@ -4621,7 +4622,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Appb_SSP_1D_Ddr4_Rdimm_Dmem.cbin"
+						BlobFile: "Appb_GN_1D_Ddr4_Rdimm_Dmem.csbin"
 					},
 					target: {
 						type: "PmuFirmwareData",
@@ -4631,7 +4632,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Appb_SSP_2D_Ddr4_Udimm_Imem.cbin"
+						BlobFile: "Appb_GN_2D_Ddr4_Udimm_Imem.csbin"
 					},
 					target: {
 						type: "PmuFirmwareInstructions",
@@ -4641,7 +4642,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Appb_SSP_2D_Ddr4_Udimm_Dmem.cbin"
+						BlobFile: "Appb_GN_2D_Ddr4_Udimm_Dmem.csbin"
 					},
 					target: {
 						type: "PmuFirmwareData",
@@ -4651,7 +4652,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Appb_SSP_2D_Ddr4_Rdimm_Imem.cbin"
+						BlobFile: "Appb_GN_2D_Ddr4_Rdimm_Imem.csbin"
 					},
 					target: {
 						type: "PmuFirmwareInstructions",
@@ -4661,7 +4662,7 @@
 				},
 				{
 					source: {
-						BlobFile: "Appb_SSP_2D_Ddr4_Rdimm_Dmem.cbin"
+						BlobFile: "Appb_GN_2D_Ddr4_Rdimm_Dmem.csbin"
 					},
 					target: {
 						type: "PmuFirmwareData",
@@ -4670,13 +4671,66 @@
 					}
 				},
 				{
-					source: "Implied",
+					source: {
+						BlobFile: "Appb_GN_BIST_Ddr4_Udimm_Imem.csbin"
+					},
 					target: {
-						type: "Apob",
-						ram_destination_address: 0x4000000
+						type: "PmuFirmwareInstructions",
+						instance: 8,
+						sub_program: 1
+					}
+				},
+				{
+					source: {
+						BlobFile: "Appb_GN_BIST_Ddr4_Udimm_Dmem.csbin"
+					},
+					target: {
+						type: "PmuFirmwareData",
+						instance: 8,
+						sub_program: 1
+					}
+				},
+				{
+					source: {
+						BlobFile: "Appb_GN_BIST_Ddr4_Rdimm_Imem.csbin"
+					},
+					target: {
+						type: "PmuFirmwareInstructions",
+						instance: 9,
+						sub_program: 1
+					}
+				},
+				{
+					source: {
+						BlobFile: "Appb_GN_BIST_Ddr4_Rdimm_Dmem.csbin"
+					},
+					target: {
+						type: "PmuFirmwareData",
+						instance: 9,
+						sub_program: 1
+					}
+				},
+				{
+					source: {
+						BlobFile: "Appb_GN_BIST_Ddr4_Lrdimm_Imem.csbin"
+					},
+					target: {
+						type: "PmuFirmwareInstructions",
+						instance: 10,
+						sub_program: 1
+					}
+				},
+				{
+					source: {
+						BlobFile: "Appb_GN_BIST_Ddr4_Lrdimm_Dmem.csbin"
+					},
+					target: {
+						type: "PmuFirmwareData",
+						instance: 10,
+						sub_program: 1
 					}
 				}
-			]
+		]
 		}
 	}
 }

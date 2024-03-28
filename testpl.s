@@ -1,0 +1,3 @@
+.globl reset
+reset:
+	hlt
