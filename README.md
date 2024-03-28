@@ -1,97 +1,195 @@
 # amd-host-image-builder
 
-This tool builds a flash image for an AMD Zen system.
+This tool builds flash images for AMD Zen systems.
 
 # Setup
 
-First, please set up the environment such that you have the required AMD firmware and also the bootloader you want to use.
+You must use GNU make to _run_ `amd-host-image-builder` in the
+provided example configurations.
 
-This is done by executing the following command:
-
-    git submodule update --init
+Make sure that you have GNU `ld` and `as` available for building
+the test payload.
 
 # Usage
 
-Then edit `etc/milan-gimlet-b.efs.json5` (or similar configuration file) to your liking.
-Then, build an image for Milan by the following commands:
+Select a configuration file for the system and firmware version
+that you are using, e.g., `etc/milan-gimlet-b-1.0.0.a.efs.json5`
+and customize it according to your application if necessary.
 
-    make milan-gimlet-b
+To build an image for a Milan-based Gimlet, run the following,
+specifying the `make` variable `PAYLOAD` to point to the reset
+image payload you want in the result:
 
-It's possible to specify `NANOBL_FLAGS_FOR_CARGO=...` at the end of that line in order to pass flags for the bootloader nanobl. An example would be to enable feature flags via `NANOBL_FLAGS_FOR_CARGO="-F <feature> ..."`.
+    gmake milan-gimlet-b PAYLOAD=/path/to/phbl
 
-If you do so, it's recommended to run `make -C nanobl-rs clean` beforehand since changes in those flags do not necessarily make nanobl rebuild things.
+or,
 
-Or, if, instead of using the Makefile, you want to manually specify the command line to amd-host-image-builder, you can do this:
+    gmake milan-gimlet-b PAYLOAD=/path/to/nanobl-rs/obj/nanobl-rs.elf
 
-    target/amd-host-image-builder -c etc/milan-gimlet-b.efs.json5 -r nanobl-rs/obj/nanobl-rs.elf -o milan-gimlet-b.img
+This will create two image files in the current directory, one
+with the current firmware version, and one without:
 
-Here, the configuration file used is `etc/milan-gimlet-b.efs.json5`, and the reset image is `nanobl-rs/obj/nanobl-rs.elf`. Only specially-prepared ELF images can be used here. `amd-host-image-builder` extracts the sections that need to be persistent from the ELF file and stores them into the appropriate entries of the flash. Those entries will automatically be created and should NOT be specified in the JSON configuration file.
+    milan-gimlet-b-1.0.0.a.img
+    milan-gimlet-b.img
 
-You can also specify which directories are searched for blobs by passing `-B <directory>` (possibly multiple times) to `amd-host-image-builder`. For each blob name mentioned in the configuration, if that name is an absolute path then that will be used. Otherwise, the directories will be searched in the order they were specified.
+One may also run the command via `cargo run`.  For example:
 
-The resulting image will be in `milan-gimlet-b.img` and can be flashed using [humility qspi](https://github.com/oxidecomputer/humility) or using a hardware flasher (CH341A etc).
+    cargo run -- \
+        -B amd-firmware/GN/1.0.0.a \
+        -c etc/milan-gimlet-b-1.0.0.a.efs.json5 \
+        -r /path/to/nanobl-rs/obj/nanobl-rs.elf \
+        -o milan-gimlet-b-1.0.0.a.img
 
-The PSP will print debug messages to the serial port that can be configured in the settings below, see [PSP configuration](#psp-configuration).
+Here, the following are given as arguments:
+
+* `amd-firmware/GN/1.0.0.a` is in the search path for blobs,
+* The configuration file used is `etc/milan-gimlet-b-1.0.0.a.efs.json5`,
+* The reset image is `nanobl-rs/obj/nanobl-rs.elf`.  Note that there are
+  restrictions on the contents of the ELF file given to the image
+  builder.  `amd-host-image-builder` extracts the segments that need to
+  be in the reset image from the ELF file and stores them into the
+  appropriate flash entries.  Those entries will automatically be created
+  and should _not_ be specified in the JSON configuration file.
+* The output file name is given as `milan-gimlet-b-1.0.0.a.img`.
+
+`amd-host-image-builder` will incorporate a number of
+(necessary) blobs named in the configuration file.  These blobs
+are located by searching directories specified via the `-B
+<directory>` option, which can be given multiple times.  If a
+blob is named by an absolute path in the configuration file,
+then that will be used. Otherwise, the directories will be
+searched in the order they were specified.
+
+The resulting image will be in `milan-gimlet-b-1.0.0.a.img` and
+can be flashed using
+[humility qspi](https://github.com/oxidecomputer/humility) or
+using a hardware flasher (CH341A etc).
+
+The PSP will print debug messages to the serial port that can be
+configured in the settings below, see [PSP configuration](#psp-configuration).
 
 # Configuration
 
-The configuration file is JSON. `make` also builds a schema and stores it into file `efs.schema.json` in the project root directory. It is recommended to use an editor that can use JSON schemas to make editing the configuration easier (for example IntelliJ IDEA can be used--create a mapping between the file suffix `.efs.json5` and the file `efs.schema.json` in `JSON Schema Mappings` in its global settings).
+The configuration file syntax is JSON5.
 
-The configuration contains: processor generation, psp directory and bhd directory.
+The configuration file contents specify:
+* Processor generation,
+* PSP directory contents,
+* BHD directory contents,
 
-Each directory has any number of entries.
+See the subsections below for more details.
 
-Each entry has a `source` and a `target` field.
+The Makefile includes a target that builds a schema and stores
+it into file `efs.schema.json` in the project root directory.
+We recommend using an editor that can match the document against
+a schema when editing the configuration.  For example, IntelliJ
+IDEA is known to work by setting a mapping between the file
+suffix `.efs.json5` and the file `efs.schema.json` in `JSON
+Schema Mappings` in its global settings.
 
-Use the `source` field to specify how to construct the payload data for that entry.
-Possible fields in `source` are either `Value` (and an immediate value to use), `ApcbJson` (and the inline configuration for the PSP) or `BlobFile` (and the name of a file to load and use as payload).
+## Directory Configuration
 
-Use the `target` field to specify where in the flash to put the result.
-The only mandatory field here is `type` (to specify what kind of entry it is supposed to go to).
+Each directory has any number of entries.  Each entry has a
+`source` and a `target` field.
 
-# PSP configuration
+The `source` field specifies how to construct the payload
+data for that entry.  Possible fields in `source` are:
 
-The PSP can be configured using one or multiple entries in the Bhd (yes, that's right) directory with the type `ApcbBackup` and/or `Apcb`. For now, it's recommended to have exactly one entry of type `ApcbBackup`, and to store it into `sub_program` 1 (that's an optional field in the `target`--which defaults to 0).
+* `Value` and an immediate value to use
+* `ApcbJson` and the inline configuration for the PSP
+* `BlobFile` and the name of a file to load and use as payload
 
-We represent the configuration of the PSP as JSON, too. The format is very close to the actual APCB (with some reserved fields being hidden if they are empty anyway). The checksum will automatically be updated by amd-host-image-builder and doesn't need to be manually updated.
+Use the `target` field to specify where in the flash to put the
+result.  The only mandatory field is `type` to specify the
+corresponding entry kind.
 
-For extra possible entries that you can add to the Apcb, please (make your editor) check the JSON schema.
+## PSP configuration
 
-The Apcb contains (about 3) groups. Each group contains several dozen entries. Each entry is either a Struct or a Tokens entry.
+The PSP can be configured using one or multiple entries in the
+Bhd directory with the type `ApcbBackup` and/or `Apcb`.  For
+now, it is recommended to have exactly one entry of type
+`ApcbBackup`, and to store it into `sub_program` 1.  Note that
+`sub_program` an optional field in the `target` that defaults to
+0.
 
-In general, Struct entries (entries which say `Struct` in the configuration) are older and AMD is in the process of replacing the settings with so-called Tokens entries (entries which say `tokens`).
+We represent the PSP configuration as JSON5, too. The format is
+very close to the actual APCB, with some reserved fields hidden
+if they are empty anyway.  The checksum will automatically be
+updated by amd-host-image-builder and doesn't need to be
+manually updated.
 
-For example, there's an entry `ErrorOutControl` which you can use to configure PSP error messages, and `ConsoleOutControl` which you can use to configure early PSP messages. You can configure target and verbosity.
+For extra possible entries that you can add to the Apcb, be sure
+to validate against the JSON schema.
 
-Under `tokens`, there's are tokens to configure later PSP messages. For example, the token `AblSerialBaudRate` configures the baud rate of the UART, `FchConsoleOutMode` to set whether PSP prints to an UART or not (0), `FchConsoleOutSerialPort` to set which UART to use (`SuperIo`, `Uart0Mmio`, or `Uart1Mmio`)--although that supposedly moved to `FchConsoleMode` in Milan.
+The Apcb contains (about 3) groups. Each group contains several
+dozen entries.  Each entry is either a "struct" or a "tokens"
+entry.  Struct entries are denoted by the keyword `Struct`, and
+are an older mechanism.  AMD is in the process of replacing them
+with tokens entries, denoted by `tokens`.  Settings should be
+made using `tokens` entries, not `Struct` entries, if possible.
 
-Settings should be set using the `tokens`, not the `Struct`s, if possible. The hope is that, one day, the structs will not be necessary at all anymore--and the token settings are preferred by the PSP anyhow.
+For example, there's an entry `ErrorOutControl` which you can
+use to configure PSP error messages, and `ConsoleOutControl`
+which you can use to configure early PSP messages. You can
+configure target and verbosity.
+
+Under `tokens`, there's are tokens to configure later PSP
+messages.  For example, the token `AblSerialBaudRate` configures
+the baud rate of the UART, `FchConsoleOutMode` to set whether
+PSP prints to a UART or not (0), `FchConsoleOutSerialPort` to
+set which UART to use (`SuperIo`, `Uart0Mmio`, or `Uart1Mmio`;
+supposedly moved to `FchConsoleMode` in Milan.
 
 # Preparation of ELF files
 
-The PSP loads the reset image into memory like specified in the ELF file.
+This tool generates its output such that, when the PSP loads the
+reset image into memory, it is laid out as specified in the
+source ELF file.  Execution will start at the ELF entry point.
 
-Afterwards, the PSP will start the x86 CPU in real mode, and that CPU will start executing 16 Byte from the *end* of the reset image.
+When the system starts, the PSP holds the x86 cores in reset
+while loading the image.  Eventually, it starts the x86 "boot"
+CPU (called the "Boot Support Core", "Bootstrap Core", or BSC in
+AMD's documentation) in 16-bit real mode.  That CPU will start
+executing 16 Byte below the end of the aligned 16-bit real-mode
+segment at the end of the reset image.  Thus, the ELF entry
+point must contain valid 16-bit real-mode code exactly 16 bytes
+from the end of the last segment in the file.
 
-That means that the ELF entry point needs to be 16 bytes from the end of the last segment--and that part needs to contain machine code that's valid for real mode.
+Also, the ELF file needs to be linked in a way that it actually
+specifies _physical_ addresses: there is no MMU configured, let
+alone enabled, when execution starts at the reset vector.
 
-Also, the ELF file needs to be linked in a way that it actually specified *physical* addresses. After all, there's no MMU set up yet--so virtual addresses don't make any sense (and we expect each virtual address to be equal to the same physical address for our purposes).
+The ELF file must also expose three symbols:
+* `__sloader` marking the start of the reset image
+* `__eloader` marking the end of the reset image
+* `_BL_SPACE` giving the amount of memory required for
+  the image, in bytes.
 
-There should be ELF symbols `__sloader`, `__eloader` and `_BL_SPACE` available. Those are the expected start address of your program, the expected end address of your program, and the size of your loader program, respectively. The values of those special symbols are checked by `amd-host-image-builder` and it will fail if those are not what is expected.
+The values of those special symbols are validated by
+`amd-host-image-builder`, which will fail if they do not
+match a set of hardcoded criteria.  See the tool's source
+code for the exact rules.
 
-As a special bringup help, right now, it's also possible to specify a non-ELF file. In that case, it will be put into x86 RAM such that it's right before address 0x8000_0000). Other checks are not done--you are on your own. We reserve the right to remove this weird non-ELF file support at any point.
-
-# Other models
-
-`amd-host-image-builder` also supports Rome. If you want to use that, please edit `etc/rome-ethanol-x.efs.json5` to your liking and then invoke `make rome-ethanol-x.img` to get `rome-ethanol-x.img` which you can flash.
+For the special case of facilitating bring-up work, it is also
+possible to specify a non-ELF file that is interpreted basically
+as a blob. In that case, it will be loaded into RAM such that it
+ends at address 0x8000_0000.  Validation checks are not
+performed in this case.  Further, we make no claims of stability
+for this feature and reserve the right to change or remove it at
+any point--you are on your own.
 
 # Using older configuration files
 
-We had used JSON before, but now switched to JSON5.
+We previously used JSON for the configuration file syntax, but
+switched to JSON5, which supports non-strings as keys, trailing
+commas, comments, and hexadecimal notation for integer
+constants.  If you find an older file that you could like to
+convert to the newer format, you can use the following `sed`
+script invocation:
 
-In order to convert your old configuration files, you can use the following commands:
+    sed \
+        -e 's;"\(0x[^"]*\)";\1;' \
+        -e 's;"\([a-zA-Z_][a-zA-Z0-9_]*\)":;\1:;' \
+        etc/Milan.json > etc/Milan.efs.json5
 
-    sed -e 's;"\(0x[^"]*\)";\1;' -e 's;"\([a-zA-Z_][a-zA-Z0-9_]*\)":;\1:;' etc/Milan.json > etc/Milan.efs.json5
-    rm etc/Milan.json
-
-Please adapt the file names above as necessary.
+Please note the file name suffix change!

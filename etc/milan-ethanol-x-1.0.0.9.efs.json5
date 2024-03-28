@@ -3901,7 +3901,7 @@
 									tokens: [
 										{
 											Byte: {
-												MemMbistAggressorOn: true
+												MemMbistAggressorOn: false
 											}
 										},
 										{
@@ -4023,7 +4023,7 @@
 										},
 										{
 											Byte: {
-												MemMbistDataEyeType: "2D Full Data Eye"
+												MemMbistDataEyeType: "1D Timing"
 											}
 										},
 										{
@@ -4043,7 +4043,7 @@
 										},
 										{
 											Byte: {
-												MemMbistTestMode: "DataEye"
+												MemMbistTestMode: "PhysicalInterface"
 											}
 										},
 										{
@@ -4199,7 +4199,7 @@
 										},
 										{
 											Byte: {
-												AblSerialBaudRate: "3000000 Baud"
+												AblSerialBaudRate: "115200 Baud"
 											}
 										},
 										{
@@ -4309,12 +4309,12 @@
 										},
 										{
 											Byte: {
-												FchConsoleOutMode: 0x01
+												FchConsoleOutMode: 0x00
 											}
 										},
 										{
 											Byte: {
-												MemMbistTest: "Enabled"
+												MemMbistTest: "Disabled"
 											}
 										},
 										{
@@ -4334,7 +4334,7 @@
 										},
 										{
 											Byte: {
-												MemMbistPatternSelect: "Both"
+												MemMbistPatternSelect: "Prbs"
 											}
 										},
 										{
