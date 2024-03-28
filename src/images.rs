@@ -2,6 +2,7 @@ use amd_flash::{
     ErasableLocation, FlashAlign, FlashRead, FlashWrite, Location,
 };
 use std::cell::RefCell;
+use std::convert::TryFrom;
 use std::fs::File;
 use std::fs::OpenOptions;
 use std::io::Read;
@@ -97,6 +98,7 @@ impl FlashWrite for FlashImage {
 impl FlashImage {
     pub fn create(
         filename: &Path,
+        image_size: u32,
         erasable_block_size: usize,
     ) -> std::io::Result<Self> {
         let file = OpenOptions::new()
@@ -104,7 +106,7 @@ impl FlashImage {
             .write(true)
             .create(true)
             .open(filename)?;
-        file.set_len(crate::static_config::IMAGE_SIZE.into())?;
+        file.set_len(image_size.into())?;
         assert!(erasable_block_size.is_power_of_two());
         let result = Self {
             file: RefCell::new(file),
@@ -119,6 +121,7 @@ impl FlashImage {
     }
     fn erase(&self) -> std::io::Result<()> {
         let filename = &self.filename;
+        let file_size = u32::try_from(self.file_size()?).unwrap();
         let flash_to_io_error = |e: amd_flash::Error| {
             std::io::Error::new(
                 std::io::ErrorKind::Other,
@@ -130,14 +133,14 @@ impl FlashImage {
             .erasable_location(0)
             .ok_or(amd_flash::Error::Alignment)
             .map_err(flash_to_io_error)?;
-        while Location::from(position) < crate::static_config::IMAGE_SIZE {
+        while Location::from(position) < file_size {
             FlashWrite::erase_block(self, position)
                 .map_err(flash_to_io_error)?;
             position = position
                 .advance(erasable_block_size)
                 .map_err(flash_to_io_error)?;
         }
-        assert!(Location::from(position) == crate::static_config::IMAGE_SIZE);
+        assert!(Location::from(position) == file_size);
         Ok(())
     }
     pub fn load(filename: &Path) -> std::io::Result<Self> {

@@ -1,8 +1,6 @@
 use amd_efs::ProcessorGeneration;
 use amd_flash::Location;
 
-pub(crate) const IMAGE_SIZE: u32 = 32 * 1024 * 1024;
-
 /* Coarse-grained flash locations (in Byte) */
 
 /*
