@@ -12,6 +12,7 @@ use amd_host_image_builder_config::{
     SerdePspDirectoryEntryBlob, SerdePspDirectoryVariant, SerdePspEntry,
     SerdePspEntrySource, TryFromSerdeDirectoryEntryWithContext,
 };
+use bytesize::ByteSize;
 use core::convert::TryFrom;
 use core::convert::TryInto;
 use static_assertions::const_assert;
@@ -25,6 +26,7 @@ use std::io::Seek;
 use std::io::SeekFrom;
 use std::path::Path;
 use std::path::PathBuf;
+use std::str::FromStr;
 use structopt::StructOpt;
 
 mod static_config;
@@ -302,6 +304,14 @@ enum Opts {
     Generate {
         #[structopt(short = "o", long = "output-file", parse(from_os_str))]
         output_filename: PathBuf,
+
+        #[structopt(
+            default_value = "32 MiB",
+            short = "s",
+            long = "output-size",
+            parse(try_from_str = ByteSize::from_str)
+        )]
+        output_size: ByteSize,
 
         #[structopt(short = "r", long = "reset-image", parse(from_os_str))]
         reset_image_filename: PathBuf,
@@ -780,6 +790,7 @@ fn dump(
 
 fn generate(
     output_filename: &Path,
+    image_size: u32,
     efs_configuration_filename: &Path,
     reset_image_filename: &Path,
     blobdirs: Vec<PathBuf>,
@@ -827,7 +838,8 @@ fn generate(
 
     const ERASABLE_BLOCK_SIZE: usize = 0x1000;
     const_assert!(ERASABLE_BLOCK_SIZE.is_power_of_two());
-    let storage = FlashImage::create(filename, ERASABLE_BLOCK_SIZE)?;
+    let storage =
+        FlashImage::create(filename, image_size, ERASABLE_BLOCK_SIZE)?;
     let path = Path::new(&efs_configuration_filename);
     let data = std::fs::read_to_string(path)?;
     let config: SerdeConfig =
@@ -847,7 +859,7 @@ fn generate(
         crate::static_config::EFH_SIZE,
         ErasableRange::new(
             storage.erasable_location(0).unwrap(),
-            storage.erasable_location(static_config::IMAGE_SIZE).unwrap(),
+            storage.erasable_location(image_size).unwrap(),
         ),
     )
     .map_err(flash_to_io_error)?;
@@ -860,7 +872,7 @@ fn generate(
         &storage,
         host_processor_generation,
         static_config::EFH_BEGINNING(host_processor_generation),
-        Some(static_config::IMAGE_SIZE),
+        Some(image_size),
     ) {
         Ok(efs) => efs,
         Err(e) => {
@@ -1166,12 +1178,23 @@ fn run() -> std::io::Result<()> {
         }
         Opts::Generate {
             output_filename,
+            output_size,
             efs_configuration_filename,
             reset_image_filename,
             blobdirs,
             verbose,
         } => generate(
             &output_filename,
+            match u32::try_from(output_size.as_u64()).expect("Size <= 32 MiB") {
+                0x100_0000 => 0x100_0000,
+                0x200_0000 => 0x200_0000,
+                _ => {
+                    return Err(std::io::Error::other(format!(
+                        "unsupported output size {}",
+                        output_size
+                    )));
+                }
+            },
             &efs_configuration_filename,
             &reset_image_filename,
             blobdirs,

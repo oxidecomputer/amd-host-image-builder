@@ -17,3 +17,4 @@ structopt = "0.3"
 amd-host-image-builder-config = { path = "amd-host-image-builder-config" }
 json5 = "0.4.1"
 static_assertions = "1.1.0"
+bytesize = "1.3.0"
