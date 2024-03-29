@@ -2,7 +2,3 @@
 	path = amd-firmware
 	url = git@github.com:oxidecomputer/amd-firmware.git
 	branch = master
-[submodule "nanobl-rs"]
-	path = nanobl-rs
-	url = git@github.com:oxidecomputer/nanobl-rs.git
-	branch = master

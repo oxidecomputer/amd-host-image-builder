@@ -8,7 +8,10 @@ You must use GNU make to _run_ `amd-host-image-builder` in the
 provided example configurations.
 
 Make sure that you have GNU `ld` and `as` available for building
-the test payload.
+the test payload if you intend to run tests.
+
+Run `git submodule update --init` to download AMD firmware blobs
+used when running the tool.
 
 # Usage
 
