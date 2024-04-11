@@ -121,6 +121,43 @@ genoa-ruby-1.0.0.0.img: etc/genoa-ruby-1.0.0.0.efs.json5 \
   $(SOURCES)
 	$(CARGO) run -- generate $(BLOB_DIRS:%=-B %) -v -B amd-firmware/RS/1.0.0.0 -c $< -r $(PAYLOAD) -o $@
 
+genoa-ruby-1.0.0.0-agesa.img Reset.img: etc/genoa-ruby-1.0.0.0-agesa.efs.json5 \
+    amd-firmware/RS/1.0.0.0/AmdPubKey_rs.tkn \
+    amd-firmware/RS/1.0.0.0/TypeId0x01_PspBl_RS.sbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x03_PspRecBl_RS.sbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x08_SmuFirmwareRS.csbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x09_PspDebugUnlockToken_RS.stkn \
+    amd-firmware/RS/1.0.0.0/TypeId0x0A_PspAblPubKey_RS.stkn \
+    amd-firmware/RS/1.0.0.0/TypeId0x12_SmuFirmware2_RS.csbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x13_SduFw_RS.sbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x21_PspAmdIkek_RS.bin \
+    amd-firmware/RS/1.0.0.0/SecureEmptyToken.bin \
+    amd-firmware/RS/1.0.0.0/TypeId0x24_RegisterAccessPolicy_RS.csbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x2a_Mp5RS.csbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x30_AgesaBootLoaderU_RS.csbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x42_PhyFw_RS.csbin \
+    amd-firmware/RS/1.0.0.0/TypeId0x50_PspKeyDataBase_RS.sbin \
+    amd-firmware/RS/1.0.0.0/Appb_RS_Ddr5_0x64_3_Rdimm_Imem1.csbin \
+    amd-firmware/RS/1.0.0.0/Appb_RS_Ddr5_0x65_3_Rdimm_Dmem1.csbin \
+    amd-firmware/RS/1.0.0.0/Appb_RS_Ddr5_0x64_4_Rdimm_Imem2.csbin \
+    amd-firmware/RS/1.0.0.0/Appb_RS_Ddr5_0x65_4_Rdimm_Dmem2.csbin \
+    amd-firmware/RS/1.0.0.0/Appb_RS_Ddr5_0x64_9_Rdimm_Imem1.csbin \
+    amd-firmware/RS/1.0.0.0/Appb_RS_Ddr5_0x65_9_Rdimm_Dmem1.csbin \
+    amd-firmware/RS/1.0.0.0/Appb_RS_Ddr5_0x64_A_Rdimm_Imem2.csbin \
+    amd-firmware/RS/1.0.0.0/Appb_RS_Ddr5_0x65_A_Rdimm_Dmem2.csbin \
+    MAIN.fd DXEFV.Fv PEIFV.Fv \
+  $(SOURCES)
+	# This has to have been built by edk2 beforehand.
+	cp MAIN.fd $@
+	# These have to have been built by edk2 beforehand.
+	cat DXEFV.Fv PEIFV.Fv >Reset.img
+	# Note: Bios direntry Size = size(Reset.img) = size inside BFVInfo.h BFV_FRONTIER
+	$(CARGO) run -- generate $(BLOB_DIRS:%=-B %) -u -v -B . -B amd-firmware/RS/1.0.0.0 -c $< -o $@
+	#$(CARGO) run --  dump -i $@ -b tst
+
+run-qemu: genoa-ruby-1.0.0.0-agesa.img
+	/gnu/store/af0856hbmqhgbrl1r1fpmw92jlv181hv-qemu-8.2.2/bin/qemu-system-x86_64 -serial stdio -m 5G -device loader,file=Reset.img,csbaseaddr=0x75f10000,addr=0x75cf0000,cpu-num=0,force-raw=on -device loader,addr=0xfff0,cpu-num=0 -bios genoa-ruby-1.0.0.0-agesa.img -bios Reset.img -d in_asm,int,guest_errors
+
 milan-gimlet-b-1.0.0.a.img: etc/milan-gimlet-b-1.0.0.a.efs.json5 \
   $(PAYLOAD) \
   amd-firmware/GN/1.0.0.a/AmdPubKey_gn.tkn \

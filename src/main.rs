@@ -326,6 +326,9 @@ enum Opts {
 
         #[structopt(short = "v", long = "verbose")]
         verbose: bool,
+
+        #[structopt(short = "u", long = "reuse")]
+        reuse: bool,
     },
     Dump {
         #[structopt(short = "i", long = "existing-file", parse(from_os_str))]
@@ -1219,6 +1222,7 @@ fn generate(
     reset_image_filename: &Option<PathBuf>,
     blobdirs: Vec<PathBuf>,
     verbose: bool,
+    reuse: bool,
 ) -> std::io::Result<()> {
     let filename = &output_filename;
     let flash_to_io_error = |e: amd_flash::Error| {
@@ -1294,11 +1298,13 @@ fn generate(
 
     // Needs to be at least 0x1000.
     // See also DirectoryAdditionalInfo::with_max_size_checked.
-    const ERASABLE_BLOCK_SIZE: usize = 0x1000;
+    const ERASABLE_BLOCK_SIZE: usize = 0x100;
     const_assert!(ERASABLE_BLOCK_SIZE.is_power_of_two());
     let storage =
         FlashImage::create(filename, image_size, ERASABLE_BLOCK_SIZE)?;
-    storage.erase()?;
+    if !reuse {
+	    storage.erase()?;
+	}
     let path = Path::new(&efs_configuration_filename);
     let data = std::fs::read_to_string(path)?;
     let config: SerdeConfig =
@@ -1733,6 +1739,7 @@ fn run() -> std::io::Result<()> {
             reset_image_filename,
             blobdirs,
             verbose,
+            reuse,
         } => generate(
             &output_filename,
             match u32::try_from(output_size.as_u64()).expect("Size <= 32 MiB") {
@@ -1749,6 +1756,7 @@ fn run() -> std::io::Result<()> {
             &reset_image_filename,
             blobdirs,
             verbose,
+            reuse,
         ),
     }
 }
