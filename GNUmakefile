@@ -145,10 +145,10 @@ genoa-ruby-1.0.0.0-agesa.img Reset.img: etc/genoa-ruby-1.0.0.0-agesa.efs.json5 \
     amd-firmware/RS/1.0.0.0/Appb_RS_Ddr5_0x65_9_Rdimm_Dmem1.csbin \
     amd-firmware/RS/1.0.0.0/Appb_RS_Ddr5_0x64_A_Rdimm_Imem2.csbin \
     amd-firmware/RS/1.0.0.0/Appb_RS_Ddr5_0x65_A_Rdimm_Dmem2.csbin \
-    MAIN.fd DXEFV.Fv PEIFV.Fv \
+    Main.fd DXEFV.Fv PEIFV.Fv \
   $(SOURCES)
 	# This has to have been built by edk2 beforehand.
-	cp MAIN.fd $@
+	cp Main.fd $@
 	# These have to have been built by edk2 beforehand.
 	cat DXEFV.Fv PEIFV.Fv >Reset.img
 	# Note: Bios direntry Size = size(Reset.img) = size inside BFVInfo.h BFV_FRONTIER
@@ -156,7 +156,7 @@ genoa-ruby-1.0.0.0-agesa.img Reset.img: etc/genoa-ruby-1.0.0.0-agesa.efs.json5 \
 	#$(CARGO) run --  dump -i $@ -b tst
 
 run-qemu: genoa-ruby-1.0.0.0-agesa.img
-	/gnu/store/af0856hbmqhgbrl1r1fpmw92jlv181hv-qemu-8.2.2/bin/qemu-system-x86_64 -display none -serial stdio -m 5G -device loader,file=Reset.img,csbaseaddr=0x75f10000,addr=0x75cf0000,cpu-num=0,force-raw=on -device loader,addr=0xfff0,cpu-num=0 -bios genoa-ruby-1.0.0.0-agesa.img -bios Reset.img # -d in_asm,int,guest_errors,cpu
+	/gnu/store/af0856hbmqhgbrl1r1fpmw92jlv181hv-qemu-8.2.2/bin/qemu-system-x86_64 -display none -serial stdio -m 5G -device loader,file=Reset.img,csbaseaddr=0x75f10000,addr=0x75cf0000,cpu-num=0,force-raw=on -device loader,addr=0xfff0,cpu-num=0 -bios genoa-ruby-1.0.0.0-agesa.img -bios Reset.img # -d in_asm,int,guest_errors #,cpu
 
 milan-gimlet-b-1.0.0.a.img: etc/milan-gimlet-b-1.0.0.a.efs.json5 \
   $(PAYLOAD) \
