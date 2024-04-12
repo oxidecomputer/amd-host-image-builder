@@ -156,7 +156,7 @@ genoa-ruby-1.0.0.0-agesa.img Reset.img: etc/genoa-ruby-1.0.0.0-agesa.efs.json5 \
 	#$(CARGO) run --  dump -i $@ -b tst
 
 run-qemu: genoa-ruby-1.0.0.0-agesa.img
-	/gnu/store/af0856hbmqhgbrl1r1fpmw92jlv181hv-qemu-8.2.2/bin/qemu-system-x86_64 -serial stdio -m 5G -device loader,file=Reset.img,csbaseaddr=0x75f10000,addr=0x75cf0000,cpu-num=0,force-raw=on -device loader,addr=0xfff0,cpu-num=0 -bios genoa-ruby-1.0.0.0-agesa.img -bios Reset.img -d in_asm,int,guest_errors
+	/gnu/store/af0856hbmqhgbrl1r1fpmw92jlv181hv-qemu-8.2.2/bin/qemu-system-x86_64 -display none -serial stdio -m 5G -device loader,file=Reset.img,csbaseaddr=0x75f10000,addr=0x75cf0000,cpu-num=0,force-raw=on -device loader,addr=0xfff0,cpu-num=0 -bios genoa-ruby-1.0.0.0-agesa.img -bios Reset.img # -d in_asm,int,guest_errors,cpu
 
 milan-gimlet-b-1.0.0.a.img: etc/milan-gimlet-b-1.0.0.a.efs.json5 \
   $(PAYLOAD) \
