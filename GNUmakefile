@@ -156,7 +156,7 @@ genoa-ruby-1.0.0.0-agesa.img Reset.img: etc/genoa-ruby-1.0.0.0-agesa.efs.json5 \
 	#$(CARGO) run --  dump -i $@ -b tst
 
 run-qemu: Reset.img
-	/gnu/store/b7ikwcpdnfly6rprvdbrqg4v9vr73009-qemu-8.2.2/bin/qemu-system-x86_64 -machine q35,accel=tcg -display none -serial stdio -m 5G -device loader,file=Reset.img,csbaseaddr=0x75f10000,addr=0x75cf0000,cpu-num=0,force-raw=on -device loader,addr=0xfff0,cpu-num=0 -bios Reset.img -singlestep #-d in_asm,int,guest_errors,cpu_reset,page,nochain #,cpu
+	/gnu/store/b7ikwcpdnfly6rprvdbrqg4v9vr73009-qemu-8.2.2/bin/qemu-system-x86_64 -gdb tcp::1234 -machine q35,accel=tcg -display none -serial stdio -m 5G -device loader,file=Reset.img,csbaseaddr=0x75f10000,addr=0x75cf0000,cpu-num=0,force-raw=on -device loader,addr=0xfff0,cpu-num=0 -bios Reset.img -singlestep #-d in_asm,int,guest_errors,cpu_reset,page,nochain #,cpu
 	# ich9_pm_iospace_update
 	# ich9: uint32_t pm_io_base = pci_get_long(lpc->d.config + ICH9_LPC_PMBASE)
 
