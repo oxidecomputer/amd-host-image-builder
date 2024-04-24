@@ -7473,8 +7473,8 @@
                     "sub_program": 0,
                     "rom_id": "SpiCs1",
                     "flash_location": 13565952,
-                    "size": 2293760,
-                    "ram_destination_address": 1976500224
+                    "size": 0x285000, // TODO check that it doesn't overlap anything behind
+                    "ram_destination_address": 0x75cf0000,
                   }
                 },
         {
