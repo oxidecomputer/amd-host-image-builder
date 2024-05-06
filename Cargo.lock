@@ -4,8 +4,8 @@ version = 3
 
 [[package]]
 name = "amd-apcb"
-version = "0.3.1"
-source = "git+https://github.com/oxidecomputer/amd-apcb.git?tag=v0.3.1#d9de1bff2fe8ac3a7391953e46affecb1d66db3b"
+version = "0.3.2"
+source = "git+https://github.com/oxidecomputer/amd-apcb.git?tag=v0.3.2#8c774bd9c8bd4bd65edbc026676ee428862b42a8"
 dependencies = [
  "byteorder",
  "four-cc",
@@ -323,9 +323,9 @@ dependencies = [
 
 [[package]]
 name = "num-traits"
-version = "0.2.18"
+version = "0.2.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "da0df0e5185db44f69b44f26786fe401b6c293d1907744beaa7fa62b2e5a517a"
+checksum = "071dfc062690e90b734c0b2273ce72ad0ffa95f0c74596bc250dcfd960262841"
 dependencies = [
  "autocfg",
 ]
@@ -503,9 +503,9 @@ checksum = "e86697c916019a8588c99b5fac3cead74ec0b4b819707a682fd4d23fa0ce1ba1"
 
 [[package]]
 name = "schemars"
-version = "0.8.17"
+version = "0.8.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7f55c82c700538496bdc329bb4918a81f87cc8888811bd123cf325a0f2f8d309"
+checksum = "fc6e7ed6919cb46507fb01ff1654309219f62b4d603822501b0b80d42f6f21ef"
 dependencies = [
  "dyn-clone",
  "schemars_derive",
@@ -515,9 +515,9 @@ dependencies = [
 
 [[package]]
 name = "schemars_derive"
-version = "0.8.17"
+version = "0.8.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "83263746fe5e32097f06356968a077f96089739c927a61450efa069905eec108"
+checksum = "185f2b7aa7e02d418e453790dde16890256bbd2bcd04b7dc5348811052b53f49"
 dependencies = [
  "proc-macro2",
  "quote",
