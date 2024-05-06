@@ -5039,14 +5039,9 @@
                     irq_polarity: 0,
                     cputemp_rtctime_vw_enabled: false,
                     cputemp_rtctime_vw_index_select: 0,
-                    _dummy_1: 0,
-                    _dummy_2: 0,
                     cpu_temp_mmio_base: 0,
                     rtc_time_mmio_base: 0,
-                    bus_master_enabled: true,
-                    _dummy_3: 0,
-                    _dummy_4: 0,
-                    _dummy_5: 0
+                    bus_master_enabled: true
                   }
                 },
                 {
