@@ -976,7 +976,7 @@ fn prepare_psp_directory_contents(
     resolve_blob: impl Fn(
         PathBuf,
     ) -> std::prelude::v1::Result<PathBuf, std::io::Error>,
-    efs_configuration_filename: &Path,
+    _efs_configuration_filename: &Path,
 ) -> PspDirectoryContents {
     let mut abl_version: Option<u32> = None;
     let mut abl_version_found = false;
@@ -1148,58 +1148,36 @@ fn prepare_bhd_directory_contents<'a>(
                     custom_bios_reset_entry = true;
                 }
             }
+            let source = entry.source;
             let blob_slot_settings = entry.target.blob;
-            let mut flash_location =
-                blob_slot_settings.as_ref().and_then(|x| x.flash_location);
-            let x: Option<Location> = flash_location;
+            let flash_location =
+                blob_slot_settings.as_ref().and_then(|x| x.flash_location)
+                // AMD sometimes uses target.flash_location=Some(0) together
+                // with Implied to mean "No flash location".
+                // Ignore that (definitely do not allocate that on the flash).
+                .filter(|&loc| !(matches!(source, SerdeBhdSource::Implied) && loc == 0));
 
             // done by try_from: raw_entry.set_destination_location(ram_destination_address);
             // done by try_from: raw_entry.set_size(size);
-            match entry.source {
+            match source {
                 SerdeBhdSource::Implied => {
-                    if entry.target.attrs.type_ != BhdDirectoryEntryType::Apob {
-                        panic!("Implied source is only supported for Apob, not {}. Are you sure you want to do that?", entry.target.attrs.type_);
-                    }
-                    match x {
-                        Some(0) => {
-                            /* This APOB entry is supposed to (really) have this target, so that's what was dumped: {
-                                type: 'Apob',
-                                region_type: 'Normal',
-                                reset_image: false,
-                                copy_image: false,
-                                read_only: false,
-                                compressed: false,
-                                instance: 0,
-                                sub_program: 0,
-                                rom_id: 'SpiCs1',
-                                flash_location: 0,
-                                size: 0,
-                                ram_destination_address: user-defined
-                            }
-
-                            Obviously, that flash_location should not actually be allocated.
-                            */
-                            flash_location = None;
-                        }
-                        None => { // ok
-                        }
-                        _ => {
-                            panic!("You specified a fixed flash location for {} but it has an Implied source. What does that mean?", entry.target.attrs.type_);
-                        }
-                    }
-                    custom_apob =
-                        Some(raw_entry.destination_location().unwrap());
+                    assert_eq!(entry.target.attrs.type_, BhdDirectoryEntryType::Apob,
+                        "Implied supports is only supported for Apob, not {typ}. Are you sure you want to do that?",
+                        typ = entry.target.attrs.type_);
+                    assert!(flash_location.is_none(),
+                        "You specified a fixed flash location for {typ} but it has an Implied source. What does that mean?",
+                        typ = entry.target.attrs.type_);
+                    custom_apob = Some(raw_entry.destination_location().expect("destination address"));
                     raw_entry.set_size(Some(0));
                     vec![(raw_entry, None, None)]
                 }
                 SerdeBhdSource::BlobFile(blob_filename) => {
-                    assert!(
-                        entry.target.attrs.type_ != BhdDirectoryEntryType::Apob
-                    );
+                    assert_ne!(entry.target.attrs.type_, BhdDirectoryEntryType::Apob,
+                        "You specified a Blob for Apob? What does that mean?");
                     let blob_filename = resolve_blob(blob_filename).unwrap();
                     let body = std::fs::read(blob_filename).unwrap();
                     raw_entry.set_size(Some(body.len().try_into().unwrap()));
-                    vec![(raw_entry, x, Some(body))]
+                    vec![(raw_entry, flash_location, Some(body))]
                 }
                 SerdeBhdSource::ApcbJson(apcb) => {
                     // Note: We need to do this
