@@ -1423,6 +1423,13 @@ fn generate(
         if psp_second_level_abl_version != abl_version {
             panic!("Different versions in the main PSP directory and in the second level PSP directory are not supported");
         }
+
+        if psp_second_level_smu_versions != smu_versions {
+            panic!("SMU versions are different in first level ({:?}) vs second level ({:?}) PSP directory",
+                   smu_versions,
+                   psp_second_level_smu_versions);
+        }
+
         let (
             mut psp_second_level_directory,
             psp_second_level_directory_range,
