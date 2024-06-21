@@ -68,31 +68,29 @@ fn size_file(
     source_filename: &Path,
     target_size: Option<u32>,
 ) -> amd_efs::Result<(File, u32)> {
-    let file = match File::open(source_filename) {
-        Ok(f) => f,
-        Err(e) => {
-            panic!("Could not open file {:?}: {}", source_filename, e);
-        }
-    };
+    let file = File::open(source_filename).unwrap_or_else(|e| {
+        panic!("Could not open file {source_filename:?}: {e:?}")
+    });
     let filesize: usize = file
         .metadata()
-        .expect(&format!(
-            "could not get file metadata of file {:?}",
-            source_filename
-        ))
+        .unwrap_or_else(|e| {
+            panic!(
+            "could not get file metadata of file {source_filename:?}: {e:?}",
+        )
+        })
         .len()
         .try_into()
-        .expect(&format!(
-            "could not get file length of file {:?}",
-            source_filename
-        ));
+        .unwrap_or_else(|e| {
+            panic!(
+                "could not get file length of file {source_filename:?}: {e:?}"
+            )
+        });
     match target_size {
         Some(x) => {
             if filesize > x as usize {
-                panic!("Configuration specifies slot size {} but contents {:?} have size {}. The contents do not fit.", x, source_filename, filesize);
-            } else {
-                Ok((file, x))
+                panic!("Configuration specifies slot size {x} but contents {source_filename:?} have size {filesize}. The contents do not fit.");
             }
+            Ok((file, x))
         }
         None => Ok((
             file,
@@ -347,15 +345,14 @@ enum Opts {
     },
 }
 
-//#[allow(clippy::type_complexity)]
+type PspRawDirectoryEntry =
+    (PspDirectoryEntry, Option<Location>, Option<Vec<u8>>);
+
+#[allow(clippy::too_many_arguments)]
 fn create_psp_directory<T: FlashRead + FlashWrite>(
     psp_type: [u8; 4],
     psp_directory_location: Option<Location>,
-    psp_raw_entries: &mut Vec<(
-        PspDirectoryEntry,
-        Option<Location>,
-        Option<Vec<u8>>,
-    )>,
+    psp_raw_entries: &mut [PspRawDirectoryEntry],
     psp_directory_address_mode: AddressMode,
     storage: &FlashImage,
     allocator: &mut impl FlashAllocate,
@@ -458,15 +455,14 @@ fn create_psp_directory<T: FlashRead + FlashWrite>(
     Ok((psp_directory, psp_directory_range, first_payload_range_beginning))
 }
 
-//#[allow(clippy::type_complexity)]
+type BhdRawDirectoryEntry =
+    (BhdDirectoryEntry, Option<Location>, Option<Vec<u8>>);
+
+#[allow(clippy::too_many_arguments)]
 fn create_bhd_directory<T: FlashRead + FlashWrite>(
     bhd_type: [u8; 4],
     bhd_directory_location: Option<Location>,
-    bhd_raw_entries: &mut Vec<(
-        BhdDirectoryEntry,
-        Option<Location>,
-        Option<Vec<u8>>,
-    )>,
+    bhd_raw_entries: &mut [BhdRawDirectoryEntry],
     bhd_directory_address_mode: AddressMode,
     storage: &FlashImage,
     allocator: &mut impl FlashAllocate,
@@ -786,7 +782,6 @@ fn dump_bhd_directory<'a, T: FlashRead + FlashWrite>(
         entries: bhd_directory
             .entries()
             .map_while(|entry| {
-                let entry = entry.clone();
                 if let Ok(typ) = entry.typ_or_err() {
                     let payload_beginning =
                         bhd_directory.payload_beginning(&entry).unwrap();
@@ -809,7 +804,7 @@ fn dump_bhd_directory<'a, T: FlashRead + FlashWrite>(
 
                             let apcb = Apcb::load(
                                 std::borrow::Cow::Borrowed(
-                                    &mut apcb_buffer[..],
+                                    apcb_buffer,
                                 ),
                                 &ApcbIoOptions::default(),
                             )
@@ -970,6 +965,9 @@ struct PspDirectoryContents {
     raw_entries: Vec<(PspDirectoryEntry, Option<Location>, Option<Vec<u8>>)>,
 }
 
+type VersionedSmuEntry =
+    HashMap<Option<(u8, u8, u8, u8)>, Vec<PspDirectoryEntry>>;
+
 fn prepare_psp_directory_contents(
     processor_generation: ProcessorGeneration,
     serde_psp_directory: SerdePspDirectory,
@@ -980,18 +978,14 @@ fn prepare_psp_directory_contents(
 ) -> PspDirectoryContents {
     let mut abl_version: Option<u32> = None;
     let mut abl_version_found = false;
-    let mut smu_versions: HashMap<
-        u8,
-        HashMap<Option<(u8, u8, u8, u8)>, Vec<PspDirectoryEntry>>,
-    > = HashMap::new();
+    let mut smu_versions: HashMap<u8, VersionedSmuEntry> = HashMap::new();
     let mut add_smu_version_record =
         |sub_program: u8,
          version: Option<(u8, u8, u8, u8)>,
          entry: PspDirectoryEntry| {
             let sub_program_versions =
-                smu_versions.entry(sub_program).or_insert_with(HashMap::new);
-            let entries =
-                sub_program_versions.entry(version).or_insert_with(Vec::new);
+                smu_versions.entry(sub_program).or_default();
+            let entries = sub_program_versions.entry(version).or_default();
             entries.push(entry);
         };
 
@@ -1115,7 +1109,7 @@ fn prepare_bhd_directory_contents<'a>(
         PathBuf,
     ) -> std::prelude::v1::Result<PathBuf, std::io::Error>,
     efs_configuration_filename: &Path,
-    abl_version: Option<u32>,
+    _abl_version: Option<u32>,
 ) -> BhdDirectoryContents<'a> {
     let mut custom_bios_reset_entry: bool = false;
     let apcb_to_io_error = |e| {
@@ -1705,14 +1699,15 @@ fn generate(
     }
 
     for (raw_entry, _, blob_body) in bhd_raw_entries {
-        //eprintln!("BHD entry {:?}", raw_entry);
         if let Some(blob_body) = blob_body {
             let source = match raw_entry
                 .source(bhd_directory_address_mode)
                 .unwrap()
             {
                 ValueOrLocation::EfsRelativeOffset(x) => {
-                    storage.erasable_location(x).expect(&format!("BHD entry {:?}: EfsRelativeOffset is {} which is not on an erase boundary", raw_entry, x))
+                    storage.erasable_location(x).unwrap_or_else(|e|
+                        panic!("BHD entry {raw_entry:?}: EfsRelativeOffset is {x} which is not on an erase boundary: {e:?}")
+                    )
                 }
                 x => {
                     eprintln!("{x:?}");
