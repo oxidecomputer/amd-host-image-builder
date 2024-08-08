@@ -53,6 +53,7 @@ dependencies = [
  "bytesize",
  "goblin",
  "json5",
+ "serde",
  "serde_json",
  "static_assertions",
  "structopt",
