@@ -6,13 +6,113 @@ use serde::{ser, Serialize};
 use std::fmt::{Display, Formatter};
 use std::io::Write;
 
-fn property_key_needs_quoting(key: &str) -> bool {
+use unic_ucd_ident::{is_id_continue, is_id_start};
+
+// Return None if there was a parse error
+fn property_key_parse_symbol(key: &str) -> Option<&str> {
+    if key.is_empty() {
+        return None;
+    }
+    let reserved_words = vec![
+        "switch",
+        "case",
+        "break",
+        "try",
+        "catch",
+        "class",
+        "const",
+        "var",
+        "let",
+        "continue",
+        "debugger",
+        "default",
+        "delete",
+        "do",
+        "else",
+        "export",
+        "extends",
+        "finally",
+        "for",
+        "function",
+        "if",
+        "import",
+        "in",
+        "instanceof",
+        "new",
+        "return",
+        "super",
+        "this",
+        "throw",
+        "typeof",
+        "void",
+        "while",
+        "with",
+        "yield",
+        "static",
+        "enum",
+        "await",
+        "implements",
+        "interface",
+        "package",
+        "protected",
+        "private",
+        "public",
+        "null",
+        "true",
+        "false",
+    ];
+    if reserved_words.contains(&key) {
+        return None;
+    }
     let mut chars = key.chars();
-    key.is_empty()
-        || !matches!(chars.next(), Some('a'..='z' | 'A'..='Z' | '_' | '$'))
-        || !chars.all(
-            |ch| matches!(ch, 'a'..='z' | 'A'..='Z' | '0'..='9' | '_' | '$'),
-        )
+    let mut first = true;
+    loop {
+        let ch = match chars.next() {
+            Some(x) => x,
+            None => return Some(key),
+        };
+        if !is_id_continue(ch)
+            && !matches!(ch, 'a'..='z' | 'A'..='Z' | '0'..='9' | '_' | '$')
+        {
+            // Check whether it's an Unicode escape sequence \uxxxx or \u{xxxxxxxx}
+            if ch == '\\' {
+                let ch = chars.next()?;
+                if ch == 'u' {
+                    let ch = chars.next()?;
+                    if ch == '{' {
+                        loop {
+                            let ch = chars.next()?;
+                            if ch == '}' {
+                                break;
+                            }
+                            ch.is_ascii_hexdigit().then_some(())?;
+                        }
+                    } else {
+                        ch.is_ascii_hexdigit().then_some(())?;
+                        for _i in 1..4 {
+                            let ch = chars.next()?;
+                            ch.is_ascii_hexdigit().then_some(())?;
+                        }
+                    }
+                } else {
+                    return None;
+                }
+            } else {
+                return None;
+            }
+        } else if first {
+            first = false;
+            if !is_id_start(ch)
+                && !matches!(ch, 'a'..='z' | 'A'..='Z' | '_' | '$')
+            {
+                return None;
+            }
+        }
+    }
+}
+
+fn property_key_needs_quoting(key: &str) -> bool {
+    property_key_parse_symbol(key).is_none()
 }
 
 #[test]
@@ -29,13 +129,27 @@ fn test_property_key_needs_quoting() {
     assert!(property_key_needs_quoting("@"));
     assert!(property_key_needs_quoting("@abc"));
     assert!(property_key_needs_quoting("@a"));
+    assert!(!property_key_needs_quoting("_validIdentifier"));
+    assert!(property_key_needs_quoting("123abc"));
+    assert!(property_key_needs_quoting("function"));
+    assert!(!property_key_needs_quoting("über"));
+    assert!(!property_key_needs_quoting("\\u{10000}start"));
+    assert!(!property_key_needs_quoting(r"\u1000start"));
+    //assert!(!property_key_needs_quoting("🚀Rocket"));
 }
 
 /// Writes V as a JSON string literal
 fn serialize_string<W: Write>(writer: &mut W, v: &str) -> Result<(), Error> {
     write!(writer, "\"")?;
     if v.contains('"') {
-        write!(writer, "{}", v.to_string().replace('"', "\\\""))?;
+        write!(
+            writer,
+            "{}",
+            v.replace('\\', "\\\\")
+                .replace('\n', "\\n")
+                .replace('\r', "\\r")
+                .replace('"', "\\\"")
+        )?;
     } else {
         write!(writer, "{}", v)?;
     }
