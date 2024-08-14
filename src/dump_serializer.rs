@@ -173,6 +173,7 @@ fn test_serialize_string() {
 
 pub struct Json5Serializer<W: Write> {
     writer: W,
+    line_number: u64,
     indent: usize,
     path: Vec<String>,
     current_indent: usize,
@@ -186,11 +187,16 @@ impl<W: Write> Json5Serializer<W> {
     fn new(writer: W) -> Self {
         Json5Serializer {
             writer,
+            line_number: 1,
             path: Vec::<String>::new(),
             indent: 2,
             current_indent: 0,
             expect_symbol: false,
         }
+    }
+
+    fn increase_line_number(&mut self) {
+        self.line_number += 1;
     }
 
     fn serialize_symbol(&mut self, v: &str) -> Result<(), Error> {
@@ -424,6 +430,7 @@ impl<'a, W: Write> serde::Serializer for &'a mut Json5Serializer<W> {
     {
         self.expect_symbol = false;
         writeln!(self.writer, "{{")?;
+        self.increase_line_number();
         self.increase_indent(variant);
         self.write_indent()?;
         self.serialize_symbol(variant)?;
@@ -431,6 +438,7 @@ impl<'a, W: Write> serde::Serializer for &'a mut Json5Serializer<W> {
         value.serialize(&mut *self)?;
         self.decrease_indent();
         writeln!(self.writer)?;
+        self.increase_line_number();
         self.write_indent()?;
         write!(self.writer, "}}")?;
         Ok(())
@@ -534,6 +542,7 @@ impl<'a, W: Write> ser::SerializeSeq for SerializeVec<'a, W> {
     {
         if !self.first {
             writeln!(self.serializer.writer, ",")?;
+            self.serializer.increase_line_number();
         }
         self.first = false;
         self.serializer.write_indent()?;
@@ -543,6 +552,7 @@ impl<'a, W: Write> ser::SerializeSeq for SerializeVec<'a, W> {
     fn end(self) -> Result<Self::Ok, Self::Error> {
         self.serializer.decrease_indent();
         writeln!(self.serializer.writer)?;
+        self.serializer.increase_line_number();
         self.serializer.write_indent()?;
         write!(self.serializer.writer, "]")?;
         Ok(())
@@ -552,6 +562,7 @@ impl<'a, W: Write> ser::SerializeSeq for SerializeVec<'a, W> {
 impl<'a, W: Write> SerializeVec<'a, W> {
     fn new(serializer: &'a mut Json5Serializer<W>) -> Result<Self, Error> {
         writeln!(serializer.writer, "[")?;
+        serializer.increase_line_number();
         serializer.increase_indent("");
         Ok(Self { serializer, first: true })
     }
@@ -616,10 +627,12 @@ impl<'a, W: Write> ser::SerializeTupleVariant for SerializeTupleVariant<'a, W> {
     fn end(self) -> Result<Self::Ok, Self::Error> {
         self.serializer.decrease_indent();
         writeln!(self.serializer.writer)?;
+        self.serializer.increase_line_number();
         self.serializer.write_indent()?;
         write!(self.serializer.writer, "]")?;
         self.serializer.decrease_indent();
         writeln!(self.serializer.writer)?;
+        self.serializer.increase_line_number();
         self.serializer.write_indent()?;
         write!(self.serializer.writer, "}}")?;
         Ok(())
@@ -632,10 +645,12 @@ impl<'a, W: Write> SerializeStructVariant<'a, W> {
         variant: &str,
     ) -> Result<Self, Error> {
         writeln!(serializer.writer, "{{")?;
+        serializer.increase_line_number();
         serializer.increase_indent(variant);
         serializer.write_indent()?;
         serializer.serialize_symbol(variant)?;
         writeln!(serializer.writer, ": {{")?;
+        serializer.increase_line_number();
         serializer.increase_indent(variant);
         Ok(Self { serializer, first: true })
     }
@@ -647,6 +662,7 @@ impl<'a, W: Write> SerializeTupleVariant<'a, W> {
         variant: &str,
     ) -> Result<Self, Error> {
         writeln!(serializer.writer, "{{")?;
+        serializer.increase_line_number();
         serializer.increase_indent(variant);
         serializer.write_indent()?;
         serializer.serialize_symbol(variant)?;
@@ -668,6 +684,7 @@ impl<'a, W: Write> ser::SerializeMap for SerializeMap<'a, W> {
     {
         if !self.first {
             writeln!(self.serializer.writer, ",")?;
+            self.serializer.increase_line_number();
         }
         self.first = false;
         self.serializer.write_indent()?;
@@ -693,6 +710,7 @@ impl<'a, W: Write> ser::SerializeMap for SerializeMap<'a, W> {
     fn end(self) -> Result<Self::Ok, Self::Error> {
         self.serializer.decrease_indent();
         writeln!(self.serializer.writer)?;
+        self.serializer.increase_line_number();
         self.serializer.write_indent()?;
         write!(self.serializer.writer, "}}")?;
         Ok(())
@@ -702,6 +720,7 @@ impl<'a, W: Write> ser::SerializeMap for SerializeMap<'a, W> {
 impl<'a, W: Write> SerializeMap<'a, W> {
     fn new_map(serializer: &'a mut Json5Serializer<W>) -> Result<Self, Error> {
         writeln!(serializer.writer, "{{")?;
+        serializer.increase_line_number();
         serializer.increase_indent("");
         Ok(Self { serializer, first: true })
     }
@@ -712,6 +731,7 @@ impl<'a, W: Write> SerializeMap<'a, W> {
     ) -> Result<Self, Error> {
         // almost self.serialize_map(Some(len))
         writeln!(serializer.writer, "{{")?;
+        serializer.increase_line_number();
         serializer.increase_indent(name);
         Ok(SerializeMap { serializer, first: true })
     }
@@ -733,6 +753,7 @@ impl<'a, W: Write> ser::SerializeStruct for SerializeMap<'a, W> {
 
         if !self.first {
             writeln!(self.serializer.writer, ",")?;
+            self.serializer.increase_line_number();
         }
         self.first = false;
         self.serializer.write_indent()?;
@@ -746,7 +767,12 @@ impl<'a, W: Write> ser::SerializeStruct for SerializeMap<'a, W> {
     }
 
     fn skip_field(&mut self, key: &'static str) -> Result<(), Self::Error> {
-        eprintln!("{}: skipped field {}", self.serializer.path.join("/"), key);
+        eprintln!(
+            "{}: skipped field {} around JSON5 line number {}",
+            self.serializer.path.join("/"),
+            key,
+            self.serializer.line_number
+        );
         Ok(())
     }
 }
@@ -767,6 +793,7 @@ impl<'a, W: Write> ser::SerializeStructVariant
     {
         if !self.first {
             writeln!(self.serializer.writer, ",")?;
+            self.serializer.increase_line_number();
         }
         self.first = false;
         self.serializer.write_indent()?;
@@ -778,17 +805,24 @@ impl<'a, W: Write> ser::SerializeStructVariant
     fn end(self) -> Result<Self::Ok, Self::Error> {
         self.serializer.decrease_indent();
         writeln!(self.serializer.writer)?;
+        self.serializer.increase_line_number();
         self.serializer.write_indent()?;
         write!(self.serializer.writer, "}}")?;
         self.serializer.decrease_indent();
         writeln!(self.serializer.writer)?;
+        self.serializer.increase_line_number();
         self.serializer.write_indent()?;
         write!(self.serializer.writer, "}}")?;
         Ok(())
     }
 
     fn skip_field(&mut self, key: &'static str) -> Result<(), Self::Error> {
-        eprintln!("{}: skipped field {}", self.serializer.path.join("/"), key);
+        eprintln!(
+            "{}: skipped field {} around JSON5 line number {}",
+            self.serializer.path.join("/"),
+            key,
+            self.serializer.line_number
+        );
         Ok(())
     }
 }
