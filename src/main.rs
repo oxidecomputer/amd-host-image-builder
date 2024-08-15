@@ -35,6 +35,8 @@ use structopt::StructOpt;
 mod static_config;
 use amd_efs::allocators::{ArenaFlashAllocator, FlashAllocate};
 
+mod dump_serializer;
+
 use amd_efs::flash::{
     ErasableLocation, ErasableRange, FlashAlign, FlashRead, FlashWrite,
     Location,
@@ -949,9 +951,13 @@ fn dump(
         path.push("config.efs.json5");
         use std::io::Write;
         let mut file = File::create(&path).expect("creation failed");
-        writeln!(file, "{}", serde_json::to_string_pretty(&config).unwrap())?;
+        writeln!(
+            file,
+            "{}",
+            dump_serializer::to_string_pretty(&config).unwrap()
+        )?;
     } else {
-        println!("{}", serde_json::to_string_pretty(&config).unwrap());
+        println!("{}", dump_serializer::to_string_pretty(&config).unwrap());
     }
     Ok(())
 }
