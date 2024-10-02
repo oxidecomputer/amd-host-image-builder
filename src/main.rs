@@ -1,4 +1,4 @@
-use amd_apcb::{Apcb, ApcbIoOptions};
+use amd_apcb::{Apcb, ApcbContext, ApcbIoOptions, MemDfeSearchVersion};
 
 use amd_efs::{
     AddressMode, BhdDirectory, BhdDirectoryEntry, BhdDirectoryEntryType,
@@ -772,6 +772,7 @@ fn dump_bhd_directory<'a, T: FlashRead + FlashWrite>(
     bhd_directory: &BhdDirectory,
     apcb_buffer_option: &mut Option<&'a mut [u8]>,
     blob_dump_dirname: &Option<PathBuf>,
+    context: ApcbContext,
 ) -> SerdeBhdDirectoryVariant<'a> {
     if let Some(blob_dump_dirname) = &blob_dump_dirname {
         let mut path = PathBuf::new();
@@ -808,7 +809,7 @@ fn dump_bhd_directory<'a, T: FlashRead + FlashWrite>(
                                 std::borrow::Cow::Borrowed(
                                     apcb_buffer,
                                 ),
-                                &ApcbIoOptions::default(),
+                                &ApcbIoOptions::default().with_context(context).build(),
                             )
                             .unwrap();
                             apcb.validate(None).unwrap(); // TODO: abl0 version ?
@@ -836,7 +837,7 @@ fn dump_bhd_directory<'a, T: FlashRead + FlashWrite>(
                                 t.push("bhd-second-level");
                                 t
                             });
-                            let variant = dump_bhd_directory(storage, &sub_bhd_directory, apcb_buffer_option, &subdir); //SerdeBhdDirectoryVariant
+                            let variant = dump_bhd_directory(storage, &sub_bhd_directory, apcb_buffer_option, &subdir, context); //SerdeBhdDirectoryVariant
                             Some(SerdeBhdEntry {
                                 source: SerdeBhdSource::SecondLevelDirectory(match variant {
                                     SerdeBhdDirectoryVariant::BhdDirectory(d) => d,
@@ -898,6 +899,82 @@ fn dump_bhd_directory<'a, T: FlashRead + FlashWrite>(
     })
 }
 
+/// AMD likes to change MemDfeSearch structure layout a lot (sometimes within the
+/// same processor generation).
+///
+/// This makes it hard for the dumper to know which structure to use.
+///
+/// Previously, we just tried to find a mem dfe structure of such a size such
+/// that the total size = struct size * some natural number. Turns out that
+/// multiple different structures can match that (with different natural
+/// numbers).
+///
+/// Since that was weirdly magical anyway, the new attempt limits it to
+/// the processor generation and one specific variant (see this function
+/// body).
+///
+/// For our "dump" use case, we have to manually check the JSON5 result
+/// afterwards anyway--might as well check this function body, too.
+///
+/// We also store the context into the JSON5 file (under ApcbJson) because,
+/// otherwise, the user could deserialize and then serialize again and then
+/// we'd not know which dfe search structure to use again.
+///
+/// Note: context.mem_dfe_search_version is currently not necessary for
+/// deserialization. However, if it's specified, see generate_is_context_valid
+/// for the part that is checking it.
+fn dump_default_context(
+    processor_generation: ProcessorGeneration,
+) -> ApcbContext {
+    ApcbContext::builder()
+        .with_mem_dfe_search_version(match processor_generation {
+            ProcessorGeneration::Naples
+            | ProcessorGeneration::Rome
+            | ProcessorGeneration::Milan => None,
+            ProcessorGeneration::Genoa => Some(MemDfeSearchVersion::Genoa2),
+            ProcessorGeneration::Turin => Some(MemDfeSearchVersion::Turin1),
+        })
+        .build()
+}
+
+// After deserialization, check whether apcb.context() is compatible with our
+// processor generation.
+//
+// Since the context was actually serialized to the JSON5 it could be
+// messed with by the user and then deserialized again (not that the context
+// is that useful to have for the user--but it practically cannot be avoided in
+// serde).
+//
+// When we generate an image, we will check whether that context is valid
+// AFTER we deserialized (using this function here).
+//
+// The reason it's there in the first place is because it's impossible to give
+// userdata to serde deserializers. It's not really the correct context (maybe
+// it is if the user cared)--but at least it's A context.
+//
+// The reason this is safe is because deserialization does not need the context
+// anyway. Note: Subsequent serialization (if any) will (!).
+//
+// Note: The ways to create a new Apcb instance are:
+// - Apcb::load
+// - Apcb::create
+// - serde::Deserialize
+fn generate_is_context_valid<'a>(
+    processor_generation: ProcessorGeneration,
+    apcb: &Apcb<'a>,
+) -> bool {
+    use MemDfeSearchVersion as Mdsv;
+    use ProcessorGeneration as Pg;
+    let context = apcb.context();
+    let mem_dfe_search_version = context.mem_dfe_search_version();
+    match (processor_generation, mem_dfe_search_version) {
+        (Pg::Naples | Pg::Rome | Pg::Milan, None) => true,
+        (Pg::Genoa, None | Some(Mdsv::Genoa1 | Mdsv::Genoa2)) => true,
+        (Pg::Turin, None | Some(Mdsv::Turin1)) => true,
+        _ => false,
+    }
+}
+
 fn dump(
     image_filename: &Path,
     blob_dump_dirname: Option<PathBuf>,
@@ -922,6 +999,21 @@ fn dump(
         Some(efs.psp_directory().unwrap().beginning());
     let bhd_main_directory_flash_location =
         Some(efs.bhd_directory(None).unwrap().beginning());
+
+    let psp = dump_psp_directory(
+        &storage,
+        &efs.psp_directory().unwrap(),
+        &blob_dump_dirname,
+    );
+
+    let bhd = dump_bhd_directory(
+        &storage,
+        &efs.bhd_directory(None).unwrap(),
+        &mut apcb_buffer_option,
+        &blob_dump_dirname,
+        dump_default_context(*gen),
+    );
+
     let config = SerdeConfig {
         processor_generation: *gen,
         spi_mode_bulldozer: efs.spi_mode_bulldozer().unwrap(),
@@ -932,18 +1024,9 @@ fn dump(
         psp_main_directory_flash_location,
         bhd_main_directory_flash_location,
         // TODO: psp_directory or psp_combo_directory
-        psp: dump_psp_directory(
-            &storage,
-            &efs.psp_directory().unwrap(),
-            &blob_dump_dirname,
-        ),
+        psp,
         // TODO: bhd_directory or bhd_combo_directory
-        bhd: dump_bhd_directory(
-            &storage,
-            &efs.bhd_directory(None).unwrap(),
-            &mut apcb_buffer_option,
-            &blob_dump_dirname,
-        ),
+        bhd,
     };
     if let Some(blob_dump_dirname) = &blob_dump_dirname {
         let mut path = PathBuf::new();
@@ -1110,6 +1193,7 @@ struct BhdDirectoryContents<'a> {
 }
 
 fn prepare_bhd_directory_contents<'a>(
+    processor_generation: ProcessorGeneration,
     serde_bhd_directory: SerdeBhdDirectory<'a>,
     resolve_blob: impl Fn(
         PathBuf,
@@ -1180,6 +1264,7 @@ fn prepare_bhd_directory_contents<'a>(
                     vec![(raw_entry, flash_location, Some(body))]
                 }
                 SerdeBhdSource::ApcbJson(apcb) => {
+                    assert!(generate_is_context_valid(processor_generation, &apcb));
                     // Note: We need to do this
                     // manually because validation
                     // needs ABL_VERSION.
@@ -1227,7 +1312,7 @@ fn generate(
     blobdirs: Vec<PathBuf>,
     verbose: bool,
 ) -> std::io::Result<()> {
-    let filename = &output_filename;
+    let filename = output_filename;
     let flash_to_io_error = |e: amd_efs::flash::Error| {
         std::io::Error::new(
             std::io::ErrorKind::Other,
@@ -1519,6 +1604,7 @@ fn generate(
     } = match bhd {
         SerdeBhdDirectoryVariant::BhdDirectory(serde_bhd_directory) => {
             prepare_bhd_directory_contents(
+                processor_generation,
                 serde_bhd_directory,
                 resolve_blob,
                 efs_configuration_filename,
@@ -1583,6 +1669,7 @@ fn generate(
             raw_entries: mut bhd_second_level_raw_entries,
             custom_bios_reset_entry: bhd_second_level_custom_bios_reset_entry,
         } = prepare_bhd_directory_contents(
+            processor_generation,
             bhd_second_level_directory_template,
             resolve_blob,
             efs_configuration_filename,
