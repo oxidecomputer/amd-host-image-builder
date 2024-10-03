@@ -13,8 +13,8 @@ dependencies = [
 
 [[package]]
 name = "amd-apcb"
-version = "0.3.3"
-source = "git+https://github.com/oxidecomputer/amd-apcb.git?branch=issue-135#a0f36452035c42477934bf6c1fec5eef7af7849c"
+version = "0.4.1"
+source = "git+https://github.com/oxidecomputer/amd-apcb.git?tag=v0.4.1#b03d2a56394ae20a428eaaa7f37be79733cd6927"
 dependencies = [
  "byteorder",
  "four-cc",
@@ -34,8 +34,8 @@ dependencies = [
 
 [[package]]
 name = "amd-efs"
-version = "0.4.0"
-source = "git+ssh://git@github.com/oxidecomputer/amd-efs.git?tag=v0.4.0#16afc05b705996ecb1f8d21febe4531bd6ab8702"
+version = "0.4.1"
+source = "git+ssh://git@github.com/oxidecomputer/amd-efs.git?tag=v0.4.1#15a3cb8d7b9fd5158f5a0b868ffc601c3fbd826d"
 dependencies = [
  "byteorder",
  "fletcher",
@@ -411,13 +411,13 @@ dependencies = [
 
 [[package]]
 name = "num-derive"
-version = "0.3.3"
+version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "876a53fff98e03a936a674b29568b0e605f06b29372c2489ff4de23f1949743d"
+checksum = "ed3955f1a9c7c0c15e092f9c887db08b1fc683305fdf6eb6684f22555355e202"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 1.0.109",
+ "syn 2.0.74",
 ]
 
 [[package]]
