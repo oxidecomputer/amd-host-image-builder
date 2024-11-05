@@ -267,6 +267,59 @@ turin-ruby-0.0.8.1.img: etc/turin-ruby-0.0.8.1.efs.json5 \
   $(SOURCES)
 	$(CARGO) run -- generate -s '16 MiB' $(BLOB_DIRS:%=-B %) -v -B . -B amd-firmware/BRH/0.0.8.1 -c $< -r $(PAYLOAD) -o $@
 
+turin-rubyred-0.0.8.1.img: etc/turin-rubyred-0.0.8.1.efs.json5 \
+  $(PAYLOAD) \
+    amd-firmware/BRH/0.0.8.1/TypeId0x00_AmdPubKey_BRH.tkn \
+    amd-firmware/BRH/0.0.8.1/TypeId0x01_PspBl_BRH.sbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x08_SmuFirmware_breithorn.csbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x208_SmuFirmware_BRHDense.csbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x09_PspDebugUnlockToken_BRH.stkn \
+    amd-firmware/BRH/0.0.8.1/TypeId0x0A_PspAblPubKey_BRH.stkn \
+    amd-firmware/BRH/0.0.8.1/TypeId0x55_SPLTable_BRH.sbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x9D_AspSramFwExt_BRH.sbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x13_SduFw_BRH.sbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x22_SecureEmptyToken.bin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x24_RegisterAccessPolicy_BRH.csbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x224_RegisterAccessPolicy_BRHDense.csbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x28_PspSystemDriver_BRH.sbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x2A_SmuFirmware_breithorn.csbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x22A_SmuFirmware_BRHDense.csbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x2D_AblRt.csbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x30_AgesaBootLoaderU_BRH.csbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x42_PhyFw_BRH.csbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x44_USB_PHY_BRH.sbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x245_RegisterAccessPolicy_BRHDense.csbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x50_PspKeyDataBase_BRH.sbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x51_PspTosKeyDataBase_BRH.sbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x5DMpioFw_BRH.csbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x64_RasDriver_BRH.sbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x65_ta_ras_prod_amdTEE.sbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x73_PspBl_BRH.sbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x76_DfRib_BRH.csbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x8C_MPDMATF_BRH.sbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x91_GmiPhyFw_BRH.csbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x92_Page_BRH.sbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0x9F_psp_tos_wl_bin_brh.sbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0xA0_S3Image_BRH_A0.sbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0xA0_S3Image_BRHD_A0.sbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0xA0_S3Image_BRH_B0.sbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0xA0_S3Image_BRH_C0.sbin \
+    amd-firmware/BRH/0.0.8.1/TypeId0xA0_S3Image_BRHD_B0.sbin \
+    amd-firmware/BRH/0.0.8.1/APOB_NV_BRH.bin \
+    amd-firmware/BRH/0.0.8.1/Type0x64_AppbDdr5RdimmImem3_BRH.csbin \
+    amd-firmware/BRH/0.0.8.1/Type0x64_AppbDdr5RdimmImem4_BRH.csbin \
+    amd-firmware/BRH/0.0.8.1/Type0x64_AppbDdr5RdimmPosttrainImem9_BRH.csbin \
+    amd-firmware/BRH/0.0.8.1/Type0x64_AppbDdr5RdimmPosttrainImem10_BRH.csbin \
+    amd-firmware/BRH/0.0.8.1/Type0x64_AppbDdr5RdimmQuickbootImem11_BRH.csbin \
+    amd-firmware/BRH/0.0.8.1/Type0x65_AppbDdr5RdimmDmem3_BRH.csbin \
+    amd-firmware/BRH/0.0.8.1/Type0x65_AppbDdr5RdimmDmem4_BRH.csbin \
+    amd-firmware/BRH/0.0.8.1/Type0x65_AppbDdr5RdimmPosttrainDmem9_BRH.csbin \
+    amd-firmware/BRH/0.0.8.1/Type0x65_AppbDdr5RdimmPosttrainDmem10_BRH.csbin \
+    amd-firmware/BRH/0.0.8.1/Type0x65_AppbDdr5RdimmQuickbootDmem11_BRH.csbin \
+    amd-firmware/BRH/0.0.8.1/Type0x65_AppbDdr5RdimmQuickbootDmem12_BRH.csbin \
+  $(SOURCES)
+	$(CARGO) run -- generate -s '16 MiB' $(BLOB_DIRS:%=-B %) -v -B . -B amd-firmware/BRH/0.0.8.1 -c $< -r $(PAYLOAD) -o $@
+
 milan-gimlet-b-1.0.0.a.img: etc/milan-gimlet-b-1.0.0.a.efs.json5 \
   $(PAYLOAD) \
   amd-firmware/GN/1.0.0.a/AmdPubKey_gn.tkn \
