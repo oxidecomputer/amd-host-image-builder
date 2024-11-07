@@ -13,8 +13,8 @@ dependencies = [
 
 [[package]]
 name = "amd-apcb"
-version = "0.4.1"
-source = "git+https://github.com/oxidecomputer/amd-apcb.git?tag=v0.4.1#b03d2a56394ae20a428eaaa7f37be79733cd6927"
+version = "0.4.2"
+source = "git+https://github.com/oxidecomputer/amd-apcb.git?tag=v0.4.2#49f466b4c919ebdba592daef5a2742e0eb0d2658"
 dependencies = [
  "byteorder",
  "four-cc",
@@ -35,7 +35,7 @@ dependencies = [
 [[package]]
 name = "amd-efs"
 version = "0.4.1"
-source = "git+ssh://git@github.com/oxidecomputer/amd-efs.git?tag=v0.4.1#15a3cb8d7b9fd5158f5a0b868ffc601c3fbd826d"
+source = "git+ssh://git@github.com/oxidecomputer/amd-efs.git?tag=v0.4.2#c2a5b4a2ff3699c73a275455e396c7390e5da0bb"
 dependencies = [
  "byteorder",
  "fletcher",
