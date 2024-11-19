@@ -1,9 +1,9 @@
 {
   processor_generation: "Turin",
   espi0_configuration: {
-    enable_port_0x80: true,
-    alert_pin: 1,
-    data_bus: 1,
+    enable_port_0x80: false,
+    alert_pin: 0,
+    data_bus: 0,
     clock: 0,
     respond_port_0x80: false,
     io_mode: "Auto"
