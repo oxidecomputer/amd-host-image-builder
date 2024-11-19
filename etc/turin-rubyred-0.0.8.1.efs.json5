@@ -5,7 +5,8 @@
     "alert_pin": 0,
     "data_bus": 0,
     "clock": 0,
-    "respond_port_0x80": false
+    "respond_port_0x80": false,
+    "io_mode": "Auto"
   },
   "psp": {
     "PspDirectory": {

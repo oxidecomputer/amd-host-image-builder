@@ -7,7 +7,7 @@ edition = "2018"
 
 [dependencies]
 amd-apcb = { git = "https://github.com/oxidecomputer/amd-apcb.git", tag = "v0.4.2", features = ["std", "serde", "schemars"] }
-amd-efs = { git = "ssh://git@github.com/oxidecomputer/amd-efs.git", tag = "v0.4.2", features = ["std", "serde", "schemars"] }
+amd-efs = { git = "ssh://git@github.com/oxidecomputer/amd-efs.git", tag = "v0.4.3", features = ["std", "serde", "schemars"] }
 schemars = "0.8.8"
 serde = { version = "1.0", default-features = false, features = ["derive"] }
 thiserror = "1.0.48"

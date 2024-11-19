@@ -34,8 +34,8 @@ dependencies = [
 
 [[package]]
 name = "amd-efs"
-version = "0.4.1"
-source = "git+ssh://git@github.com/oxidecomputer/amd-efs.git?tag=v0.4.2#c2a5b4a2ff3699c73a275455e396c7390e5da0bb"
+version = "0.4.3"
+source = "git+ssh://git@github.com/oxidecomputer/amd-efs.git?tag=v0.4.3#ad2861c02c2ede3aa4dca083389dbf8e2a1b6f78"
 dependencies = [
  "byteorder",
  "fletcher",
