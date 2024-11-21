@@ -7745,7 +7745,7 @@
                     },
                     {
                       Byte: {
-                        MemMbistAggressorsDdr: "PhysicalInterface"
+                        MemMbistAggressorsDdr: "Disabled"
                       }
                     },
                     {
@@ -8518,7 +8518,7 @@
                     },
                     {
                       Byte: {
-                        MemMbistAggressorsDdr: "PhysicalInterface"
+                        MemMbistAggressorsDdr: "Disabled"
                       }
                     },
                     {
