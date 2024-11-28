@@ -10554,13 +10554,6 @@
           }
         },
         {
-          source: "Implied",
-          target: {
-            type: "Apob",
-            ram_destination_address: 0x4000000
-          }
-        },
-        {
           source: {
             BlobFile: "APOB_NV_BRH.bin"
           },
