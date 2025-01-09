@@ -345,6 +345,9 @@ turin-ruby-1.0.0.2-p1.img turin-rubyred-1.0.0.2-p1.img: \
 turin-ruby-1.0.0.2-p1.img: etc/turin-ruby-1.0.0.2-p1.efs.json5
 	$(CARGO) run -- generate -s '16 MiB' $(BLOB_DIRS:%=-B %) -v -B . -B amd-firmware/BRH/1.0.0.2-p1 -c $< -r $(PAYLOAD) -o $@
 
+turin-ruby-1.0.0.2-p1-mbist.img: etc/turin-ruby-1.0.0.2-p1-mbist.efs.json5
+	$(CARGO) run -- generate -s '16 MiB' $(BLOB_DIRS:%=-B %) -v -B . -B amd-firmware/BRH/1.0.0.2-p1 -c $< -r $(PAYLOAD) -o $@
+
 turin-rubyred-1.0.0.2-p1.img: etc/turin-rubyred-1.0.0.2-p1.efs.json5
 	$(CARGO) run -- generate -s '16 MiB' $(BLOB_DIRS:%=-B %) -v -B . -B amd-firmware/BRH/1.0.0.2-p1 -c $< -r $(PAYLOAD) -o $@
 
