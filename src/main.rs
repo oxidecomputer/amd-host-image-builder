@@ -1245,15 +1245,38 @@ fn prepare_bhd_directory_contents<'a>(
             // done by try_from: raw_entry.set_size(size);
             match source {
                 SerdeBhdSource::Implied => {
-                    assert_eq!(entry.target.attrs.type_, BhdDirectoryEntryType::Apob,
-                        "Implied supports is only supported for Apob, not {typ}. Are you sure you want to do that?",
-                        typ = entry.target.attrs.type_);
-                    assert!(flash_location.is_none(),
-                        "You specified a fixed flash location for {typ} but it has an Implied source. What does that mean?",
-                        typ = entry.target.attrs.type_);
-                    custom_apob = Some(raw_entry.destination_location().expect("destination address"));
-                    raw_entry.set_size(Some(0));
-                    vec![(raw_entry, None, None)]
+                    match entry.target.attrs.type_ {
+                        BhdDirectoryEntryType::Apob => {
+                            assert!(flash_location.is_none(), "You specified a
+                                    fixed flash location for {typ} but it has
+                                    an Implied source. What does that mean?",
+                                    typ = entry.target.attrs.type_);
+                            custom_apob = Some(raw_entry.destination_location()
+                                .expect("destination address"));
+                            raw_entry.set_size(Some(0));
+                            vec![(raw_entry, None, None)]
+                        }
+                        BhdDirectoryEntryType::ApobNvCopy => {
+                            assert!(raw_entry.destination_location().is_none(),
+                                    "You specified a fixed RAM location for
+                                    {typ}. What does that mean?",
+                                    typ = entry.target.attrs.type_);
+                            assert!(flash_location.is_some(), "You did not
+                                    specify a flash location for {typ}.",
+                                    typ = entry.target.attrs.type_);
+                            assert_ne!(raw_entry.size(), Some(0), "You did not
+                                       specify a size for {typ}.",
+                                       typ = entry.target.attrs.type_);
+                            vec![(raw_entry, None, None)]
+                        }
+                        _ => {
+                            panic!("Implied source is only supported for Apob
+                                   and ApobNvCopy, not {typ}. Are you sure you
+                                   want to do that?",
+                                   typ = entry.target.attrs.type_);
+                        }
+                    }
+
                 }
                 SerdeBhdSource::BlobFile(blob_filename) => {
                     assert_ne!(entry.target.attrs.type_, BhdDirectoryEntryType::Apob,

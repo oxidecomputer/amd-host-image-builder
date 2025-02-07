@@ -13935,6 +13935,21 @@
           }
         },
         {
+          "source": "Implied",
+          "target": {
+            "type": "Apob",
+            "ram_destination_address": 0x4000000
+          }
+        },
+        {
+          "source": "Implied",
+          target: {
+            type: "ApobNvCopy",
+            flash_location: 0x12345678,
+            size: 0xd0000
+          }
+        },
+        {
           source: {
             BlobFile: "Type0x64_AppbDdr5RdimmImem3_BRH.csbin"
           },
