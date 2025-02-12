@@ -14,7 +14,7 @@ SOURCES:=	amd-host-image-builder-config/src/lib.rs \
 		Cargo.lock
 
 PAYLOAD:=	PAYLOAD=/set/me
-
+PATCH:= patch
 CARGO:= cargo
 
 efs.schema.json: amd-host-image-builder-config/src/lib.rs \
@@ -342,11 +342,137 @@ turin-ruby-1.0.0.2-p1.img turin-rubyred-1.0.0.2-p1.img: \
     amd-firmware/BRH/1.0.0.2-p1/Type0x65_AppbDdr5RdimmQuickbootDmem12_BRH_C0.csbin \
     $(SOURCES)
 
+turin-ruby-1.0.0.3.img turin-rubyred-1.0.0.3.img: \
+    $(PAYLOAD) \
+    amd-firmware/BRH/1.0.0.3/TypeId0x00_AmdPubKey_BRH.tkn \
+    amd-firmware/BRH/1.0.0.3/TypeId0x01_PspBl_BRH.esbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x08_SmuFirmware_breithorn.ecsbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x208_SmuFirmware_BRHDense.ecsbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x09_PspDebugUnlockToken_BRH.stkn \
+    amd-firmware/BRH/1.0.0.3/TypeId0x0A_PspAblPubKey_BRH.stkn \
+    amd-firmware/BRH/1.0.0.3/TypeId0x55_SPLTable_BRH.sbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x9D_AspSramFwExt_BRH.sbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x13_SduFw_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x22_SecureEmptyToken.bin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x24_RegisterAccessPolicy_BRH.cesbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x224_RegisterAccessPolicy_BRHDense.cesbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x28_PspSystemDriver_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x2A_SmuFirmware_breithorn.ecsbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x22A_SmuFirmware_BRHDense.ecsbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x2D_AblRt.ecsbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x30_AgesaBootLoaderU_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x42_PhyFw_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x44_USB_PHY_BRH.esbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x245_RegisterAccessPolicy_BRHDense.cesbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x50_PspKeyDataBase_BRH.sbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x51_PspTosKeyDataBase_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x5DMpioFw_BRH.cesbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x64_RasDriver_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x65_ta_ras_prod_amdTEE.ecsbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x73_PspBl_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x76_DfRib_BRH.csbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x8C_MPDMATF_BRH.sbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x91_GmiPhyFw_BRH.esbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x92_Page_BRH.sbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x9F_psp_tos_wl_bin_brh.sbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0xA0_S3Image_BRH_A0.sbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0xA0_S3Image_BRHD_A0.sbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0xA0_S3Image_BRH_B0.sbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0xA0_S3Image_BRH_C0.sbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0xA0_S3Image_BRHD_B0.sbin \
+    amd-firmware/BRH/1.0.0.3/Type0x64_AppbDdr5RdimmImem3_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3/Type0x64_AppbDdr5RdimmImem4_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3/Type0x64_AppbDdr5RdimmPosttrainImem9_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3/Type0x64_AppbDdr5RdimmPosttrainImem10_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3/Type0x64_AppbDdr5RdimmQuickbootImem11_BRH_C0.ecsbin \
+    amd-firmware/BRH/1.0.0.3/Type0x65_AppbDdr5RdimmDmem3_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3/Type0x65_AppbDdr5RdimmDmem4_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3/Type0x65_AppbDdr5RdimmPosttrainDmem9_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3/Type0x65_AppbDdr5RdimmPosttrainDmem10_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3/Type0x65_AppbDdr5RdimmPosttrainDmem9_BRH_C0.ecsbin \
+    amd-firmware/BRH/1.0.0.3/Type0x65_AppbDdr5RdimmPosttrainDmem10_BRH_C0.ecsbin \
+    amd-firmware/BRH/1.0.0.3/Type0x65_AppbDdr5RdimmQuickbootDmem11_BRH_C0.ecsbin \
+    amd-firmware/BRH/1.0.0.3/Type0x65_AppbDdr5RdimmQuickbootDmem12_BRH_C0.ecsbin \
+    amd-firmware/BRH/1.0.0.3/TypeId0x21_PspAmdIkek_BRH.bin \
+    $(SOURCES)
+
+turin-ruby-1.0.0.3-p1.img turin-rubyred-1.0.0.3-p1.img: \
+    $(PAYLOAD) \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x00_AmdPubKey_BRH.tkn \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x01_PspBl_BRH.esbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x08_SmuFirmware_breithorn.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x208_SmuFirmware_BRHDense.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x09_PspDebugUnlockToken_BRH.stkn \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x0A_PspAblPubKey_BRH.stkn \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x55_SPLTable_BRH.sbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x9D_AspSramFwExt_BRH.sbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x13_SduFw_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x22_SecureEmptyToken.bin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x24_RegisterAccessPolicy_BRH.cesbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x224_RegisterAccessPolicy_BRHDense.cesbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x28_PspSystemDriver_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x2A_SmuFirmware_breithorn.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x22A_SmuFirmware_BRHDense.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x2D_AblRt.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x30_AgesaBootLoaderU_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x42_PhyFw_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x44_USB_PHY_BRH.esbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x245_RegisterAccessPolicy_BRHDense.cesbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x50_PspKeyDataBase_BRH.sbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x51_PspTosKeyDataBase_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x5DMpioFw_BRH.cesbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x64_RasDriver_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x65_ta_ras_prod_amdTEE.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x73_PspBl_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x76_DfRib_BRH.csbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x8C_MPDMATF_BRH.sbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x91_GmiPhyFw_BRH.esbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x92_Page_BRH.sbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x9F_psp_tos_wl_bin_brh.sbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0xA0_S3Image_BRH_A0.sbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0xA0_S3Image_BRHD_A0.sbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0xA0_S3Image_BRH_B0.sbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0xA0_S3Image_BRH_C0.sbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0xA0_S3Image_BRHD_B0.sbin \
+    amd-firmware/BRH/1.0.0.3-p1/Type0x64_AppbDdr5RdimmImem3_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/Type0x64_AppbDdr5RdimmImem4_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/Type0x64_AppbDdr5RdimmPosttrainImem9_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/Type0x64_AppbDdr5RdimmPosttrainImem10_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/Type0x64_AppbDdr5RdimmQuickbootImem11_BRH_C0.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/Type0x65_AppbDdr5RdimmDmem3_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/Type0x65_AppbDdr5RdimmDmem4_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/Type0x65_AppbDdr5RdimmPosttrainDmem9_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/Type0x65_AppbDdr5RdimmPosttrainDmem10_BRH.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/Type0x65_AppbDdr5RdimmPosttrainDmem9_BRH_C0.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/Type0x65_AppbDdr5RdimmPosttrainDmem10_BRH_C0.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/Type0x65_AppbDdr5RdimmQuickbootDmem11_BRH_C0.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/Type0x65_AppbDdr5RdimmQuickbootDmem12_BRH_C0.ecsbin \
+    amd-firmware/BRH/1.0.0.3-p1/TypeId0x21_PspAmdIkek_BRH.bin \
+    $(SOURCES)
+
 turin-ruby-1.0.0.2-p1.img: etc/turin-ruby-1.0.0.2-p1.efs.json5
 	$(CARGO) run -- generate -s '16 MiB' $(BLOB_DIRS:%=-B %) -v -B . -B amd-firmware/BRH/1.0.0.2-p1 -c $< -r $(PAYLOAD) -o $@
 
 turin-rubyred-1.0.0.2-p1.img: etc/turin-rubyred-1.0.0.2-p1.efs.json5
 	$(CARGO) run -- generate -s '16 MiB' $(BLOB_DIRS:%=-B %) -v -B . -B amd-firmware/BRH/1.0.0.2-p1 -c $< -r $(PAYLOAD) -o $@
+
+turin-ruby-1.0.0.3.img: etc/turin-ruby-1.0.0.3.efs.json5
+	$(CARGO) run -- generate -s '16 MiB' $(BLOB_DIRS:%=-B %) -v -B . -B amd-firmware/BRH/1.0.0.3 -c $< -r $(PAYLOAD) -o $@
+
+turin-ruby-1.0.0.3-p1.img: etc/turin-ruby-1.0.0.3-p1.efs.json5
+	$(CARGO) run -- generate -s '16 MiB' $(BLOB_DIRS:%=-B %) -v -B . -B amd-firmware/BRH/1.0.0.3-p1 -c $< -r $(PAYLOAD) -o $@
+
+turin-rubyred-1.0.0.3-p1.img: etc/turin-rubyred-1.0.0.3-p1.efs.json5
+	$(CARGO) run -- generate -s '16 MiB' $(BLOB_DIRS:%=-B %) -v -B . -B amd-firmware/BRH/1.0.0.3-p1 -c $< -r $(PAYLOAD) -o $@
+
+etc/turin-rubyred-1.0.0.3.efs.json5: etc/turin-ruby-1.0.0.3.efs.json5 etc/patches/turin-red.patch
+	$(PATCH) -F 0 -l -N -o $@ $< etc/patches/turin-red.patch
+
+etc/turin-rubyred-1.0.0.3-p1.efs.json5: etc/turin-ruby-1.0.0.3-p1.efs.json5 etc/patches/turin-red.patch
+	$(PATCH) -F 0 -l -N -o $@ $< etc/patches/turin-red.patch
+
+turin-rubyred-1.0.0.3.img: etc/turin-rubyred-1.0.0.3.efs.json5
+	$(CARGO) run -- generate -s '16 MiB' $(BLOB_DIRS:%=-B %) -v -B . -B amd-firmware/BRH/1.0.0.3 -c $< -r $(PAYLOAD) -o $@
 
 turin-ruby-1.0.0.1-p1.img: etc/turin-ruby-1.0.0.1-p1.efs.json5
 	$(CARGO) run -- generate -s '16 MiB' $(BLOB_DIRS:%=-B %) -v -B . -B amd-firmware/BRH/1.0.0.1-p1 -c $< -r $(PAYLOAD) -o $@
