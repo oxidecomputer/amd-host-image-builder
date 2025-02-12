@@ -1,0 +1,15 @@
+--- turin-ruby.efs.json5	2025-01-20 21:39:44.037923373 +0100
++++ turin-rubyred.efs.json5	2025-01-20 21:39:44.037923373 +0100
+@@ -1,9 +1,9 @@
+ {
+   processor_generation: "Turin",
+   espi0_configuration: {
+-    enable_port_0x80: true,
+-    alert_pin: 1,
+-    data_bus: 1,
++    enable_port_0x80: false,
++    alert_pin: 0,
++    data_bus: 0,
+     clock: 0,
+     respond_port_0x80: false,
+     io_mode: "Auto"

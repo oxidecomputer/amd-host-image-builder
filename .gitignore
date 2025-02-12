@@ -5,3 +5,5 @@ target/
 testpl
 testpl.o
 efs.schema.json
+/etc/turin-rubyred-1.0.0.3.efs.json5
+/etc/turin-rubyred-1.0.0.3-p1.efs.json5
