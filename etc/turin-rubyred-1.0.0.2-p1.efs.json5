@@ -11723,7 +11723,7 @@
                     },
                     {
                       Bool: {
-                        FchCmosClearEnableMemRestore: false
+                        FchCmosClearEnableMemRestore: true
                       }
                     },
                     {
