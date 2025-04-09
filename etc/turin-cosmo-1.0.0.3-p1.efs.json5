@@ -10914,7 +10914,7 @@
                     },
                     {
                       Bool: {
-                        FchCmosClearEnableMemRestore: false
+                        FchCmosClearEnableMemRestore: true
                       }
                     },
                     {
@@ -11790,8 +11790,8 @@
                       Byte: {
                         FchConsoleOutSerialPortEspiController: {
                           espi_controller: "Controller0",
-                          io_2e_2f_disabled: false,
-                          io_4e_4f_disabled: false,
+                          io_2e_2f_disabled: true,
+                          io_4e_4f_disabled: true,
                         }
                       }
                     },
@@ -11807,7 +11807,7 @@
                     },
                     {
                       Byte: {
-                        FchConsoleOutMode: "Disabled"
+                        FchConsoleOutMode: "Enabled"
                       }
                     },
                     {
@@ -11877,7 +11877,7 @@
                     },
                     {
                       Byte: {
-                        FchConsoleOutSerialPort: "Uart1Mmio"
+                        FchConsoleOutSerialPort: "Uart0Mmio"
                       }
                     }
                   ]
