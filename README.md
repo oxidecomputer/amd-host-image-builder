@@ -27,7 +27,7 @@ image payload you want in the result:
 
 or,
 
-    gmake milan-gimlet-b PAYLOAD=/path/to/nanobl-rs/obj/nanobl-rs.elf
+    gmake milan-gimlet-b PAYLOAD=/path/to/bldb/target/x86_64-oxide-none-elf/release/bldb
 
 This will create two image files in the current directory, one
 with the current firmware version, and one without:
@@ -40,16 +40,16 @@ One may also run the command via `cargo run`.  For example:
     cargo run -- \
         -B amd-firmware/GN/1.0.0.a \
         -c etc/milan-gimlet-b-1.0.0.a.efs.json5 \
-        -r /path/to/nanobl-rs/obj/nanobl-rs.elf \
+        -r /path/to/target/x86_64-oxide-none-elf/release/bldb \
         -o milan-gimlet-b-1.0.0.a.img
 
 Here, the following are given as arguments:
 
 * `amd-firmware/GN/1.0.0.a` is in the search path for blobs,
 * The configuration file used is `etc/milan-gimlet-b-1.0.0.a.efs.json5`,
-* The reset image is `nanobl-rs/obj/nanobl-rs.elf`.  Note that there are
-  restrictions on the contents of the ELF file given to the image
-  builder.  `amd-host-image-builder` extracts the segments that need to
+* The reset image is `bldb`.  Note that there are restrictions on the
+  contents of the ELF file given to the image builder.
+  `amd-host-image-builder` extracts the segments that need to
   be in the reset image from the ELF file and stores them into the
   appropriate flash entries.  Those entries will automatically be created
   and should _not_ be specified in the JSON configuration file.
