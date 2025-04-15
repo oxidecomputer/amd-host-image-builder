@@ -450,7 +450,7 @@
                     {
                       dimm_slot_present: false,
                       socket_id: 0,
-                      channel_id: 0,
+                      channel_id: 8,
                       dimm_id: 0,
                       dimm_smbus_address: 0,
                       i2c_mux_address: 0,
@@ -576,126 +576,6 @@
                       i2c_mux_address: 11,
                       mux_control_address: 1,
                       mux_channel: 170
-                    },
-                    {
-                      dimm_slot_present: false,
-                      socket_id: 0,
-                      channel_id: 0,
-                      dimm_id: 0,
-                      dimm_smbus_address: 0,
-                      i2c_mux_address: 0,
-                      mux_control_address: 0,
-                      mux_channel: 0
-                    },
-                    {
-                      dimm_slot_present: false,
-                      socket_id: 0,
-                      channel_id: 0,
-                      dimm_id: 0,
-                      dimm_smbus_address: 0,
-                      i2c_mux_address: 0,
-                      mux_control_address: 0,
-                      mux_channel: 0
-                    },
-                    {
-                      dimm_slot_present: false,
-                      socket_id: 0,
-                      channel_id: 0,
-                      dimm_id: 0,
-                      dimm_smbus_address: 0,
-                      i2c_mux_address: 0,
-                      mux_control_address: 0,
-                      mux_channel: 0
-                    },
-                    {
-                      dimm_slot_present: false,
-                      socket_id: 0,
-                      channel_id: 0,
-                      dimm_id: 0,
-                      dimm_smbus_address: 0,
-                      i2c_mux_address: 0,
-                      mux_control_address: 0,
-                      mux_channel: 0
-                    },
-                    {
-                      dimm_slot_present: false,
-                      socket_id: 0,
-                      channel_id: 0,
-                      dimm_id: 0,
-                      dimm_smbus_address: 0,
-                      i2c_mux_address: 0,
-                      mux_control_address: 0,
-                      mux_channel: 0
-                    },
-                    {
-                      dimm_slot_present: false,
-                      socket_id: 0,
-                      channel_id: 0,
-                      dimm_id: 0,
-                      dimm_smbus_address: 0,
-                      i2c_mux_address: 0,
-                      mux_control_address: 0,
-                      mux_channel: 0
-                    },
-                    {
-                      dimm_slot_present: false,
-                      socket_id: 0,
-                      channel_id: 0,
-                      dimm_id: 0,
-                      dimm_smbus_address: 0,
-                      i2c_mux_address: 0,
-                      mux_control_address: 0,
-                      mux_channel: 0
-                    },
-                    {
-                      dimm_slot_present: false,
-                      socket_id: 0,
-                      channel_id: 0,
-                      dimm_id: 0,
-                      dimm_smbus_address: 0,
-                      i2c_mux_address: 0,
-                      mux_control_address: 0,
-                      mux_channel: 0
-                    },
-                    {
-                      dimm_slot_present: false,
-                      socket_id: 0,
-                      channel_id: 0,
-                      dimm_id: 0,
-                      dimm_smbus_address: 0,
-                      i2c_mux_address: 0,
-                      mux_control_address: 0,
-                      mux_channel: 0
-                    },
-                    {
-                      dimm_slot_present: false,
-                      socket_id: 0,
-                      channel_id: 0,
-                      dimm_id: 0,
-                      dimm_smbus_address: 0,
-                      i2c_mux_address: 0,
-                      mux_control_address: 0,
-                      mux_channel: 0
-                    },
-                    {
-                      dimm_slot_present: false,
-                      socket_id: 0,
-                      channel_id: 0,
-                      dimm_id: 0,
-                      dimm_smbus_address: 0,
-                      i2c_mux_address: 0,
-                      mux_control_address: 0,
-                      mux_channel: 0
-                    },
-                    {
-                      dimm_slot_present: false,
-                      socket_id: 0,
-                      channel_id: 0,
-                      dimm_id: 0,
-                      dimm_smbus_address: 0,
-                      i2c_mux_address: 0,
-                      mux_control_address: 0,
-                      mux_channel: 0
                     }
                   ]
                 },
