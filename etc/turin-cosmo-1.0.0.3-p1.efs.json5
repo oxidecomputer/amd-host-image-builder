@@ -906,7 +906,7 @@
                     {
                       dimm_slot_present: false,
                       socket_id: 0,
-                      channel_id: 8,
+                      channel_id: 0,
                       dimm_id: 0,
                       dimm_smbus_address: 0,
                       i2c_mux_address: 0,
@@ -916,242 +916,242 @@
                     {
                       dimm_slot_present: true,
                       socket_id: 0,
+                      channel_id: 0,
+                      dimm_id: 0,
+                      dimm_smbus_address: 160,
+                      i2c_mux_address: 0,
+                      mux_control_address: 0,
+                      mux_channel: 0
+                    },
+                    {
+                      dimm_slot_present: true,
+                      socket_id: 0,
+                      channel_id: 1,
+                      dimm_id: 0,
+                      dimm_smbus_address: 162,
+                      i2c_mux_address: 0,
+                      mux_control_address: 0,
+                      mux_channel: 0
+                    },
+                    {
+                      dimm_slot_present: true,
+                      socket_id: 0,
+                      channel_id: 2,
+                      dimm_id: 0,
+                      dimm_smbus_address: 164,
+                      i2c_mux_address: 0,
+                      mux_control_address: 0,
+                      mux_channel: 0
+                    },
+                    {
+                      dimm_slot_present: true,
+                      socket_id: 0,
+                      channel_id: 3,
+                      dimm_id: 0,
+                      dimm_smbus_address: 166,
+                      i2c_mux_address: 0,
+                      mux_control_address: 0,
+                      mux_channel: 0
+                    },
+                    {
+                      dimm_slot_present: true,
+                      socket_id: 0,
+                      channel_id: 4,
+                      dimm_id: 0,
+                      dimm_smbus_address: 168,
+                      i2c_mux_address: 0,
+                      mux_control_address: 0,
+                      mux_channel: 0
+                    },
+                    {
+                      dimm_slot_present: true,
+                      socket_id: 0,
+                      channel_id: 5,
+                      dimm_id: 0,
+                      dimm_smbus_address: 170,
+                      i2c_mux_address: 0,
+                      mux_control_address: 0,
+                      mux_channel: 0
+                    },
+                    {
+                      dimm_slot_present: true,
+                      socket_id: 0,
+                      channel_id: 6,
+                      dimm_id: 0,
+                      dimm_smbus_address: 160,
+                      i2c_mux_address: 1,
+                      mux_control_address: 0,
+                      mux_channel: 0
+                    },
+                    {
+                      dimm_slot_present: true,
+                      socket_id: 0,
+                      channel_id: 7,
+                      dimm_id: 0,
+                      dimm_smbus_address: 162,
+                      i2c_mux_address: 1,
+                      mux_control_address: 0,
+                      mux_channel: 0
+                    },
+                    {
+                      dimm_slot_present: true,
+                      socket_id: 0,
                       channel_id: 8,
+                      dimm_id: 0,
+                      dimm_smbus_address: 164,
+                      i2c_mux_address: 1,
+                      mux_control_address: 0,
+                      mux_channel: 0
+                    },
+                    {
+                      dimm_slot_present: true,
+                      socket_id: 0,
+                      channel_id: 9,
+                      dimm_id: 0,
+                      dimm_smbus_address: 166,
+                      i2c_mux_address: 1,
+                      mux_control_address: 0,
+                      mux_channel: 0
+                    },
+                    {
+                      dimm_slot_present: true,
+                      socket_id: 0,
+                      channel_id: 10,
+                      dimm_id: 0,
+                      dimm_smbus_address: 168,
+                      i2c_mux_address: 1,
+                      mux_control_address: 0,
+                      mux_channel: 0
+                    },
+                    {
+                      dimm_slot_present: true,
+                      socket_id: 0,
+                      channel_id: 11,
+                      dimm_id: 0,
+                      dimm_smbus_address: 170,
+                      i2c_mux_address: 1,
+                      mux_control_address: 0,
+                      mux_channel: 0
+                    },
+                    {
+                      dimm_slot_present: false,
+                      socket_id: 0,
+                      channel_id: 0,
                       dimm_id: 0,
                       dimm_smbus_address: 0,
                       i2c_mux_address: 0,
                       mux_control_address: 0,
-                      mux_channel: 160
+                      mux_channel: 0
                     },
                     {
-                      dimm_slot_present: true,
+                      dimm_slot_present: false,
                       socket_id: 0,
-                      channel_id: 8,
+                      channel_id: 0,
                       dimm_id: 0,
                       dimm_smbus_address: 0,
-                      i2c_mux_address: 1,
+                      i2c_mux_address: 0,
                       mux_control_address: 0,
-                      mux_channel: 162
+                      mux_channel: 0
                     },
                     {
-                      dimm_slot_present: true,
+                      dimm_slot_present: false,
                       socket_id: 0,
-                      channel_id: 8,
+                      channel_id: 0,
                       dimm_id: 0,
                       dimm_smbus_address: 0,
-                      i2c_mux_address: 2,
+                      i2c_mux_address: 0,
                       mux_control_address: 0,
-                      mux_channel: 164
+                      mux_channel: 0
                     },
                     {
-                      dimm_slot_present: true,
+                      dimm_slot_present: false,
                       socket_id: 0,
-                      channel_id: 8,
+                      channel_id: 0,
                       dimm_id: 0,
                       dimm_smbus_address: 0,
-                      i2c_mux_address: 3,
+                      i2c_mux_address: 0,
                       mux_control_address: 0,
-                      mux_channel: 166
+                      mux_channel: 0
                     },
                     {
-                      dimm_slot_present: true,
+                      dimm_slot_present: false,
                       socket_id: 0,
-                      channel_id: 8,
+                      channel_id: 0,
                       dimm_id: 0,
                       dimm_smbus_address: 0,
-                      i2c_mux_address: 4,
+                      i2c_mux_address: 0,
                       mux_control_address: 0,
-                      mux_channel: 168
+                      mux_channel: 0
                     },
                     {
-                      dimm_slot_present: true,
+                      dimm_slot_present: false,
                       socket_id: 0,
-                      channel_id: 8,
+                      channel_id: 0,
                       dimm_id: 0,
                       dimm_smbus_address: 0,
-                      i2c_mux_address: 5,
+                      i2c_mux_address: 0,
                       mux_control_address: 0,
-                      mux_channel: 170
-                    },
-                    {
-                      dimm_slot_present: true,
-                      socket_id: 0,
-                      channel_id: 8,
-                      dimm_id: 0,
-                      dimm_smbus_address: 0,
-                      i2c_mux_address: 6,
-                      mux_control_address: 1,
-                      mux_channel: 160
-                    },
-                    {
-                      dimm_slot_present: true,
-                      socket_id: 0,
-                      channel_id: 8,
-                      dimm_id: 0,
-                      dimm_smbus_address: 0,
-                      i2c_mux_address: 7,
-                      mux_control_address: 1,
-                      mux_channel: 162
-                    },
-                    {
-                      dimm_slot_present: true,
-                      socket_id: 0,
-                      channel_id: 8,
-                      dimm_id: 0,
-                      dimm_smbus_address: 0,
-                      i2c_mux_address: 8,
-                      mux_control_address: 1,
-                      mux_channel: 164
-                    },
-                    {
-                      dimm_slot_present: true,
-                      socket_id: 0,
-                      channel_id: 8,
-                      dimm_id: 0,
-                      dimm_smbus_address: 0,
-                      i2c_mux_address: 9,
-                      mux_control_address: 1,
-                      mux_channel: 166
-                    },
-                    {
-                      dimm_slot_present: true,
-                      socket_id: 0,
-                      channel_id: 8,
-                      dimm_id: 0,
-                      dimm_smbus_address: 0,
-                      i2c_mux_address: 10,
-                      mux_control_address: 1,
-                      mux_channel: 168
-                    },
-                    {
-                      dimm_slot_present: true,
-                      socket_id: 0,
-                      channel_id: 8,
-                      dimm_id: 0,
-                      dimm_smbus_address: 0,
-                      i2c_mux_address: 11,
-                      mux_control_address: 1,
-                      mux_channel: 170
+                      mux_channel: 0
                     },
                     {
                       dimm_slot_present: false,
                       socket_id: 0,
-                      channel_id: 8,
+                      channel_id: 0,
                       dimm_id: 0,
                       dimm_smbus_address: 0,
-                      i2c_mux_address: 16,
+                      i2c_mux_address: 0,
                       mux_control_address: 0,
-                      mux_channel: 160
+                      mux_channel: 0
                     },
                     {
                       dimm_slot_present: false,
                       socket_id: 0,
-                      channel_id: 8,
+                      channel_id: 0,
                       dimm_id: 0,
                       dimm_smbus_address: 0,
-                      i2c_mux_address: 17,
+                      i2c_mux_address: 0,
                       mux_control_address: 0,
-                      mux_channel: 162
+                      mux_channel: 0
                     },
                     {
                       dimm_slot_present: false,
                       socket_id: 0,
-                      channel_id: 8,
+                      channel_id: 0,
                       dimm_id: 0,
                       dimm_smbus_address: 0,
-                      i2c_mux_address: 18,
+                      i2c_mux_address: 0,
                       mux_control_address: 0,
-                      mux_channel: 164
+                      mux_channel: 0
                     },
                     {
                       dimm_slot_present: false,
                       socket_id: 0,
-                      channel_id: 8,
+                      channel_id: 0,
                       dimm_id: 0,
                       dimm_smbus_address: 0,
-                      i2c_mux_address: 19,
+                      i2c_mux_address: 0,
                       mux_control_address: 0,
-                      mux_channel: 166
+                      mux_channel: 0
                     },
                     {
                       dimm_slot_present: false,
                       socket_id: 0,
-                      channel_id: 8,
+                      channel_id: 0,
                       dimm_id: 0,
                       dimm_smbus_address: 0,
-                      i2c_mux_address: 20,
+                      i2c_mux_address: 0,
                       mux_control_address: 0,
-                      mux_channel: 168
+                      mux_channel: 0
                     },
                     {
                       dimm_slot_present: false,
                       socket_id: 0,
-                      channel_id: 8,
+                      channel_id: 0,
                       dimm_id: 0,
                       dimm_smbus_address: 0,
-                      i2c_mux_address: 21,
+                      i2c_mux_address: 0,
                       mux_control_address: 0,
-                      mux_channel: 170
-                    },
-                    {
-                      dimm_slot_present: false,
-                      socket_id: 0,
-                      channel_id: 8,
-                      dimm_id: 0,
-                      dimm_smbus_address: 0,
-                      i2c_mux_address: 22,
-                      mux_control_address: 1,
-                      mux_channel: 160
-                    },
-                    {
-                      dimm_slot_present: false,
-                      socket_id: 0,
-                      channel_id: 8,
-                      dimm_id: 0,
-                      dimm_smbus_address: 0,
-                      i2c_mux_address: 23,
-                      mux_control_address: 1,
-                      mux_channel: 162
-                    },
-                    {
-                      dimm_slot_present: false,
-                      socket_id: 0,
-                      channel_id: 8,
-                      dimm_id: 0,
-                      dimm_smbus_address: 0,
-                      i2c_mux_address: 24,
-                      mux_control_address: 1,
-                      mux_channel: 164
-                    },
-                    {
-                      dimm_slot_present: false,
-                      socket_id: 0,
-                      channel_id: 8,
-                      dimm_id: 0,
-                      dimm_smbus_address: 0,
-                      i2c_mux_address: 25,
-                      mux_control_address: 1,
-                      mux_channel: 166
-                    },
-                    {
-                      dimm_slot_present: false,
-                      socket_id: 0,
-                      channel_id: 8,
-                      dimm_id: 0,
-                      dimm_smbus_address: 0,
-                      i2c_mux_address: 26,
-                      mux_control_address: 1,
-                      mux_channel: 168
-                    },
-                    {
-                      dimm_slot_present: false,
-                      socket_id: 0,
-                      channel_id: 8,
-                      dimm_id: 0,
-                      dimm_smbus_address: 0,
-                      i2c_mux_address: 27,
-                      mux_control_address: 1,
-                      mux_channel: 170
+                      mux_channel: 0
                     }
                   ]
                 },
@@ -3220,7 +3220,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2000,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -3263,7 +3263,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 2,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 1
@@ -3306,7 +3306,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 2,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 2
@@ -3349,7 +3349,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -3521,7 +3521,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 1
@@ -3564,7 +3564,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 2
@@ -3625,7 +3625,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 1800,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -3668,7 +3668,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2000,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -3711,7 +3711,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 1
@@ -3754,7 +3754,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 2,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 1
@@ -3797,7 +3797,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 2,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 2
@@ -3840,7 +3840,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -4012,7 +4012,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 1
@@ -4055,7 +4055,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 2
@@ -4116,7 +4116,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 1800,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -4159,7 +4159,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2000,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -4202,7 +4202,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 1
@@ -4245,7 +4245,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 2,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 1
@@ -4288,7 +4288,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 2,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 2
@@ -4331,7 +4331,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -4503,7 +4503,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 1
@@ -4546,7 +4546,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 2
@@ -4607,7 +4607,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2000,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -4650,7 +4650,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 1
@@ -4693,7 +4693,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 2,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 1
@@ -4736,7 +4736,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 2,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 2
@@ -4779,7 +4779,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -4951,7 +4951,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 1
@@ -4994,7 +4994,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 2
@@ -5055,7 +5055,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 1800,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -5098,7 +5098,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2000,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -5141,7 +5141,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 1
@@ -5184,7 +5184,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 2,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 1
@@ -5227,7 +5227,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 2,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 2
@@ -5270,7 +5270,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -5442,7 +5442,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 1
@@ -5485,7 +5485,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 2
@@ -5546,7 +5546,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 1800,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -5589,7 +5589,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2000,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -5632,7 +5632,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 1
@@ -5675,7 +5675,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 2,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 1
@@ -5718,7 +5718,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 2,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 2
@@ -5761,7 +5761,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -5933,7 +5933,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 1
@@ -5976,7 +5976,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 2
@@ -6037,7 +6037,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2000,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -6080,7 +6080,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 1
@@ -6123,7 +6123,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 2,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 1
@@ -6166,7 +6166,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 2,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 2
@@ -6209,7 +6209,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -6467,7 +6467,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 1
@@ -6510,7 +6510,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 2
@@ -6571,7 +6571,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 1800,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -6614,7 +6614,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2000,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -6657,7 +6657,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 1
@@ -6700,7 +6700,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 2,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 1
@@ -6743,7 +6743,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 2,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 2
@@ -6786,7 +6786,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -6958,7 +6958,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 1
@@ -7001,7 +7001,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 2
@@ -7062,7 +7062,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 1800,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -7105,7 +7105,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2000,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -7148,7 +7148,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 1
@@ -7191,7 +7191,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 2,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 1
@@ -7234,7 +7234,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 2,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 2
@@ -7277,7 +7277,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -7449,7 +7449,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 1
@@ -7492,7 +7492,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 2
@@ -7553,7 +7553,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2000,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -7596,7 +7596,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 4,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 1
@@ -7639,7 +7639,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 2,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 1
@@ -7682,7 +7682,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2200,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 2,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 2
@@ -7725,7 +7725,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 4,
                         sdram_io_width_bitmap: 255
@@ -7940,7 +7940,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 1
@@ -7983,7 +7983,7 @@
                       header: {
                         total_size: 12,
                         target_memclk: 2600,
-                        dimm_slots_per_channel: 2,
+                        dimm_slots_per_channel: 1,
                         dimm0_rank_bitmap: 1,
                         dimm1_rank_bitmap: 2,
                         sdram_io_width_bitmap: 2
