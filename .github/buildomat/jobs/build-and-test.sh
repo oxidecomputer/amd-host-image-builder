@@ -48,18 +48,14 @@ done
 #
 export CARGO_NET_GIT_FETCH_WITH_CLI=true
 
-git submodule sync
-git submodule update --init
-
 banner test
-ptime -m cargo test --verbose --locked
-(cd amd-host-image-builder-config && ptime -m cargo test --verbose --locked)
+ptime -m cargo xtask test --verbose --locked
 
 banner build
-ptime -m cargo build --release --verbose --locked
+ptime -m cargo xtask build --release --verbose --locked
 
 banner lint
-ptime -m cargo clippy --locked
+ptime -m cargo xtask clippy --locked
 
 banner package
 mkdir -p /work/bins

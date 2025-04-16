@@ -1,0 +1,11 @@
+[package]
+name = "ahib-schema"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+amd-host-image-builder-config = { path = "../ahib-config" }
+serde_json = "1.0"
+json5 = "0.4"
+valico = "4"
+schemars = "0.8.22"

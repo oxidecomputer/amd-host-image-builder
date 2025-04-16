@@ -38,14 +38,14 @@ with the current firmware version, and one without:
 One may also run the command via `cargo run`.  For example:
 
     cargo run -- \
-        -B amd-firmware/GN/1.0.0.a \
+        -B /path/to/amd-firmware/GN/1.0.0.a \
         -c etc/milan-gimlet-b-1.0.0.a.efs.json5 \
         -r /path/to/target/x86_64-oxide-none-elf/release/bldb \
         -o milan-gimlet-b-1.0.0.a.img
 
 Here, the following are given as arguments:
 
-* `amd-firmware/GN/1.0.0.a` is in the search path for blobs,
+* `/path/to/amd-firmware/GN/1.0.0.a` is in the search path for blobs,
 * The configuration file used is `etc/milan-gimlet-b-1.0.0.a.efs.json5`,
 * The reset image is `bldb`.  Note that there are restrictions on the
   contents of the ELF file given to the image builder.

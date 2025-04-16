@@ -1,0 +1,16 @@
+[package]
+name = "xtask"
+version = "0.1.0"
+edition = "2021"
+license = "MPL-2.0"
+
+[dependencies]
+anyhow = "1.0.98"
+clap = { version = "4.5.36", features = ["derive"] }
+duct = "0.13.7"
+serde = { version = "1.0.219", features = ["derive"] }
+toml = "0.8.20"
+
+[build-dependencies]
+cc = "1.2.19"
+duct = "0.13.7"

@@ -4,10 +4,11 @@ use std::path::PathBuf;
 use amd_apcb::Apcb;
 use serde::Deserialize;
 
+use amd_efs::flash::Location;
 use amd_efs::{
     AddressMode, ComboDirectoryEntryFilter, EfhBulldozerSpiMode,
-    EfhNaplesSpiMode, EfhRomeSpiMode, ProcessorGeneration,
-    EfhEspiConfiguration,
+    EfhEspiConfiguration, EfhNaplesSpiMode, EfhRomeSpiMode,
+    ProcessorGeneration,
 };
 use amd_efs::{
     BhdDirectoryEntry, BhdDirectoryEntryRegionType, BhdDirectoryEntryType,
@@ -17,7 +18,6 @@ use amd_efs::{
     PspDirectoryEntry, PspDirectoryEntryType, PspDirectoryRomId,
     ValueOrLocation,
 };
-use amd_efs::flash::Location;
 
 #[derive(Debug, thiserror::Error)]
 #[non_exhaustive]
@@ -359,8 +359,10 @@ impl<'a> From<SerdeConfig<'a>> for RawSerdeConfig<'a> {
             spi_mode_zen_rome: config.spi_mode_zen_rome,
             espi0_configuration: config.espi0_configuration,
             espi1_configuration: config.espi1_configuration,
-            psp_main_directory_flash_location: config.psp_main_directory_flash_location,
-            bhd_main_directory_flash_location: config.bhd_main_directory_flash_location,
+            psp_main_directory_flash_location: config
+                .psp_main_directory_flash_location,
+            bhd_main_directory_flash_location: config
+                .bhd_main_directory_flash_location,
             psp: config.psp,
             bhd: config.bhd,
         }
@@ -388,8 +390,10 @@ impl<'a> core::convert::TryFrom<RawSerdeConfig<'a>> for SerdeConfig<'a> {
                         spi_mode_zen_rome: raw.spi_mode_zen_rome,
                         espi0_configuration: None,
                         espi1_configuration: None,
-                        psp_main_directory_flash_location: raw.psp_main_directory_flash_location,
-                        bhd_main_directory_flash_location: raw.bhd_main_directory_flash_location,
+                        psp_main_directory_flash_location: raw
+                            .psp_main_directory_flash_location,
+                        bhd_main_directory_flash_location: raw
+                            .bhd_main_directory_flash_location,
                         psp: raw.psp,
                         bhd: raw.bhd,
                     });
@@ -407,8 +411,10 @@ impl<'a> core::convert::TryFrom<RawSerdeConfig<'a>> for SerdeConfig<'a> {
                         spi_mode_zen_rome: raw.spi_mode_zen_rome,
                         espi0_configuration: None,
                         espi1_configuration: None,
-                        psp_main_directory_flash_location: raw.psp_main_directory_flash_location,
-                        bhd_main_directory_flash_location: raw.bhd_main_directory_flash_location,
+                        psp_main_directory_flash_location: raw
+                            .psp_main_directory_flash_location,
+                        bhd_main_directory_flash_location: raw
+                            .bhd_main_directory_flash_location,
                         psp: raw.psp,
                         bhd: raw.bhd,
                     });
@@ -420,7 +426,8 @@ impl<'a> core::convert::TryFrom<RawSerdeConfig<'a>> for SerdeConfig<'a> {
                 // Needless to say, the Bulldozer SPI mode is bullshit.
                 if raw.spi_mode_zen_naples.is_none()
                     && raw.spi_mode_zen_rome.is_none()
-                    && (raw.espi0_configuration.is_some() || raw.espi1_configuration.is_some())
+                    && (raw.espi0_configuration.is_some()
+                        || raw.espi1_configuration.is_some())
                 {
                     return Ok(SerdeConfig {
                         processor_generation: raw.processor_generation,
@@ -429,8 +436,10 @@ impl<'a> core::convert::TryFrom<RawSerdeConfig<'a>> for SerdeConfig<'a> {
                         spi_mode_zen_rome: raw.spi_mode_zen_rome,
                         espi0_configuration: raw.espi0_configuration,
                         espi1_configuration: raw.espi1_configuration,
-                        psp_main_directory_flash_location: raw.psp_main_directory_flash_location,
-                        bhd_main_directory_flash_location: raw.bhd_main_directory_flash_location,
+                        psp_main_directory_flash_location: raw
+                            .psp_main_directory_flash_location,
+                        bhd_main_directory_flash_location: raw
+                            .bhd_main_directory_flash_location,
                         psp: raw.psp,
                         bhd: raw.bhd,
                     });
