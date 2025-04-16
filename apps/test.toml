@@ -1,0 +1,6 @@
+cpu = 'test'
+board = 'test'
+firmware_version = 'test'
+size = 16
+
+blobs = []

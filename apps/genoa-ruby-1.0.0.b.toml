@@ -1,0 +1,33 @@
+cpu = 'genoa'
+board = 'ruby'
+firmware_version = '1.0.0.b'
+size = 16
+blobs = [
+    'AmdPubKey_rs.tkn',
+    'TypeId0x01_PspBl_RS.sbin',
+    'TypeId0x03_PspRecBl_RS.sbin',
+    'TypeId0x08_SmuFirmware_RSB0.csbin',
+    'TypeId0x08_SmuFirmware_Bergamo.csbin',
+    'TypeId0x09_PspDebugUnlockToken_RS.stkn',
+    'TypeId0x0A_PspAblPubKey_RS.stkn',
+    'TypeId0x12_SmuFirmware2_RSB0.sbin',
+    'TypeId0x12_SmuFirmware2_Bergamo.sbin',
+    'TypeId0x13_SduFw_RS.sbin',
+    'TypeId0x21_PspAmdIkek_RS.bin',
+    'SecureEmptyToken.bin',
+    'TypeId0x24_RegisterAccessPolicy_RSB0.csbin',
+    'TypeId0x24_RegisterAccessPolicy_Bergamo.csbin',
+    'TypeId0x2a_Mp5_RSB0.csbin',
+    'TypeId0x2a_Mp5_Bergamo.csbin',
+    'TypeId0x30_AgesaBootLoaderU_RS.csbin',
+    'TypeId0x42_PhyFw_RS.csbin',
+    'TypeId0x50_PspKeyDataBase_RS.sbin',
+    'Appb_RS_Ddr5_0x64_3_Rdimm_Imem1.csbin',
+    'Appb_RS_Ddr5_0x65_3_Rdimm_Dmem1.csbin',
+    'Appb_RS_Ddr5_0x64_4_Rdimm_Imem2.csbin',
+    'Appb_RS_Ddr5_0x65_4_Rdimm_Dmem2.csbin',
+    'Appb_RS_Ddr5_0x64_9_Rdimm_Imem1.csbin',
+    'Appb_RS_Ddr5_0x65_9_Rdimm_Dmem1.csbin',
+    'Appb_RS_Ddr5_0x64_A_Rdimm_Imem2.csbin',
+    'Appb_RS_Ddr5_0x65_A_Rdimm_Dmem2.csbin',
+]
