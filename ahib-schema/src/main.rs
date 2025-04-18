@@ -1,5 +1,5 @@
 use amd_host_image_builder_config::SerdeConfig;
-use schemars::gen::SchemaSettings;
+use schemars::r#gen::SchemaSettings;
 use schemars::schema::RootSchema;
 use std::path::Path;
 use valico::json_schema;
@@ -11,8 +11,8 @@ pub fn generate_config_json_schema() -> RootSchema {
         // of magnitude.
         s.inline_subschemas = true
     });
-    let gen = settings.into_generator();
-    gen.into_root_schema_for::<SerdeConfig>()
+    let generator = settings.into_generator();
+    generator.into_root_schema_for::<SerdeConfig>()
 }
 
 fn test_schema(schema_str: &str) {

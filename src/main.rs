@@ -90,7 +90,9 @@ fn size_file(
     match target_size {
         Some(x) => {
             if filesize > x as usize {
-                panic!("Configuration specifies slot size {x} but contents {source_filename:?} have size {filesize}. The contents do not fit.");
+                panic!(
+                    "Configuration specifies slot size {x} but contents {source_filename:?} have size {filesize}. The contents do not fit."
+                );
             }
             Ok((file, x))
         }
@@ -985,13 +987,13 @@ fn dump(
     let amd_physical_mode_mmio_size =
         if filesize <= 0x100_0000 { Some(filesize as u32) } else { None };
     let efs = Efs::load(&storage, None, amd_physical_mode_mmio_size).unwrap();
-    let gen = [
+    let generation = [
         ProcessorGeneration::Turin,
         ProcessorGeneration::Genoa,
         ProcessorGeneration::Milan,
     ]
     .iter()
-    .find(|&gen| efs.compatible_with_processor_generation(*gen))
+    .find(|&generation| efs.compatible_with_processor_generation(*generation))
     .expect("only Milan, Genoa and Turin are supported for dumping right now");
     let mut apcb_buffer = [0xFFu8; Apcb::MAX_SIZE];
     let mut apcb_buffer_option = Some(&mut apcb_buffer[..]);
@@ -1011,11 +1013,11 @@ fn dump(
         &efs.bhd_directory(None).unwrap(),
         &mut apcb_buffer_option,
         &blob_dump_dirname,
-        dump_default_context(*gen),
+        dump_default_context(*generation),
     );
 
     let config = SerdeConfig {
-        processor_generation: *gen,
+        processor_generation: *generation,
         spi_mode_bulldozer: efs.spi_mode_bulldozer().unwrap(),
         spi_mode_zen_naples: efs.spi_mode_zen_naples().unwrap(),
         spi_mode_zen_rome: efs.spi_mode_zen_rome().unwrap(),
@@ -1161,9 +1163,14 @@ fn prepare_psp_directory_contents(
         let unique_versions = versions.keys().len();
         if unique_versions > 1 {
             for (version, entries) in versions.iter() {
-                eprintln!("Hint: SMU version {version:?} used in those entries: {entries:?} of sub program {sub_program}");
+                eprintln!(
+                    "Hint: SMU version {version:?} used in those entries: {entries:?} of sub program {sub_program}"
+                );
             }
-            panic!("For sub_program {}, there are {} different SMU firmware versions. There should be only one.", sub_program, unique_versions);
+            panic!(
+                "For sub_program {}, there are {} different SMU firmware versions. There should be only one.",
+                sub_program, unique_versions
+            );
         }
     }
 
@@ -1484,13 +1491,16 @@ fn generate(
         );
         assert!(psp_third_level_directory_template.is_none());
         if psp_second_level_abl_version != abl_version {
-            panic!("Different versions in the main PSP directory and in the second level PSP directory are not supported");
+            panic!(
+                "Different versions in the main PSP directory and in the second level PSP directory are not supported"
+            );
         }
 
         if psp_second_level_smu_versions != smu_versions {
-            panic!("SMU versions are different in first level ({:?}) vs second level ({:?}) PSP directory",
-                   smu_versions,
-                   psp_second_level_smu_versions);
+            panic!(
+                "SMU versions are different in first level ({:?}) vs second level ({:?}) PSP directory",
+                smu_versions, psp_second_level_smu_versions
+            );
         }
 
         let (
@@ -1632,7 +1642,9 @@ fn generate(
         reset_image_filename
     {
         if custom_bios_reset_entry {
-            panic!("It's impossible to use both a Bios type Reset entry in the config file and a (Bios) Reset image on the command line");
+            panic!(
+                "It's impossible to use both a Bios type Reset entry in the config file and a (Bios) Reset image on the command line"
+            );
         }
         let (reset_image_entry, reset_image_body) =
             bhd_directory_add_reset_image(reset_image_filename)
@@ -1645,7 +1657,9 @@ fn generate(
         Some((reset_image_entry, reset_image_body))
     } else {
         if !custom_bios_reset_entry {
-            panic!("Without a Bios Reset entry, the target will not boot. Hint: Please Specify '-r', or add an entry to the config file with type 'Bios'");
+            panic!(
+                "Without a Bios Reset entry, the target will not boot. Hint: Please Specify '-r', or add an entry to the config file with type 'Bios'"
+            );
         }
         None
     };
@@ -1683,7 +1697,10 @@ fn generate(
             // same reset image payload to both directories.
             // That means the apob cannot be possibly different.
             if bhd_second_level_custom_apob != custom_apob {
-                panic!("When adding the same reset image to both the main BHD directory and the second level BHD directory, then you cannot have different APOB locations. But two different APOB locations were requested: {:?} vs {:?}", custom_apob, bhd_second_level_custom_apob);
+                panic!(
+                    "When adding the same reset image to both the main BHD directory and the second level BHD directory, then you cannot have different APOB locations. But two different APOB locations were requested: {:?} vs {:?}",
+                    custom_apob, bhd_second_level_custom_apob
+                );
             }
             bhd_second_level_raw_entries.push((
                 reset_image_entry,

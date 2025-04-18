@@ -1,5 +1,5 @@
-use amd_efs::flash::Location;
 use amd_efs::ProcessorGeneration;
+use amd_efs::flash::Location;
 
 /* Coarse-grained flash locations (in Byte) */
 
