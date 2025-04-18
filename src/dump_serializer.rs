@@ -2,7 +2,7 @@
 - Serialize to JSON5 with little noise
 - If a field was skipped, note on stderr what was skipped
  */
-use serde::{ser, Serialize};
+use serde::{Serialize, ser};
 use std::fmt::{Display, Formatter};
 use std::io::Write;
 

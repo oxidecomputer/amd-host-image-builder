@@ -341,9 +341,9 @@ impl schemars::JsonSchema for SerdeConfig<'_> {
         RawSerdeConfig::schema_name()
     }
     fn json_schema(
-        gen: &mut schemars::gen::SchemaGenerator,
+        generator: &mut schemars::r#gen::SchemaGenerator,
     ) -> schemars::schema::Schema {
-        RawSerdeConfig::json_schema(gen)
+        RawSerdeConfig::json_schema(generator)
     }
     fn is_referenceable() -> bool {
         RawSerdeConfig::is_referenceable()
