@@ -9,7 +9,7 @@ We use the `cargo xtask` for building.
 You will need to have either the LLVM `ld.lld` or GNU linkers
 installed in order to build.  If you are building on illumos,
 GNU `ld` is installed as `gld`; set `LD=gld` before running
-`cargo xtask`.
+`cargo xtask` if you get errors from `build.rs`.
 
 # Usage
 
@@ -21,7 +21,7 @@ To build an image for a Milan-based Gimlet, run the following,
 specifying the `make` variable `PAYLOAD` to point to the reset
 image payload you want in the result:
 
-    LD=gld cargo xtask gen \
+    cargo xtask gen \
         --payload /path/to/phbl \
         --amd-firmware /path/to/amd-firmware/blobs \
         --app apps/milan-gimlet-b-1.0.0.a.toml \
@@ -35,7 +35,7 @@ loader as the payload.
 
 To use the development loader, one may run:
 
-    LD=gld cargo xtask gen \
+    cargo xtask gen \
         --payload /path/to/bldb/target/x86_64-oxide-none-elf/release/bldb \
         --amd-firmware /path/to/amd-firmware/blobs \
         --app apps/turin-ruby-1.0.0.3-p1.toml \
