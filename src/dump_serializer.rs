@@ -371,12 +371,9 @@ impl<'a, W: Write> serde::Serializer for &'a mut Json5Serializer<W> {
         self.serialize_unit()
     }
 
-    fn serialize_some<T: ?Sized>(
-        self,
-        value: &T,
-    ) -> Result<Self::Ok, Self::Error>
+    fn serialize_some<T>(self, value: &T) -> Result<Self::Ok, Self::Error>
     where
-        T: Serialize,
+        T: Serialize + ?Sized,
     {
         self.expect_symbol = false;
         value.serialize(self)
@@ -406,19 +403,19 @@ impl<'a, W: Write> serde::Serializer for &'a mut Json5Serializer<W> {
         self.serialize_str(variant)
     }
 
-    fn serialize_newtype_struct<T: ?Sized>(
+    fn serialize_newtype_struct<T>(
         self,
         _name: &'static str,
         value: &T,
     ) -> Result<Self::Ok, Self::Error>
     where
-        T: Serialize,
+        T: Serialize + ?Sized,
     {
         self.expect_symbol = false;
         value.serialize(self)
     }
 
-    fn serialize_newtype_variant<T: ?Sized>(
+    fn serialize_newtype_variant<T>(
         self,
         _name: &'static str,
         _variant_index: u32,
@@ -426,7 +423,7 @@ impl<'a, W: Write> serde::Serializer for &'a mut Json5Serializer<W> {
         value: &T,
     ) -> Result<Self::Ok, Self::Error>
     where
-        T: Serialize,
+        T: Serialize + ?Sized,
     {
         self.expect_symbol = false;
         writeln!(self.writer, "{{")?;
@@ -529,16 +526,13 @@ pub struct SerializeStructVariant<'a, W: 'a + Write> {
     first: bool,
 }
 
-impl<'a, W: Write> ser::SerializeSeq for SerializeVec<'a, W> {
+impl<W: Write> ser::SerializeSeq for SerializeVec<'_, W> {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_element<T: ?Sized>(
-        &mut self,
-        value: &T,
-    ) -> Result<(), Self::Error>
+    fn serialize_element<T>(&mut self, value: &T) -> Result<(), Self::Error>
     where
-        T: Serialize,
+        T: Serialize + ?Sized,
     {
         if !self.first {
             writeln!(self.serializer.writer, ",")?;
@@ -568,16 +562,13 @@ impl<'a, W: Write> SerializeVec<'a, W> {
     }
 }
 
-impl<'a, W: Write> ser::SerializeTuple for SerializeVec<'a, W> {
+impl<W: Write> ser::SerializeTuple for SerializeVec<'_, W> {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_element<T: ?Sized>(
-        &mut self,
-        value: &T,
-    ) -> Result<(), Self::Error>
+    fn serialize_element<T>(&mut self, value: &T) -> Result<(), Self::Error>
     where
-        T: Serialize,
+        T: Serialize + ?Sized,
     {
         ser::SerializeSeq::serialize_element(self, value)
     }
@@ -587,16 +578,13 @@ impl<'a, W: Write> ser::SerializeTuple for SerializeVec<'a, W> {
     }
 }
 
-impl<'a, W: Write> ser::SerializeTupleStruct for SerializeVec<'a, W> {
+impl<W: Write> ser::SerializeTupleStruct for SerializeVec<'_, W> {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_field<T: ?Sized>(
-        &mut self,
-        value: &T,
-    ) -> Result<(), Self::Error>
+    fn serialize_field<T>(&mut self, value: &T) -> Result<(), Self::Error>
     where
-        T: Serialize,
+        T: Serialize + ?Sized,
     {
         ser::SerializeSeq::serialize_element(self, value)
     }
@@ -606,16 +594,13 @@ impl<'a, W: Write> ser::SerializeTupleStruct for SerializeVec<'a, W> {
     }
 }
 
-impl<'a, W: Write> ser::SerializeTupleVariant for SerializeTupleVariant<'a, W> {
+impl<W: Write> ser::SerializeTupleVariant for SerializeTupleVariant<'_, W> {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_field<T: ?Sized>(
-        &mut self,
-        value: &T,
-    ) -> Result<(), Self::Error>
+    fn serialize_field<T>(&mut self, value: &T) -> Result<(), Self::Error>
     where
-        T: Serialize,
+        T: Serialize + ?Sized,
     {
         if !self.first {
             write!(self.serializer.writer, ", ")?;
@@ -673,14 +658,13 @@ impl<'a, W: Write> SerializeTupleVariant<'a, W> {
 }
 
 /// Because map keys can be anything, we need something that allows us to decide whether we need to quote symbols or not
-
-impl<'a, W: Write> ser::SerializeMap for SerializeMap<'a, W> {
+impl<W: Write> ser::SerializeMap for SerializeMap<'_, W> {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_key<T: ?Sized>(&mut self, key: &T) -> Result<(), Self::Error>
+    fn serialize_key<T>(&mut self, key: &T) -> Result<(), Self::Error>
     where
-        T: Serialize,
+        T: Serialize + ?Sized,
     {
         if !self.first {
             writeln!(self.serializer.writer, ",")?;
@@ -697,12 +681,9 @@ impl<'a, W: Write> ser::SerializeMap for SerializeMap<'a, W> {
         Ok(())
     }
 
-    fn serialize_value<T: ?Sized>(
-        &mut self,
-        value: &T,
-    ) -> Result<(), Self::Error>
+    fn serialize_value<T>(&mut self, value: &T) -> Result<(), Self::Error>
     where
-        T: Serialize,
+        T: Serialize + ?Sized,
     {
         value.serialize(&mut *self.serializer)
     }
@@ -737,17 +718,17 @@ impl<'a, W: Write> SerializeMap<'a, W> {
     }
 }
 
-impl<'a, W: Write> ser::SerializeStruct for SerializeMap<'a, W> {
+impl<W: Write> ser::SerializeStruct for SerializeMap<'_, W> {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_field<T: ?Sized>(
+    fn serialize_field<T>(
         &mut self,
         key: &'static str,
         value: &T,
     ) -> Result<(), Self::Error>
     where
-        T: Serialize,
+        T: Serialize + ?Sized,
     {
         // Inlined specialization of ser::SerializeMap::serialize_key(self, key: &str):
 
@@ -777,19 +758,17 @@ impl<'a, W: Write> ser::SerializeStruct for SerializeMap<'a, W> {
     }
 }
 
-impl<'a, W: Write> ser::SerializeStructVariant
-    for SerializeStructVariant<'a, W>
-{
+impl<W: Write> ser::SerializeStructVariant for SerializeStructVariant<'_, W> {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_field<T: ?Sized>(
+    fn serialize_field<T>(
         &mut self,
         key: &'static str,
         value: &T,
     ) -> Result<(), Self::Error>
     where
-        T: Serialize,
+        T: Serialize + ?Sized,
     {
         if !self.first {
             writeln!(self.serializer.writer, ",")?;

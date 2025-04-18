@@ -232,7 +232,19 @@ fn run_gen<P: AsRef<Path> + ?Sized>(
         let mut patch_config = PathBuf::from("target");
         patch_config.push(config.strip_prefix("etc").unwrap());
         config = patch_config;
-        cmd!("patch", "-F", "0", "-l", "-N", "-o", config.to_str().unwrap(), patch.base().to_str().unwrap(), patch.diff().to_str().unwrap()).run().expect("patch applied");
+        cmd!(
+            "patch",
+            "-F",
+            "0",
+            "-l",
+            "-N",
+            "-o",
+            config.to_str().unwrap(),
+            patch.base().to_str().unwrap(),
+            patch.diff().to_str().unwrap()
+        )
+        .run()
+        .expect("patch applied");
     }
 
     let mut missing =

@@ -126,6 +126,7 @@ impl FlashImage {
             .read(true)
             .write(true)
             .create(true)
+            .truncate(true)
             .open(filename)?;
         file.set_len(image_size.into())?;
         assert!(erasable_block_size.is_power_of_two());
@@ -134,7 +135,7 @@ impl FlashImage {
             filename: filename.to_path_buf(),
             erasable_block_size,
             buffer: RefCell::new(
-                std::iter::repeat(0xff).take(erasable_block_size).collect(),
+                std::iter::repeat_n(0xff, erasable_block_size).collect(),
             ),
         };
         Ok(result)
@@ -174,7 +175,7 @@ impl FlashImage {
             filename: filename.to_path_buf(),
             erasable_block_size,
             buffer: RefCell::new(
-                std::iter::repeat(0xff).take(erasable_block_size).collect(),
+                std::iter::repeat_n(0xff, erasable_block_size).collect(),
             ),
         };
         Ok(result)
