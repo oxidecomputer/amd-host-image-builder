@@ -959,20 +959,20 @@ fn dump_default_context(
 // - Apcb::load
 // - Apcb::create
 // - serde::Deserialize
-fn generate_is_context_valid<'a>(
+fn generate_is_context_valid(
     processor_generation: ProcessorGeneration,
-    apcb: &Apcb<'a>,
+    apcb: &Apcb<'_>,
 ) -> bool {
     use MemDfeSearchVersion as Mdsv;
     use ProcessorGeneration as Pg;
     let context = apcb.context();
     let mem_dfe_search_version = context.mem_dfe_search_version();
-    match (processor_generation, mem_dfe_search_version) {
-        (Pg::Naples | Pg::Rome | Pg::Milan, None) => true,
-        (Pg::Genoa, None | Some(Mdsv::Genoa1 | Mdsv::Genoa2)) => true,
-        (Pg::Turin, None | Some(Mdsv::Turin1)) => true,
-        _ => false,
-    }
+    matches!(
+        (processor_generation, mem_dfe_search_version),
+        (Pg::Naples | Pg::Rome | Pg::Milan, None)
+            | (Pg::Genoa, None | Some(Mdsv::Genoa1 | Mdsv::Genoa2))
+            | (Pg::Turin, None | Some(Mdsv::Turin1))
+    )
 }
 
 fn dump(

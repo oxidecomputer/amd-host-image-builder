@@ -336,7 +336,7 @@ pub struct SerdeConfig<'a> {
     pub bhd: SerdeBhdDirectoryVariant<'a>,
 }
 
-impl<'a> schemars::JsonSchema for SerdeConfig<'a> {
+impl schemars::JsonSchema for SerdeConfig<'_> {
     fn schema_name() -> std::string::String {
         RawSerdeConfig::schema_name()
     }
