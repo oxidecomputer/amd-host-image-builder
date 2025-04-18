@@ -4,14 +4,12 @@ This tool builds flash images for AMD Zen systems.
 
 # Setup
 
-You must use GNU make to _run_ `amd-host-image-builder` in the
-provided example configurations.
+We use the `cargo xtask` for building.
 
-Make sure that you have GNU `ld` and `as` available for building
-the test payload if you intend to run tests.
-
-Run `git submodule update --init` to download AMD firmware blobs
-used when running the tool.
+You will need to have either the LLVM `ld.lld` or GNU linkers
+installed in order to build.  If you are building on illumos,
+GNU `ld` is installed as `gld`; set `LD=gld` before running
+`cargo xtask`.
 
 # Usage
 
@@ -23,19 +21,28 @@ To build an image for a Milan-based Gimlet, run the following,
 specifying the `make` variable `PAYLOAD` to point to the reset
 image payload you want in the result:
 
-    gmake milan-gimlet-b PAYLOAD=/path/to/phbl
+    LD=gld cargo xtask gen \
+        --payload /path/to/phbl \
+        --amd-firmware /path/to/amd-firmware/blobs \
+        --app apps/milan-gimlet-b-1.0.0.a.toml \
+        --image out/milan-gimlet-b-1.0.0.a.img
 
-or,
 
-    gmake milan-gimlet-b PAYLOAD=/path/to/bldb/target/x86_64-oxide-none-elf/release/bldb
+This will create an image file in the `out/` subdirectory of
+the current directory, with the name that you specified, e.g.,
+`milan-gimlet-b-1.0.0.a.img`, with the production `phbl`
+loader as the payload.
 
-This will create two image files in the current directory, one
-with the current firmware version, and one without:
+To use the development loader, one may run:
 
-    milan-gimlet-b-1.0.0.a.img
-    milan-gimlet-b.img
+    LD=gld cargo xtask gen \
+        --payload /path/to/bldb/target/x86_64-oxide-none-elf/release/bldb \
+        --amd-firmware /path/to/amd-firmware/blobs \
+        --app apps/turin-ruby-1.0.0.3-p1.toml \
+        --image out/turin-ruby-1.0.0.3-p1-bldb.img
 
-One may also run the command via `cargo run`.  For example:
+Alternatively, one may run `cargo run` directory, and not use
+the `xtask` wrapper.  For example:
 
     cargo run -- \
         -B /path/to/amd-firmware/GN/1.0.0.a \
@@ -66,7 +73,7 @@ searched in the order they were specified.
 The resulting image will be in `milan-gimlet-b-1.0.0.a.img` and
 can be flashed using
 [humility qspi](https://github.com/oxidecomputer/humility) or
-using a hardware flasher (CH341A etc).
+a hardware flasher (CH341A etc).
 
 The PSP will print debug messages to the serial port that can be
 configured in the settings below, see [PSP configuration](#psp-configuration).
@@ -82,8 +89,9 @@ The configuration file contents specify:
 
 See the subsections below for more details.
 
-The Makefile includes a target that builds a schema and stores
-it into file `efs.schema.json` in the project root directory.
+Running `cargo xtask schema` builds the schema and stores it
+into `/out/efs.schema.json`.
+
 We recommend using an editor that can match the document against
 a schema when editing the configuration.  For example, IntelliJ
 IDEA is known to work by setting a mapping between the file
@@ -181,18 +189,16 @@ performed in this case.  Further, we make no claims of stability
 for this feature and reserve the right to change or remove it at
 any point--you are on your own.
 
-# Using older configuration files
+# Firmware Blobs
 
-We previously used JSON for the configuration file syntax, but
-switched to JSON5, which supports non-strings as keys, trailing
-commas, comments, and hexadecimal notation for integer
-constants.  If you find an older file that you could like to
-convert to the newer format, you can use the following `sed`
-script invocation:
+Firmware blobs come from AMD, and we do not redistribute them
+here.  However, the `dump` subcommand of this tool can extract
+them from an existing image.  If you have, say, a ROM image with
+AGESA for your board, you can use this to extract the blobs that
+are embedded with that image, and then use those with
+`amd-host-image-builder` to build your own image with a
+different payload.
 
-    sed \
-        -e 's;"\(0x[^"]*\)";\1;' \
-        -e 's;"\([a-zA-Z_][a-zA-Z0-9_]*\)":;\1:;' \
-        etc/Milan.json > etc/Milan.efs.json5
+# License
 
-Please note the file name suffix change!
+AMD host image builder uses the Mozilla Public License, 2.0.
