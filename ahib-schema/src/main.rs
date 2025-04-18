@@ -21,7 +21,7 @@ fn test_schema(schema_str: &str) {
     let schema_json: serde_json::Value =
         serde_json::from_str(schema_str).expect("Schema");
     let configuration_filename =
-        Path::new("test-inputs").join("Milan.efs.json5");
+        Path::new("tests").join("data").join("Milan.efs.json5");
     let configuration_str =
         std::fs::read_to_string(configuration_filename).expect("configuration");
     let configuration_json: serde_json::Value =

@@ -7,7 +7,7 @@ use std::path::Path;
 #[test]
 fn test_token_versioning() {
     let configuration_filename =
-        Path::new("test-inputs").join("Milan.efs.json5");
+        Path::new("tests").join("data").join("Milan.efs.json5");
     let configuration_str =
         std::fs::read_to_string(configuration_filename).unwrap();
     let configuration: SerdeConfig =
@@ -36,7 +36,7 @@ fn test_token_versioning() {
 #[test]
 fn test_token_versioning_failure() {
     let configuration_filename =
-        Path::new("test-inputs").join("Milan-new.efs.json5");
+        Path::new("tests").join("data").join("Milan-new.efs.json5");
     let configuration_str =
         std::fs::read_to_string(configuration_filename).unwrap();
     let configuration: SerdeConfig =
@@ -76,7 +76,7 @@ fn test_token_versioning_failure() {
 #[test]
 fn test_token_versioning_both_new() {
     let configuration_filename =
-        Path::new("test-inputs").join("Milan-new.efs.json5");
+        Path::new("tests").join("data").join("Milan-new.efs.json5");
     let configuration_str =
         std::fs::read_to_string(configuration_filename).unwrap();
     let configuration: SerdeConfig =

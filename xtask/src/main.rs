@@ -327,7 +327,7 @@ fn test_payload() {
     run_gen(
         "apps/test.toml",
         "target/testpl",
-        "test-inputs",
+        "tests",
         image,
         Build::default(),
     );
