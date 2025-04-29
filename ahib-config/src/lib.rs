@@ -8,7 +8,7 @@ use amd_efs::flash::Location;
 use amd_efs::{
     AddressMode, ComboDirectoryEntryFilter, EfhBulldozerSpiMode,
     EfhEspiConfiguration, EfhNaplesSpiMode, EfhRomeSpiMode,
-    ProcessorGeneration,
+    ProcessorGeneration, PspSoftFuseChain,
 };
 use amd_efs::{
     BhdDirectoryEntry, BhdDirectoryEntryRegionType, BhdDirectoryEntryType,
@@ -30,6 +30,8 @@ pub enum Error {
     Io(std::io::Error),
     #[error("image too big")]
     ImageTooBig,
+    #[error("psp entry source {0} unknown")]
+    PspEntrySourceUnknown(PspDirectoryEntryType),
 }
 
 impl From<amd_efs::Error> for Error {
@@ -106,11 +108,125 @@ impl TryFromSerdeDirectoryEntryWithContext<SerdePspDirectoryEntry>
     }
 }
 
+#[derive(Clone, serde::Serialize, schemars::JsonSchema)]
+#[serde(rename = "SerdePspEntrySourceValue")]
+#[serde(deny_unknown_fields)]
+#[non_exhaustive]
+pub enum SerdePspEntrySourceValue {
+    PspSoftFuseChain(PspSoftFuseChain),
+    #[serde(deserialize_with = "deserialize_raw")]
+    Unknown(u64),
+}
+
+impl<'de> serde::de::Deserialize<'de> for SerdePspEntrySourceValue {
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct PspVisitor;
+
+        impl<'de> serde::de::Visitor<'de> for PspVisitor {
+            type Value = SerdePspEntrySourceValue;
+
+            fn expecting(
+                &self,
+                formatter: &mut std::fmt::Formatter,
+            ) -> std::fmt::Result {
+                formatter
+                    .write_str("a u64 or a SerdePspEntrySourceValue variant")
+            }
+
+            fn visit_u64<E>(
+                self,
+                value: u64,
+            ) -> std::result::Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                Ok(SerdePspEntrySourceValue::Unknown(value))
+            }
+
+            fn visit_i64<E>(
+                self,
+                value: i64,
+            ) -> std::result::Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                if value >= 0 {
+                    Ok(SerdePspEntrySourceValue::Unknown(value as u64))
+                } else {
+                    Err(E::invalid_value(
+                        serde::de::Unexpected::Signed(value),
+                        &"a positive integer or SerdePspEntrySourceValue variant",
+                    ))
+                }
+            }
+
+            fn visit_map<A>(
+                self,
+                mut map: A,
+            ) -> std::result::Result<Self::Value, A::Error>
+            where
+                A: serde::de::MapAccess<'de>,
+            {
+                if let Some(key) = map.next_key::<String>()? {
+                    match key.as_str() {
+                        "PspSoftFuseChain" => {
+                            Ok(SerdePspEntrySourceValue::PspSoftFuseChain(
+                                map.next_value::<PspSoftFuseChain>()?,
+                            ))
+                        }
+                        _ => Err(serde::de::Error::custom(
+                            "expected SerdePspEntrySourceValue variant",
+                        )),
+                    }
+                } else {
+                    Err(serde::de::Error::custom(
+                        "expected SerdePspEntrySourceValue variant",
+                    ))
+                }
+            }
+        }
+
+        deserializer.deserialize_any(PspVisitor)
+    }
+}
+
+impl SerdePspEntrySourceValue {
+    pub fn from_u64(value: u64, typ: PspDirectoryEntryType) -> Self {
+        match typ {
+            PspDirectoryEntryType::PspSoftFuseChain => {
+                Self::PspSoftFuseChain(PspSoftFuseChain::from(value))
+            }
+            _ => SerdePspEntrySourceValue::Unknown(value),
+        }
+    }
+
+    pub fn to_u64(
+        &self,
+        typ_or_err: std::result::Result<PspDirectoryEntryType, amd_efs::Error>,
+    ) -> Result<u64> {
+        if let SerdePspEntrySourceValue::Unknown(x) = self {
+            Ok(*x)
+        } else {
+            let typ = typ_or_err.unwrap();
+            match typ {
+                PspDirectoryEntryType::PspSoftFuseChain => match self {
+                    Self::PspSoftFuseChain(x) => Ok(u64::from(*x)),
+                    _ => Err(Error::PspEntrySourceUnknown(typ)),
+                },
+                _ => Err(Error::PspEntrySourceUnknown(typ)),
+            }
+        }
+    }
+}
+
 #[derive(Clone, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "PspEntrySource")]
 #[serde(deny_unknown_fields)]
 pub enum SerdePspEntrySource {
-    Value(u64),
+    Value(SerdePspEntrySourceValue),
     BlobFile(PathBuf),
     SecondLevelDirectory(SerdePspDirectory),
 }
