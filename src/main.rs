@@ -59,16 +59,37 @@ fn test_bitfield_serde() {
 
 #[test]
 fn test_valid_compat_serde_psp_entry_source_value_deserialization() {
-    let json = "123";
-    let _result =
+    let json = "16"; //     force_security_policy_loading_even_if_insecure
+    let result =
         serde_json::from_str::<SerdePspEntrySourceValue>(json).unwrap();
+    if let SerdePspEntrySourceValue::Unknown(x) = result {
+        assert_eq!(x, 16);
+    } else {
+        panic!("got the wrong SerdePspEntrySourceValue variant")
+    }
 }
 
 #[test]
 fn test_valid_serde_psp_entry_source_value_deserialization() {
-    let json = r#"{"PspSoftFuseChain": {"early_secure_debug_unlock": true, "spi_decoding": "LowerHalf", "postcode_decoding": "Lpc"}}"#;
-    let _result =
+    use amd_efs::PspSoftFuseChain32MiBSpiDecoding;
+    use amd_efs::PspSoftFuseChainPostCodeDecoding;
+    let json = r#"{"PspSoftFuseChain": {"early_secure_debug_unlock": true, "spi_decoding": "UpperHalf", "postcode_decoding": "Lpc"}}"#;
+    let result =
         serde_json::from_str::<SerdePspEntrySourceValue>(json).unwrap();
+    if let SerdePspEntrySourceValue::PspSoftFuseChain(x) = result {
+        assert_eq!(
+            x.spi_decoding(),
+            PspSoftFuseChain32MiBSpiDecoding::UpperHalf
+        );
+        assert_eq!(
+            x.postcode_decoding(),
+            PspSoftFuseChainPostCodeDecoding::Lpc
+        );
+        assert!(x.early_secure_debug_unlock());
+        assert!(!x.force_recovery_booting());
+    } else {
+        panic!("got the wrong SerdePspEntrySourceValue variant")
+    }
 }
 
 #[test]
