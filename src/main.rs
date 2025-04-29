@@ -711,7 +711,7 @@ fn dump_psp_directory<T: FlashRead + FlashWrite>(
                     }
                     None => {
                         let value = e.value().unwrap();
-                        SerdePspEntrySource::Value(SerdePspEntrySourceValue::from_u64(value, typ).expect("known psp entry type"))
+                        SerdePspEntrySource::Value(SerdePspEntrySourceValue::from_u64(value, typ))
                     }
                 },
                 target: SerdePspDirectoryEntry {

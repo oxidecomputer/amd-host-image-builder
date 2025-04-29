@@ -194,12 +194,12 @@ impl<'de> serde::de::Deserialize<'de> for SerdePspEntrySourceValue {
 }
 
 impl SerdePspEntrySourceValue {
-    pub fn from_u64(value: u64, typ: PspDirectoryEntryType) -> Result<Self> {
+    pub fn from_u64(value: u64, typ: PspDirectoryEntryType) -> Self {
         match typ {
             PspDirectoryEntryType::PspSoftFuseChain => {
-                Ok(Self::PspSoftFuseChain(PspSoftFuseChain::from(value)))
+                Self::PspSoftFuseChain(PspSoftFuseChain::from(value))
             }
-            _ => Ok(SerdePspEntrySourceValue::Unknown(value)),
+            _ => SerdePspEntrySourceValue::Unknown(value),
         }
     }
 
