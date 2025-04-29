@@ -8,7 +8,7 @@ use amd_efs::flash::Location;
 use amd_efs::{
     AddressMode, ComboDirectoryEntryFilter, EfhBulldozerSpiMode,
     EfhEspiConfiguration, EfhNaplesSpiMode, EfhRomeSpiMode,
-    ProcessorGeneration,
+    ProcessorGeneration, PspSoftFuseChain,
 };
 use amd_efs::{
     BhdDirectoryEntry, BhdDirectoryEntryRegionType, BhdDirectoryEntryType,
@@ -30,6 +30,8 @@ pub enum Error {
     Io(std::io::Error),
     #[error("image too big")]
     ImageTooBig,
+    #[error("psp entry source {0} unknown")]
+    PspEntrySourceUnknown(PspDirectoryEntryType),
 }
 
 impl From<amd_efs::Error> for Error {
@@ -106,11 +108,46 @@ impl TryFromSerdeDirectoryEntryWithContext<SerdePspDirectoryEntry>
     }
 }
 
+// See <https://github.com/serde-rs/serde/issues/1799>
+#[derive(Clone, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
+#[serde(rename = "SerdePspEntrySourceValue")]
+#[serde(deny_unknown_fields)]
+pub enum SerdePspEntrySourceValue {
+    PspSoftFuseChain(PspSoftFuseChain),
+    #[serde(default)]
+    Raw(u64),
+}
+
+impl SerdePspEntrySourceValue {
+    pub fn from_u64(value: u64, typ: PspDirectoryEntryType) -> Result<Self> {
+        match typ {
+            PspDirectoryEntryType::PspSoftFuseChain => {
+                Ok(Self::PspSoftFuseChain(PspSoftFuseChain::from(value)))
+            }
+            _ => Err(Error::PspEntrySourceUnknown(typ)),
+        }
+    }
+
+    pub fn to_u64(
+        &self,
+        typ_or_err: std::result::Result<PspDirectoryEntryType, amd_efs::Error>,
+    ) -> Result<u64> {
+        let typ = typ_or_err.unwrap();
+        match typ {
+            PspDirectoryEntryType::PspSoftFuseChain => match self {
+                Self::PspSoftFuseChain(x) => Ok(u64::from(*x)),
+                _ => Err(Error::PspEntrySourceUnknown(typ)),
+            },
+            _ => Err(Error::PspEntrySourceUnknown(typ)),
+        }
+    }
+}
+
 #[derive(Clone, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[serde(rename = "PspEntrySource")]
 #[serde(deny_unknown_fields)]
 pub enum SerdePspEntrySource {
-    Value(u64),
+    Value(SerdePspEntrySourceValue),
     BlobFile(PathBuf),
     SecondLevelDirectory(SerdePspDirectory),
 }

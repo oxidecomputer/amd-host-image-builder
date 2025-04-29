@@ -6,6 +6,7 @@ use amd_efs::{
     ProcessorGeneration, PspDirectory, PspDirectoryEntry,
     PspDirectoryEntryType, PspDirectoryHeader, ValueOrLocation,
 };
+use amd_host_image_builder_config::SerdePspEntrySourceValue;
 use amd_host_image_builder_config::{
     Error, Result, SerdeBhdDirectory, SerdeBhdDirectoryEntry,
     SerdeBhdDirectoryEntryAttrs, SerdeBhdDirectoryEntryBlob,
@@ -622,7 +623,7 @@ fn dump_psp_directory<T: FlashRead + FlashWrite>(
     // TODO: Handle the other variant (PspComboDirectory)
     let mut blob_dump_filenames = HashSet::<PathBuf>::new();
     SerdePspDirectoryVariant::PspDirectory(SerdePspDirectory {
-        entries: psp_directory.entries().map_while(|e| {
+        entries: psp_directory.entries().map_while(|e| -> Option<SerdePspEntry> {
         if let Ok(typ) = e.typ_or_err() {
             match typ {
                 PspDirectoryEntryType::SecondLevelDirectory => {
@@ -684,7 +685,7 @@ fn dump_psp_directory<T: FlashRead + FlashWrite>(
                     }
                     None => {
                         let value = e.value().unwrap();
-                        SerdePspEntrySource::Value(value)
+                        SerdePspEntrySource::Value(SerdePspEntrySourceValue::from_u64(value, typ).expect("known psp entry type"))
                     }
                 },
                 target: SerdePspDirectoryEntry {
@@ -1096,7 +1097,7 @@ fn prepare_psp_directory_contents(
                     SerdePspEntrySource::Value(x) => {
                         // FIXME: assert!(blob_slot_settings.is_none()); fails for some reason
                         // DirectoryRelativeOffset is the one that can always be overridden
-                        raw_entry.set_source(AddressMode::DirectoryRelativeOffset, ValueOrLocation::Value(x)).unwrap();
+                        raw_entry.set_source(AddressMode::DirectoryRelativeOffset, ValueOrLocation::Value(x.to_u64(raw_entry.typ_or_err()).unwrap())).unwrap();
                         vec![(raw_entry, None, None)]
                     }
                     SerdePspEntrySource::BlobFile(
