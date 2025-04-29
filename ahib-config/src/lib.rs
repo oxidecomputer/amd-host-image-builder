@@ -108,14 +108,88 @@ impl TryFromSerdeDirectoryEntryWithContext<SerdePspDirectoryEntry>
     }
 }
 
-// See <https://github.com/serde-rs/serde/issues/1799>
 #[derive(Clone, serde::Serialize, schemars::JsonSchema)]
 #[serde(rename = "SerdePspEntrySourceValue")]
 #[serde(deny_unknown_fields)]
 #[non_exhaustive]
 pub enum SerdePspEntrySourceValue {
     PspSoftFuseChain(PspSoftFuseChain),
+    #[serde(deserialize_with = "deserialize_raw")]
     Unknown(u64),
+}
+
+impl<'de> serde::de::Deserialize<'de> for SerdePspEntrySourceValue {
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        struct PspVisitor;
+
+        impl<'de> serde::de::Visitor<'de> for PspVisitor {
+            type Value = SerdePspEntrySourceValue;
+
+            fn expecting(
+                &self,
+                formatter: &mut std::fmt::Formatter,
+            ) -> std::fmt::Result {
+                formatter
+                    .write_str("a u64 or a SerdePspEntrySourceValue variant")
+            }
+
+            fn visit_u64<E>(
+                self,
+                value: u64,
+            ) -> std::result::Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                Ok(SerdePspEntrySourceValue::Unknown(value))
+            }
+
+            fn visit_i64<E>(
+                self,
+                value: i64,
+            ) -> std::result::Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                if value >= 0 {
+                    Ok(SerdePspEntrySourceValue::Unknown(value as u64))
+                } else {
+                    Err(E::invalid_value(
+                        serde::de::Unexpected::Signed(value),
+                        &"a positive integer or SerdePspEntrySourceValue variant",
+                    ))
+                }
+            }
+
+            fn visit_map<A>(
+                self,
+                mut map: A,
+            ) -> std::result::Result<Self::Value, A::Error>
+            where
+                A: serde::de::MapAccess<'de>,
+            {
+                while let Some(key) = map.next_key::<String>()? {
+                    if key == "PspSoftFuseChain" {
+                        let value = map.next_value::<PspSoftFuseChain>()?;
+                        return Ok(SerdePspEntrySourceValue::PspSoftFuseChain(
+                            value,
+                        ));
+                    } else {
+                        return Err(serde::de::Error::custom(
+                            "expected SerdePspEntrySourceValue variant",
+                        ));
+                    }
+                }
+                Err(serde::de::Error::custom(
+                    "expected SerdePspEntrySourceValue variant",
+                ))
+            }
+        }
+
+        deserializer.deserialize_any(PspVisitor)
+    }
 }
 
 impl SerdePspEntrySourceValue {
@@ -144,60 +218,6 @@ impl SerdePspEntrySourceValue {
                 _ => Err(Error::PspEntrySourceUnknown(typ)),
             }
         }
-    }
-}
-
-impl<'de> serde::Deserialize<'de> for SerdePspEntrySourceValue {
-    fn deserialize<D: serde::Deserializer<'de>>(
-        deserializer: D,
-    ) -> std::result::Result<Self, D::Error> {
-        struct ModeVisitor;
-        impl<'de> serde::de::Visitor<'de> for ModeVisitor {
-            type Value = SerdePspEntrySourceValue;
-            fn expecting(
-                &self,
-                formatter: &mut core::fmt::Formatter<'_>,
-            ) -> core::fmt::Result {
-                formatter.write_str("dict")
-            }
-            fn visit_map<A>(
-                self,
-                map: A,
-            ) -> std::result::Result<Self::Value, A::Error>
-            where
-                A: serde::de::MapAccess<'de>,
-            {
-                // Delegate to PspSoftFuseChain's deserializer
-                let chain = PspSoftFuseChain::deserialize(
-                    serde::de::value::MapAccessDeserializer::new(map),
-                )?;
-                Ok(SerdePspEntrySourceValue::PspSoftFuseChain(chain))
-            }
-            fn visit_i64<E: serde::de::Error>(
-                self,
-                value: i64,
-            ) -> core::result::Result<Self::Value, E> {
-                if value >= 0 {
-                    Ok(SerdePspEntrySourceValue::PspSoftFuseChain(
-                        PspSoftFuseChain::from(value as u64),
-                    ))
-                } else {
-                    Err(E::invalid_value(
-                        serde::de::Unexpected::Signed(value),
-                        &"a positive integer or PspSoftFuseChain",
-                    ))
-                }
-            }
-            fn visit_u64<E: serde::de::Error>(
-                self,
-                value: u64,
-            ) -> core::result::Result<Self::Value, E> {
-                Ok(SerdePspEntrySourceValue::PspSoftFuseChain(
-                    PspSoftFuseChain::from(value),
-                ))
-            }
-        }
-        deserializer.deserialize_any(ModeVisitor)
     }
 }
 

@@ -57,6 +57,30 @@ fn test_bitfield_serde() {
     assert_eq!(result.address_mode(), AddressMode::PhysicalAddress);
 }
 
+#[test]
+fn test_valid_compat_serde_psp_entry_source_value_deserialization() {
+    let json = "123";
+    let _result = serde_json::from_str::<SerdePspEntrySourceValue>(json).unwrap();
+}
+
+#[test]
+fn test_valid_serde_psp_entry_source_value_deserialization() {
+    let json = r#"{"PspSoftFuseChain": {"early_secure_debug_unlock": true, "spi_decoding": "LowerHalf", "postcode_decoding": "Lpc"}}"#;
+    let _result = serde_json::from_str::<SerdePspEntrySourceValue>(json).unwrap();
+}
+
+#[test]
+fn test_invalid_string_deserialization() {
+    let json = r#""x""#;
+    assert!(serde_json::from_str::<SerdePspEntrySourceValue>(json).is_err());
+}
+
+#[test]
+fn test_invalid_wrong_key_name() {
+    let json = r#"{"WrongName": {"some": "data"}}"#;
+    assert!(serde_json::from_str::<SerdePspEntrySourceValue>(json).is_err());
+}
+
 mod hole;
 use hole::Hole;
 
