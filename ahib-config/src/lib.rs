@@ -170,21 +170,22 @@ impl<'de> serde::de::Deserialize<'de> for SerdePspEntrySourceValue {
             where
                 A: serde::de::MapAccess<'de>,
             {
-                while let Some(key) = map.next_key::<String>()? {
-                    if key == "PspSoftFuseChain" {
-                        let value = map.next_value::<PspSoftFuseChain>()?;
-                        return Ok(SerdePspEntrySourceValue::PspSoftFuseChain(
-                            value,
-                        ));
-                    } else {
-                        return Err(serde::de::Error::custom(
+                if let Some(key) = map.next_key::<String>()? {
+                    match key.as_str() {
+                        "PspSoftFuseChain" => {
+                            Ok(SerdePspEntrySourceValue::PspSoftFuseChain(
+                                map.next_value::<PspSoftFuseChain>()?,
+                            ))
+                        }
+                        _ => Err(serde::de::Error::custom(
                             "expected SerdePspEntrySourceValue variant",
-                        ));
+                        )),
                     }
+                } else {
+                    Err(serde::de::Error::custom(
+                        "expected SerdePspEntrySourceValue variant",
+                    ))
                 }
-                Err(serde::de::Error::custom(
-                    "expected SerdePspEntrySourceValue variant",
-                ))
             }
         }
 
