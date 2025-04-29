@@ -60,13 +60,15 @@ fn test_bitfield_serde() {
 #[test]
 fn test_valid_compat_serde_psp_entry_source_value_deserialization() {
     let json = "123";
-    let _result = serde_json::from_str::<SerdePspEntrySourceValue>(json).unwrap();
+    let _result =
+        serde_json::from_str::<SerdePspEntrySourceValue>(json).unwrap();
 }
 
 #[test]
 fn test_valid_serde_psp_entry_source_value_deserialization() {
     let json = r#"{"PspSoftFuseChain": {"early_secure_debug_unlock": true, "spi_decoding": "LowerHalf", "postcode_decoding": "Lpc"}}"#;
-    let _result = serde_json::from_str::<SerdePspEntrySourceValue>(json).unwrap();
+    let _result =
+        serde_json::from_str::<SerdePspEntrySourceValue>(json).unwrap();
 }
 
 #[test]
