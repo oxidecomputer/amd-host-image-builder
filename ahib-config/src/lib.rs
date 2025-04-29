@@ -115,6 +115,7 @@ impl TryFromSerdeDirectoryEntryWithContext<SerdePspDirectoryEntry>
 #[non_exhaustive]
 pub enum SerdePspEntrySourceValue {
     PspSoftFuseChain(PspSoftFuseChain),
+    Unknown(u64),
 }
 
 impl SerdePspEntrySourceValue {
@@ -123,7 +124,7 @@ impl SerdePspEntrySourceValue {
             PspDirectoryEntryType::PspSoftFuseChain => {
                 Ok(Self::PspSoftFuseChain(PspSoftFuseChain::from(value)))
             }
-            _ => Err(Error::PspEntrySourceUnknown(typ)),
+            _ => Ok(SerdePspEntrySourceValue::Unknown(value)),
         }
     }
 
@@ -131,13 +132,17 @@ impl SerdePspEntrySourceValue {
         &self,
         typ_or_err: std::result::Result<PspDirectoryEntryType, amd_efs::Error>,
     ) -> Result<u64> {
-        let typ = typ_or_err.unwrap();
-        match typ {
-            PspDirectoryEntryType::PspSoftFuseChain => match self {
-                Self::PspSoftFuseChain(x) => Ok(u64::from(*x)),
+        if let SerdePspEntrySourceValue::Unknown(x) = self {
+            Ok(*x)
+        } else {
+            let typ = typ_or_err.unwrap();
+            match typ {
+                PspDirectoryEntryType::PspSoftFuseChain => match self {
+                    Self::PspSoftFuseChain(x) => Ok(u64::from(*x)),
+                    _ => Err(Error::PspEntrySourceUnknown(typ)),
+                },
                 _ => Err(Error::PspEntrySourceUnknown(typ)),
-            },
-            _ => Err(Error::PspEntrySourceUnknown(typ)),
+            }
         }
     }
 }
@@ -146,7 +151,6 @@ impl<'de> serde::Deserialize<'de> for SerdePspEntrySourceValue {
     fn deserialize<D: serde::Deserializer<'de>>(
         deserializer: D,
     ) -> std::result::Result<Self, D::Error> {
-        // rest delegate to PspSoftFuseChain, if that makes sense.
         struct ModeVisitor;
         impl<'de> serde::de::Visitor<'de> for ModeVisitor {
             type Value = SerdePspEntrySourceValue;
@@ -154,7 +158,7 @@ impl<'de> serde::Deserialize<'de> for SerdePspEntrySourceValue {
                 &self,
                 formatter: &mut core::fmt::Formatter<'_>,
             ) -> core::fmt::Result {
-                formatter.write_str("'Disabled', 'Enabled', 0 or 1")
+                formatter.write_str("dict")
             }
             fn visit_map<A>(
                 self,
@@ -169,7 +173,6 @@ impl<'de> serde::Deserialize<'de> for SerdePspEntrySourceValue {
                 )?;
                 Ok(SerdePspEntrySourceValue::PspSoftFuseChain(chain))
             }
-
             fn visit_i64<E: serde::de::Error>(
                 self,
                 value: i64,
