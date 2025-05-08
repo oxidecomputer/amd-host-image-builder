@@ -5284,10 +5284,8 @@
                       }
                     },
                     {
-                      Unknown: {
-                        entry_id: "Byte",
-                        tag: 2915578852,
-                        value: 0
+                      Byte: {
+                        SevMode2: "Disabled"
                       }
                     },
                     {
@@ -5406,10 +5404,8 @@
                       }
                     },
                     {
-                      Unknown: {
-                        entry_id: "Byte",
-                        tag: 3688315322,
-                        value: 15
+                      Byte: {
+                        FchPreferredIo: "Auto"
                       }
                     },
                     {
@@ -5491,10 +5487,8 @@
                       }
                     },
                     {
-                      Unknown: {
-                        entry_id: "Word",
-                        tag: 570428203,
-                        value: 80
+                      Word: {
+                        LrdimmSensorCritical: 80
                       }
                     },
                     {
@@ -5573,10 +5567,8 @@
                       }
                     },
                     {
-                      Unknown: {
-                        entry_id: "Word",
-                        tag: 0xcddd55d0,
-                        value: 66
+                      Word: {
+                        LrdimmSensorUpper: 66
                       }
                     },
                     {
