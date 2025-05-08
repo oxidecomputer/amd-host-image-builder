@@ -4639,6 +4639,11 @@
                     },
                     {
                       Bool: {
+                        DfPickerThrottleEnable: false
+                      }
+                    },
+                    {
+                      Bool: {
                         PspEventLogDisplay: true
                       }
                     },
@@ -4749,11 +4754,6 @@
                     },
                     {
                       Bool: {
-                        MemUmaAbove4GiB: true
-                      }
-                    },
-                    {
-                      Bool: {
                         MemMbistAggressorStaticLaneControl: false
                       }
                     },
@@ -4789,7 +4789,17 @@
                     },
                     {
                       Bool: {
-                        GeneralCapsuleMode: false
+                        GeneralCapsuleMode: true
+                      }
+                    },
+                    {
+                      Bool: {
+                        MemDramDoubleRefreshRateMilan: false
+                      }
+                    },
+                    {
+                      Bool: {
+                        DfNps1With4ChannelInterleavedRdimm4ChannelNonInterleavedNvdimm: false
                       }
                     },
                     {
@@ -4987,11 +4997,6 @@
                     },
                     {
                       Byte: {
-                        UmaMode: "Auto"
-                      }
-                    },
-                    {
-                      Byte: {
                         WorkloadProfile: "Disabled"
                       }
                     },
@@ -5025,6 +5030,11 @@
                     {
                       Byte: {
                         DfDramNumaPerSocket: "Auto"
+                      }
+                    },
+                    {
+                      Byte: {
+                        GnbAdditionalFeatureDsm2: "Auto"
                       }
                     },
                     {
@@ -5131,6 +5141,11 @@
                     },
                     {
                       Byte: {
+                        DvArbiterMin: 1
+                      }
+                    },
+                    {
+                      Byte: {
                         MemRcdParity: true
                       }
                     },
@@ -5157,6 +5172,16 @@
                     {
                       Byte: {
                         DfXgmiEncrypt: "Auto"
+                      }
+                    },
+                    {
+                      Byte: {
+                        MemPsErrorHandling: 0
+                      }
+                    },
+                    {
+                      Byte: {
+                        DvArbiterMax: 10
                       }
                     },
                     {
@@ -5215,6 +5240,16 @@
                     },
                     {
                       Byte: {
+                        FchConsoleOutSerialPortIoBase: "3f8"
+                      }
+                    },
+                    {
+                      Byte: {
+                        MemTccd5ReadCommandSpacingMode: "Disabled"
+                      }
+                    },
+                    {
+                      Byte: {
                         MemDataScramble: 0x01
                       }
                     },
@@ -5235,12 +5270,24 @@
                     },
                     {
                       Byte: {
+                        MemRcwWeakDriveDisable: "Enabled"
+                      }
+                    },
+                    {
+                      Byte: {
                         MemMbistTgtStaticLaneSelEcc: 0x00
                       }
                     },
                     {
                       Byte: {
                         MemDramVrefRange: 0x00
+                      }
+                    },
+                    {
+                      Unknown: {
+                        entry_id: "Byte",
+                        tag: 2915578852,
+                        value: 0
                       }
                     },
                     {
@@ -5260,12 +5307,22 @@
                     },
                     {
                       Byte: {
+                        BmcRcbCheckingMode: "Auto"
+                      }
+                    },
+                    {
+                      Byte: {
                         DfPstateModeSelect: "Auto"
                       }
                     },
                     {
                       Byte: {
                         MemTrainingHdtControl: "StageCompletionMessages1"
+                      }
+                    },
+                    {
+                      Byte: {
+                        ReservedDramModuleDrtmMode: "Disabled"
                       }
                     },
                     {
@@ -5349,6 +5406,13 @@
                       }
                     },
                     {
+                      Unknown: {
+                        entry_id: "Byte",
+                        tag: 3688315322,
+                        value: 15
+                      }
+                    },
+                    {
                       Byte: {
                         MemMbistAggressorsChannels: "Disabled"
                       }
@@ -5390,17 +5454,17 @@
                     },
                     {
                       Byte: {
+                        GnbAdditionalFeatureDsmDetector2: "Auto"
+                      }
+                    },
+                    {
+                      Byte: {
                         MemHealBistEnable: "Disabled"
                       }
                     },
                     {
                       Byte: {
                         FchConsoleOutSerialPort: "Uart0Mmio"
-                      }
-                    },
-                    {
-                      Byte: {
-                        GnbAdditionalFeatureDsmDetector2: "Enabled"
                       }
                     }
                   ]
@@ -5424,6 +5488,13 @@
                     {
                       Word: {
                         Dimm3DsSensorCritical: 80
+                      }
+                    },
+                    {
+                      Unknown: {
+                        entry_id: "Word",
+                        tag: 570428203,
+                        value: 80
                       }
                     },
                     {
@@ -5453,6 +5524,16 @@
                     },
                     {
                       Word: {
+                        FchI2cSdaHoldOverrideMode: "IgnoreBoth"
+                      }
+                    },
+                    {
+                      Word: {
+                        FchI2cSdaTxHold: 0x0000
+                      }
+                    },
+                    {
+                      Word: {
                         ScrubIcacheRate: 0x0000
                       }
                     },
@@ -5463,34 +5544,44 @@
                     },
                     {
                       Word: {
+                        FchI2cSdaRxHold: 0x0000
+                      }
+                    },
+                    {
+                      Word: {
                         ScrubDcacheRate: 0x0000
                       }
                     },
                     {
                       Word: {
-                        DimmSensorUpper: 0x0050
+                        DimmSensorUpper: 80
                       }
                     },
                     {
                       Word: {
-                        ScrubL3Rate: 0x0000
+                        ScrubL3Rate: 0
                       }
                     },
                     {
                       Word: {
-                        DimmSensorLower: 0x000a
+                        DimmSensorLower: 10
+                      }
+                    },
+                    {
+                      Word: {
+                        FchGppClkMap: "Auto"
                       }
                     },
                     {
                       Unknown: {
                         entry_id: "Word",
-                        tag: 0xcd7e6983,
-                        value: 0x0000ffff
+                        tag: 0xcddd55d0,
+                        value: 66
                       }
                     },
                     {
                       Word: {
-                        PspSyshubWatchdogTimerInterval: 0x0a28
+                        PspSyshubWatchdogTimerInterval: 2600
                       }
                     }
                   ]
@@ -5528,22 +5619,12 @@
                     },
                     {
                       Dword: {
-                        MemUmaSize: 0x00000000
-                      }
-                    },
-                    {
-                      Dword: {
                         DfPciMmioSize: 0x10000000
                       }
                     },
                     {
                       Dword: {
                         FchRom3BaseHigh: 0x00000000
-                      }
-                    },
-                    {
-                      Dword: {
-                        MemUmaAlignment: 0x00ffffc0
                       }
                     },
                     {
@@ -5557,10 +5638,8 @@
                       }
                     },
                     {
-                      Unknown: {
-                        entry_id: "Dword",
-                        tag: 0x7e6069c5,
-                        value: 0x7fffffff
+                      Dword: {
+                        DxioPhyParamIqofc: "Skip"
                       }
                     },
                     {
@@ -5570,7 +5649,7 @@
                     },
                     {
                       Dword: {
-                        GnbOffRampStall: 0x000000c8
+                        GnbAdditionalFeatureOnRamp: 70
                       }
                     },
                     {
@@ -5618,6 +5697,11 @@
                     {
                       Dword: {
                         DxioPhyParamVga: "Skip"
+                      }
+                    },
+                    {
+                      Dword: {
+                        GnbAdditionalFeatureOffRamp: 40
                       }
                     },
                     {
