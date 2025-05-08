@@ -9046,6 +9046,21 @@
                       }
                     },
                     {
+                      Byte: {
+                        MemMbistDataEyeSilentExecutionDdr: "Disabled"
+                      }
+                    },
+                    {
+                      Byte: {
+                        BdatSupport: "Enabled"
+                      }
+                    },
+                    {
+                      Byte: {
+                        BdatPrintData: "Disabled"
+                      }
+                    },
+                    {
                       "Byte": {
                         "FchI2cI3cSmbusSelect0": "I2c"
                       }
@@ -9809,6 +9824,21 @@
                     {
                       "Byte": {
                         "MemMbistDdrMode": "Disabled"
+                      }
+                    },
+                    {
+                      Byte: {
+                        MemMbistDataEyeSilentExecutionDdr: "Disabled"
+                      }
+                    },
+                    {
+                      Byte: {
+                        BdatSupport: "Enabled"
+                      }
+                    },
+                    {
+                      Byte: {
+                        BdatPrintData: "Disabled"
                       }
                     },
                     {
