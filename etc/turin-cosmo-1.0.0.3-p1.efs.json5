@@ -7480,7 +7480,7 @@
                         0
                       ],
                       speeds: [
-                        3000,
+                        3200,
                         4401,
                         4401
                       ]
@@ -7501,91 +7501,7 @@
                         0
                       ],
                       speeds: [
-                        3000,
-                        4401,
-                        4401
-                      ]
-                    },
-                    {
-                      dimm_slots_per_channel: {
-                        Specific: {
-                          one_dimm: false,
-                          two_dimms: true,
-                          three_dimms: false,
-                          four_dimms: false,
-                        }
-                      },
-                      conditions: [
-                        1,
-                        1,
-                        0,
-                        0
-                      ],
-                      speeds: [
-                        2600,
-                        4401,
-                        4401
-                      ]
-                    },
-                    {
-                      dimm_slots_per_channel: {
-                        Specific: {
-                          one_dimm: false,
-                          two_dimms: true,
-                          three_dimms: false,
-                          four_dimms: false,
-                        }
-                      },
-                      conditions: [
-                        1,
-                        0,
-                        1,
-                        0
-                      ],
-                      speeds: [
-                        2600,
-                        4401,
-                        4401
-                      ]
-                    },
-                    {
-                      dimm_slots_per_channel: {
-                        Specific: {
-                          one_dimm: false,
-                          two_dimms: true,
-                          three_dimms: false,
-                          four_dimms: false,
-                        }
-                      },
-                      conditions: [
-                        2,
-                        2,
-                        0,
-                        0
-                      ],
-                      speeds: [
-                        2200,
-                        4401,
-                        4401
-                      ]
-                    },
-                    {
-                      dimm_slots_per_channel: {
-                        Specific: {
-                          one_dimm: false,
-                          two_dimms: true,
-                          three_dimms: false,
-                          four_dimms: false,
-                        }
-                      },
-                      conditions: [
-                        2,
-                        0,
-                        2,
-                        0
-                      ],
-                      speeds: [
-                        2000,
+                        3200,
                         4401,
                         4401
                       ]
@@ -7624,49 +7540,7 @@
                         0
                       ],
                       speeds: [
-                        3000,
-                        4401,
-                        4401
-                      ]
-                    },
-                    {
-                      dimm_slots_per_channel: {
-                        Specific: {
-                          one_dimm: false,
-                          two_dimms: true,
-                          three_dimms: false,
-                          four_dimms: false,
-                        }
-                      },
-                      conditions: [
-                        1,
-                        0,
-                        1,
-                        0
-                      ],
-                      speeds: [
-                        2600,
-                        4401,
-                        4401
-                      ]
-                    },
-                    {
-                      dimm_slots_per_channel: {
-                        Specific: {
-                          one_dimm: false,
-                          two_dimms: true,
-                          three_dimms: false,
-                          four_dimms: false,
-                        }
-                      },
-                      conditions: [
-                        2,
-                        0,
-                        2,
-                        0
-                      ],
-                      speeds: [
-                        2000,
+                        3200,
                         4401,
                         4401
                       ]
@@ -9917,90 +9791,6 @@
                       ],
                       speeds: [
                         3200,
-                        4401,
-                        4401
-                      ]
-                    },
-                    {
-                      dimm_slots_per_channel: {
-                        Specific: {
-                          one_dimm: false,
-                          two_dimms: true,
-                          three_dimms: false,
-                          four_dimms: false,
-                        }
-                      },
-                      conditions: [
-                        1,
-                        1,
-                        0,
-                        0
-                      ],
-                      speeds: [
-                        2600,
-                        4401,
-                        4401
-                      ]
-                    },
-                    {
-                      dimm_slots_per_channel: {
-                        Specific: {
-                          one_dimm: false,
-                          two_dimms: true,
-                          three_dimms: false,
-                          four_dimms: false,
-                        }
-                      },
-                      conditions: [
-                        1,
-                        0,
-                        1,
-                        0
-                      ],
-                      speeds: [
-                        2600,
-                        4401,
-                        4401
-                      ]
-                    },
-                    {
-                      dimm_slots_per_channel: {
-                        Specific: {
-                          one_dimm: false,
-                          two_dimms: true,
-                          three_dimms: false,
-                          four_dimms: false,
-                        }
-                      },
-                      conditions: [
-                        2,
-                        2,
-                        0,
-                        0
-                      ],
-                      speeds: [
-                        2200,
-                        4401,
-                        4401
-                      ]
-                    },
-                    {
-                      dimm_slots_per_channel: {
-                        Specific: {
-                          one_dimm: false,
-                          two_dimms: true,
-                          three_dimms: false,
-                          four_dimms: false,
-                        }
-                      },
-                      conditions: [
-                        2,
-                        0,
-                        2,
-                        0
-                      ],
-                      speeds: [
-                        2000,
                         4401,
                         4401
                       ]
