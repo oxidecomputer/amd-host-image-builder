@@ -5359,8 +5359,12 @@
 											}
 										},
 										{
-											Byte: {
-												AblSerialBaudRate: "3000000 Baud"
+											Unknown: {
+												entry_id: "Byte",
+												// AblSerialBaudRate
+												tag: 0xAE46CEA4,
+												// 3000000 Baud - Milan Fast Spew ABL
+												value: 9
 											}
 										},
 										{
