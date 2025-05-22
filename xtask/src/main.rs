@@ -9,7 +9,6 @@ use clap::Parser;
 use duct::cmd;
 use std::convert::From;
 use std::env;
-use std::ffi::OsString;
 use std::path::{Path, PathBuf};
 
 mod app;
@@ -52,6 +51,8 @@ enum Command {
     Gen {
         #[clap(long)]
         app: PathBuf,
+        #[clap(long)]
+        config: Option<PathBuf>,
         #[clap(long)]
         payload: PathBuf,
         #[clap(long)]
@@ -183,6 +184,7 @@ fn main() -> std::io::Result<()> {
         }
         Command::Gen {
             app,
+            config,
             payload,
             amd_firmware,
             image,
@@ -192,6 +194,7 @@ fn main() -> std::io::Result<()> {
             verbose,
         } => run_gen(
             app.as_path(),
+            config.as_deref(),
             payload.as_path(),
             amd_firmware.as_path(),
             image.as_path(),
@@ -214,6 +217,7 @@ fn build(args: Build) {
 
 fn run_gen<P: AsRef<Path> + ?Sized>(
     app: &P,
+    config: Option<&P>,
     payload: &P,
     amd_firmware: &P,
     image: &P,
@@ -224,9 +228,13 @@ fn run_gen<P: AsRef<Path> + ?Sized>(
     let name = Path::new(&name);
     let run = args.cmd_str("run");
     let blob_dir = app.blob_path(amd_firmware.as_ref());
-    let mut config = OsString::from(PathBuf::from("etc").join(name));
-    config.push(".efs.json5");
-    let mut config = PathBuf::from(config);
+    let mut config = if let Some(c) = config {
+        PathBuf::from(c.as_ref())
+    } else {
+        let mut c = PathBuf::from("etc").join(name);
+        c.set_extension("efs.json5");
+        c
+    };
 
     if let Some(patch) = app.patch() {
         let mut patch_config = PathBuf::from("target");
@@ -326,6 +334,7 @@ fn test_payload() {
     let image = "target/test.img";
     run_gen(
         "apps/test.toml",
+        None,
         "target/testpl",
         "tests",
         image,
