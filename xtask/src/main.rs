@@ -306,6 +306,7 @@ fn tests(args: Build) {
         .run()
         .expect("test successful");
     test_payload();
+    test_xgen_payload();
 }
 
 /// Runs the Clippy linter.
@@ -342,4 +343,28 @@ fn test_payload() {
         Build::default(),
     );
     dump(image, "target/test_blobs");
+}
+
+fn test_xgen_payload() {
+    let payload = "target/testpl";
+    let app = "apps/test.toml";
+    let image = "target/test.img";
+    let amd_firmware = "tests";
+    cmd(
+        cargo(),
+        [
+            "xtask",
+            "gen",
+            "--payload",
+            payload,
+            "--app",
+            app,
+            "--amd-firmware",
+            amd_firmware,
+            "--image",
+            image,
+        ],
+    )
+    .run()
+    .expect("cargo xtask gen successful");
 }
