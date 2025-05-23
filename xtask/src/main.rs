@@ -9,6 +9,7 @@ use clap::Parser;
 use duct::cmd;
 use std::convert::From;
 use std::env;
+use std::ffi::OsString;
 use std::path::{Path, PathBuf};
 
 mod app;
@@ -231,9 +232,9 @@ fn run_gen<P: AsRef<Path> + ?Sized>(
     let mut config = if let Some(c) = config {
         PathBuf::from(c.as_ref())
     } else {
-        let mut c = PathBuf::from("etc").join(name);
-        c.set_extension("efs.json5");
-        c
+        let mut config = OsString::from(PathBuf::from("etc").join(name));
+        config.push(".efs.json5");
+        PathBuf::from(config)
     };
 
     if let Some(patch) = app.patch() {
