@@ -6,6 +6,7 @@ use amd_efs::{
     ProcessorGeneration, PspDirectory, PspDirectoryEntry,
     PspDirectoryEntryType, PspDirectoryHeader, ValueOrLocation,
 };
+use amd_host_image_builder_config::SerdePspEntrySourceValue;
 use amd_host_image_builder_config::{
     Error, Result, SerdeBhdDirectory, SerdeBhdDirectoryEntry,
     SerdeBhdDirectoryEntryAttrs, SerdeBhdDirectoryEntryBlob,
@@ -54,6 +55,53 @@ fn test_bitfield_serde() {
     use amd_efs::DirectoryAdditionalInfo;
     let result: DirectoryAdditionalInfo = json5::from_str(config).unwrap();
     assert_eq!(result.address_mode(), AddressMode::PhysicalAddress);
+}
+
+#[test]
+fn test_valid_compat_serde_psp_entry_source_value_deserialization() {
+    let json = "16"; //     force_security_policy_loading_even_if_insecure
+    let result =
+        serde_json::from_str::<SerdePspEntrySourceValue>(json).unwrap();
+    if let SerdePspEntrySourceValue::Unknown(x) = result {
+        assert_eq!(x, 16);
+    } else {
+        panic!("got the wrong SerdePspEntrySourceValue variant")
+    }
+}
+
+#[test]
+fn test_valid_serde_psp_entry_source_value_deserialization() {
+    use amd_efs::PspSoftFuseChain32MiBSpiDecoding;
+    use amd_efs::PspSoftFuseChainPostCodeDecoding;
+    let json = r#"{"PspSoftFuseChain": {"early_secure_debug_unlock": true, "spi_decoding": "UpperHalf", "postcode_decoding": "Lpc"}}"#;
+    let result =
+        serde_json::from_str::<SerdePspEntrySourceValue>(json).unwrap();
+    if let SerdePspEntrySourceValue::PspSoftFuseChain(x) = result {
+        assert_eq!(
+            x.spi_decoding(),
+            PspSoftFuseChain32MiBSpiDecoding::UpperHalf
+        );
+        assert_eq!(
+            x.postcode_decoding(),
+            PspSoftFuseChainPostCodeDecoding::Lpc
+        );
+        assert!(x.early_secure_debug_unlock());
+        assert!(!x.force_recovery_booting());
+    } else {
+        panic!("got the wrong SerdePspEntrySourceValue variant")
+    }
+}
+
+#[test]
+fn test_invalid_string_deserialization() {
+    let json = r#""x""#;
+    assert!(serde_json::from_str::<SerdePspEntrySourceValue>(json).is_err());
+}
+
+#[test]
+fn test_invalid_wrong_key_name() {
+    let json = r#"{"WrongName": {"some": "data"}}"#;
+    assert!(serde_json::from_str::<SerdePspEntrySourceValue>(json).is_err());
 }
 
 mod hole;
@@ -622,7 +670,7 @@ fn dump_psp_directory<T: FlashRead + FlashWrite>(
     // TODO: Handle the other variant (PspComboDirectory)
     let mut blob_dump_filenames = HashSet::<PathBuf>::new();
     SerdePspDirectoryVariant::PspDirectory(SerdePspDirectory {
-        entries: psp_directory.entries().map_while(|e| {
+        entries: psp_directory.entries().map_while(|e| -> Option<SerdePspEntry> {
         if let Ok(typ) = e.typ_or_err() {
             match typ {
                 PspDirectoryEntryType::SecondLevelDirectory => {
@@ -684,7 +732,7 @@ fn dump_psp_directory<T: FlashRead + FlashWrite>(
                     }
                     None => {
                         let value = e.value().unwrap();
-                        SerdePspEntrySource::Value(value)
+                        SerdePspEntrySource::Value(SerdePspEntrySourceValue::from_u64(value, typ))
                     }
                 },
                 target: SerdePspDirectoryEntry {
@@ -1096,7 +1144,7 @@ fn prepare_psp_directory_contents(
                     SerdePspEntrySource::Value(x) => {
                         // FIXME: assert!(blob_slot_settings.is_none()); fails for some reason
                         // DirectoryRelativeOffset is the one that can always be overridden
-                        raw_entry.set_source(AddressMode::DirectoryRelativeOffset, ValueOrLocation::Value(x)).unwrap();
+                        raw_entry.set_source(AddressMode::DirectoryRelativeOffset, ValueOrLocation::Value(x.to_u64(raw_entry.typ_or_err()).unwrap())).unwrap();
                         vec![(raw_entry, None, None)]
                     }
                     SerdePspEntrySource::BlobFile(
