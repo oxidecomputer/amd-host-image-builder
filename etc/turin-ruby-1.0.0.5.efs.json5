@@ -29,6 +29,22 @@
         },
         {
           source: {
+            BlobFile: "TypeId0x02_PspOS_BRH.ecsbin"
+          },
+          target: {
+            type: "PspOs"
+          }
+        },
+        {
+          source: {
+            BlobFile: "TypeId0x03_PspRecBl_BRH.esbin"
+          },
+          target: {
+            type: "PspRecoveryBootloader"
+          }
+        },
+        {
+          source: {
             BlobFile: "TypeId0x08_SmuFirmware_breithorn.ecsbin"
           },
           target: {
@@ -46,10 +62,26 @@
         },
         {
           source: {
+            BlobFile: "TypeId0x09_PspDebugUnlockToken_BRH.stkn"
+          },
+          target: {
+            type: "AmdSecureDebugKey"
+          }
+        },
+        {
+          source: {
             BlobFile: "TypeId0x0A_PspAblPubKey_BRH.stkn"
           },
           target: {
             type: "AblPublicKey"
+          }
+        },
+        {
+          source: {
+            BlobFile: "TypeId0x13_SduFw_BRH.ecsbin"
+          },
+          target: {
+            type: "PspEarlySecureUnlockDebugImage"
           }
         },
         {
@@ -62,34 +94,10 @@
         },
         {
           source: {
-            BlobFile: "TypeId0x55_SPLTable_BRH.sbin"
-          },
-          target: {
-            type: "BootloaderSplTable"
-          }
-        },
-        {
-          source: {
-            BlobFile: "TypeId0x9D_AspSramFwExt_BRH.sbin"
-          },
-          target: {
-            type: "AspSramFirmwareExtension"
-          }
-        },
-        {
-          source: {
             BlobFile: "TypeId0x21_PspAmdIkek_BRH.bin"
           },
           target: {
             type: "WrappedIkek"
-          }
-        },
-        {
-          source: {
-            BlobFile: "TypeId0x13_SduFw_BRH.ecsbin"
-          },
-          target: {
-            type: "PspEarlySecureUnlockDebugImage"
           }
         },
         {
@@ -209,6 +217,14 @@
         },
         {
           source: {
+            BlobFile: "TypeId0x55_SPLTable_BRH.sbin"
+          },
+          target: {
+            type: "BootloaderSplTable"
+          }
+        },
+        {
+          source: {
             BlobFile: "TypeId0x5DMpioFw_BRH.cesbin"
           },
           target: {
@@ -269,6 +285,14 @@
           },
           target: {
             type: "MpdmaPageMigrationFirmware"
+          }
+        },
+        {
+          source: {
+            BlobFile: "TypeId0x9D_AspSramFwExt_BRH.sbin"
+          },
+          target: {
+            type: "AspSramFirmwareExtension"
           }
         },
         {
