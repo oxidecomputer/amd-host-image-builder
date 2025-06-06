@@ -3532,7 +3532,7 @@
                         },
                         dimms: "Any",
                         value: 2,
-                                              }
+                      }
                     },
                     {
                       MaxChannelsPerSocket: {
@@ -12032,7 +12032,7 @@
                         MemMbistPerBitSlaveDieReportDdr: "Auto"
                       }
                     },
-                                        {
+                    {
                       Byte: {
                         SecondPcieLinkEndLane: 135
                       }
