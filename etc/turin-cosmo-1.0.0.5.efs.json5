@@ -2487,15 +2487,15 @@
                   ConsoleOutControl: {
                     abl_console_out_control: {
                       enable_console_logging: true,
-                      enable_mem_flow_logging: true,
-                      enable_mem_setreg_logging: true,
+                      enable_mem_flow_logging: false,
+                      enable_mem_setreg_logging: false,
                       enable_mem_getreg_logging: false,
-                      enable_mem_status_logging: true,
+                      enable_mem_status_logging: false,
                       enable_mem_pmu_logging: true,
                       enable_mem_pmu_sram_read_logging: false,
                       enable_mem_pmu_sram_write_logging: false,
                       enable_mem_test_verbose_logging: false,
-                      enable_mem_basic_output_logging: true,
+                      enable_mem_basic_output_logging: false,
                       abl_console_port: 128
                     },
                     abl_breakpoint_control: {
@@ -11064,7 +11064,7 @@
                     },
                     {
                       Byte: {
-                        FchConsoleOutMode: "Disabled"
+                        FchConsoleOutMode: "Enabled"
                       }
                     },
                     {
@@ -11566,6 +11566,21 @@
           },
           target: {
             type: "ApcbBackup"
+          }
+        },
+        {
+          source: "Implied",
+          target: {
+            type: "Apob",
+            ram_destination_address: 0x4000000
+          }
+        },
+        {
+          source: "Implied",
+          target: {
+            type: "ApobNvCopy",
+            flash_location: 0x7000000,
+            size: 0xd0000
           }
         },
         {
