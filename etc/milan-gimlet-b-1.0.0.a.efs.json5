@@ -58,7 +58,11 @@
 				},
 				{
 					source: {
-						Value: 1
+						Value: {
+							PspSoftFuseChain: {
+								secure_debug_unlock: true
+							}
+						}
 					},
 					target: {
 						type: "PspSoftFuseChain"

@@ -55,7 +55,7 @@ dependencies = [
 [[package]]
 name = "amd-efs"
 version = "0.4.4"
-source = "git+https://github.com/oxidecomputer/amd-efs.git?branch=main#81e565383ee8b0133532edaa54074a0a4bbd200e"
+source = "git+https://github.com/oxidecomputer/amd-efs.git?branch=main#da9716b305396da455bd7f6f665cec493c780037"
 dependencies = [
  "fletcher",
  "memoffset",
