@@ -34,8 +34,8 @@ dependencies = [
 
 [[package]]
 name = "amd-apcb"
-version = "0.5.2"
-source = "git+https://github.com/oxidecomputer/amd-apcb.git?branch=main#c39f9eac17ac402083db1c01d448743f1b1ff10a"
+version = "0.5.4"
+source = "git+https://github.com/oxidecomputer/amd-apcb.git?branch=main#d8244b0a0f4a1496799c660e53dfe294b46f8888"
 dependencies = [
  "byteorder",
  "four-cc",
