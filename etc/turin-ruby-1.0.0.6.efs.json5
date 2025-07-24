@@ -11978,23 +11978,13 @@
                       }
                     },
                     {
-                      Unknown: {
-                        entry_id: "Byte",
-                        // APCB_TOKEN_UID_MEM_ECC_DIS_ERR_INJECTION_DDR
-                        // Specifies if UMC error injection configuration writes are disabled.
-                        // 0 = False
-                        tag: 0xF77A05F1,
-                        value: 0
+                      Byte: {
+                        MemEccErrInjectionDdr: "Enabled"
                       }
                     },
                     {
-                      Unknown: {
-                        entry_id: "Byte",
-                        // APCB_TOKEN_UID_MEM_SPECIFIC_VENDOR_DIE_CE_WA
-                        // Workaround for CE on certain vendor
-                        // 0 = Disabled (default)
-                        tag: 0x0636BDA8,
-                        value: 0
+                      Byte: {
+                        MemSpecificVendorDieCeWorkaround: "Disabled"
                       }
                     },
                     {
@@ -12180,13 +12170,8 @@
                       }
                     },
                     {
-                      Unknown: {
-                        entry_id: "Byte",
-                        // APCB_TOKEN_UID_MEM_SPECIFIC_VENDOR_DIE_CACS_WA
-                        // Workaround for VREF CACS for Certain Vendor
-                        // 1 = Enabled (default)
-                        tag: 0x4A0B4129,
-                        value: 1
+                      Byte: {
+                        MemSpecificVendorDieCacsWorkaround: "Enabled"
                       }
                     },
                     {
@@ -12756,23 +12741,13 @@
                       }
                     },
                     {
-                      Unknown: {
-                        entry_id: "Byte",
-                        // APCB_TOKEN_UID_MEM_ECC_DIS_ERR_INJECTION_DDR
-                        // Specifies if UMC error injection configuration writes are disabled.
-                        // 0 = False
-                        tag: 0xF77A05F1,
-                        value: 0
+                      Byte: {
+                        MemEccErrInjectionDdr: "Enabled"
                       }
                     },
                     {
-                      Unknown: {
-                        entry_id: "Byte",
-                        // APCB_TOKEN_UID_MEM_SPECIFIC_VENDOR_DIE_CE_WA
-                        // Workaround for CE on certain vendor
-                        // 0 = Disabled (default)
-                        tag: 0x0636BDA8,
-                        value: 0
+                      Byte: {
+                        MemSpecificVendorDieCeWorkaround: "Disabled"
                       }
                     },
                     {
@@ -12948,12 +12923,8 @@
                       }
                     },
                     {
-                      Unknown: {
-                        entry_id: "Byte",
-                        // APCB_TOKEN_UID_MEM_T_WRWR_SCDLR_3DS_4800_WA_EN
-                        // XXX: Supposedly Boolean but showed up in Byte section?
-                        tag: 0x3EE89212,
-                        value: 0
+                      Byte: {
+                        MemTimingWriteToWriteScheduler3ds4800Workaround: "Disabled"
                       }
                     },
                     {
@@ -12987,13 +12958,8 @@
                       }
                     },
                     {
-                      Unknown: {
-                        entry_id: "Byte",
-                        // APCB_TOKEN_UID_MEM_SPECIFIC_VENDOR_DIE_CACS_WA
-                        // Workaround for VREF CACS for Certain Vendor
-                        // 1 = Enabled (default)
-                        tag: 0x4A0B4129,
-                        value: 1
+                      Byte: {
+                        MemSpecificVendorDieCacsWorkaround: "Enabled"
                       }
                     },
                     {
