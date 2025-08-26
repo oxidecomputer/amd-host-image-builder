@@ -74,4 +74,5 @@ blobs = [
     'Type0x65_AppbDdr5RdimmPosttrainDmem10_BRH_C0.ecsbin',
     'Type0x65_AppbDdr5RdimmQuickbootDmem11_BRH_C0.ecsbin',
     'Type0x65_AppbDdr5RdimmQuickbootDmem12_BRH_C0.ecsbin',
+    'APOB_NV_BRH.bin',
 ]
