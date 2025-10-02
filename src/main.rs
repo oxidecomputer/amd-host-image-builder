@@ -1289,43 +1289,87 @@ fn prepare_bhd_directory_contents<'a>(
             }
             let source = entry.source;
             let blob_slot_settings = entry.target.blob;
-            let flash_location =
-                blob_slot_settings.as_ref().and_then(|x| x.flash_location)
+            let flash_location = blob_slot_settings
+                .as_ref()
+                .and_then(|x| x.flash_location)
                 // AMD sometimes uses target.flash_location=Some(0) together
                 // with Implied to mean "No flash location".
                 // Ignore that (definitely do not allocate that on the flash).
-                .filter(|&loc| !(matches!(source, SerdeBhdSource::Implied) && loc == 0));
+                .filter(|&loc| {
+                    !(matches!(source, SerdeBhdSource::Implied) && loc == 0)
+                });
 
             // done by try_from: raw_entry.set_destination_location(ram_destination_address);
             // done by try_from: raw_entry.set_size(size);
             match source {
-                SerdeBhdSource::Implied => {
-                    assert_eq!(entry.target.attrs.type_, BhdDirectoryEntryType::Apob,
-                        "Implied supports is only supported for Apob, not {typ}. Are you sure you want to do that?",
-                        typ = entry.target.attrs.type_);
-                    assert!(flash_location.is_none(),
-                        "You specified a fixed flash location for {typ} but it has an Implied source. What does that mean?",
-                        typ = entry.target.attrs.type_);
-                    custom_apob = Some(raw_entry.destination_location().expect("destination address"));
-                    raw_entry.set_size(Some(0));
-                    vec![(raw_entry, None, None)]
-                }
+                SerdeBhdSource::Implied => match entry.target.attrs.type_ {
+                    BhdDirectoryEntryType::Apob => {
+                        assert!(
+                            flash_location.is_none(),
+                            "You specified a
+                                    fixed flash location for {typ} but it has
+                                    an Implied source. What does that mean?",
+                            typ = entry.target.attrs.type_
+                        );
+                        custom_apob = Some(
+                            raw_entry
+                                .destination_location()
+                                .expect("destination address"),
+                        );
+                        raw_entry.set_size(Some(0));
+                        vec![(raw_entry, None, None)]
+                    }
+                    BhdDirectoryEntryType::ApobNvCopy => {
+                        assert!(
+                            raw_entry.destination_location().is_none(),
+                            "You specified a fixed RAM location for
+                                    {typ}. What does that mean?",
+                            typ = entry.target.attrs.type_
+                        );
+                        assert!(
+                            flash_location.is_some(),
+                            "You did not
+                                    specify a flash location for {typ}.",
+                            typ = entry.target.attrs.type_
+                        );
+                        assert_ne!(
+                            raw_entry.size(),
+                            Some(0),
+                            "You did not
+                                       specify a size for {typ}.",
+                            typ = entry.target.attrs.type_
+                        );
+                        vec![(raw_entry, None, None)]
+                    }
+                    _ => {
+                        panic!(
+                            "Implied source is only supported for Apob
+                                   and ApobNvCopy, not {typ}. Are you sure you
+                                   want to do that?",
+                            typ = entry.target.attrs.type_
+                        );
+                    }
+                },
                 SerdeBhdSource::BlobFile(blob_filename) => {
-                    assert_ne!(entry.target.attrs.type_, BhdDirectoryEntryType::Apob,
-                        "You specified a Blob for Apob? What does that mean?");
+                    assert_ne!(
+                        entry.target.attrs.type_,
+                        BhdDirectoryEntryType::Apob,
+                        "You specified a Blob for Apob? What does that mean?"
+                    );
                     let blob_filename = resolve_blob(blob_filename).unwrap();
                     let body = std::fs::read(blob_filename).unwrap();
                     raw_entry.set_size(Some(body.len().try_into().unwrap()));
                     vec![(raw_entry, flash_location, Some(body))]
                 }
                 SerdeBhdSource::ApcbJson(apcb) => {
-                    assert!(generate_is_context_valid(processor_generation, &apcb));
+                    assert!(generate_is_context_valid(
+                        processor_generation,
+                        &apcb
+                    ));
                     // Note: We need to do this
                     // manually because validation
                     // needs ABL_VERSION.
-                    apcb.validate(None)
-                        .map_err(apcb_to_io_error)
-                        .unwrap();
+                    apcb.validate(None).map_err(apcb_to_io_error).unwrap();
                     let buf =
                         apcb.save_no_inc().map_err(apcb_to_io_error).unwrap();
                     let bufref = buf.as_ref();
