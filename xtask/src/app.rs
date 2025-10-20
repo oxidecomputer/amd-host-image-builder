@@ -30,6 +30,13 @@ pub struct Patch {
 }
 
 impl Patch {
+    pub fn with_root(self, root: Option<&Path>) -> Patch {
+        Patch {
+            base: root_path(root, self.base),
+            diff: root_path(root, self.diff),
+        }
+    }
+
     pub fn base(&self) -> &Path {
         self.base.as_ref()
     }
@@ -60,11 +67,15 @@ pub struct App {
     blobs: Vec<PathBuf>,
 }
 
+fn root_path(root: Option<&Path>, p: PathBuf) -> PathBuf {
+    if let Some(root) = root { root.join(p) } else { p }
+}
+
 impl App {
-    pub fn try_from_str(data: &str) -> Result<App> {
+    pub fn try_from_str(root: Option<&Path>, data: &str) -> Result<App> {
         let app_raw: AppRaw = toml::from_str(data)?;
-        let app = if let Some(base) = &app_raw.base {
-            let base = try_from_file(base)
+        let app = if let Some(base) = app_raw.base {
+            let base = try_from_file(root, &root_path(root, base))
                 .context("Failed to parse base App config")?;
             App {
                 cpu: app_raw.cpu.unwrap_or(base.cpu),
@@ -75,7 +86,8 @@ impl App {
                     app_raw.patch
                 } else {
                     base.patch
-                },
+                }
+                .map(|p| p.with_root(root)),
                 size: app_raw.size.unwrap_or(base.size),
                 board: app_raw.board.unwrap_or(base.board),
                 blobs: app_raw.blobs.unwrap_or(base.blobs),
@@ -86,7 +98,7 @@ impl App {
                 firmware_version: app_raw
                     .firmware_version
                     .ok_or_else(|| anyhow!("'firmware_version' missing"))?,
-                patch: app_raw.patch,
+                patch: app_raw.patch.map(|p| p.with_root(root)),
                 size: app_raw.size.ok_or_else(|| anyhow!("'size' missing"))?,
                 board: app_raw
                     .board
@@ -140,7 +152,7 @@ impl App {
     }
 }
 
-pub fn try_from_file(app: &Path) -> Result<App> {
+pub fn try_from_file(root: Option<&Path>, app: &Path) -> Result<App> {
     eprintln!("reading from {app:?}");
     let data = fs::read(app)?;
     //eprintln!("data: {data:?}");
@@ -151,7 +163,7 @@ pub fn try_from_file(app: &Path) -> Result<App> {
             return Err(e.into());
         }
     };
-    App::try_from_str(data)
+    App::try_from_str(root, data)
 }
 
 #[cfg(test)]
@@ -170,7 +182,7 @@ mod tests {
             'b',
             'c',
         ]"#;
-        let maybe = App::try_from_str(data);
+        let maybe = App::try_from_str(None, data);
         assert!(maybe.is_ok());
         let app = maybe.unwrap();
         assert_eq!(app.cpu, Cpu::Turin);
@@ -199,7 +211,7 @@ mod tests {
             'b',
             'c',
         ]"#;
-        assert!(App::try_from_str(base_data).is_ok());
+        assert!(App::try_from_str(None, base_data).is_ok());
         let mut base_app = NamedTempFile::new().unwrap();
         writeln!(base_app, "{base_data}").unwrap();
         base_app.flush().unwrap();
@@ -215,7 +227,7 @@ mod tests {
         "#,
             base_app.path().display()
         );
-        let maybe = App::try_from_str(&data);
+        let maybe = App::try_from_str(None, &data);
         assert!(maybe.is_ok());
         let app = maybe.unwrap();
         assert_eq!(app.cpu, Cpu::Turin);
@@ -231,5 +243,27 @@ mod tests {
         let patch = app.patch.unwrap();
         assert_eq!(patch.base, PathBuf::from("base.json5"));
         assert_eq!(patch.diff, PathBuf::from("diff.patch"));
+    }
+
+    #[test]
+    fn patch_root() {
+        let data = r#"
+        cpu = 'test'
+        board = 'test'
+        size = 16
+        firmware_version = 'test'
+        blobs = []
+        [patch]
+        base = '/base.json5'
+        diff = 'diff.patch'
+        "#;
+        let maybe = App::try_from_str(Some(&Path::new("/configs")), data);
+        assert!(maybe.is_ok());
+        let app = maybe.unwrap();
+        assert!(app.patch.is_some());
+        let patch = app.patch.unwrap();
+        // Base path was absolute so should remain unchanged
+        assert_eq!(patch.base, PathBuf::from("/base.json5"));
+        assert_eq!(patch.diff, PathBuf::from("/configs/diff.patch"));
     }
 }
