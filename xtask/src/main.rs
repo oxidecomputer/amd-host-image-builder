@@ -68,6 +68,8 @@ enum Command {
         locked: Locked,
         #[clap(flatten)]
         verbose: Verbose,
+        #[clap(long)]
+        root: Option<PathBuf>,
     },
     /// Dumps an existing image, extracting its blobs
     /// and printing its config
@@ -193,7 +195,9 @@ fn main() -> std::io::Result<()> {
             profile,
             locked,
             verbose,
+            root,
         } => run_gen(
+            root.as_deref(),
             app.as_path(),
             config.as_deref(),
             payload.as_path(),
@@ -217,6 +221,7 @@ fn build(args: Build) {
 }
 
 fn run_gen<P: AsRef<Path> + ?Sized>(
+    root: Option<&P>,
     app: &P,
     config: Option<&P>,
     payload: &P,
@@ -224,7 +229,8 @@ fn run_gen<P: AsRef<Path> + ?Sized>(
     image: &P,
     args: Build,
 ) {
-    let app = app::try_from_file(app.as_ref()).expect("Parsed app");
+    let app = app::try_from_file(root.map(|r| r.as_ref()), app.as_ref())
+        .expect("Parsed app");
     let name = app.name();
     let name = Path::new(&name);
     let run = args.cmd_str("run");
@@ -335,6 +341,7 @@ fn cargo() -> String {
 fn test_payload() {
     let image = "target/test.img";
     run_gen(
+        None,
         "apps/test.toml",
         None,
         "target/testpl",
