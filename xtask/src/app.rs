@@ -2,7 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-use anyhow::Result;
+use anyhow::{Context, Result, anyhow};
 use serde::Deserialize;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -39,6 +39,17 @@ impl Patch {
     }
 }
 
+#[derive(Deserialize)]
+struct AppRaw {
+    base: Option<PathBuf>,
+    cpu: Option<Cpu>,
+    firmware_version: Option<String>,
+    patch: Option<Patch>,
+    size: Option<u32>,
+    board: Option<String>,
+    blobs: Option<Vec<PathBuf>>,
+}
+
 #[derive(Debug, Deserialize)]
 pub struct App {
     cpu: Cpu,
@@ -51,7 +62,40 @@ pub struct App {
 
 impl App {
     pub fn try_from_str(data: &str) -> Result<App> {
-        let app = toml::from_str(data)?;
+        let app_raw: AppRaw = toml::from_str(data)?;
+        let app = if let Some(base) = &app_raw.base {
+            let base = try_from_file(base)
+                .context("Failed to parse base App config")?;
+            App {
+                cpu: app_raw.cpu.unwrap_or(base.cpu),
+                firmware_version: app_raw
+                    .firmware_version
+                    .unwrap_or(base.firmware_version),
+                patch: if app_raw.patch.is_some() {
+                    app_raw.patch
+                } else {
+                    base.patch
+                },
+                size: app_raw.size.unwrap_or(base.size),
+                board: app_raw.board.unwrap_or(base.board),
+                blobs: app_raw.blobs.unwrap_or(base.blobs),
+            }
+        } else {
+            App {
+                cpu: app_raw.cpu.ok_or_else(|| anyhow!("'cpu' missing"))?,
+                firmware_version: app_raw
+                    .firmware_version
+                    .ok_or_else(|| anyhow!("'firmware_version' missing"))?,
+                patch: app_raw.patch,
+                size: app_raw.size.ok_or_else(|| anyhow!("'size' missing"))?,
+                board: app_raw
+                    .board
+                    .ok_or_else(|| anyhow!("'board' missing"))?,
+                blobs: app_raw
+                    .blobs
+                    .ok_or_else(|| anyhow!("'blobs' missing"))?,
+            }
+        };
         Ok(app)
     }
 
@@ -138,5 +182,54 @@ mod tests {
             app.blob_path(Path::new("/fw")).to_str(),
             Some("/fw/BRH/1.0.0.3-p1")
         );
+    }
+
+    #[test]
+    fn inherit_app() {
+        use std::io::Write;
+        use tempfile::NamedTempFile;
+
+        let base_data = r#"
+        cpu = 'turin'
+        board = 'ruby'
+        size = 16
+        firmware_version = '1.0.0.3-p1'
+        blobs = [
+            'a',
+            'b',
+            'c',
+        ]"#;
+        assert!(App::try_from_str(base_data).is_ok());
+        let mut base_app = NamedTempFile::new().unwrap();
+        writeln!(base_app, "{base_data}").unwrap();
+        base_app.flush().unwrap();
+
+        // Inherit from base but replace 'board' value
+        let data = format!(
+            r#"
+        base = '{}'
+        board = 'cosmo'
+        [patch]
+        base = 'base.json5'
+        diff = 'diff.patch'
+        "#,
+            base_app.path().display()
+        );
+        let maybe = App::try_from_str(&data);
+        assert!(maybe.is_ok());
+        let app = maybe.unwrap();
+        assert_eq!(app.cpu, Cpu::Turin);
+        assert_eq!(app.firmware_version, "1.0.0.3-p1");
+        assert_eq!(app.size, 16);
+        assert_eq!(app.board, "cosmo");
+        assert_eq!(app.blobs, [PathBuf::from("a"), "b".into(), "c".into()]);
+        assert_eq!(
+            app.blob_path(Path::new("/fw")).to_str(),
+            Some("/fw/BRH/1.0.0.3-p1")
+        );
+        assert!(app.patch.is_some());
+        let patch = app.patch.unwrap();
+        assert_eq!(patch.base, PathBuf::from("base.json5"));
+        assert_eq!(patch.diff, PathBuf::from("diff.patch"));
     }
 }
