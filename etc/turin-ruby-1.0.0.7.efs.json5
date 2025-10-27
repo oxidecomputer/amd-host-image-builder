@@ -442,6 +442,15 @@
         },
         {
           source: {
+            BlobFile: "TypeId0xA0_S3Image_BRH_B1.sbin"
+          },
+          target: {
+            type: "S3Image",
+            instance: 5
+          }
+        },
+        {
+          source: {
             BlobFile: "TypeId0xA0_S3Image_BRH_C1.sbin"
           },
           target: {
