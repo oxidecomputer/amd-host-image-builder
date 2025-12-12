@@ -34,13 +34,13 @@ dependencies = [
 
 [[package]]
 name = "amd-apcb"
-version = "0.5.4"
-source = "git+https://github.com/oxidecomputer/amd-apcb.git?branch=main#d8244b0a0f4a1496799c660e53dfe294b46f8888"
+version = "0.5.5"
+source = "git+https://github.com/oxidecomputer/amd-apcb.git?branch=main#1ec66d607de2437813cdd9ffa91719a4b163b3cf"
 dependencies = [
  "byteorder",
  "four-cc",
  "memoffset",
- "modular-bitfield",
+ "modular-bitfield 0.13.1",
  "num-derive",
  "num-traits",
  "parse_int",
@@ -59,7 +59,7 @@ source = "git+https://github.com/oxidecomputer/amd-efs.git?branch=main#da9716b30
 dependencies = [
  "fletcher",
  "memoffset",
- "modular-bitfield",
+ "modular-bitfield 0.11.2",
  "num-derive",
  "num-traits",
  "paste",
@@ -819,7 +819,17 @@ version = "0.11.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a53d79ba8304ac1c4f9eb3b9d281f21f7be9d4626f72ce7df4ad8fbde4f38a74"
 dependencies = [
- "modular-bitfield-impl",
+ "modular-bitfield-impl 0.11.2",
+ "static_assertions",
+]
+
+[[package]]
+name = "modular-bitfield"
+version = "0.13.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2956e537fc68236d2aa048f55704f231cc93f1c4de42fe1ecb5bd7938061fc4a"
+dependencies = [
+ "modular-bitfield-impl 0.13.1",
  "static_assertions",
 ]
 
@@ -832,6 +842,17 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 1.0.109",
+]
+
+[[package]]
+name = "modular-bitfield-impl"
+version = "0.13.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "59b43b4fd69e3437618106f7754f34021b831a514f9e1a98ae863cabcd8d8dad"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.101",
 ]
 
 [[package]]
