@@ -1,0 +1,7 @@
+base = 'apps/turin-ruby-1.0.0.a.toml'
+
+board = 'rubyred'
+
+[patch]
+base = 'etc/turin-ruby-1.0.0.a.efs.json5'
+diff = 'etc/patches/turin-red.patch'
